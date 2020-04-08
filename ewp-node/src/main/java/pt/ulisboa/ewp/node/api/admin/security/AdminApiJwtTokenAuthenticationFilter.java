@@ -1,24 +1,21 @@
 package pt.ulisboa.ewp.node.api.admin.security;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import javax.xml.bind.JAXBException;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
 import pt.ulisboa.ewp.node.api.common.security.jwt.AbstractJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.common.security.jwt.JwtAuthenticationUserDetails;
 import pt.ulisboa.ewp.node.api.common.utils.ApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.user.UserRole;
-
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 /**
  * A filter that authenticates an host, for the Forward EWP APIs. It expects a JWT with the claim
@@ -34,7 +31,7 @@ public class AdminApiJwtTokenAuthenticationFilter extends AbstractJwtTokenAuthen
       AuthenticationManager authenticationManager,
       AdminApiUserRolesPopulator userRolesPopulator,
       String secret) {
-    super(authenticationManager);
+    super(authenticationManager, true);
     this.userRolesPopulator = userRolesPopulator;
     this.secret = secret;
   }
@@ -63,8 +60,8 @@ public class AdminApiJwtTokenAuthenticationFilter extends AbstractJwtTokenAuthen
           HttpServletResponse.SC_UNAUTHORIZED,
           MediaType.APPLICATION_JSON,
           ApiUtils.createApiResponseBody(null));
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (IOException | JAXBException e) {
+      logger.error("Failed to write response's body", e);
     }
   }
 }

@@ -1,23 +1,22 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.security;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.IOException;
 import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import javax.xml.bind.JAXBException;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-
 import pt.ulisboa.ewp.node.api.common.security.jwt.AbstractJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.common.security.jwt.JwtAuthenticationUserDetails;
 import pt.ulisboa.ewp.node.api.common.utils.ApiUtils;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ResultType;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
-
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 /**
  * A filter that authenticates an host, for the Forward EWP APIs. It expects a JWT with the claim
@@ -31,7 +30,7 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
 
   public ForwardEwpApiJwtTokenAuthenticationFilter(
       AuthenticationManager authenticationManager, HostRepository repository) {
-    super(authenticationManager);
+    super(authenticationManager, true);
     this.repository = repository;
   }
 
@@ -64,10 +63,11 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
       ApiUtils.writeResponseBody(
           response,
           HttpServletResponse.SC_UNAUTHORIZED,
-          MediaType.APPLICATION_JSON,
-          ApiUtils.createApiResponseBody(null));
-    } catch (IOException e) {
-      e.printStackTrace();
+          MediaType.APPLICATION_XML,
+          ForwardEwpApiResponseUtils.createEmptyResponseWithMessages(
+              ResultType.REQUEST_AUTHENTICATION_ERROR));
+    } catch (IOException | JAXBException e) {
+      logger.error("Failed to write response's body", e);
     }
   }
 }

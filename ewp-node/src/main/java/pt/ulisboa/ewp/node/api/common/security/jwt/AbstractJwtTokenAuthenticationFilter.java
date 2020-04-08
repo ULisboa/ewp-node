@@ -1,31 +1,27 @@
 package pt.ulisboa.ewp.node.api.common.security.jwt;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.IOException;
 import java.util.Optional;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-
 import pt.ulisboa.ewp.node.api.common.security.SecurityCommonConstants;
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
 import pt.ulisboa.ewp.node.utils.messaging.Severity;
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 /**
  * A filter that authenticates a user given the JWT authentication token on header.
@@ -34,29 +30,35 @@ import com.auth0.jwt.interfaces.DecodedJWT;
  */
 public abstract class AbstractJwtTokenAuthenticationFilter extends BasicAuthenticationFilter {
 
+  private final boolean isTokenRequired;
   private String tokenSecret;
 
-  public AbstractJwtTokenAuthenticationFilter(AuthenticationManager authenticationManager) {
-    super(authenticationManager);
+  public AbstractJwtTokenAuthenticationFilter(
+      AuthenticationManager authenticationManager, boolean isTokenRequired, String tokenSecret) {
+    this(authenticationManager, isTokenRequired);
+    this.tokenSecret = tokenSecret;
   }
 
-  public AbstractJwtTokenAuthenticationFilter(
-      AuthenticationManager authenticationManager, String tokenSecret) {
+  public AbstractJwtTokenAuthenticationFilter(AuthenticationManager authenticationManager,
+      boolean isTokenRequired) {
     super(authenticationManager);
-    this.tokenSecret = tokenSecret;
+    this.isTokenRequired = isTokenRequired;
   }
 
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-    String token = getToken(request);
-    if (token == null) {
-      chain.doFilter(request, response);
-      return;
-    }
-
     try {
+      String token = getToken(request);
+      if (token == null) {
+        if (isTokenRequired) {
+          throwAuthenticationError("Token was not found on request");
+        }
+        chain.doFilter(request, response);
+        return;
+      }
+
       Authentication authentication = getAuthentication(token);
 
       LoggerUtils.info(
@@ -116,12 +118,12 @@ public abstract class AbstractJwtTokenAuthenticationFilter extends BasicAuthenti
     } catch (TokenExpiredException e) {
       LoggerUtils.error(
           "Token expired: " + jwtToken, AbstractJwtTokenAuthenticationFilter.class.getSimpleName());
-      throwAuthenticationError(e.getLocalizedMessage());
+      throwAuthenticationError("Token expired: " + e.getLocalizedMessage());
     } catch (JWTVerificationException e) {
       LoggerUtils.error(
           "Invalid token: " + jwtToken + "(" + e.getMessage() + ")",
           AbstractJwtTokenAuthenticationFilter.class.getSimpleName());
-      throwAuthenticationError(e.getLocalizedMessage());
+      throwAuthenticationError("Invalid token: " + jwtToken + " (" + e.getLocalizedMessage() + ")");
     } catch (RuntimeException e) {
       LoggerUtils.error(
           String.format("Exception found (token=%s): %s", jwtToken, e.getLocalizedMessage()),
