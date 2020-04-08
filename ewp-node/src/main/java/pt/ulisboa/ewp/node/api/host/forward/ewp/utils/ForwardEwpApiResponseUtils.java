@@ -1,33 +1,36 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.utils;
 
+import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
 import java.math.BigInteger;
 import java.util.Collection;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.AuthenticationAlgorithm;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ResultType;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.Messages;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.OriginalResponse;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.ProcessingError;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.RequestError;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.OriginalResponse.AuthenticationResult;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.OriginalResponse.Body;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.ProcessingError;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.RequestError;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.MessageSeverity;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ResultType;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
+import pt.ulisboa.ewp.node.service.messaging.MessageService;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
+import pt.ulisboa.ewp.node.utils.messaging.Message;
+import pt.ulisboa.ewp.node.utils.messaging.Severity;
 
 public class ForwardEwpApiResponseUtils {
 
-  private ForwardEwpApiResponseUtils() {}
+  private ForwardEwpApiResponseUtils() {
+  }
 
-  public static <T> ResponseEntity<ForwardEwpApiResponse> toRequestErrorResponseEntity(
+  public static ResponseEntity<ForwardEwpApiResponse> toRequestErrorResponseEntity(
       Collection<String> errorMessages) {
-    ForwardEwpApiResponse responseBody = new ForwardEwpApiResponse();
-    responseBody.setResultType(ResultType.REQUEST_ERROR);
+    ForwardEwpApiResponse responseBody = createEmptyResponseWithMessages(ResultType.REQUEST_ERROR);
 
     RequestError requestError = new RequestError();
     requestError.getErrorMessage().addAll(errorMessages);
@@ -52,8 +55,7 @@ public class ForwardEwpApiResponseUtils {
 
   public static ResponseEntity<ForwardEwpApiResponse> toProcessorErrorResponseEntity(
       String errorMessage) {
-    ForwardEwpApiResponse response = new ForwardEwpApiResponse();
-    response.setResultType(ResultType.PROCESSOR_ERROR);
+    ForwardEwpApiResponse response = createEmptyResponseWithMessages(ResultType.PROCESSOR_ERROR);
 
     ProcessingError processingError = new ProcessingError();
     processingError.setErrorMessage(errorMessage);
@@ -66,8 +68,8 @@ public class ForwardEwpApiResponseUtils {
 
   public static ResponseEntity<ForwardEwpApiResponse> toResponseAuthenticationErrorResponseEntity(
       EwpResponse ewpResponse, EwpAuthenticationResult responseAuthenticationResult) {
-    ForwardEwpApiResponse response = new ForwardEwpApiResponse();
-    response.setResultType(ResultType.RESPONSE_AUTHENTICATION_ERROR);
+    ForwardEwpApiResponse response = createEmptyResponseWithMessages(
+        ResultType.RESPONSE_AUTHENTICATION_ERROR);
 
     OriginalResponse originalResponse = new OriginalResponse();
     originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatusCode()));
@@ -83,8 +85,7 @@ public class ForwardEwpApiResponseUtils {
       EwpResponse ewpResponse,
       EwpAuthenticationResult responseAuthenticationResult,
       ErrorResponse errorResponse) {
-    ForwardEwpApiResponse response = new ForwardEwpApiResponse();
-    response.setResultType(ResultType.ERROR_RESPONSE);
+    ForwardEwpApiResponse response = createEmptyResponseWithMessages(ResultType.ERROR_RESPONSE);
 
     OriginalResponse originalResponse = new OriginalResponse();
     originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatusCode()));
@@ -101,8 +102,8 @@ public class ForwardEwpApiResponseUtils {
 
   public static ResponseEntity<ForwardEwpApiResponse> toUnknownErrorResponseEntity(
       EwpResponse ewpResponse, EwpAuthenticationResult responseAuthenticationResult, String error) {
-    ForwardEwpApiResponse response = new ForwardEwpApiResponse();
-    response.setResultType(ResultType.UNKNOWN_ERROR_RESPONSE);
+    ForwardEwpApiResponse response = createEmptyResponseWithMessages(
+        ResultType.UNKNOWN_ERROR_RESPONSE);
 
     OriginalResponse originalResponse = new OriginalResponse();
     originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatusCode()));
@@ -119,8 +120,7 @@ public class ForwardEwpApiResponseUtils {
       EwpResponse ewpResponse,
       EwpAuthenticationResult responseAuthenticationResult,
       T responseBody) {
-    ForwardEwpApiResponse response = new ForwardEwpApiResponse();
-    response.setResultType(ResultType.SUCCESS);
+    ForwardEwpApiResponse response = createEmptyResponseWithMessages(ResultType.SUCCESS);
 
     OriginalResponse originalResponse = new OriginalResponse();
     originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatusCode()));
@@ -159,6 +159,44 @@ public class ForwardEwpApiResponseUtils {
       default:
         throw new IllegalArgumentException(
             "Unknown authentication method: " + authenticationMethod.name());
+    }
+  }
+
+  public static ForwardEwpApiResponse createEmptyResponseWithMessages(ResultType resultType) {
+    ForwardEwpApiResponse response = new ForwardEwpApiResponse();
+    response.setResultType(resultType);
+    decorateResponseWithMessages(response);
+    return response;
+  }
+
+  public static void decorateResponseWithMessages(ForwardEwpApiResponse response) {
+    Collection<Message> messagesToAdd = MessageService.getInstance().consumeMessages();
+    Messages messages = new Messages();
+    messagesToAdd
+        .forEach(messageToAdd -> messages.getMessage().add(toMessage(messageToAdd)));
+    response.setMessages(messages);
+  }
+
+  private static Messages.Message toMessage(Message message) {
+    Messages.Message result = new Messages.Message();
+    result.setContext(message.getContext());
+    result.setSeverity(toMessageSeverity(message.getSeverity()));
+    result.setSummary(message.getSummary());
+    return result;
+  }
+
+  private static MessageSeverity toMessageSeverity(Severity severity) {
+    switch (severity) {
+      case FATAL:
+        return MessageSeverity.FATAL;
+      case ERROR:
+        return MessageSeverity.ERROR;
+      case WARN:
+        return MessageSeverity.WARN;
+      case INFO:
+        return MessageSeverity.INFO;
+      default:
+        throw new IllegalArgumentException("Unknown severity: " + severity.name());
     }
   }
 }

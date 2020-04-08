@@ -33,6 +33,50 @@
           </xs:annotation>
         </xs:element>
 
+        <xs:element name="messages" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Messages that the EWP node produced and may be relevant to consider.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="message" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    A message
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="context" type="xs:string" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Context of the message.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="severity" type="message-severity" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Severity of the message.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="summary" type="xs:string" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Summary of the message.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
         <xs:element name="request-error" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
@@ -168,12 +212,22 @@
 
   <xs:simpleType name="result-type" final="restriction">
     <xs:restriction base="xs:string">
+      <xs:enumeration value="REQUEST_AUTHENTICATION_ERROR"/>
       <xs:enumeration value="REQUEST_ERROR"/>
       <xs:enumeration value="PROCESSOR_ERROR"/>
       <xs:enumeration value="SUCCESS"/>
       <xs:enumeration value="RESPONSE_AUTHENTICATION_ERROR"/>
       <xs:enumeration value="ERROR_RESPONSE"/>
       <xs:enumeration value="UNKNOWN_ERROR_RESPONSE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="message-severity" final="restriction">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="FATAL"/>
+      <xs:enumeration value="ERROR"/>
+      <xs:enumeration value="WARN"/>
+      <xs:enumeration value="INFO"/>
     </xs:restriction>
   </xs:simpleType>
 
