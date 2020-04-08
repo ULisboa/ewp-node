@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
+import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
@@ -13,19 +14,16 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
-
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -33,7 +31,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
@@ -57,40 +54,45 @@ import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedKeystore;
 import pt.ulisboa.ewp.node.utils.keystore.KeyStoreUtil;
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class EwpClient {
 
-  @Autowired private Logger log;
+  @Autowired
+  private Logger log;
 
-  @Autowired private KeyStoreService keystoreService;
+  @Autowired
+  private KeyStoreService keystoreService;
 
-  @Autowired private HttpSignatureService httpSignatureService;
+  @Autowired
+  private HttpSignatureService httpSignatureService;
 
-  @Autowired private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
+  @Autowired
+  private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
   /**
    * Sends a request to the target API, resolving its response, returning it only upon success. If a
    * request fails or the response obtained indicates an error then a corresponding exception is
    * thrown.
    *
-   * @param request Request to send
+   * @param request          Request to send
    * @param responseBodyType Expected response's body class type upon success.
    * @return
-   * @throws EwpClientProcessorException Request/Response processing failed for some reason.
-   * @throws EwpClientErrorResponseException Target API returned an error response (see {@see
-   *     eu.erasmuswithoutpaper.api.architecture.ErrorResponse}).
-   * @throws EwpClientUnknownErrorResponseException Target API returned an unknown error response.
+   * @throws EwpClientProcessorException                    Request/Response processing failed for
+   *                                                        some reason.
+   * @throws EwpClientErrorResponseException                Target API returned an error response
+   *                                                        (see {@see eu.erasmuswithoutpaper.api.architecture.ErrorResponse}).
+   * @throws EwpClientUnknownErrorResponseException         Target API returned an unknown error
+   *                                                        response.
    * @throws EwpClientResponseAuthenticationFailedException The obtained response failed
-   *     authentication
+   *                                                        authentication
    */
   @SuppressWarnings("unchecked")
   public <T> EwpSuccessOperationResult<T> executeWithLoggingExpectingSuccess(
       EwpRequest request, Class<T> responseBodyType)
       throws EwpClientErrorResponseException, EwpClientResponseAuthenticationFailedException,
-          EwpClientUnknownErrorResponseException, EwpClientProcessorException {
+      EwpClientUnknownErrorResponseException, EwpClientProcessorException {
     AbstractEwpOperationResult operationResult = executeWithLogging(request, responseBodyType);
     return getSuccessOperationResult(responseBodyType, operationResult);
   }
@@ -98,7 +100,7 @@ public class EwpClient {
   private <T> EwpSuccessOperationResult<T> getSuccessOperationResult(
       Class<T> responseBodyType, AbstractEwpOperationResult operationResult)
       throws EwpClientProcessorException, EwpClientResponseAuthenticationFailedException,
-          EwpClientErrorResponseException, EwpClientUnknownErrorResponseException {
+      EwpClientErrorResponseException, EwpClientUnknownErrorResponseException {
     switch (operationResult.getResultType()) {
       case PROCESSOR_ERROR:
         EwpProcessorErrorOperationResult processorErrorOperationResult =
@@ -154,6 +156,115 @@ public class EwpClient {
     return operationResult;
   }
 
+  protected <T> AbstractEwpOperationResult execute(
+      EwpRequest request, Class<T> expectedResponseBodyType) {
+    EwpResponse ewpResponse = null;
+    EwpAuthenticationResult responseAuthenticationResult = null;
+    try {
+      Client client;
+      try {
+        client = getClient();
+      } catch (NoSuchAlgorithmException
+          | KeyManagementException
+          | UnrecoverableKeyException
+          | KeyStoreException
+          | NoSuchProviderException e) {
+        log.error("Failed to initialize EWP client", e);
+        return new EwpProcessorErrorOperationResult.Builder().request(request).exception(e).build();
+      }
+
+      WebTarget target = client.target(request.getUrl());
+      target.property("http.autoredirect", true);
+
+      signRequest(request, target);
+      Invocation invocation = buildRequest(request, target);
+
+      log.info("Sending EWP request to: {}", request.getUrl());
+
+      Response response = invocation.invoke();
+
+      sanitizeResponse(response);
+
+      EwpResponse.Builder responseBuilder = new EwpResponse.Builder();
+      responseBuilder.statusCode(response.getStatus());
+      responseBuilder.mediaType(response.getMediaType().toString());
+
+      response
+          .getHeaders()
+          .forEach(
+              (headerName, headerValues) ->
+                  responseBuilder.header(
+                      headerName,
+                      headerValues.stream().map(Object::toString)
+                          .collect(Collectors.joining(", "))));
+
+      if (response.hasEntity()) {
+        response.bufferEntity();
+
+        responseBuilder.rawBody(response.readEntity(String.class));
+      }
+
+      ewpResponse = responseBuilder.build();
+
+      responseAuthenticationResult =
+          authenticateResponse(request, ewpResponse);
+      if (!responseAuthenticationResult.isValid()) {
+        return new EwpResponseAuthenticationErrorOperationResult.Builder()
+            .request(request)
+            .response(ewpResponse)
+            .responseAuthenticationResult(responseAuthenticationResult)
+            .build();
+      }
+
+      if (!ewpResponse.isOk()) {
+        try {
+          ErrorResponse errorResponse =
+              EwpResponseUtils.readResponseBody(ewpResponse, ErrorResponse.class);
+          return new EwpErrorResponseOperationResult.Builder()
+              .request(request)
+              .response(ewpResponse)
+              .responseAuthenticationResult(responseAuthenticationResult)
+              .errorResponse(errorResponse)
+              .build();
+
+        } catch (EwpResponseBodyCannotBeCastToException e) {
+          log.error("Failed to read error response's body", e);
+          return new EwpUnknownErrorResponseOperationResult.Builder()
+              .request(request)
+              .response(ewpResponse)
+              .responseAuthenticationResult(responseAuthenticationResult)
+              .error(ewpResponse.getRawBody())
+              .build();
+        }
+      }
+
+      T responseBody;
+      try {
+        responseBody = EwpResponseUtils.readResponseBody(ewpResponse, expectedResponseBodyType);
+      } catch (EwpResponseBodyCannotBeCastToException e) {
+        return new EwpProcessorErrorOperationResult.Builder()
+            .request(request)
+            .response(ewpResponse)
+            .responseAuthenticationResult(responseAuthenticationResult)
+            .exception(e)
+            .build();
+      }
+
+      return new EwpSuccessOperationResult.Builder<T>()
+          .request(request)
+          .response(ewpResponse)
+          .responseAuthenticationResult(responseAuthenticationResult)
+          .responseBody(responseBody)
+          .build();
+
+    } catch (Exception e) {
+      log.error("Failed to execute request", e);
+      return new EwpProcessorErrorOperationResult.Builder().request(request)
+          .response(ewpResponse).responseAuthenticationResult(responseAuthenticationResult)
+          .exception(e).build();
+    }
+  }
+
   private String getOperationObservations(AbstractEwpOperationResult result) {
     switch (result.getResultType()) {
       case PROCESSOR_ERROR:
@@ -179,110 +290,6 @@ public class EwpClient {
     StringWriter result = new StringWriter();
     exception.printStackTrace(new PrintWriter(result));
     return result.toString();
-  }
-
-  protected <T> AbstractEwpOperationResult execute(
-      EwpRequest request, Class<T> expectedResponseBodyType) {
-    Client client;
-    try {
-      client = getClient();
-    } catch (NoSuchAlgorithmException
-        | KeyManagementException
-        | UnrecoverableKeyException
-        | KeyStoreException
-        | NoSuchProviderException e) {
-      log.error("Failed to initialize EWP client", e);
-      return new EwpProcessorErrorOperationResult.Builder().request(request).exception(e).build();
-    }
-
-    WebTarget target = client.target(request.getUrl());
-    target.property("http.autoredirect", true);
-
-    signRequest(request, target);
-    Invocation invocation = buildRequest(request, target);
-
-    log.info("Sending EWP request to: {}", request.getUrl());
-
-    Response response;
-    try {
-      response = invocation.invoke();
-    } catch (ProcessingException e) {
-      log.error("Failed to invoke request and get response back", e);
-      return new EwpProcessorErrorOperationResult.Builder().request(request).exception(e).build();
-    }
-
-    sanitizeResponse(response);
-
-    EwpResponse.Builder responseBuilder = new EwpResponse.Builder();
-    responseBuilder.statusCode(response.getStatus());
-    responseBuilder.mediaType(response.getMediaType().toString());
-
-    response
-        .getHeaders()
-        .forEach(
-            (headerName, headerValues) ->
-                responseBuilder.header(
-                    headerName,
-                    headerValues.stream().map(Object::toString).collect(Collectors.joining(", "))));
-
-    if (response.hasEntity()) {
-      response.bufferEntity();
-
-      responseBuilder.rawBody(response.readEntity(String.class));
-    }
-
-    EwpResponse ewpResponse = responseBuilder.build();
-
-    EwpAuthenticationResult responseAuthenticationResult =
-        authenticateResponse(request, ewpResponse);
-    if (!responseAuthenticationResult.isValid()) {
-      return new EwpResponseAuthenticationErrorOperationResult.Builder()
-          .request(request)
-          .response(ewpResponse)
-          .responseAuthenticationResult(responseAuthenticationResult)
-          .build();
-    }
-
-    if (!ewpResponse.isOk()) {
-      try {
-        ErrorResponse errorResponse =
-            EwpResponseUtils.readResponseBody(ewpResponse, ErrorResponse.class);
-        return new EwpErrorResponseOperationResult.Builder()
-            .request(request)
-            .response(ewpResponse)
-            .responseAuthenticationResult(responseAuthenticationResult)
-            .errorResponse(errorResponse)
-            .build();
-
-      } catch (EwpResponseBodyCannotBeCastToException e) {
-        log.error("Failed to read error response's body", e);
-        return new EwpUnknownErrorResponseOperationResult.Builder()
-            .request(request)
-            .response(ewpResponse)
-            .responseAuthenticationResult(responseAuthenticationResult)
-            .error(ewpResponse.getRawBody())
-            .build();
-      }
-    }
-
-    T responseBody;
-    try {
-      responseBody = EwpResponseUtils.readResponseBody(ewpResponse, expectedResponseBodyType);
-    } catch (EwpResponseBodyCannotBeCastToException e) {
-      return new EwpProcessorErrorOperationResult.Builder()
-          .request(request)
-          .response(ewpResponse)
-          .responseAuthenticationResult(responseAuthenticationResult)
-          .exception(e)
-          .build();
-    }
-
-    return new EwpSuccessOperationResult.Builder<T>()
-        .request(request)
-        .response(ewpResponse)
-        .responseAuthenticationResult(responseAuthenticationResult)
-        .responseBody(responseBody)
-        .build();
   }
 
   private EwpAuthenticationResult authenticateResponse(EwpRequest request, EwpResponse response) {
@@ -331,7 +338,7 @@ public class EwpClient {
 
   private Client getClient()
       throws NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException,
-          UnrecoverableKeyException, KeyManagementException {
+      UnrecoverableKeyException, KeyManagementException {
     DecodedKeystore decodedKeystore = keystoreService.getDecodedKeyStoreFromStorage();
     SSLContext sslContext =
         createSecurityContext(
@@ -386,7 +393,7 @@ public class EwpClient {
   private static SSLContext createSecurityContext(
       KeyStore keyStore, KeyStore trustStore, String password)
       throws NoSuchProviderException, NoSuchAlgorithmException, UnrecoverableKeyException,
-          KeyStoreException, KeyManagementException {
+      KeyStoreException, KeyManagementException {
     KeyManager[] keyManagers = null;
     if (!KeyStoreUtil.isSelfIssued(
         keyStore, (X509Certificate) keyStore.getCertificate(keyStore.aliases().nextElement()))) {

@@ -62,6 +62,16 @@ public class HttpCommunicationFromEwpNodeLogRepository
           messages.get("error.http.communication.from.ewp.node.log.response.must.be.defined"));
     }
 
+    if (entity.getStartProcessingDateTime() == null) {
+      throw new DomainException(
+          messages.get("error.http.communication.from.ewp.node.log.start.processing.date.time.must.be.defined"));
+    }
+
+    if (entity.getEndProcessingDateTime() == null) {
+      throw new DomainException(
+          messages.get("error.http.communication.from.ewp.node.log.end.processing.date.time.must.be.defined"));
+    }
+
     return true;
   }
 }

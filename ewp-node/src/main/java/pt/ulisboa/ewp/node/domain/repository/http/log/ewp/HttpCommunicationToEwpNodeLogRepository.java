@@ -1,14 +1,11 @@
 package pt.ulisboa.ewp.node.domain.repository.http.log.ewp;
 
 import java.time.ZonedDateTime;
-
 import javax.transaction.Transactional;
-
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
-
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
@@ -22,7 +19,9 @@ import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
 public class HttpCommunicationToEwpNodeLogRepository
     extends AbstractRepository<HttpCommunicationToEwpNodeLog> {
 
-  @Autowired @Lazy private MessageResolver messages;
+  @Autowired
+  @Lazy
+  private MessageResolver messages;
 
   protected HttpCommunicationToEwpNodeLogRepository(SessionFactory sessionFactory) {
     super(HttpCommunicationToEwpNodeLog.class, sessionFactory);
@@ -54,9 +53,16 @@ public class HttpCommunicationToEwpNodeLogRepository
           messages.get("error.http.communication.to.ewp.node.log.request.must.be.defined"));
     }
 
-    if (entity.getResponse() == null) {
+    if (entity.getStartProcessingDateTime() == null) {
       throw new DomainException(
-          messages.get("error.http.communication.to.ewp.node.log.response.must.be.defined"));
+          messages.get(
+              "error.http.communication.to.ewp.node.log.start.processing.date.time.must.be.defined"));
+    }
+
+    if (entity.getEndProcessingDateTime() == null) {
+      throw new DomainException(
+          messages.get(
+              "error.http.communication.to.ewp.node.log.end.processing.date.time.must.be.defined"));
     }
 
     return true;

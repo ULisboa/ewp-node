@@ -2,17 +2,14 @@ package pt.ulisboa.ewp.node.domain.repository;
 
 import java.util.Collection;
 import java.util.function.Function;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
 import pt.ulisboa.ewp.node.utils.messaging.Severity;
@@ -20,12 +17,11 @@ import pt.ulisboa.ewp.node.utils.messaging.Severity;
 @Transactional
 public abstract class AbstractRepository<T> {
 
-  private Logger log;
+  private final Logger log = LoggerFactory.getLogger(getClass());
   private final Class<T> entityClass;
   private final SessionFactory sessionFactory;
 
   protected AbstractRepository(Class<T> entityClass, SessionFactory sessionFactory) {
-    this.log = LoggerFactory.getLogger(getClass());
     this.entityClass = entityClass;
     this.sessionFactory = sessionFactory;
   }
@@ -45,7 +41,7 @@ public abstract class AbstractRepository<T> {
       checkDomainConstraints(entity);
     } catch (DomainException e) {
       MessageService.getInstance().add(Severity.ERROR, e.getMessage());
-      log.error(e.getMessage());
+      log.error("Failed to persist entity", e);
       return false;
     }
 
