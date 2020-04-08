@@ -1,13 +1,11 @@
 package pt.ulisboa.ewp.node.domain.entity.http.log.ewp;
 
 import java.time.ZonedDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
@@ -19,7 +17,8 @@ public abstract class EwpHttpCommunicationLog extends HttpCommunicationLog {
 
   private EwpAuthenticationMethod authenticationMethod;
 
-  public EwpHttpCommunicationLog() {}
+  public EwpHttpCommunicationLog() {
+  }
 
   public EwpHttpCommunicationLog(
       EwpAuthenticationMethod authenticationMethod,
@@ -33,7 +32,7 @@ public abstract class EwpHttpCommunicationLog extends HttpCommunicationLog {
   }
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "authentication_method", nullable = false)
+  @Column(name = "authentication_method")
   public EwpAuthenticationMethod getAuthenticationMethod() {
     return authenticationMethod;
   }

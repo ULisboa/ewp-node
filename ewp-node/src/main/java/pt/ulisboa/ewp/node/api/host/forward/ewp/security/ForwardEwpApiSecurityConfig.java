@@ -6,8 +6,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-
 import pt.ulisboa.ewp.node.api.common.security.logging.MDCAuthenticationFilter;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.security.filter.ForwardEwpApiJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.handler.ForwardEwpApiAccessDeniedResponseHandler;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
@@ -16,9 +16,11 @@ import pt.ulisboa.ewp.node.domain.repository.HostRepository;
 @Order(2)
 public class ForwardEwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  @Autowired private ForwardEwpApiAccessDeniedResponseHandler accessDeniedHandler;
+  @Autowired
+  private ForwardEwpApiAccessDeniedResponseHandler accessDeniedHandler;
 
-  @Autowired private HostRepository repository;
+  @Autowired
+  private HostRepository repository;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {

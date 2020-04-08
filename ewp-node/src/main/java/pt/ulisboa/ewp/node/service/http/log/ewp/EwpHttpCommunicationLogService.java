@@ -1,34 +1,28 @@
 package pt.ulisboa.ewp.node.service.http.log.ewp;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
-
 import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.AbstractEwpOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpHeader;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpMethod;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.repository.http.log.ewp.HttpCommunicationFromEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.domain.repository.http.log.ewp.HttpCommunicationToEwpNodeLogRepository;
-import pt.ulisboa.ewp.node.utils.http.HttpHeadersMap;
+import pt.ulisboa.ewp.node.service.http.log.HttpCommunicationLogService;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
 @Service
 @Transactional
-public class EwpHttpCommunicationLogService {
+public class EwpHttpCommunicationLogService extends HttpCommunicationLogService {
 
   @Autowired
   private HttpCommunicationFromEwpNodeLogRepository httpCommunicationFromEwpNodeLogRepository;
@@ -105,20 +99,6 @@ public class EwpHttpCommunicationLogService {
     return requestLog;
   }
 
-  private HttpResponseLog toHttpResponseLog(ContentCachingResponseWrapper response) {
-    if (response == null) {
-      return null;
-    }
-
-    HttpResponseLog responseLog =
-        HttpResponseLog.create(
-            response.getStatusCode(),
-            getHttpHeadersCollection(response),
-            new String(response.getContentAsByteArray()));
-    responseLog.getHeaders().forEach(header -> header.setResponseLog(responseLog));
-    return responseLog;
-  }
-
   private HttpResponseLog toHttpResponseLog(EwpResponse response) {
     if (response == null) {
       return null;
@@ -133,41 +113,4 @@ public class EwpHttpCommunicationLogService {
     return responseLog;
   }
 
-  private Collection<HttpHeader> getHttpHeadersCollection(EwpApiHttpRequestWrapper request) {
-    Collection<HttpHeader> headers = new ArrayList<>();
-    Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
-    while (headerNamesEnumeration.hasMoreElements()) {
-      String headerName = headerNamesEnumeration.nextElement();
-      Enumeration<String> headerValuesEnumeration = request.getHeaders(headerName);
-      while (headerValuesEnumeration.hasMoreElements()) {
-        String headerValue = headerValuesEnumeration.nextElement();
-        headers.add(HttpHeader.create(headerName, headerValue));
-      }
-    }
-    return headers;
-  }
-
-  private Collection<HttpHeader> getHttpHeadersCollection(ContentCachingResponseWrapper response) {
-    Collection<HttpHeader> headers = new ArrayList<>();
-    Collection<String> headerNames = response.getHeaderNames();
-    headerNames.forEach(
-        headerName -> {
-          response
-              .getHeaders(headerName)
-              .forEach(
-                  headerValue -> {
-                    headers.add(HttpHeader.create(headerName, headerValue));
-                  });
-        });
-    return headers;
-  }
-
-  private Collection<HttpHeader> getHttpHeadersCollection(HttpHeadersMap headersMap) {
-    Collection<HttpHeader> headers = new ArrayList<>();
-    headersMap.forEach(
-        (headerName, headerValue) -> {
-          headers.add(HttpHeader.create(headerName, headerValue));
-        });
-    return headers;
-  }
 }

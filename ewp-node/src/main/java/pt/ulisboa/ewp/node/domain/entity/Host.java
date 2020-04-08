@@ -18,6 +18,7 @@ import javax.persistence.Table;
 
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.HostForwardEwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.host.notification.HostNotificationApiConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.http.log.host.HostHttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.listener.EntityAuditListener;
 
 @Entity
@@ -34,6 +35,7 @@ public class Host {
   private HostForwardEwpApiConfiguration forwardEwpApiConfiguration;
   private HostNotificationApiConfiguration notificationApiConfiguration;
   private Collection<Hei> coveredHeis = new HashSet<>();
+  private Collection<HostHttpCommunicationLog> httpCommunicationLogs = new HashSet<>();
 
   protected Host() {}
 
@@ -119,6 +121,16 @@ public class Host {
 
   public void setCoveredHeis(Collection<Hei> coveredHeis) {
     this.coveredHeis = coveredHeis;
+  }
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "host", cascade = CascadeType.ALL)
+  public Collection<HostHttpCommunicationLog> getHttpCommunicationLogs() {
+    return httpCommunicationLogs;
+  }
+
+  public void setHttpCommunicationLogs(
+      Collection<HostHttpCommunicationLog> httpCommunicationLogs) {
+    this.httpCommunicationLogs = httpCommunicationLogs;
   }
 
   public static Host create(String code, String description, String adminEmail, String adminNotes) {

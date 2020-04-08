@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.host.forward.ewp.security;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.security.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.IOException;
@@ -14,6 +14,8 @@ import pt.ulisboa.ewp.node.api.common.security.jwt.AbstractJwtTokenAuthenticatio
 import pt.ulisboa.ewp.node.api.common.security.jwt.JwtAuthenticationUserDetails;
 import pt.ulisboa.ewp.node.api.common.utils.ApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ResultType;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiAuthenticationToken;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiHostPrincipal;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
@@ -26,7 +28,10 @@ import pt.ulisboa.ewp.node.domain.repository.HostRepository;
 public class ForwardEwpApiJwtTokenAuthenticationFilter
     extends AbstractJwtTokenAuthenticationFilter {
 
-  private HostRepository repository;
+  public static final String REQUEST_ATTRIBUTE_HOST_NAME =
+      ForwardEwpApiJwtTokenAuthenticationFilter.class.getPackage().getName() + ".HOST";
+
+  private final HostRepository repository;
 
   public ForwardEwpApiJwtTokenAuthenticationFilter(
       AuthenticationManager authenticationManager, HostRepository repository) {
@@ -47,13 +52,21 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
   }
 
   @Override
-  protected Authentication resolveToAuthentication(DecodedJWT decodedToken) {
+  protected ForwardEwpApiAuthenticationToken resolveToAuthentication(DecodedJWT decodedToken) {
     Optional<Host> hostOptional = repository.findByCode(decodedToken.getIssuer());
     assert hostOptional.isPresent();
     Host host = hostOptional.get();
 
     return new ForwardEwpApiAuthenticationToken(
         new JwtAuthenticationUserDetails(decodedToken), new ForwardEwpApiHostPrincipal(host));
+  }
+
+  @Override
+  protected void onSuccessfulAuthentication(HttpServletRequest request,
+      HttpServletResponse response, Authentication authentication) {
+    ForwardEwpApiAuthenticationToken forwardEwpApiAuthenticationToken = (ForwardEwpApiAuthenticationToken) authentication;
+    request.setAttribute(REQUEST_ATTRIBUTE_HOST_NAME,
+        forwardEwpApiAuthenticationToken.getPrincipal().getHost());
   }
 
   @Override
