@@ -1,0 +1,43 @@
+{{- if .Values.ingress.enabled -}}
+  {{- $fullName := include "ewp-node.fullname" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+  {{ include "ewp-node.labels" . | indent 4 }}
+  {{- with .Values.ingress.annotations }}
+annotations:
+  {{- if $.Values.ingress.host }}
+host: {{ $.Values.ingress.host | quote }}
+  {{- end }}
+  {{ include "ewp-node.annotations" . | indent 4 }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+nginx.ingress.kubernetes.io/configuration-snippet: |
+  proxy_set_header ssl-client-cert $ssl_client_escaped_cert;
+nginx.ingress.kubernetes.io/server-snippet: |
+  ssl_verify_client optional_no_ca;
+spec:
+  {{- if .Values.ingress.tls }}
+tls:
+  - hosts:
+    {{- if .Values.ingress.host }}
+    - {{ $.Values.ingress.host | quote }}
+    {{- end }}
+    secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
+rules:
+  - http:
+      paths:
+      {{- range .Values.ingress.paths }}
+      - path: {{ . }}
+        backend:
+          serviceName: {{ $fullName }}
+          servicePort: {{ $.Values.service.externalPort }}
+      {{- end }}
+  {{- if .Values.ingress.host }}
+  host: {{ .Values.ingress.host | quote }}
+  {{- end }}
+  {{- end }}

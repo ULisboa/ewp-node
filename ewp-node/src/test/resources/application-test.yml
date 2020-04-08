@@ -1,0 +1,55 @@
+# Base context path (should not end with slash)
+baseContextPath:
+
+db:
+  driverClassName: org.h2.Driver
+  url: jdbc:h2:mem:ewp_node_tests;DB_CLOSE_DELAY=-1
+  #  url: jdbc:h2:tcp://127.0.0.1:9090/mem:ewp_node_tests;DB_CLOSE_DELAY=-1 # Uncomment this line for DB debugging (requires an H2 TCP server)
+  username: sa
+  password:
+  hibernate:
+    dialect: org.hibernate.dialect.H2Dialect
+    hbm2ddlAuto: create
+    timeZone: Europe/Lisbon
+
+registry:
+  url: dev-registry.erasmuswithoutpaper.eu
+  autoRefresh: true
+  timeBetweenRetriesInMilliseconds: 180000
+
+security:
+  # Temporary for skipping certificate check (DEFAULT: false).
+  # allowMissingClientCertificate: false
+
+  keyStore:
+    password: sample-keystore-password
+  api:
+    admin:
+      secret: sample-admin-api-secret
+
+bootstrap:
+  # Hosts are bootstrapped if no host is currently defined on DB
+  hosts:
+    - code: sample-host
+      description: Sample host
+      adminEmail: admin@example.com
+      adminNotes: Sample host
+      forwardEwpApi:
+        secret: sample-host-forward-ewp-api-secret
+      notificationApi:
+        baseUrl: https://example.com/rest
+        secret: sample-host-notification-api-secret
+      coveredHeis:
+        - schacCode: sample.edu
+          names:
+            - locale: en
+              value: Sample institution
+            - locale: pt-PT
+              value: Instituição de exemplo
+          otherHeiIds:
+            - type: pic
+              value: 123456789
+            - type: erasmus
+              value: S S01
+            - type: erasmus-charter
+              value: 123456

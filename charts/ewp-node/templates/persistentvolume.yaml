@@ -1,0 +1,28 @@
+{{- if .Values.persistentVolume.enabled -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.persistentVolume.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+  {{ include "ewp-node.labels" . | indent 4 }}
+annotations:
+  {{ include "ewp-node.annotations" . | indent 4 }}
+spec:
+  storageClassName: {{ .Values.storageClass.name }}
+  capacity:
+    storage: {{ .Values.persistentVolume.capacity.storage }}
+  {{- with .Values.persistentVolume.accessModes }}
+accessModes:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.persistentVolume.azureFile }}
+azureFile:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=1000
+  - gid=1000
+  {{- end -}}

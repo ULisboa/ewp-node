@@ -1,0 +1,12 @@
+target
+nb-configuration.xml
+node_modules
+bower_components
+**/webapp/resources/vendor
+**/webapp/resources/reference-connector.js
+**/webapp/resources/reference-connector.css
+.idea
+connector.iml
+**/nbproject/
+**/workshops/
+**/derby.log

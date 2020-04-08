@@ -1,0 +1,109 @@
+# Default values for ewp-node.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+env: []
+
+healthcheck:
+  enabled: true
+
+service:
+  type: LoadBalancer
+  externalPort: 8080
+  internalPort: 8080
+
+deployment:
+  livenessProbe:
+    path: /rest/healthcheck
+    initialDelaySeconds: 60
+    periodSeconds: 60
+    failureThreshold: 2
+    timeoutSeconds: 5
+    successThreshold: 1
+  readinessProbe:
+    path: /rest/healthcheck
+    initialDelaySeconds: 15
+    periodSeconds: 30
+    failureThreshold: 3
+    timeoutSeconds: 5
+    successThreshold: 1
+
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  # host: ewp-node
+  paths:
+    - /
+
+  # tls:
+  #   secretName: ingress-tls
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 150m
+  limits:
+    memory: 1024Mi
+    cpu: 500m
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+horizontalPodAutoScaler:
+  minReplicaCount: 1
+  maxReplicaCount: 3
+  targetCPUUtilizationPercentage: 40
+
+storageClass:
+  enabled: false
+  name: sc-azfile
+  reclaimPolicy: Retain
+  parameters: {}
+    # skuName:
+    # location:
+    # storageAccount:
+    # resourceGroup:
+    # secretNamespace:
+  # secretName:
+  # readOnly:
+
+persistentVolume:
+  enabled: false
+  name: ewp-node-volume
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadOnlyMany
+  azureFile:
+    # secretName:
+    # shareName:
+    readOnly: false
+
+persistentVolumeClaim:
+  enabled: false
+  name: ewp-node-volume-claim
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi
+
+volumeMounts:
+  config:
+    enabled: false
+    mountPath: config
+    subPath: config

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified"
+
+  targetNamespace="https://github.com/ulisboa/ewp-node/tree/master"
+  xmlns="https://github.com/ulisboa/ewp-node/tree/master"
+>
+
+  <xs:annotation>
+    <xs:documentation>
+      This schema is a part of the EWP Node project.
+      It specifies the structure of a Forward EWP API.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="forward-ewp-api-response">
+    <xs:annotation>
+      <xs:documentation>
+        This describes the format of the response returned by the a Forward EWP API.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType>
+      <xs:sequence>
+
+        <xs:element name="result-type" type="result-type" minOccurs="1" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Result type of the forwarded operation.
+              This must be used to know which fields below should a processor look at.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+
+        <xs:element name="request-error" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              This represents a request error, such as, a bad request.
+              A request error means that the request was discarded on the forwarder,
+              not reaching the target EWP host.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="error-message" type="xs:string" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    The request error message.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="processing-error" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              This represents a processing error.
+              If a forward call to a remote EWP node fails locally (for example, an I/O error),
+              this will contain that error message.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="error-message" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    The processing error message.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="original-response" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              The original response obtained from the target EWP host.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="status-code" type="xs:integer" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    The status code of the original target EWP host's response.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="authentication-result" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    This presents the authentication result of the original response.
+                    If the verification does not pass then the original response's body
+                    will not be filled on the current response. On that scenario, this
+                    contains an error message detailing the authentication requirement not
+                    satisfied.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="algorithm" type="authentication-algorithm" minOccurs="1"
+                      maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Authentication algorithm that lead to the failure.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="valid" type="xs:boolean" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Indicates whether the original target EWP's response passed the
+                          authentication
+                          algorithm.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="error-message" type="xs:string" minOccurs="0"
+                      maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>
+                          If authentication failed, this will contain an error message
+                          detailing the authentication requirement not satisfied.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="body" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    The response's body of the original target EWP host's response.
+                    It is present if the response's body type is known to the processor,
+                    otherwise the response's body will be on unknown-response-body element below.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:any namespace="##any" minOccurs="0" maxOccurs="1"
+                      processContents="lax"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="unknown-raw-body" type="xs:string" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    The raw response's body of the original target EWP host's response,
+                    when whose type is not known by the processor.
+                    Note that while this element is a string, the actual EWP host's response
+                    may be a XML file (of unknown type).
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="result-type" final="restriction">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="REQUEST_ERROR"/>
+      <xs:enumeration value="PROCESSOR_ERROR"/>
+      <xs:enumeration value="SUCCESS"/>
+      <xs:enumeration value="RESPONSE_AUTHENTICATION_ERROR"/>
+      <xs:enumeration value="ERROR_RESPONSE"/>
+      <xs:enumeration value="UNKNOWN_ERROR_RESPONSE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="authentication-algorithm" final="restriction">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="HTTP_SIGNATURE"/>
+      <xs:enumeration value="TLS"/>
+      <xs:enumeration value="ANONYMOUS"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

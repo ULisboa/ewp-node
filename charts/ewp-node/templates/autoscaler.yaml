@@ -1,0 +1,17 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "ewp-node.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+  {{ include "ewp-node.labels" . | indent 4 }}
+annotations:
+  {{ include "ewp-node.annotations" . | indent 4 }}
+spec:
+  minReplicas: {{ .Values.horizontalPodAutoScaler.minReplicaCount }}
+  maxReplicas: {{ .Values.horizontalPodAutoScaler.maxReplicaCount }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "ewp-node.fullname" . }}
+  targetCPUUtilizationPercentage: {{ .Values.horizontalPodAutoScaler.targetCPUUtilizationPercentage }}

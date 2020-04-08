@@ -1,0 +1,111 @@
+# Base context path (should not end with slash)
+baseContextPath:
+
+# Uncomment these lines to enable SSL on Spring Boot
+#server:
+#  ssl:
+#    key-store: <PATH to keystore>
+#    key-password: <KEYSTORE PASSWORD>
+#    key-alias: <CERTIFICATE ALIAS>
+#    client-auth: want # "want" in order to allow client requests without embedded client certificate
+
+# Database configuration for the node itself (for keystore management and others)
+db:
+  driverClassName: org.h2.Driver
+  url: jdbc:h2:mem:ewp_node__tests;DB_CLOSE_DELAY=-1
+  #  url: jdbc:h2:tcp://127.0.0.1:9090/mem:ewp_node_tests;DB_CLOSE_DELAY=-1 # Uncomment this line for DB debugging (requires an H2 TCP server)
+  username: sa
+  password:
+  hibernate:
+    dialect: org.hibernate.dialect.H2Dialect
+    hbm2ddlAuto: create
+    timeZone: Europe/Lisbon
+
+# EWP registry configuration
+registry:
+  url: dev-registry.erasmuswithoutpaper.eu
+  autoRefresh: true
+  timeBetweenRetriesInMilliseconds: 180000
+
+# Security configuration
+security:
+  # Temporary for skipping certificate check (DEFAULT: false).
+  # allowMissingClientCertificate: false
+
+  # Configuration for the Client TLS Certificate authentication
+  clientTls:
+    # Header of the request where the certificate is embedded
+    headerName: ssl-client-cert
+
+  # Configuration of the keystore used for authentication (such as, HTTP Signatures)
+  keyStore:
+    # For how long the keystore is cached locally.
+    # When a new keystore is created it will take this amount of time to use the new keystore
+    cacheValidityInSeconds: 60
+    # Password used when generating/decoding the local keystore
+    password: sample-keystore-password
+
+  # Configuration of the API provided by the node for management
+  api:
+    admin:
+      secret: sample-admin-api-secret
+
+# Configuration of basic data to load when launching for the first time
+bootstrap:
+  # Hosts are bootstrapped if no host is currently defined on DB
+  hosts:
+    # The code of a host is used to identify the host on communications from it.
+    # Namely, for the Forward EWP APIs, the JWT token produced must use as "iss" (issuer)
+    # the code of the host.
+    - code: sample-host
+      description: Sample host
+      adminEmail: admin@example.com
+      adminNotes: Sample host
+      # Configuration of the Forward EWP APIs
+      forwardEwpApi:
+        # Secret key that the host will use when generating a JWT token.
+        # This secret key is used on the EWP node to assert that the received JWT token
+        # was effectively produced by the host.
+        # Hence, both host and EWP node must know this secret.
+        secret: sample-host-forward-ewp-api-secret
+      # Configuration of the notification API of the host
+      notificationApi:
+        baseUrl: https://example.com/rest
+        # Secret key that the EWP node will use when generating a JWT token.
+        # This secret key is used on the host to assert that the received JWT token
+        # was effectively produced by the EWP node.
+        # Hence, both host and EWP node must know this secret.
+        secret: sample-host-notification-api-secret
+      coveredHeis:
+        - schacCode: sample.edu
+          names:
+            - locale: pt-PT
+              value: Instituição de exemplo
+            - locale: en
+              value: Sample institution
+          otherHeiIds:
+            - type: pic
+              value: 123456789
+            - type: erasmus
+              value: S S01
+            - type: erasmus-charter
+              value: 123456
+
+  # User profiles are bootstrapped if no user profile is currently defined on DB
+  # The Admin APIs use the admin user and expect that it has ADMIN role.
+  # Hence, this configuration may be used as is.
+  userProfiles:
+    - username: admin
+      role: ADMIN
+
+# swagger-ui custom path
+springdoc:
+  version: '@springdoc.version@'
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG

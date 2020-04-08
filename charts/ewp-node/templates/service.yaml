@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ewp-node.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+  {{ include "ewp-node.labels" . | indent 4 }}
+annotations:
+  {{ include "ewp-node.annotations" . | indent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.externalPort }}
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "ewp-node.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

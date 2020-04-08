@@ -1,0 +1,23 @@
+{{- if .Values.persistentVolumeClaim.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.persistentVolumeClaim.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+  {{ include "ewp-node.labels" . | indent 4 }}
+annotations:
+  {{ include "ewp-node.annotations" . | indent 4 }}
+spec:
+  storageClassName: {{ .Values.storageClass.name }}
+  {{- with .Values.persistentVolumeClaim.accessModes }}
+accessModes:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+resources:
+  requests:
+    storage: {{ .Values.persistentVolumeClaim.resources.requests.storage }}
+  {{- if .Values.persistentVolume.enabled }}
+volumeName: {{ .Values.persistentVolume.name }}
+  {{- end }}
+  {{- end -}}
