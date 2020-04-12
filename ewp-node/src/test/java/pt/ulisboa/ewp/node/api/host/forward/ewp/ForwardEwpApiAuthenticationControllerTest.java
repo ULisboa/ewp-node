@@ -16,10 +16,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import pt.ulisboa.ewp.node.AbstractTest;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.filter.ForwardEwpApiRequestFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
+import pt.ulisboa.ewp.node.service.http.log.host.HostHttpCommunicationLogService;
 
 public class ForwardEwpApiAuthenticationControllerTest extends AbstractTest {
 
@@ -29,11 +31,16 @@ public class ForwardEwpApiAuthenticationControllerTest extends AbstractTest {
   @Autowired
   private HostRepository hostRepository;
 
+  @Autowired
+  private HostHttpCommunicationLogService hostCommunicationLogService;
+
   private MockMvc mockMvc;
 
   @Before
   public void setup() {
-    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
+    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
+        .addFilter(new ForwardEwpApiRequestFilter(hostCommunicationLogService))
+        .apply(springSecurity()).build();
   }
 
   @Test
