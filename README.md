@@ -85,7 +85,7 @@ docker-compose up -d
 
 Note: This configuration can be adapted to run on Docker Swarm.
 
-#### Docker Image Parameters
+### Docker Image Parameters
 
 Container images are configured using parameters passed at runtime.
 These parameters are separated by a colon and indicate ```<external>:<internal>``` respectively.
