@@ -33,10 +33,10 @@
           </xs:annotation>
         </xs:element>
 
-        <xs:element name="messages" minOccurs="0" maxOccurs="1">
+        <xs:element name="other-messages" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
-              Messages that the EWP node produced and may be relevant to consider.
+              Other messages that the EWP node produced and may be relevant to consider.
             </xs:documentation>
           </xs:annotation>
           <xs:complexType>
