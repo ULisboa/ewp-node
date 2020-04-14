@@ -3,6 +3,8 @@
 # ewp-node
 This repository contains code regarding a generic EWP implementation.
 
+The project must be cloned recursively, so the submodules are also cloned.
+
 ## Build
 
 Run ```mvn clean package```.

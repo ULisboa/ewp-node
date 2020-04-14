@@ -1,0 +1,3 @@
+[submodule "ewp-connector-api"]
+	path = ewp-connector-api
+	url = https://github.com/ULisboa/ewp-connector-api
