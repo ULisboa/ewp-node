@@ -1,5 +1,10 @@
 !.mvn/wrapper/maven-wrapper.jar
 
+### GIT ###
+**/.git
+.gitignore
+.gitmodules
+
 ### STS ###
 .apt_generated
 .classpath
@@ -10,10 +15,10 @@
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+**/.idea
+**/*.iws
+**/*.iml
+**/*.ipr
 
 ### NetBeans ###
 /nbproject/private/
@@ -23,14 +28,21 @@
 /nbdist/
 /.nb-gradle/
 
-### Maven
+### Maven ###
 /target
-
-/logs
-README.md
-Dockerfile
-.dockerignore
-.gitignore
+**/target/
 .mvn
 mvnw
 mvnw.cmd
+
+### Helm ###
+/charts
+
+### Docker ###
+Dockerfile
+.dockerignore
+
+### Others ###
+**/logs
+README.md
+.directory
