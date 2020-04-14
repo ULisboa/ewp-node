@@ -1,6 +1,8 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
 import eu.erasmuswithoutpaper.api.courses.replication.CourseReplicationResponse;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +30,7 @@ public class EwpSimpleCourseReplicationClient {
   }
 
   public EwpSuccessOperationResult<CourseReplicationResponse> findAllCourses(
-      String heiId, String modifiedSince) throws AbstractEwpClientErrorException {
+      String heiId, ZonedDateTime modifiedSince) throws AbstractEwpClientErrorException {
     Optional<EwpSimpleCourseReplicationApiConfiguration> apiOptional =
         EwpApiUtils.getSimpleCourseReplicationApiConfiguration(registryClient, heiId);
     if (!apiOptional.isPresent()) {
@@ -44,7 +46,8 @@ public class EwpSimpleCourseReplicationClient {
     queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
     if (modifiedSince != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_MODIFIED_SINCE, Collections.singletonList(modifiedSince));
+          EwpClientConstants.QUERY_MODIFIED_SINCE,
+          Collections.singletonList(DateTimeFormatter.ISO_DATE_TIME.format(modifiedSince)));
     }
     request.queryParams(queryParams);
 

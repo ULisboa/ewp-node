@@ -1,15 +1,21 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
+import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
+
 import eu.erasmuswithoutpaper.api.courses.CoursesResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +27,12 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstant
 import pt.ulisboa.ewp.node.client.ewp.EwpCoursesClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
 @RestController
 @ForwardEwpApi
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "courses")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
-@Validated
 public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiController {
 
   @Autowired private EwpCoursesClient client;
@@ -35,67 +41,30 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
   @Operation(
       summary = "EWP Courses Forward API.",
       tags = {"Forward EWP API"})
-  public ResponseEntity<?> coursesGet(
-      @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID) String heiId,
-      @Parameter(
-              description =
-                  "Must be set if no "
-                      + ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE
-                      + " is provided.")
-          @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID, defaultValue = "")
-          List<String> losIds,
-      @Parameter(
-              description =
-                  "Must be set if no "
-                      + ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID
-                      + " is provided.")
-          @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE, defaultValue = "")
-          List<String> losCodes,
-      @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_BEFORE, required = false)
-          String loisBefore,
-      @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AFTER, required = false)
-          String loisAfter,
-      @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE, required = false)
-          String loisAtDate)
+  public ResponseEntity<?> coursesGet(@Valid @RequestParam CoursesRequestDto requestDto)
       throws AbstractEwpClientErrorException {
-    return getCourses(heiId, losIds, losCodes, loisBefore, loisAfter, loisAtDate);
+    return getCourses(
+        requestDto.getHeiId(),
+        requestDto.getLosIds(),
+        requestDto.getLosCodes(),
+        requestDto.getLoisBefore(),
+        requestDto.getLoisAfter(),
+        requestDto.getLoisAtDate());
   }
 
   @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Courses Forward API.",
       tags = {"Forward EWP API"})
-  public ResponseEntity<?> coursesPost(
-      @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID) String heiId,
-      @Parameter(
-              description =
-                  "Must be set if no "
-                      + ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE
-                      + " is provided.")
-          @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID, required = false)
-          List<String> losIds,
-      @Parameter(
-              description =
-                  "Must be set if no "
-                      + ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID
-                      + " is provided.")
-          @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE, required = false)
-          List<String> losCodes,
-      @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_BEFORE, required = false)
-          String loisBefore,
-      @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AFTER, required = false)
-          String loisAfter,
-      @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE, required = false)
-          String loisAtDate)
+  public ResponseEntity<?> coursesPost(@Valid @RequestParam CoursesRequestDto requestDto)
       throws AbstractEwpClientErrorException {
-
-    if (losIds == null) {
-      losIds = new ArrayList<>();
-    }
-    if (losCodes == null) {
-      losCodes = new ArrayList<>();
-    }
-    return getCourses(heiId, losIds, losCodes, loisBefore, loisAfter, loisAtDate);
+    return getCourses(
+        requestDto.getHeiId(),
+        requestDto.getLosIds(),
+        requestDto.getLosCodes(),
+        requestDto.getLoisBefore(),
+        requestDto.getLoisAfter(),
+        requestDto.getLoisAtDate());
   }
 
   // NOTE: currently only allows to obtain by LOS IDs or LOS codes (not both simultaneously)
@@ -103,9 +72,9 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
       String heiId,
       List<String> losIds,
       List<String> losCodes,
-      String loisBefore,
-      String loisAfter,
-      String loisAtDate)
+      LocalDate loisBefore,
+      LocalDate loisAfter,
+      LocalDate loisAtDate)
       throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<CoursesResponse> coursesResponse;
     if (!losIds.isEmpty()) {
@@ -114,5 +83,87 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
       coursesResponse = client.findByLosCodes(heiId, losCodes, loisBefore, loisAfter, loisAtDate);
     }
     return createResponseEntityFromOperationResult(coursesResponse);
+  }
+
+  private static class CoursesRequestDto {
+
+    @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID)
+    @NotNull
+    @Size(min = 1)
+    private String heiId;
+
+    @ParamName(value = ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID)
+    @Parameter(
+        description =
+            "Must be set if no "
+                + ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE
+                + " is provided.")
+    private List<String> losIds = new ArrayList<>();
+
+    @ParamName(value = ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE)
+    @Parameter(
+        description =
+            "Must be set if no " + ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID + " is provided.")
+    private List<String> losCodes = new ArrayList<>();
+
+    @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOIS_BEFORE)
+    @DateTimeFormat(iso = DATE)
+    private LocalDate loisBefore;
+
+    @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AFTER)
+    @DateTimeFormat(iso = DATE)
+    private LocalDate loisAfter;
+
+    @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE)
+    @DateTimeFormat(iso = DATE)
+    private LocalDate loisAtDate;
+
+    public String getHeiId() {
+      return heiId;
+    }
+
+    public void setHeiId(String heiId) {
+      this.heiId = heiId;
+    }
+
+    public List<String> getLosIds() {
+      return losIds;
+    }
+
+    public void setLosIds(List<String> losIds) {
+      this.losIds = losIds;
+    }
+
+    public List<String> getLosCodes() {
+      return losCodes;
+    }
+
+    public void setLosCodes(List<String> losCodes) {
+      this.losCodes = losCodes;
+    }
+
+    public LocalDate getLoisBefore() {
+      return loisBefore;
+    }
+
+    public void setLoisBefore(LocalDate loisBefore) {
+      this.loisBefore = loisBefore;
+    }
+
+    public LocalDate getLoisAfter() {
+      return loisAfter;
+    }
+
+    public void setLoisAfter(LocalDate loisAfter) {
+      this.loisAfter = loisAfter;
+    }
+
+    public LocalDate getLoisAtDate() {
+      return loisAtDate;
+    }
+
+    public void setLoisAtDate(LocalDate loisAtDate) {
+      this.loisAtDate = loisAtDate;
+    }
   }
 }

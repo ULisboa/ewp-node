@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
 import eu.erasmuswithoutpaper.api.courses.CoursesResponse;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,9 +33,9 @@ public class EwpCoursesClient {
   public EwpSuccessOperationResult<CoursesResponse> findByLosIds(
       String heiId,
       Collection<String> losIds,
-      String loisBeforeDate,
-      String loisAfterDate,
-      String loisAtDate)
+      LocalDate loisBeforeDate,
+      LocalDate loisAfterDate,
+      LocalDate loisAtDate)
       throws AbstractEwpClientErrorException {
     Optional<EwpCourseApiConfiguration> apiOptional =
         EwpApiUtils.getCourseApiConfiguration(registryClient, heiId);
@@ -51,14 +52,16 @@ public class EwpCoursesClient {
     queryParams.put(EwpClientConstants.QUERY_LOS_ID, new ArrayList<>(losIds));
     if (loisBeforeDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOIS_BEFORE, Collections.singletonList(loisBeforeDate));
+          EwpClientConstants.QUERY_LOIS_BEFORE,
+          Collections.singletonList(loisBeforeDate.toString()));
     }
     if (loisAfterDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOIS_AFTER, Collections.singletonList(loisAfterDate));
+          EwpClientConstants.QUERY_LOIS_AFTER, Collections.singletonList(loisAfterDate.toString()));
     }
     if (loisAtDate != null) {
-      queryParams.put(EwpClientConstants.QUERY_LOIS_AT_DATE, Collections.singletonList(loisAtDate));
+      queryParams.put(
+          EwpClientConstants.QUERY_LOIS_AT_DATE, Collections.singletonList(loisAtDate.toString()));
     }
     request.queryParams(queryParams);
 
@@ -68,9 +71,9 @@ public class EwpCoursesClient {
   public EwpSuccessOperationResult<CoursesResponse> findByLosCodes(
       String heiId,
       Collection<String> losCodes,
-      String loisBeforeDate,
-      String loisAfterDate,
-      String loisAtDate)
+      LocalDate loisBeforeDate,
+      LocalDate loisAfterDate,
+      LocalDate loisAtDate)
       throws AbstractEwpClientErrorException {
     Optional<EwpCourseApiConfiguration> apiOptional =
         EwpApiUtils.getCourseApiConfiguration(registryClient, heiId);
@@ -87,14 +90,16 @@ public class EwpCoursesClient {
     queryParams.put(EwpClientConstants.QUERY_LOS_CODE, new ArrayList<>(losCodes));
     if (loisBeforeDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOIS_BEFORE, Collections.singletonList(loisBeforeDate));
+          EwpClientConstants.QUERY_LOIS_BEFORE,
+          Collections.singletonList(loisBeforeDate.toString()));
     }
     if (loisAfterDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOIS_AFTER, Collections.singletonList(loisAfterDate));
+          EwpClientConstants.QUERY_LOIS_AFTER, Collections.singletonList(loisAfterDate.toString()));
     }
     if (loisAtDate != null) {
-      queryParams.put(EwpClientConstants.QUERY_LOIS_AT_DATE, Collections.singletonList(loisAtDate));
+      queryParams.put(
+          EwpClientConstants.QUERY_LOIS_AT_DATE, Collections.singletonList(loisAtDate.toString()));
     }
     request.queryParams(queryParams);
 
