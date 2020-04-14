@@ -1,48 +1,109 @@
-[![ULisboa](https://www.ulisboa.pt/sites/ulisboa.pt/themes/bs3/logo.png)](https://www.ulisboa.pt/)
+<h1 align="center">
+  <br>
+  <a href="https://www.erasmuswithoutpaper.eu/"><img src="https://developers.erasmuswithoutpaper.eu/logo.png" alt="EWP" width="300"></a>
+  <a href="https://www.ulisboa.pt/"><img src="https://rem.rc.iseg.ulisboa.pt/img/logo_ulisboa.png" alt="ULisboa" width="400"></a>
+    <br>
+  EWP Node
+  <br>
+</h1>
 
-# ewp-node
-This repository contains code regarding a generic EWP implementation.
+<h4 align="center">A generic and flexible EWP node implementation.</h4>
 
-The project must be cloned recursively, so the submodules are also cloned.
 
-## Build
+## Requirements
 
-Run ```mvn clean package```.
-If successful, a .jar file will be located at ewp-node/target/ that may be used to run the server.
+To clone and run this project, you'll need [Git](https://git-scm.com) and, depending on your preference,
+[Maven](https://maven.apache.org/) or [Docker](https://www.docker.com/).
 
-## Build Docker image
+## Cloning the Project
 
-Run ```docker build -t ewp-node .```
-
-## Package Helm chart
-
-Run ```helm package ./charts/ewp-node```
-
-## Configuration
-
-The application loads the application.yml file corresponding to the profile passed as VM options when launching the application.
-For instance, if the application is launcher with the VM option ```-Dspring.profiles.active=dev``` then the 
-configuration file ```application-dev.yml``` from the resources folder (src/main/resources) will be loaded.
-
-The configuration file configures the database (for instance, for keystore management and requests logging), 
-the EWP registry to use, basic data of the EWP node itself.
-
-## Launch development version
-
-To launch the application run the class EwpNodeApplication, following the guidelines of the Configuration section.
-
-## Admin REST API documentation
-
-The admin REST API documentation can be seen at http://localhost:8080/swagger-ui.
-
-## Install/Upgrade release on Kubernetes using Helm
-
-Run:
+To clone the project run:
 ```
-helm upgrade --install ${TGZ_FILE_PATH} --wait \
-    --set namespace=${NAMESPACE},image.repository=${REGISTRY_URL}/${IMAGE_NAME},image.tag=${TAG},ingress.host=${HOST}
+git clone --recursive https://github.com/ULisboa/ewp-node
+```
+Note the ```--recursive``` flag that is needed so the external dependencies configured as submodules are also cloned.
+
+## Building and Running with Maven
+
+Run the command line:
+```
+mvn -pl ewp-node spring-boot:run
 ```
 
-Change the variables accordingly.
+## Building and Running with Docker
 
-For a full list of possible values to set consult charts/ewp-node/values.yaml.
+### Building the Docker image
+
+Run the command line:
+```
+docker build -t ulisboa/ewp-node .
+```
+
+### Running the Docker image
+
+#### Directly with Docker
+
+Run the command line (check the section [Docker Image Parameters](#docker-image-parameters) for reference):
+```
+docker run \
+    --name=ewp-node \
+    -p 8080:8080 \
+    -v <path to config folder>:/config \
+    -v <path to logs folder>:/logs \
+    --restart unless-stopped \
+    ulisboa/ewp-node
+```
+
+#### With Docker Compose
+
+Write into a docker-compose.yml file (check the section [Docker Image Parameters](#docker-image-parameters) for reference):
+```
+---
+version: "2.1"
+services:
+  ewp-node:
+    image: ulisboa/ewp-node
+    container_name: ewp-node
+    volumes:
+      - <path to config folder>:/config
+      - <path to logs folder>:/logs
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "--no-check-certificate", "http://localhost:8080/rest/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+```
+
+Then run on the folder containing that file:
+```
+docker-compose up -d
+```
+
+Note: This configuration can be adapted to run on Docker Swarm.
+
+#### Docker Image Parameters
+
+Container images are configured using parameters passed at runtime.
+These parameters are separated by a colon and indicate ```<external>:<internal>``` respectively.
+For example, ```-p 80:8080``` would expose port 8080 from inside the container to be accessible
+from the host's IP on port 80 outside the container.
+
+
+| Parameter | Function |
+| :----: | --- |
+| `-p 8080` | Port used by the server |
+| `-v /config` | Path from where the server will read the configuration when starting. Namely, it expects a file application.yml with the same structure as [ewp-node/src/main/resources/application.yml](ewp-node/src/main/resources/application.yml) (check this file for an example as well documentation on it). |
+| `-v /logs` | Path where the server will store the logs. |
+
+## Automatic APIs documentation
+
+When the project is running, the endpoint [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) 
+will provide an interface to the APIs automatic documentation.
+
+## License
+
+This project is licensed under the terms of the [MIT license](LICENSE).
