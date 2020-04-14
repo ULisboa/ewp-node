@@ -1,17 +1,19 @@
 package pt.ulisboa.ewp.node;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,13 +26,15 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
-
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import pt.ulisboa.ewp.node.config.bootstrap.BootstrapProperties;
 import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.domain.utils.DatabaseProperties;
 import pt.ulisboa.ewp.node.service.bootstrap.BootstrapService;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
+import pt.ulisboa.ewp.node.utils.bean.ParamNameProcessor;
 
 @SpringBootApplication(scanBasePackages = {"pt.ulisboa.ewp.node"})
 @EnableConfigurationProperties(
@@ -100,6 +104,46 @@ public class EwpNodeApplication {
     jaxbProperties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true);
     marshaller.setMarshallerProperties(jaxbProperties);
     return marshaller;
+  }
+
+  /**
+   * Custom {@link BeanPostProcessor} for adding {@link ParamNameProcessor} into the first of {@link
+   * RequestMappingHandlerAdapter#argumentResolvers}.
+   *
+   * @return BeanPostProcessor
+   */
+  @Bean
+  public BeanPostProcessor beanPostProcessor() {
+    return new BeanPostProcessor() {
+
+      @Override
+      public Object postProcessBeforeInitialization(Object bean, String beanName)
+          throws BeansException {
+        return bean;
+      }
+
+      @Override
+      public Object postProcessAfterInitialization(Object bean, String beanName)
+          throws BeansException {
+        if (bean instanceof RequestMappingHandlerAdapter) {
+          RequestMappingHandlerAdapter adapter = (RequestMappingHandlerAdapter) bean;
+          List<HandlerMethodArgumentResolver> argumentResolvers =
+              new ArrayList<>(adapter.getArgumentResolvers());
+          argumentResolvers.add(0, paramNameProcessor());
+          adapter.setArgumentResolvers(argumentResolvers);
+        }
+        return bean;
+      }
+    };
+  }
+
+  /**
+   * A processor for {@link pt.ulisboa.ewp.node.utils.bean.ParamName} annotations. Reference:
+   * https://stackoverflow.com/questions/8986593/how-to-customize-parameter-names-when-binding-spring-mvc-command-objects
+   */
+  @Bean
+  public ParamNameProcessor paramNameProcessor() {
+    return new ParamNameProcessor();
   }
 
   @Bean

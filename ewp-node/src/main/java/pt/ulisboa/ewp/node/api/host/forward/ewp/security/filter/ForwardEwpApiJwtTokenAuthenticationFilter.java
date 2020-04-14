@@ -62,11 +62,12 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
   }
 
   @Override
-  protected void onSuccessfulAuthentication(HttpServletRequest request,
-      HttpServletResponse response, Authentication authentication) {
-    ForwardEwpApiAuthenticationToken forwardEwpApiAuthenticationToken = (ForwardEwpApiAuthenticationToken) authentication;
-    request.setAttribute(REQUEST_ATTRIBUTE_HOST_NAME,
-        forwardEwpApiAuthenticationToken.getPrincipal().getHost());
+  protected void onSuccessfulAuthentication(
+      HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    ForwardEwpApiAuthenticationToken forwardEwpApiAuthenticationToken =
+        (ForwardEwpApiAuthenticationToken) authentication;
+    request.setAttribute(
+        REQUEST_ATTRIBUTE_HOST_NAME, forwardEwpApiAuthenticationToken.getPrincipal().getHost());
   }
 
   @Override
@@ -77,7 +78,7 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
           response,
           HttpServletResponse.SC_UNAUTHORIZED,
           MediaType.APPLICATION_XML,
-          ForwardEwpApiResponseUtils.createEmptyResponseWithMessages(
+          ForwardEwpApiResponseUtils.createResponseWithMessages(
               ResultType.REQUEST_AUTHENTICATION_ERROR));
     } catch (IOException | JAXBException e) {
       logger.error("Failed to write response's body", e);

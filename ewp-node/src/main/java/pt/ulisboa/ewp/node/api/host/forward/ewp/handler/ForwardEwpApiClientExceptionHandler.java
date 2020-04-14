@@ -1,15 +1,19 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.handler;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
@@ -24,28 +28,45 @@ import pt.ulisboa.ewp.node.utils.PojoUtils;
 @ControllerAdvice(annotations = ForwardEwpApi.class)
 public class ForwardEwpApiClientExceptionHandler {
 
-  @Autowired
-  private Logger log;
+  @Autowired private Logger log;
 
-  @Autowired
-  private MessageSource messageSource;
+  @Autowired private MessageSource messageSource;
 
   @ExceptionHandler({ConstraintViolationException.class})
   public ResponseEntity<ForwardEwpApiResponse> handleConstraintViolationException(
       ConstraintViolationException exception) {
-    Collection<String> errorMessages = new ArrayList<>();
+    List<String> errorMessages = new ArrayList<>();
     Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
     Iterator<ConstraintViolation<?>> constraintViolationsIterator = constraintViolations.iterator();
     while (constraintViolationsIterator.hasNext()) {
       ConstraintViolation<?> constraintViolation = constraintViolationsIterator.next();
-      String errorMessage =
-          String.format(
-              "%s: %s",
-              PojoUtils.getUserFriendlyPropertyName(constraintViolation),
-              constraintViolation.getMessage());
-      errorMessages.add(errorMessage);
+      String fieldName = PojoUtils.getUserFriendlyPropertyName(constraintViolation);
+      String errorMessage = constraintViolation.getMessage();
+      errorMessages.add(fieldName + ": " + errorMessage);
     }
 
+    return ForwardEwpApiResponseUtils.toRequestErrorResponseEntity(errorMessages);
+  }
+
+  @ExceptionHandler({BindException.class})
+  public ResponseEntity<ForwardEwpApiResponse> handleBindException(BindException exception)
+      throws NoSuchFieldException {
+    List<String> errorMessages = new ArrayList<>();
+    for (FieldError fieldError : exception.getFieldErrors()) {
+      String fieldName =
+          PojoUtils.getUserFriendlyPropertyName(exception.getTarget().getClass(), fieldError);
+      String errorMessage = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+      errorMessages.add(fieldName + ": " + errorMessage);
+    }
+
+    return ForwardEwpApiResponseUtils.toRequestErrorResponseEntity(errorMessages);
+  }
+
+  @ExceptionHandler({MissingServletRequestParameterException.class})
+  public ResponseEntity<ForwardEwpApiResponse> handleMissingServletRequestParameterException(
+      MissingServletRequestParameterException exception) {
+    List<String> errorMessages = new ArrayList<>();
+    errorMessages.add(exception.getMessage());
     return ForwardEwpApiResponseUtils.toRequestErrorResponseEntity(errorMessages);
   }
 

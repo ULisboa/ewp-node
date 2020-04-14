@@ -1,14 +1,12 @@
 package pt.ulisboa.ewp.node.utils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.lang.reflect.Field;
 import java.util.Iterator;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Path;
-
 import org.springframework.validation.FieldError;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
 public class PojoUtils {
 
@@ -24,9 +22,7 @@ public class PojoUtils {
     Iterator<Path.Node> iterator = constraintViolation.getPropertyPath().iterator();
 
     String propertyName;
-    for (propertyName = null;
-        iterator.hasNext();
-        propertyName = ((Path.Node) iterator.next()).getName()) {}
+    for (propertyName = null; iterator.hasNext(); propertyName = iterator.next().getName()) {}
 
     return propertyName;
   }
@@ -37,6 +33,11 @@ public class PojoUtils {
       JsonProperty jsonPropertyAnnotation = declaredField.getAnnotation(JsonProperty.class);
       if (jsonPropertyAnnotation != null) {
         return jsonPropertyAnnotation.value();
+      }
+
+      ParamName paramNameAnnotation = declaredField.getAnnotation(ParamName.class);
+      if (paramNameAnnotation != null) {
+        return paramNameAnnotation.value();
       }
     }
     return field;
