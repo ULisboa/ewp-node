@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp.exception;
 
-public class EwpClientProcessorException extends Exception {
+public class EwpClientProcessorException extends AbstractEwpClientErrorException {
 
   private Exception exception;
 

@@ -1,17 +1,18 @@
 package pt.ulisboa.ewp.node.client.ewp.operation.result;
 
 import java.io.Serializable;
-
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.error.AbstractErrorEwpOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
 
 public abstract class AbstractEwpOperationResult implements Serializable {
 
-  private EwpOperationResultType resultType;
-  private EwpRequest request;
-  private EwpResponse response;
-  private EwpAuthenticationResult responseAuthenticationResult;
+  private final EwpOperationResultType resultType;
+  private final EwpRequest request;
+  private final EwpResponse response;
+  private final EwpAuthenticationResult responseAuthenticationResult;
 
   protected AbstractEwpOperationResult(EwpOperationResultType resultType, Builder<?> builder) {
     this.resultType = resultType;
@@ -36,10 +37,17 @@ public abstract class AbstractEwpOperationResult implements Serializable {
     return responseAuthenticationResult;
   }
 
-  public EwpProcessorErrorOperationResult asProcessorError() {
-    assert resultType == EwpOperationResultType.PROCESSOR_ERROR;
-    return (EwpProcessorErrorOperationResult) this;
+  public boolean isSuccess() {
+    return EwpOperationResultType.SUCCESS.equals(resultType);
   }
+
+  /**
+   * Returns a summary of the operation result. This should be succinct, as it may be used for
+   * logging purposes.
+   *
+   * @return A succinct summary of the operation result.
+   */
+  public abstract String getSummary();
 
   @SuppressWarnings("unchecked")
   public <T> EwpSuccessOperationResult<T> asSuccess(Class<T> responseBodyType) {
@@ -47,19 +55,13 @@ public abstract class AbstractEwpOperationResult implements Serializable {
     return (EwpSuccessOperationResult<T>) this;
   }
 
-  public EwpResponseAuthenticationErrorOperationResult asResponseAuthenticationError() {
-    assert resultType == EwpOperationResultType.RESPONSE_AUTHENTICATION_ERROR;
-    return (EwpResponseAuthenticationErrorOperationResult) this;
+  public boolean isError() {
+    return EwpOperationResultType.ERROR.equals(resultType);
   }
 
-  public EwpErrorResponseOperationResult asErrorResponse() {
-    assert resultType == EwpOperationResultType.ERROR_RESPONSE;
-    return (EwpErrorResponseOperationResult) this;
-  }
-
-  public EwpUnknownErrorResponseOperationResult asUnknownErrorResponse() {
-    assert resultType == EwpOperationResultType.UNKNOWN_ERROR_RESPONSE;
-    return (EwpUnknownErrorResponseOperationResult) this;
+  public AbstractErrorEwpOperationResult asError() {
+    assert resultType == EwpOperationResultType.ERROR;
+    return (AbstractErrorEwpOperationResult) this;
   }
 
   public abstract static class Builder<T extends Builder<T>> {
@@ -96,5 +98,10 @@ public abstract class AbstractEwpOperationResult implements Serializable {
     }
 
     public abstract T getThis();
+  }
+
+  public enum EwpOperationResultType {
+    SUCCESS,
+    ERROR
   }
 }

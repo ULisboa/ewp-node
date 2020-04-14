@@ -1,16 +1,23 @@
-package pt.ulisboa.ewp.node.client.ewp.operation.result;
+package pt.ulisboa.ewp.node.client.ewp.operation.result.success;
+
+import pt.ulisboa.ewp.node.client.ewp.operation.result.AbstractEwpOperationResult;
 
 public class EwpSuccessOperationResult<T> extends AbstractEwpOperationResult {
 
-  private T responseBody;
+  private final T responseBody;
 
   protected EwpSuccessOperationResult(Builder<T> builder) {
     super(EwpOperationResultType.SUCCESS, builder);
     this.responseBody = builder.responseBody;
-  };
+  }
 
   public T getResponseBody() {
     return responseBody;
+  }
+
+  @Override
+  public String getSummary() {
+    return "Success";
   }
 
   public static class Builder<T> extends AbstractEwpOperationResult.Builder<Builder<T>> {

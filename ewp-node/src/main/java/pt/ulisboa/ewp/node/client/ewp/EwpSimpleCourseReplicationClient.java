@@ -7,13 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientUnknownErrorResponseException;
+import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
@@ -31,9 +28,7 @@ public class EwpSimpleCourseReplicationClient {
   }
 
   public EwpSuccessOperationResult<CourseReplicationResponse> findAllCourses(
-      String heiId, String modifiedSince)
-      throws EwpClientErrorResponseException, EwpClientResponseAuthenticationFailedException,
-          EwpClientUnknownErrorResponseException, EwpClientProcessorException {
+      String heiId, String modifiedSince) throws AbstractEwpClientErrorException {
     Optional<EwpSimpleCourseReplicationApiConfiguration> apiOptional =
         EwpApiUtils.getSimpleCourseReplicationApiConfiguration(registryClient, heiId);
     if (!apiOptional.isPresent()) {

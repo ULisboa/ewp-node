@@ -1,8 +1,10 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
+import eu.erasmuswithoutpaper.api.courses.CoursesResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,19 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.EwpCoursesClient;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientUnknownErrorResponseException;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
-import eu.erasmuswithoutpaper.api.courses.CoursesResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 
 @RestController
 @ForwardEwpApi
@@ -62,8 +57,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
           String loisAfter,
       @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE, required = false)
           String loisAtDate)
-      throws EwpClientErrorResponseException, EwpClientResponseAuthenticationFailedException,
-          EwpClientUnknownErrorResponseException, EwpClientProcessorException {
+      throws AbstractEwpClientErrorException {
     return getCourses(heiId, losIds, losCodes, loisBefore, loisAfter, loisAtDate);
   }
 
@@ -93,8 +87,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
           String loisAfter,
       @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE, required = false)
           String loisAtDate)
-      throws EwpClientErrorResponseException, EwpClientResponseAuthenticationFailedException,
-          EwpClientUnknownErrorResponseException, EwpClientProcessorException {
+      throws AbstractEwpClientErrorException {
 
     if (losIds == null) {
       losIds = new ArrayList<>();
@@ -113,8 +106,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
       String loisBefore,
       String loisAfter,
       String loisAtDate)
-      throws EwpClientResponseAuthenticationFailedException, EwpClientProcessorException,
-          EwpClientUnknownErrorResponseException, EwpClientErrorResponseException {
+      throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<CoursesResponse> coursesResponse;
     if (!losIds.isEmpty()) {
       coursesResponse = client.findByLosIds(heiId, losIds, loisBefore, loisAfter, loisAtDate);

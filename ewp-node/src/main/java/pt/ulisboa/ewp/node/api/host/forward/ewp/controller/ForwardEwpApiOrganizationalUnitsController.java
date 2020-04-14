@@ -1,8 +1,10 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
+import eu.erasmuswithoutpaper.api.ounits.OunitsResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,19 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.EwpOrganizationalUnitsClient;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientUnknownErrorResponseException;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
-import eu.erasmuswithoutpaper.api.ounits.OunitsResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 
 @RestController
 @ForwardEwpApi
@@ -58,8 +53,7 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
               value = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE,
               defaultValue = "")
           List<String> organizationalUnitCodes)
-      throws EwpClientErrorResponseException, EwpClientResponseAuthenticationFailedException,
-          EwpClientUnknownErrorResponseException, EwpClientProcessorException {
+      throws AbstractEwpClientErrorException {
     return getOrganizationalUnits(heiId, organizationalUnitIds, organizationalUnitCodes);
   }
 
@@ -83,8 +77,7 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
                       + " is provided.")
           @RequestParam(value = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE, required = false)
           List<String> organizationalUnitCodes)
-      throws EwpClientErrorResponseException, EwpClientResponseAuthenticationFailedException,
-          EwpClientUnknownErrorResponseException, EwpClientProcessorException {
+      throws AbstractEwpClientErrorException {
     if (organizationalUnitIds == null) {
       organizationalUnitIds = new ArrayList<>();
     }
@@ -97,8 +90,7 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
   // NOTE: currently only allows to obtain by ounit IDs or ounit codes (not both simultaneously)
   private ResponseEntity<?> getOrganizationalUnits(
       String heiId, List<String> organizationalUnitIds, List<String> organizationalUnitCodes)
-      throws EwpClientResponseAuthenticationFailedException, EwpClientProcessorException,
-          EwpClientUnknownErrorResponseException, EwpClientErrorResponseException {
+      throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<OunitsResponse> ounitsResponse;
     if (!organizationalUnitIds.isEmpty()) {
       ounitsResponse = organizationalUnitClient.findByOunitIds(heiId, organizationalUnitIds);

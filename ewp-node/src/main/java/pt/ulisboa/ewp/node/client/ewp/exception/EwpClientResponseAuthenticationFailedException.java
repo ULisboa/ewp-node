@@ -4,7 +4,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
 
-public class EwpClientResponseAuthenticationFailedException extends Exception {
+public class EwpClientResponseAuthenticationFailedException
+    extends AbstractEwpClientErrorException {
 
   private EwpRequest request;
   private EwpResponse response;

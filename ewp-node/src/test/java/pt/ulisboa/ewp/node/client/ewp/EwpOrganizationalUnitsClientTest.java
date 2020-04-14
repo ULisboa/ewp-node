@@ -12,11 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pt.ulisboa.ewp.node.AbstractTest;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientUnknownErrorResponseException;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 
 @SpringBootTest(
     classes = {EwpNodeApplication.class},
@@ -26,9 +23,7 @@ public class EwpOrganizationalUnitsClientTest extends AbstractTest {
   @Autowired private EwpOrganizationalUnitsClient client;
 
   @Test
-  public void testGetOrganizationalUnits()
-      throws EwpClientUnknownErrorResponseException, EwpClientProcessorException,
-          EwpClientResponseAuthenticationFailedException, EwpClientErrorResponseException {
+  public void testGetOrganizationalUnits() throws AbstractEwpClientErrorException {
     String heiId = "demo.usos.edu.pl";
     Collection<String> organizationalUnitIds =
         Arrays.asList("5653486D96841E16E0530B501E0A4594", "5653486D96871E16E0530B501E0A4594");

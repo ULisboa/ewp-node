@@ -9,13 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientUnknownErrorResponseException;
+import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
@@ -34,8 +31,7 @@ public class EwpOrganizationalUnitsClient {
 
   public EwpSuccessOperationResult<OunitsResponse> findByOunitIds(
       String heiId, Collection<String> organizationalUnitIds)
-      throws EwpClientErrorResponseException, EwpClientResponseAuthenticationFailedException,
-          EwpClientUnknownErrorResponseException, EwpClientProcessorException {
+      throws AbstractEwpClientErrorException {
     Optional<EwpOrganizationalUnitApiConfiguration> apiOptional =
         EwpApiUtils.getOrganizationalUnitApiConfiguration(registryClient, heiId);
     if (!apiOptional.isPresent()) {
@@ -57,8 +53,7 @@ public class EwpOrganizationalUnitsClient {
 
   public EwpSuccessOperationResult<OunitsResponse> findByOunitCodes(
       String heiId, Collection<String> organizationalUnitCodes)
-      throws EwpClientErrorResponseException, EwpClientResponseAuthenticationFailedException,
-          EwpClientUnknownErrorResponseException, EwpClientProcessorException {
+      throws AbstractEwpClientErrorException {
     Optional<EwpOrganizationalUnitApiConfiguration> apiOptional =
         EwpApiUtils.getOrganizationalUnitApiConfiguration(registryClient, heiId);
     if (!apiOptional.isPresent()) {

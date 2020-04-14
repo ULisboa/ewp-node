@@ -1,9 +1,8 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
 import org.springframework.http.ResponseEntity;
-
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 
 public abstract class AbstractForwardEwpApiController {
 

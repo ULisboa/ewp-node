@@ -1,11 +1,11 @@
 package pt.ulisboa.ewp.node.client.ewp.exception;
 
+import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
 
-public class EwpClientErrorResponseException extends Exception {
+public class EwpClientErrorResponseException extends AbstractEwpClientErrorException {
 
   private EwpRequest request;
   private EwpResponse response;

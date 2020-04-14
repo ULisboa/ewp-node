@@ -30,12 +30,10 @@ import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.AbstractTest;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
+import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientUnknownErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
@@ -65,9 +63,7 @@ public class EwpClientTest extends AbstractTest {
   }
 
   @Test
-  public void testGetDevRegistryCatalogue()
-      throws EwpClientUnknownErrorResponseException, EwpClientProcessorException,
-          EwpClientResponseAuthenticationFailedException, EwpClientErrorResponseException {
+  public void testGetDevRegistryCatalogue() throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<Catalogue> result =
         ewpClient.executeWithLoggingExpectingSuccess(
             new EwpRequest(
@@ -79,9 +75,7 @@ public class EwpClientTest extends AbstractTest {
   }
 
   @Test
-  public void testGetDevRegistryManifestAnonymous()
-      throws EwpClientUnknownErrorResponseException, EwpClientProcessorException,
-          EwpClientResponseAuthenticationFailedException, EwpClientErrorResponseException {
+  public void testGetDevRegistryManifestAnonymous() throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<Manifest> clientResponse =
         ewpClient.executeWithLoggingExpectingSuccess(
             new EwpRequest(
@@ -93,9 +87,7 @@ public class EwpClientTest extends AbstractTest {
   }
 
   @Test(expected = EwpClientErrorResponseException.class)
-  public void testGetOwnEchoResourceWithoutAuthentication()
-      throws EwpClientUnknownErrorResponseException, EwpClientProcessorException,
-          EwpClientResponseAuthenticationFailedException, EwpClientErrorResponseException {
+  public void testGetOwnEchoResourceWithoutAuthentication() throws AbstractEwpClientErrorException {
     Map<String, List<String>> params = new HashMap<>();
     params.put(EwpApiParamConstants.PARAM_NAME_ECHO, Collections.singletonList("abc"));
     ewpClient.executeWithLoggingExpectingSuccess(
@@ -108,9 +100,7 @@ public class EwpClientTest extends AbstractTest {
   @Test
   public void testGetOwnEchoResourceWithHttpSignature()
       throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
-          KeyStoreException, IOException, EwpClientUnknownErrorResponseException,
-          EwpClientProcessorException, EwpClientResponseAuthenticationFailedException,
-          EwpClientErrorResponseException {
+          KeyStoreException, IOException, AbstractEwpClientErrorException {
     DecodedCertificateAndKey decodedCertificateAndKey =
         keyStoreService.getDecodedCertificateAndKeyFromStorage();
     doReturn(decodedCertificateAndKey.getRsaPublicKey())
@@ -137,9 +127,7 @@ public class EwpClientTest extends AbstractTest {
   @Test
   public void testPostOwnEchoResourceWithHttpSignature()
       throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
-          KeyStoreException, IOException, EwpClientUnknownErrorResponseException,
-          EwpClientProcessorException, EwpClientResponseAuthenticationFailedException,
-          EwpClientErrorResponseException {
+          KeyStoreException, IOException, AbstractEwpClientErrorException {
     DecodedCertificateAndKey decodedCertificateAndKey =
         keyStoreService.getDecodedCertificateAndKeyFromStorage();
     doReturn(decodedCertificateAndKey.getRsaPublicKey())

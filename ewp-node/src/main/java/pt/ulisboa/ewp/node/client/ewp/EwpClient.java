@@ -1,8 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
 import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -29,6 +27,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
@@ -36,11 +35,11 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientUnknownErrorResponseExc
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.AbstractEwpOperationResult;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpErrorResponseOperationResult;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpProcessorErrorOperationResult;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpResponseAuthenticationErrorOperationResult;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpUnknownErrorResponseOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpErrorResponseOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpProcessorErrorOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpResponseAuthenticationErrorOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpUnknownErrorResponseOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.exception.ewp.EwpResponseBodyCannotBeCastToException;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
@@ -84,55 +83,20 @@ public class EwpClient {
    */
   @SuppressWarnings("unchecked")
   public <T> EwpSuccessOperationResult<T> executeWithLoggingExpectingSuccess(
-      EwpRequest request, Class<T> responseBodyType)
-      throws EwpClientErrorResponseException, EwpClientResponseAuthenticationFailedException,
-          EwpClientUnknownErrorResponseException, EwpClientProcessorException {
+      EwpRequest request, Class<T> responseBodyType) throws AbstractEwpClientErrorException {
     AbstractEwpOperationResult operationResult = executeWithLogging(request, responseBodyType);
     return getSuccessOperationResult(responseBodyType, operationResult);
   }
 
   private <T> EwpSuccessOperationResult<T> getSuccessOperationResult(
       Class<T> responseBodyType, AbstractEwpOperationResult operationResult)
-      throws EwpClientProcessorException, EwpClientResponseAuthenticationFailedException,
-          EwpClientErrorResponseException, EwpClientUnknownErrorResponseException {
-    switch (operationResult.getResultType()) {
-      case PROCESSOR_ERROR:
-        EwpProcessorErrorOperationResult processorErrorOperationResult =
-            operationResult.asProcessorError();
-        throw new EwpClientProcessorException(processorErrorOperationResult.getException());
-
-      case SUCCESS:
-        return operationResult.asSuccess(responseBodyType);
-
-      case RESPONSE_AUTHENTICATION_ERROR:
-        EwpResponseAuthenticationErrorOperationResult responseAuthenticationErrorOperationResult =
-            operationResult.asResponseAuthenticationError();
-        throw new EwpClientResponseAuthenticationFailedException(
-            responseAuthenticationErrorOperationResult.getRequest(),
-            responseAuthenticationErrorOperationResult.getResponse(),
-            responseAuthenticationErrorOperationResult.getResponseAuthenticationResult());
-
-      case ERROR_RESPONSE:
-        EwpErrorResponseOperationResult errorResponseOperationResult =
-            operationResult.asErrorResponse();
-        throw new EwpClientErrorResponseException(
-            errorResponseOperationResult.getRequest(),
-            errorResponseOperationResult.getResponse(),
-            errorResponseOperationResult.getResponseAuthenticationResult(),
-            errorResponseOperationResult.getErrorResponse());
-
-      case UNKNOWN_ERROR_RESPONSE:
-        EwpUnknownErrorResponseOperationResult unknownErrorResponseOperationResult =
-            operationResult.asUnknownErrorResponse();
-        throw new EwpClientUnknownErrorResponseException(
-            unknownErrorResponseOperationResult.getRequest(),
-            unknownErrorResponseOperationResult.getResponse(),
-            unknownErrorResponseOperationResult.getResponseAuthenticationResult(),
-            unknownErrorResponseOperationResult.getError());
-
-      default:
-        throw new IllegalStateException(
-            "Unknown result type: " + operationResult.getResultType().name());
+      throws AbstractEwpClientErrorException {
+    if (operationResult.isSuccess()) {
+      return operationResult.asSuccess(responseBodyType);
+    } else if (operationResult.isError()) {
+      throw operationResult.asError().toClientException();
+    } else {
+      throw new IllegalArgumentException("Unknown result type: " + operationResult.getResultType());
     }
   }
 
@@ -145,7 +109,7 @@ public class EwpClient {
         operationResult,
         startProcessingDateTime,
         endProcessingDateTime,
-        getOperationObservations(operationResult));
+        operationResult.getSummary());
 
     return operationResult;
   }
@@ -259,33 +223,6 @@ public class EwpClient {
           .exception(e)
           .build();
     }
-  }
-
-  private String getOperationObservations(AbstractEwpOperationResult result) {
-    switch (result.getResultType()) {
-      case PROCESSOR_ERROR:
-        return toString(result.asProcessorError().getException()).substring(0, 1000);
-
-      case SUCCESS:
-      case ERROR_RESPONSE:
-      case UNKNOWN_ERROR_RESPONSE:
-        return "";
-
-      case RESPONSE_AUTHENTICATION_ERROR:
-        return result
-            .asResponseAuthenticationError()
-            .getResponseAuthenticationResult()
-            .getErrorMessage();
-
-      default:
-        throw new IllegalStateException("Unknown result type: " + result.getResultType().name());
-    }
-  }
-
-  private String toString(Exception exception) {
-    StringWriter result = new StringWriter();
-    exception.printStackTrace(new PrintWriter(result));
-    return result.toString();
   }
 
   private void sanitizeResponse(Response response) {
