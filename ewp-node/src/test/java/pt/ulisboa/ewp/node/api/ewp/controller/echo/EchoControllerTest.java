@@ -29,9 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -56,7 +54,6 @@ import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
 import org.tomitribe.auth.signatures.Verifier;
 import org.w3c.dom.Node;
-
 import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
@@ -650,7 +647,7 @@ public class EchoControllerTest extends AbstractEwpControllerTest {
           Signature.fromString(result.getResponse().getHeader(HttpConstants.HEADER_SIGNATURE));
       boolean valid =
           new Verifier(decodedCertificateAndKey.getRsaPublicKey(), signature)
-              .verify("", "", HttpUtils.getHeaders(result.getResponse()));
+              .verify("", "", HttpUtils.toHeadersMap(result.getResponse()));
       assertTrue("Signature", valid);
     };
   }

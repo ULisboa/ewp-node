@@ -2,27 +2,25 @@ package pt.ulisboa.ewp.node.utils.http;
 
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MultivaluedMap;
-
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 
 public class HttpUtils {
 
   private HttpUtils() {}
 
-  public static HttpHeadersMap getCaseInsensitiveHeadersMap(
-      MultivaluedMap<String, Object> headers) {
-    HttpHeadersMap result = new HttpHeadersMap();
+  public static HttpHeaders toHttpHeaders(MultivaluedMap<String, Object> headers) {
+    HttpHeaders result = new HttpHeaders();
     headers
         .keySet()
         .forEach(
@@ -30,30 +28,33 @@ public class HttpUtils {
                 result.put(
                     headerKey,
                     headers.get(headerKey).stream()
-                        .map(h -> (String) h)
-                        .collect(
-                            Collectors.joining(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN))));
+                        .map(String::valueOf)
+                        .collect(Collectors.toList())));
     return result;
   }
 
-  public static HttpHeadersMap getCaseInsensitiveHeadersMap(HttpServletRequest request) {
-    HttpHeadersMap headers = new HttpHeadersMap();
+  public static HttpHeaders toHttpHeaders(HttpServletRequest request) {
+    HttpHeaders headers = new HttpHeaders();
     Enumeration<String> headerNames = request.getHeaderNames();
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();
-      Collection<String> headerValues = new ArrayList<>();
       Enumeration<String> headerValuesEnumeration = request.getHeaders(headerName);
       while (headerValuesEnumeration.hasMoreElements()) {
-        headerValues.add(headerValuesEnumeration.nextElement());
+        headers.add(headerName, headerValuesEnumeration.nextElement());
       }
-      headers.put(
-          headerName.toLowerCase(),
-          String.join(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN, headerValues));
     }
     return headers;
   }
 
-  public static Map<String, String> getHeaders(HttpServletResponse response) {
+  public static Map<String, String> toHeadersMap(HttpHeaders headers) {
+    return headers.entrySet().stream()
+        .collect(
+            Collectors.toMap(
+                Entry::getKey,
+                e -> String.join(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN, e.getValue())));
+  }
+
+  public static Map<String, String> toHeadersMap(HttpServletResponse response) {
     Map<String, String> headers = new HashMap<>();
     Collection<String> headerNames = response.getHeaderNames();
     for (String headerName : headerNames) {

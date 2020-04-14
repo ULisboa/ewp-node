@@ -6,6 +6,9 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
+import eu.erasmuswithoutpaper.api.discovery.Manifest;
+import eu.erasmuswithoutpaper.api.echo.Response;
+import eu.erasmuswithoutpaper.api.registry.Catalogue;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -15,7 +18,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,8 +25,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import pt.ulisboa.ewp.node.AbstractTest;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -36,12 +38,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpMethod;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
-import eu.erasmuswithoutpaper.api.discovery.Manifest;
-import eu.erasmuswithoutpaper.api.echo.Response;
-import eu.erasmuswithoutpaper.api.registry.Catalogue;
 
 @SpringBootTest(
     classes = {EwpNodeApplication.class, EwpClientTest.Config.class},

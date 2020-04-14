@@ -4,13 +4,12 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import eu.erasmuswithoutpaper.api.ounits.OunitsResponse;
 import java.util.Arrays;
 import java.util.Collection;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import pt.ulisboa.ewp.node.AbstractTest;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
@@ -18,7 +17,6 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientUnknownErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
-import eu.erasmuswithoutpaper.api.ounits.OunitsResponse;
 
 @SpringBootTest(
     classes = {EwpNodeApplication.class},

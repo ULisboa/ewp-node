@@ -1,23 +1,21 @@
 package pt.ulisboa.ewp.node.client.ewp.operation.request;
 
+import com.google.common.base.Strings;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpMethod;
-import pt.ulisboa.ewp.node.utils.http.HttpHeadersMap;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
-
-import com.google.common.base.Strings;
 
 public class EwpRequest {
 
   private String id = UUID.randomUUID().toString();
   private HttpMethod method;
   private String urlWithoutQueryParams;
-  private HttpHeadersMap headers = new HttpHeadersMap();
+  private HttpHeaders headers = new HttpHeaders();
   private Map<String, List<String>> queryParams = new HashMap<>();
   private Map<String, List<String>> bodyParams = new HashMap<>();
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.TLS;
@@ -49,17 +47,17 @@ public class EwpRequest {
     return this;
   }
 
-  public HttpHeadersMap getHeaders() {
+  public HttpHeaders getHeaders() {
     return headers;
   }
 
-  public EwpRequest headers(HttpHeadersMap headers) {
+  public EwpRequest headers(HttpHeaders headers) {
     this.headers = headers;
     return this;
   }
 
-  public EwpRequest header(String name, String value) {
-    this.headers.put(name, value);
+  public EwpRequest header(String key, List<String> values) {
+    this.headers.put(key, values);
     return this;
   }
 

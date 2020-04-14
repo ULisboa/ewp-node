@@ -13,16 +13,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -34,7 +35,6 @@ import org.tomitribe.auth.signatures.MissingRequiredHeaderException;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
 import org.tomitribe.auth.signatures.Verifier;
-
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiAuthenticateMethodResponse;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
@@ -43,7 +43,6 @@ import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.HttpSignatureAuthenticationResult;
 import pt.ulisboa.ewp.node.utils.DateUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
-import pt.ulisboa.ewp.node.utils.http.HttpHeadersMap;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
@@ -95,21 +94,25 @@ public class HttpSignatureService {
       byte[] digest = MessageDigest.getInstance(SHA_256).digest(bodyBytes);
       String digestHeader = SHA_256 + "=" + new String(Base64.encodeBase64(digest));
 
-      HttpHeadersMap headers = new HttpHeadersMap();
+      HttpHeaders headers = new HttpHeaders();
 
-      headers.put(HttpConstants.HEADER_ORIGINAL_DATE, stringToday);
-      headers.put(HttpConstants.HEADER_DIGEST, digestHeader);
+      headers.set(HttpConstants.HEADER_ORIGINAL_DATE, stringToday);
+      headers.set(HttpConstants.HEADER_DIGEST, digestHeader);
 
       if (requestId != null) {
-        headers.put(HttpConstants.HEADER_X_REQUEST_ID, requestId);
+        headers.set(HttpConstants.HEADER_X_REQUEST_ID, requestId);
       }
 
       if (requestSignature != null) {
-        headers.put(HttpConstants.HEADER_X_REQUEST_SIGNATURE, requestSignature.getSignature());
+        headers.set(HttpConstants.HEADER_X_REQUEST_SIGNATURE, requestSignature.getSignature());
       }
 
       // Update the response with the new headers
-      headers.forEach(response::addHeader);
+      headers.forEach(
+          (headerName, headerValues) ->
+              response.addHeader(
+                  headerName,
+                  String.join(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN, headerValues)));
 
       List<String> headerNames = new ArrayList<>(response.getHeaderNames());
 
@@ -124,7 +127,7 @@ public class HttpSignatureService {
       Key key = decodedCertificateAndKey.getPrivateKey();
 
       Signer signer = new Signer(key, signature);
-      Signature signed = signer.sign("", "", HttpUtils.getHeaders(response));
+      Signature signed = signer.sign("", "", HttpUtils.toHeadersMap(response));
 
       response.addHeader(
           HttpConstants.HEADER_SIGNATURE, signed.toString().replaceAll("Signature ", ""));
@@ -139,24 +142,24 @@ public class HttpSignatureService {
       URI uri,
       String formData,
       String requestId,
-      BiConsumer<String, String> headerSetter) {
+      BiConsumer<String, List<String>> headerSetter) {
     try {
-      final HttpHeadersMap headers = new HttpHeadersMap();
+      final HttpHeaders headers = new HttpHeaders();
 
-      headers.put(HttpConstants.HEADER_WANT_DIGEST, SHA_256);
+      headers.set(HttpConstants.HEADER_WANT_DIGEST, SHA_256);
 
-      headers.put(HttpConstants.HEADER_ACCEPT_SIGNATURE, Algorithm.RSA_SHA256.getPortableName());
+      headers.set(HttpConstants.HEADER_ACCEPT_SIGNATURE, Algorithm.RSA_SHA256.getPortableName());
 
-      headers.put(HttpConstants.HEADER_X_REQUEST_ID, requestId);
+      headers.set(HttpConstants.HEADER_X_REQUEST_ID, requestId);
 
-      headers.put(
+      headers.set(
           HttpConstants.HEADER_ORIGINAL_DATE,
           DateUtils.toStringAsGMT(new Date(), DATETIME_WITH_TIMEZONE_FORMAT));
 
       byte[] bodyBytes = formData.getBytes();
       byte[] digest = MessageDigest.getInstance(SHA_256).digest(bodyBytes);
       String digestHeader = SHA_256 + "=" + new String(Base64.encodeBase64(digest));
-      headers.put(HttpConstants.HEADER_DIGEST, digestHeader);
+      headers.set(HttpConstants.HEADER_DIGEST, digestHeader);
 
       List<String> requiredSignatureHeaderNames = new ArrayList<>();
       requiredSignatureHeaderNames.add(HEADER_REQUEST_TARGET);
@@ -167,26 +170,35 @@ public class HttpSignatureService {
             headerSetter.accept(key, value);
           });
 
-      DecodedCertificateAndKey decodedCertificateAndKey =
-          keyStoreService.getDecodedCertificateAndKeyFromStorage();
-      Signature signature =
-          new Signature(
-              decodedCertificateAndKey.getPublicKeyFingerprint(),
-              Algorithm.RSA_SHA256,
-              null,
-              requiredSignatureHeaderNames);
-      Key key = decodedCertificateAndKey.getPrivateKey();
-
-      Signer signer = new Signer(key, signature);
-      String queryParams = uri.getQuery() == null ? "" : "?" + uri.getQuery();
-      HttpHeadersMap headersWithHostHeader =
-          new HttpHeadersMap(headers).header(HttpHeaders.HOST, HttpUtils.getHostHeaderValue(uri));
-      Signature signed = signer.sign(method, uri.getPath() + queryParams, headersWithHostHeader);
-
-      headerSetter.accept(HttpHeaders.AUTHORIZATION, signed.toString());
+      String signatureValue =
+          generateSignatureValue(requiredSignatureHeaderNames, method, uri, headers);
+      headerSetter.accept(HttpHeaders.AUTHORIZATION, Collections.singletonList(signatureValue));
     } catch (IOException | NoSuchAlgorithmException e) {
       log.error("Can't sign request", e);
     }
+  }
+
+  private String generateSignatureValue(
+      List<String> requiredSignatureHeaderNames, String method, URI requestUri, HttpHeaders headers)
+      throws IOException {
+    DecodedCertificateAndKey decodedCertificateAndKey =
+        keyStoreService.getDecodedCertificateAndKeyFromStorage();
+    Signature signature =
+        new Signature(
+            decodedCertificateAndKey.getPublicKeyFingerprint(),
+            Algorithm.RSA_SHA256,
+            null,
+            requiredSignatureHeaderNames);
+    Key key = decodedCertificateAndKey.getPrivateKey();
+
+    Signer signer = new Signer(key, signature);
+    String queryParams = requestUri.getQuery() == null ? "" : "?" + requestUri.getQuery();
+    Map<String, String> headersMapWithHostHeader = HttpUtils.toHeadersMap(headers);
+    headersMapWithHostHeader.put(HttpHeaders.HOST, HttpUtils.getHostHeaderValue(requestUri));
+    Signature signed =
+        signer.sign(method, requestUri.getPath() + queryParams, headersMapWithHostHeader);
+
+    return signed.toString();
   }
 
   public EwpApiAuthenticateMethodResponse verifyHttpSignatureRequest(
@@ -223,7 +235,7 @@ public class HttpSignatureService {
       return authenticateMethodResponse.get();
     }
 
-    HttpHeadersMap headers = HttpUtils.getCaseInsensitiveHeadersMap(request);
+    HttpHeaders headers = HttpUtils.toHttpHeaders(request);
 
     if (!verifyHost(request, headers)) {
       return EwpApiAuthenticateMethodResponse.failureBuilder(
@@ -293,12 +305,8 @@ public class HttpSignatureService {
    * @return The result of the HTTP signature verification
    */
   public HttpSignatureAuthenticationResult verifyHttpSignatureResponse(
-      String method,
-      String requestUri,
-      HttpHeadersMap headers,
-      String rawResponse,
-      String requestId) {
-    if (!requestId.equals(headers.getAsList(HttpConstants.HEADER_X_REQUEST_ID).get(0))) {
+      String method, String requestUri, HttpHeaders headers, String rawResponse, String requestId) {
+    if (!requestId.equals(headers.getFirst(HttpConstants.HEADER_X_REQUEST_ID))) {
       return HttpSignatureAuthenticationResult.createInvalid(
           "Header X-Request-Id does not match the id sent in the request");
     }
@@ -308,7 +316,10 @@ public class HttpSignatureService {
           "Missing Signature header in response");
     }
 
-    String signatureHeader = headers.getAsList(HttpConstants.HEADER_SIGNATURE).get(0);
+    String signatureHeader = headers.getFirst(HttpConstants.HEADER_SIGNATURE);
+    if (StringUtils.isEmpty(signatureHeader)) {
+      return HttpSignatureAuthenticationResult.createInvalid("Signature header must be set.");
+    }
 
     Signature signature = Signature.fromString(signatureHeader);
     if (signature.getAlgorithm() != Algorithm.RSA_SHA256) {
@@ -353,30 +364,29 @@ public class HttpSignatureService {
     return HttpSignatureAuthenticationResult.createValid();
   }
 
-  private boolean verifyHost(HttpServletRequest request, HttpHeadersMap headers)
+  private boolean verifyHost(HttpServletRequest request, HttpHeaders headers)
       throws MalformedURLException {
     URL requestUrl = new URL(request.getRequestURL().toString());
     String expectedHost =
         requestUrl.getHost() + (requestUrl.getPort() == -1 ? "" : ":" + requestUrl.getPort());
     return headers.containsKey(HttpHeaders.HOST)
-        && expectedHost.equals(headers.get(HttpHeaders.HOST));
+        && expectedHost.equals(headers.getFirst(HttpHeaders.HOST));
   }
 
-  private boolean verifyXRequestId(HttpHeadersMap headers) {
+  private boolean verifyXRequestId(HttpHeaders headers) {
     return headers.containsKey(HttpConstants.HEADER_X_REQUEST_ID)
-        && headers
-            .get(HttpConstants.HEADER_X_REQUEST_ID)
+        && Objects.requireNonNull(headers.getFirst(HttpConstants.HEADER_X_REQUEST_ID))
             .matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
   }
 
-  private boolean verifyDate(HttpHeadersMap headers) {
+  private boolean verifyDate(HttpHeaders headers) {
     if (headers.containsKey(HttpHeaders.DATE)
-        && !isDateWithinTimeThreshold(headers.get(HttpHeaders.DATE))) {
+        && !isDateWithinTimeThreshold(headers.getFirst(HttpHeaders.DATE))) {
       return false;
     }
 
     if (headers.containsKey(HttpConstants.HEADER_ORIGINAL_DATE)
-        && !isDateWithinTimeThreshold(headers.get(HttpConstants.HEADER_ORIGINAL_DATE))) {
+        && !isDateWithinTimeThreshold(headers.getFirst(HttpConstants.HEADER_ORIGINAL_DATE))) {
       return false;
     }
 
@@ -384,7 +394,7 @@ public class HttpSignatureService {
   }
 
   private Optional<EwpApiAuthenticateMethodResponse> verifyDigest(
-      HttpHeadersMap headers, byte[] bodyBytes) {
+      HttpHeaders headers, byte[] bodyBytes) {
     if (headers.containsKey(HttpConstants.HEADER_DIGEST)) {
       byte[] digest;
       try {
@@ -401,7 +411,7 @@ public class HttpSignatureService {
       String digestCalculatedWithAlgorithm = SHA_256 + "=" + digestCalculatedWithoutAlgorithm;
 
       String requestDigest =
-          Arrays.stream(headers.get(HttpConstants.HEADER_DIGEST).split(", "))
+          headers.getOrDefault(HttpConstants.HEADER_DIGEST, new ArrayList<>()).stream()
               .filter(d -> d.substring(0, d.indexOf('=')).equalsIgnoreCase(SHA_256))
               .findFirst()
               .orElse(null);
@@ -435,13 +445,14 @@ public class HttpSignatureService {
   private Optional<EwpApiAuthenticateMethodResponse> verifySignature(
       String method,
       String requestUri,
-      HttpHeadersMap headers,
+      HttpHeaders headers,
       Signature signature,
       RSAPublicKey publicKey) {
     try {
       Verifier verifier = new Verifier(publicKey, signature);
 
-      boolean valid = verifier.verify(method.toLowerCase(), requestUri, headers);
+      boolean valid =
+          verifier.verify(method.toLowerCase(), requestUri, HttpUtils.toHeadersMap(headers));
       if (!valid) {
         return Optional.of(
             EwpApiAuthenticateMethodResponse.failureBuilder(

@@ -1,12 +1,12 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
+import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
@@ -17,9 +17,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpMethod;
 import pt.ulisboa.ewp.node.utils.ewp.EwpApiUtils;
-import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
 
 @Service
 public class EwpInstitutionsClient {

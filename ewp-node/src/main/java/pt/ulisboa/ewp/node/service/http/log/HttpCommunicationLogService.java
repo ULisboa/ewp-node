@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import javax.transaction.Transactional;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -11,7 +12,7 @@ import pt.ulisboa.ewp.node.domain.entity.http.HttpHeader;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpMethod;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
-import pt.ulisboa.ewp.node.utils.http.HttpHeadersMap;
+import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
 @Service
 @Transactional
@@ -22,7 +23,7 @@ public class HttpCommunicationLogService {
         HttpRequestLog.create(
             HttpMethod.fromString(request.getMethod()),
             request.getRequestURL().toString(),
-            getHttpHeadersCollection(request),
+            toHttpHeaderCollection(request),
             new String(request.getContentAsByteArray()));
     requestLog.getHeaders().forEach(header -> header.setRequestLog(requestLog));
     return requestLog;
@@ -36,13 +37,13 @@ public class HttpCommunicationLogService {
     HttpResponseLog responseLog =
         HttpResponseLog.create(
             response.getStatusCode(),
-            getHttpHeadersCollection(response),
+            toHttpHeaderCollection(response),
             new String(response.getContentAsByteArray()));
     responseLog.getHeaders().forEach(header -> header.setResponseLog(responseLog));
     return responseLog;
   }
 
-  protected Collection<HttpHeader> getHttpHeadersCollection(ContentCachingRequestWrapper request) {
+  protected Collection<HttpHeader> toHttpHeaderCollection(ContentCachingRequestWrapper request) {
     Collection<HttpHeader> headers = new ArrayList<>();
     Enumeration<String> headerNames = request.getHeaderNames();
     while (headerNames.hasMoreElements()) {
@@ -56,8 +57,7 @@ public class HttpCommunicationLogService {
     return headers;
   }
 
-  protected Collection<HttpHeader> getHttpHeadersCollection(
-      ContentCachingResponseWrapper response) {
+  protected Collection<HttpHeader> toHttpHeaderCollection(ContentCachingResponseWrapper response) {
     Collection<HttpHeader> headers = new ArrayList<>();
     Collection<String> headerNames = response.getHeaderNames();
     headerNames.forEach(
@@ -72,13 +72,15 @@ public class HttpCommunicationLogService {
     return headers;
   }
 
-  protected Collection<HttpHeader> getHttpHeadersCollection(HttpHeadersMap headersMap) {
-    Collection<HttpHeader> headers = new ArrayList<>();
-    headersMap.forEach(
-        (headerName, headerValue) -> {
-          headers.add(HttpHeader.create(headerName, headerValue));
+  protected Collection<HttpHeader> toHttpHeaderCollection(HttpHeaders headers) {
+    Collection<HttpHeader> result = new ArrayList<>();
+    headers.forEach(
+        (headerName, headerValues) -> {
+          result.add(
+              HttpHeader.create(
+                  headerName,
+                  String.join(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN, headerValues)));
         });
-    return headers;
+    return result;
   }
-
 }

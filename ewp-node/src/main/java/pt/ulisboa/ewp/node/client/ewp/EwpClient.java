@@ -59,40 +59,34 @@ import pt.ulisboa.ewp.node.utils.keystore.KeyStoreUtil;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class EwpClient {
 
-  @Autowired
-  private Logger log;
+  @Autowired private Logger log;
 
-  @Autowired
-  private KeyStoreService keystoreService;
+  @Autowired private KeyStoreService keystoreService;
 
-  @Autowired
-  private HttpSignatureService httpSignatureService;
+  @Autowired private HttpSignatureService httpSignatureService;
 
-  @Autowired
-  private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
+  @Autowired private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
   /**
    * Sends a request to the target API, resolving its response, returning it only upon success. If a
    * request fails or the response obtained indicates an error then a corresponding exception is
    * thrown.
    *
-   * @param request          Request to send
+   * @param request Request to send
    * @param responseBodyType Expected response's body class type upon success.
    * @return
-   * @throws EwpClientProcessorException                    Request/Response processing failed for
-   *                                                        some reason.
-   * @throws EwpClientErrorResponseException                Target API returned an error response
-   *                                                        (see {@see eu.erasmuswithoutpaper.api.architecture.ErrorResponse}).
-   * @throws EwpClientUnknownErrorResponseException         Target API returned an unknown error
-   *                                                        response.
+   * @throws EwpClientProcessorException Request/Response processing failed for some reason.
+   * @throws EwpClientErrorResponseException Target API returned an error response (see {@see
+   *     eu.erasmuswithoutpaper.api.architecture.ErrorResponse}).
+   * @throws EwpClientUnknownErrorResponseException Target API returned an unknown error response.
    * @throws EwpClientResponseAuthenticationFailedException The obtained response failed
-   *                                                        authentication
+   *     authentication
    */
   @SuppressWarnings("unchecked")
   public <T> EwpSuccessOperationResult<T> executeWithLoggingExpectingSuccess(
       EwpRequest request, Class<T> responseBodyType)
       throws EwpClientErrorResponseException, EwpClientResponseAuthenticationFailedException,
-      EwpClientUnknownErrorResponseException, EwpClientProcessorException {
+          EwpClientUnknownErrorResponseException, EwpClientProcessorException {
     AbstractEwpOperationResult operationResult = executeWithLogging(request, responseBodyType);
     return getSuccessOperationResult(responseBodyType, operationResult);
   }
@@ -100,7 +94,7 @@ public class EwpClient {
   private <T> EwpSuccessOperationResult<T> getSuccessOperationResult(
       Class<T> responseBodyType, AbstractEwpOperationResult operationResult)
       throws EwpClientProcessorException, EwpClientResponseAuthenticationFailedException,
-      EwpClientErrorResponseException, EwpClientUnknownErrorResponseException {
+          EwpClientErrorResponseException, EwpClientUnknownErrorResponseException {
     switch (operationResult.getResultType()) {
       case PROCESSOR_ERROR:
         EwpProcessorErrorOperationResult processorErrorOperationResult =
@@ -195,8 +189,7 @@ public class EwpClient {
               (headerName, headerValues) ->
                   responseBuilder.header(
                       headerName,
-                      headerValues.stream().map(Object::toString)
-                          .collect(Collectors.joining(", "))));
+                      headerValues.stream().map(String::valueOf).collect(Collectors.toList())));
 
       if (response.hasEntity()) {
         response.bufferEntity();
@@ -206,8 +199,7 @@ public class EwpClient {
 
       ewpResponse = responseBuilder.build();
 
-      responseAuthenticationResult =
-          authenticateResponse(request, ewpResponse);
+      responseAuthenticationResult = authenticateResponse(request, ewpResponse);
       if (!responseAuthenticationResult.isValid()) {
         return new EwpResponseAuthenticationErrorOperationResult.Builder()
             .request(request)
@@ -259,9 +251,12 @@ public class EwpClient {
 
     } catch (Exception e) {
       log.error("Failed to execute request", e);
-      return new EwpProcessorErrorOperationResult.Builder().request(request)
-          .response(ewpResponse).responseAuthenticationResult(responseAuthenticationResult)
-          .exception(e).build();
+      return new EwpProcessorErrorOperationResult.Builder()
+          .request(request)
+          .response(ewpResponse)
+          .responseAuthenticationResult(responseAuthenticationResult)
+          .exception(e)
+          .build();
     }
   }
 
@@ -338,7 +333,7 @@ public class EwpClient {
 
   private Client getClient()
       throws NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException,
-      UnrecoverableKeyException, KeyManagementException {
+          UnrecoverableKeyException, KeyManagementException {
     DecodedKeystore decodedKeystore = keystoreService.getDecodedKeyStoreFromStorage();
     SSLContext sslContext =
         createSecurityContext(
@@ -366,7 +361,7 @@ public class EwpClient {
   }
 
   private void setRequestHeaders(Invocation.Builder requestBuilder, EwpRequest request) {
-    request.getHeaders().forEach(requestBuilder::header);
+    HttpUtils.toHeadersMap(request.getHeaders()).forEach(requestBuilder::header);
   }
 
   private Invocation buildGetRequest(Invocation.Builder requestBuilder) {
@@ -393,7 +388,7 @@ public class EwpClient {
   private static SSLContext createSecurityContext(
       KeyStore keyStore, KeyStore trustStore, String password)
       throws NoSuchProviderException, NoSuchAlgorithmException, UnrecoverableKeyException,
-      KeyStoreException, KeyManagementException {
+          KeyStoreException, KeyManagementException {
     KeyManager[] keyManagers = null;
     if (!KeyStoreUtil.isSelfIssued(
         keyStore, (X509Certificate) keyStore.getCertificate(keyStore.aliases().nextElement()))) {

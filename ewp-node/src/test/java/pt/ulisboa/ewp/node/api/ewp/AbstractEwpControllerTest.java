@@ -18,13 +18,13 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.Map;
 import java.util.TreeSet;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,14 +48,11 @@ import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
 public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
 
-  @Autowired
-  private WebApplicationContext wac;
+  @Autowired private WebApplicationContext wac;
 
-  @Autowired
-  private XmlValidator xmlValidator;
+  @Autowired private XmlValidator xmlValidator;
 
-  @Autowired
-  private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
+  @Autowired private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
   protected MockMvc mockMvc;
 
@@ -100,10 +97,10 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
           .getHeisCoveredByCertificate(mockedX509Certificate);
       doReturn(mockedX509Certificate)
           .when(registryClient)
-          .getCertificateKnownInEwpNetwork(new X509Certificate[]{mockedX509Certificate});
+          .getCertificateKnownInEwpNetwork(new X509Certificate[] {mockedX509Certificate});
 
       request.setAttribute(
-          "javax.servlet.request.X509Certificate", new X509Certificate[]{mockedX509Certificate});
+          "javax.servlet.request.X509Certificate", new X509Certificate[] {mockedX509Certificate});
       return request;
     };
   }
@@ -116,7 +113,7 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
       String signature,
       boolean validKeyId) {
     return request -> {
-      Map<String, String> headers = HttpUtils.getCaseInsensitiveHeadersMap(request);
+      HttpHeaders headers = HttpUtils.toHttpHeaders(request);
 
       TreeSet<String> signatureHeadersSet = new TreeSet<>(headers.keySet());
       signatureHeadersSet.add(HttpSignatureService.HEADER_REQUEST_TARGET);
@@ -169,7 +166,7 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
         HttpConstants.HEADER_ACCEPT_SIGNATURE, Algorithm.RSA_SHA256.getPortableName());
     request.addHeader(HttpConstants.HEADER_WANT_DIGEST, "SHA-256");
 
-    Map<String, String> headers = HttpUtils.getCaseInsensitiveHeadersMap(request);
+    HttpHeaders headers = HttpUtils.toHttpHeaders(request);
 
     KeyPair keyPair = createKeyPair();
 
@@ -192,7 +189,7 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
       String signatureParameter,
       String[] signatureHeaders,
       MockHttpServletRequest request,
-      Map<String, String> headers,
+      HttpHeaders headers,
       KeyPair keyPair) {
     Signer signer =
         new Signer(keyPair.getPrivate(), new Signature(keyId, algorithm, null, signatureHeaders));
@@ -201,7 +198,9 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
       String requestString = request.getPathInfo() + (queryParams == null ? "" : "?" + queryParams);
       Signature signature;
       if (signatureParameter == null) {
-        signature = signer.sign(request.getMethod().toLowerCase(), requestString, headers);
+        signature =
+            signer.sign(
+                request.getMethod().toLowerCase(), requestString, HttpUtils.toHeadersMap(headers));
       } else {
         signature = new Signature(keyId, algorithm, signatureParameter, signatureHeaders);
       }

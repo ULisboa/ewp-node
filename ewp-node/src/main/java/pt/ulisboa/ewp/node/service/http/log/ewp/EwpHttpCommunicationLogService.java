@@ -82,7 +82,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         HttpRequestLog.create(
             HttpMethod.fromString(request.getMethod()),
             url.toString(),
-            getHttpHeadersCollection(request),
+            toHttpHeaderCollection(request),
             request.getBody());
     requestLog.getHeaders().forEach(header -> header.setRequestLog(requestLog));
     return requestLog;
@@ -93,7 +93,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         HttpRequestLog.create(
             HttpMethod.fromString(request.getMethod().name()),
             request.getUrl(),
-            getHttpHeadersCollection(request.getHeaders()),
+            toHttpHeaderCollection(request.getHeaders()),
             HttpUtils.serializeFormData(request.getBodyParams()));
     requestLog.getHeaders().forEach(header -> header.setRequestLog(requestLog));
     return requestLog;
@@ -107,10 +107,9 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
     HttpResponseLog responseLog =
         HttpResponseLog.create(
             response.getStatusCode(),
-            getHttpHeadersCollection(response.getHeaders()),
+            toHttpHeaderCollection(response.getHeaders()),
             response.getRawBody());
     responseLog.getHeaders().forEach(header -> header.setResponseLog(responseLog));
     return responseLog;
   }
-
 }

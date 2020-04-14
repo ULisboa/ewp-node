@@ -1,14 +1,14 @@
 package pt.ulisboa.ewp.node.client.ewp.operation.response;
 
 import java.io.Serializable;
-
-import pt.ulisboa.ewp.node.utils.http.HttpHeadersMap;
+import java.util.List;
+import org.springframework.http.HttpHeaders;
 
 public class EwpResponse implements Serializable {
 
   private int statusCode = -1;
   private String mediaType;
-  private HttpHeadersMap headers = new HttpHeadersMap();
+  private HttpHeaders headers = new HttpHeaders();
   private String rawBody = "";
 
   protected EwpResponse(Builder builder) {
@@ -26,7 +26,7 @@ public class EwpResponse implements Serializable {
     return mediaType;
   }
 
-  public HttpHeadersMap getHeaders() {
+  public HttpHeaders getHeaders() {
     return headers;
   }
 
@@ -46,7 +46,7 @@ public class EwpResponse implements Serializable {
 
     private int statusCode = -1;
     private String mediaType;
-    private HttpHeadersMap headers = new HttpHeadersMap();
+    private HttpHeaders headers = new HttpHeaders();
     private String rawBody = "";
 
     public Builder statusCode(int statusCode) {
@@ -67,17 +67,17 @@ public class EwpResponse implements Serializable {
       return mediaType;
     }
 
-    public Builder headers(HttpHeadersMap headers) {
+    public Builder headers(HttpHeaders headers) {
       this.headers = headers;
       return this;
     }
 
-    public HttpHeadersMap headers() {
+    public HttpHeaders headers() {
       return headers;
     }
 
-    public Builder header(String key, String value) {
-      this.headers.put(key, value);
+    public Builder header(String key, List<String> values) {
+      headers.put(key, values);
       return this;
     }
 
