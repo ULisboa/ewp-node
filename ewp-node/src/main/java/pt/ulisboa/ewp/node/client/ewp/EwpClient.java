@@ -3,8 +3,6 @@ package pt.ulisboa.ewp.node.client.ewp;
 import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -49,8 +47,8 @@ import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
+import pt.ulisboa.ewp.node.service.security.ewp.verifier.response.ResponseAuthenticationVerifier;
 import pt.ulisboa.ewp.node.utils.ewp.EwpResponseUtils;
-import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedKeystore;
 import pt.ulisboa.ewp.node.utils.keystore.KeyStoreUtil;
@@ -64,6 +62,8 @@ public class EwpClient {
   @Autowired private KeyStoreService keystoreService;
 
   @Autowired private HttpSignatureService httpSignatureService;
+
+  @Autowired private ResponseAuthenticationVerifier responseAuthenticationVerifier;
 
   @Autowired private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
@@ -199,7 +199,8 @@ public class EwpClient {
 
       ewpResponse = responseBuilder.build();
 
-      responseAuthenticationResult = authenticateResponse(request, ewpResponse);
+      responseAuthenticationResult =
+          responseAuthenticationVerifier.verifyAgainstMethod(request, ewpResponse);
       if (!responseAuthenticationResult.isValid()) {
         return new EwpResponseAuthenticationErrorOperationResult.Builder()
             .request(request)
@@ -285,39 +286,6 @@ public class EwpClient {
     StringWriter result = new StringWriter();
     exception.printStackTrace(new PrintWriter(result));
     return result.toString();
-  }
-
-  private EwpAuthenticationResult authenticateResponse(EwpRequest request, EwpResponse response) {
-    if (request.getAuthenticationMethod().equals(EwpAuthenticationMethod.HTTP_SIGNATURE)) {
-      return httpSignatureService.verifyHttpSignatureResponse(
-          request.getMethod().name(),
-          request.getUrlWithoutQueryParams(),
-          response.getHeaders(),
-          response.getRawBody(),
-          request.getId());
-
-    } else if (request.getAuthenticationMethod().equals(EwpAuthenticationMethod.TLS)) {
-      try {
-        boolean valid =
-            new URL(request.getUrl()).getProtocol().equalsIgnoreCase(HttpConstants.PROTOCOL_HTTPS);
-        if (valid) {
-          return EwpAuthenticationResult.createValid(EwpAuthenticationMethod.TLS);
-        } else {
-          return EwpAuthenticationResult.createInvalid(
-              EwpAuthenticationMethod.TLS,
-              "Request URL is not using " + HttpConstants.PROTOCOL_HTTPS + " protocol");
-        }
-      } catch (MalformedURLException e) {
-        throw new IllegalArgumentException(e);
-      }
-
-    } else if (request.getAuthenticationMethod().equals(EwpAuthenticationMethod.ANONYMOUS)) {
-      return EwpAuthenticationResult.createValid(EwpAuthenticationMethod.ANONYMOUS);
-
-    } else {
-      throw new IllegalStateException(
-          "Communication to EWP servers must use one authentication method");
-    }
   }
 
   private void sanitizeResponse(Response response) {
