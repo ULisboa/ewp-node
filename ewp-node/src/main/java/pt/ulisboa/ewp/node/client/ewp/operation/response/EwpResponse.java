@@ -2,13 +2,13 @@ package pt.ulisboa.ewp.node.client.ewp.operation.response;
 
 import java.io.Serializable;
 import java.util.List;
-import org.springframework.http.HttpHeaders;
+import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
 
 public class EwpResponse implements Serializable {
 
   private int statusCode = -1;
   private String mediaType;
-  private HttpHeaders headers = new HttpHeaders();
+  private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
   private String rawBody = "";
 
   protected EwpResponse(Builder builder) {
@@ -26,7 +26,7 @@ public class EwpResponse implements Serializable {
     return mediaType;
   }
 
-  public HttpHeaders getHeaders() {
+  public ExtendedHttpHeaders getHeaders() {
     return headers;
   }
 
@@ -46,7 +46,7 @@ public class EwpResponse implements Serializable {
 
     private int statusCode = -1;
     private String mediaType;
-    private HttpHeaders headers = new HttpHeaders();
+    private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
     private String rawBody = "";
 
     public Builder statusCode(int statusCode) {
@@ -67,12 +67,12 @@ public class EwpResponse implements Serializable {
       return mediaType;
     }
 
-    public Builder headers(HttpHeaders headers) {
+    public Builder headers(ExtendedHttpHeaders headers) {
       this.headers = headers;
       return this;
     }
 
-    public HttpHeaders headers() {
+    public ExtendedHttpHeaders headers() {
       return headers;
     }
 

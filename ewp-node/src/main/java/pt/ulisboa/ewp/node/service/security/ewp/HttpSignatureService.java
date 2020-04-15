@@ -42,6 +42,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.HttpSignatureAuthenticationResult;
 import pt.ulisboa.ewp.node.utils.DateUtils;
+import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
@@ -235,7 +236,7 @@ public class HttpSignatureService {
       return authenticateMethodResponse.get();
     }
 
-    HttpHeaders headers = HttpUtils.toHttpHeaders(request);
+    ExtendedHttpHeaders headers = HttpUtils.toExtendedHttpHeaders(request);
 
     if (!verifyHost(request, headers)) {
       return EwpApiAuthenticateMethodResponse.failureBuilder(
@@ -305,7 +306,11 @@ public class HttpSignatureService {
    * @return The result of the HTTP signature verification
    */
   public HttpSignatureAuthenticationResult verifyHttpSignatureResponse(
-      String method, String requestUri, HttpHeaders headers, String rawResponse, String requestId) {
+      String method,
+      String requestUri,
+      ExtendedHttpHeaders headers,
+      String rawResponse,
+      String requestId) {
     if (!requestId.equals(headers.getFirst(HttpConstants.HEADER_X_REQUEST_ID))) {
       return HttpSignatureAuthenticationResult.createInvalid(
           "Header X-Request-Id does not match the id sent in the request");
@@ -394,44 +399,9 @@ public class HttpSignatureService {
   }
 
   private Optional<EwpApiAuthenticateMethodResponse> verifyDigest(
-      HttpHeaders headers, byte[] bodyBytes) {
+      ExtendedHttpHeaders headers, byte[] bodyBytes) {
     if (headers.containsKey(HttpConstants.HEADER_DIGEST)) {
-      byte[] digest;
-      try {
-        digest = MessageDigest.getInstance(SHA_256).digest(bodyBytes);
-      } catch (NoSuchAlgorithmException e) {
-        log.warn(MESSAGE_NO_SUCH_ALGORITHM, e);
-        return Optional.of(
-            EwpApiAuthenticateMethodResponse.failureBuilder(
-                    EwpAuthenticationMethod.HTTP_SIGNATURE, MESSAGE_NO_SUCH_ALGORITHM)
-                .withResponseCode(HttpStatus.BAD_REQUEST)
-                .build());
-      }
-      String digestCalculatedWithoutAlgorithm = new String(Base64.encodeBase64(digest));
-      String digestCalculatedWithAlgorithm = SHA_256 + "=" + digestCalculatedWithoutAlgorithm;
-
-      String requestDigest =
-          headers.getOrDefault(HttpConstants.HEADER_DIGEST, new ArrayList<>()).stream()
-              .filter(d -> d.substring(0, d.indexOf('=')).equalsIgnoreCase(SHA_256))
-              .findFirst()
-              .orElse(null);
-      if (requestDigest == null
-          || !digestCalculatedWithoutAlgorithm.equals(
-              requestDigest.substring(requestDigest.indexOf('=') + 1))) {
-        return Optional.of(
-            EwpApiAuthenticateMethodResponse.failureBuilder(
-                    EwpAuthenticationMethod.HTTP_SIGNATURE,
-                    "Digest mismatch! calculated (body length: "
-                        + bodyBytes.length
-                        + "): "
-                        + digestCalculatedWithAlgorithm
-                        + ", header: "
-                        + requestDigest)
-                .withResponseCode(HttpStatus.BAD_REQUEST)
-                .build());
-      }
-
-      return Optional.empty();
+      return verifyDigestAgainstAlgorithm(headers, SHA_256, bodyBytes);
     } else {
       // DOUBT: Digest header is required or not?
       return Optional.of(
@@ -440,6 +410,41 @@ public class HttpSignatureService {
               .withResponseCode(HttpStatus.BAD_REQUEST)
               .build());
     }
+  }
+
+  private Optional<EwpApiAuthenticateMethodResponse> verifyDigestAgainstAlgorithm(
+      ExtendedHttpHeaders headers, String algorithm, byte[] bodyBytes) {
+    byte[] digest;
+    try {
+      digest = MessageDigest.getInstance(algorithm).digest(bodyBytes);
+    } catch (NoSuchAlgorithmException e) {
+      log.error(MESSAGE_NO_SUCH_ALGORITHM, e);
+      return Optional.of(
+          EwpApiAuthenticateMethodResponse.failureBuilder(
+                  EwpAuthenticationMethod.HTTP_SIGNATURE, MESSAGE_NO_SUCH_ALGORITHM)
+              .withResponseCode(HttpStatus.BAD_REQUEST)
+              .build());
+    }
+    String digestValueCalculated = new String(Base64.encodeBase64(digest));
+
+    String requestDigestValue = headers.getDigestValue(algorithm);
+    if (!digestValueCalculated.equals(requestDigestValue)) {
+      return Optional.of(
+          EwpApiAuthenticateMethodResponse.failureBuilder(
+                  EwpAuthenticationMethod.HTTP_SIGNATURE,
+                  "Digest mismatch! calculated for algorithm "
+                      + algorithm
+                      + " (body length: "
+                      + bodyBytes.length
+                      + "): "
+                      + digestValueCalculated
+                      + ", provided: "
+                      + requestDigestValue)
+              .withResponseCode(HttpStatus.BAD_REQUEST)
+              .build());
+    }
+
+    return Optional.empty();
   }
 
   private Optional<EwpApiAuthenticateMethodResponse> verifySignature(

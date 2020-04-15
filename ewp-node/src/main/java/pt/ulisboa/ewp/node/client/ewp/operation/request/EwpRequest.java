@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
+import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
 public class EwpRequest {
@@ -15,7 +15,7 @@ public class EwpRequest {
   private String id = UUID.randomUUID().toString();
   private HttpMethod method;
   private String urlWithoutQueryParams;
-  private HttpHeaders headers = new HttpHeaders();
+  private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
   private Map<String, List<String>> queryParams = new HashMap<>();
   private Map<String, List<String>> bodyParams = new HashMap<>();
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.TLS;
@@ -47,11 +47,11 @@ public class EwpRequest {
     return this;
   }
 
-  public HttpHeaders getHeaders() {
+  public ExtendedHttpHeaders getHeaders() {
     return headers;
   }
 
-  public EwpRequest headers(HttpHeaders headers) {
+  public EwpRequest headers(ExtendedHttpHeaders headers) {
     this.headers = headers;
     return this;
   }

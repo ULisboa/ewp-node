@@ -19,8 +19,8 @@ public class HttpUtils {
 
   private HttpUtils() {}
 
-  public static HttpHeaders toHttpHeaders(MultivaluedMap<String, Object> headers) {
-    HttpHeaders result = new HttpHeaders();
+  public static ExtendedHttpHeaders toExtendedHttpHeaders(MultivaluedMap<String, Object> headers) {
+    ExtendedHttpHeaders result = new ExtendedHttpHeaders();
     headers
         .keySet()
         .forEach(
@@ -33,8 +33,8 @@ public class HttpUtils {
     return result;
   }
 
-  public static HttpHeaders toHttpHeaders(HttpServletRequest request) {
-    HttpHeaders headers = new HttpHeaders();
+  public static ExtendedHttpHeaders toExtendedHttpHeaders(HttpServletRequest request) {
+    ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
     Enumeration<String> headerNames = request.getHeaderNames();
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();

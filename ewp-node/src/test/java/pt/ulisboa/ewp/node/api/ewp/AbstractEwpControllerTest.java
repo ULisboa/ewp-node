@@ -113,7 +113,7 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
       String signature,
       boolean validKeyId) {
     return request -> {
-      HttpHeaders headers = HttpUtils.toHttpHeaders(request);
+      HttpHeaders headers = HttpUtils.toExtendedHttpHeaders(request);
 
       TreeSet<String> signatureHeadersSet = new TreeSet<>(headers.keySet());
       signatureHeadersSet.add(HttpSignatureService.HEADER_REQUEST_TARGET);
@@ -166,7 +166,7 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
         HttpConstants.HEADER_ACCEPT_SIGNATURE, Algorithm.RSA_SHA256.getPortableName());
     request.addHeader(HttpConstants.HEADER_WANT_DIGEST, "SHA-256");
 
-    HttpHeaders headers = HttpUtils.toHttpHeaders(request);
+    HttpHeaders headers = HttpUtils.toExtendedHttpHeaders(request);
 
     KeyPair keyPair = createKeyPair();
 

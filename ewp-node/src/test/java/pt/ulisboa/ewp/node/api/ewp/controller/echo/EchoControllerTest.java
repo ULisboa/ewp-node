@@ -262,7 +262,7 @@ public class EchoControllerTest extends AbstractEwpControllerTest {
         InvalidEchoHttpSignatureTestDataWrapper.create(
                 this::postRequest,
                 HttpStatus.BAD_REQUEST,
-                "Digest mismatch! calculated (body length: 7): SHA-256=7K89JMP/+DCmiM5iRh4iK6B8VZm8pqDY4yv8tTumlfo=, header: SHA-256=@@@invalid@@@")
+                "Digest mismatch! calculated for algorithm SHA-256 (body length: 7): 7K89JMP/+DCmiM5iRh4iK6B8VZm8pqDY4yv8tTumlfo=, provided: @@@invalid@@@")
             .echo(Collections.singletonList("a1"))
             .digest("SHA-256=@@@invalid@@@"));
   }
