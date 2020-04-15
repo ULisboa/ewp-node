@@ -4,9 +4,9 @@ metadata:
   name: {{ include "ewp-node.fullname" . }}
   namespace: {{ .Values.namespace }}
   labels:
-  {{ include "ewp-node.labels" . | indent 4 }}
-annotations:
-  {{ include "ewp-node.annotations" . | indent 4 }}
+    {{ include "ewp-node.labels" . | nindent 4 }}
+  annotations:
+    {{ include "ewp-node.annotations" . | nindent 4 }}
 spec:
   minReplicas: {{ .Values.horizontalPodAutoScaler.minReplicaCount }}
   maxReplicas: {{ .Values.horizontalPodAutoScaler.maxReplicaCount }}

@@ -4,9 +4,9 @@ metadata:
   name: {{ include "ewp-node.fullname" . }}
   namespace: {{ .Values.namespace }}
   labels:
-  {{ include "ewp-node.labels" . | indent 4 }}
-annotations:
-  {{ include "ewp-node.annotations" . | indent 4 }}
+    {{ include "ewp-node.labels" . | nindent 4 }}
+  annotations:
+    {{ include "ewp-node.annotations" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -18,69 +18,69 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "ewp-node.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-  {{ include "ewp-node.labels" . | indent 8 }}
-annotations:
-  {{ include "ewp-node.annotations" . | indent 8 }}
-spec:
-  {{- with .Values.imagePullSecrets }}
-imagePullSecrets:
-  {{- toYaml . | nindent 8 }}
-  {{- end }}
-containers:
-  - name: {{ .Chart.Name }}
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-    imagePullPolicy: {{ .Values.image.pullPolicy }}
-    {{- with .Values.env }}
-    env:
-      {{- toYaml . | nindent 12 }}
-    {{- end }}
-    ports:
-      - name: http
-        containerPort: {{ .Values.service.internalPort }}
-        protocol: TCP
-    {{- if .Values.healthcheck.enabled }}
-    livenessProbe:
-      httpGet:
-        path: {{ .Values.deployment.livenessProbe.path }}
-        port: http
-      initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
-      periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
-      failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold }}
-      timeoutSeconds: {{ .Values.deployment.livenessProbe.timeoutSeconds }}
-      successThreshold: {{ .Values.deployment.livenessProbe.successThreshold }}
-    readinessProbe:
-      httpGet:
-        path: {{ .Values.deployment.readinessProbe.path }}
-        port: http
-      initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
-      periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
-      failureThreshold: {{ .Values.deployment.readinessProbe.failureThreshold }}
-      timeoutSeconds: {{ .Values.deployment.readinessProbe.timeoutSeconds }}
-      successThreshold: {{ .Values.deployment.readinessProbe.successThreshold }}
-    {{- end }}
-    resources:
-      {{- toYaml .Values.resources | nindent 12 }}
-    volumeMounts:
-      {{- if .Values.volumeMounts.config.enabled }}
-      - mountPath: {{ .Values.volumeMounts.config.mountPath }}
-        name: {{ include "ewp-node.fullname" . }}-config-volume
-        subPath: {{ .Values.volumeMounts.config.subPath }}
+        {{ include "ewp-node.labels" . | nindent 8 }}
+      annotations:
+        {{ include "ewp-node.annotations" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
-  {{- with .Values.nodeSelector }}
-nodeSelector:
-  {{- toYaml . | nindent 8 }}
-  {{- end }}
-volumes:
-  {{- if .Values.persistentVolumeClaim.enabled }}
-  - name: {{ include "ewp-node.fullname" . }}-config-volume
-    persistentVolumeClaim:
-      claimName: {{ .Values.persistentVolumeClaim.name }}
-  {{- end }}
-  {{- with .Values.affinity }}
-affinity:
-  {{- toYaml . | nindent 8 }}
-  {{- end }}
-  {{- with .Values.tolerations }}
-tolerations:
-  {{- toYaml . | nindent 8 }}
-  {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.internalPort }}
+              protocol: TCP
+          {{- if .Values.healthcheck.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.deployment.livenessProbe.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.deployment.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.deployment.livenessProbe.successThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.deployment.readinessProbe.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.deployment.readinessProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.deployment.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.deployment.readinessProbe.successThreshold }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.volumeMounts.config.enabled }}
+            - mountPath: {{ .Values.volumeMounts.config.mountPath }}
+              name: {{ include "ewp-node.fullname" . }}-config-volume
+              subPath: {{ .Values.volumeMounts.config.subPath }}
+            {{- end }}
+        {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      volumes:
+        {{- if .Values.persistentVolumeClaim.enabled }}
+        - name: {{ include "ewp-node.fullname" . }}-config-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistentVolumeClaim.name }}
+        {{- end }}
+        {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}

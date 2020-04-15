@@ -3,9 +3,9 @@ kind: Pod
 metadata:
   name: "{{ include "ewp-node.fullname" . }}-test-connection"
   labels:
-  {{ include "ewp-node.labels" . | indent 4 }}
-annotations:
-  "helm.sh/hook": test-success
+    {{ include "ewp-node.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
 spec:
   containers:
     - name: wget
