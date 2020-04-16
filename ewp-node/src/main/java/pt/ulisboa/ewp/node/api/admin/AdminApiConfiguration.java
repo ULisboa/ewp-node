@@ -1,6 +1,5 @@
 package pt.ulisboa.ewp.node.api.admin;
 
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -29,16 +28,16 @@ public class AdminApiConfiguration {
     public void customise(OpenAPI openApi) {
       final String securitySchemeName = "bearerAuth";
       openApi.addSecurityItem(new SecurityRequirement().addList(securitySchemeName));
-      openApi.components(
-          new Components()
-              .addSecuritySchemes(
-                  securitySchemeName,
-                  new SecurityScheme()
-                      .name(securitySchemeName)
-                      .type(SecurityScheme.Type.HTTP)
-                      .description("JWT token encoded using the admin's secret")
-                      .scheme("bearer")
-                      .bearerFormat("JWT")));
+      openApi
+          .getComponents()
+          .addSecuritySchemes(
+              securitySchemeName,
+              new SecurityScheme()
+                  .name(securitySchemeName)
+                  .type(SecurityScheme.Type.HTTP)
+                  .description("JWT token encoded using the admin's secret")
+                  .scheme("bearer")
+                  .bearerFormat("JWT"));
     }
   }
 }

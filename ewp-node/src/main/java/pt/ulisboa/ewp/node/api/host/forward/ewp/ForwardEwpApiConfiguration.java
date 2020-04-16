@@ -1,6 +1,5 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp;
 
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -31,18 +30,18 @@ public class ForwardEwpApiConfiguration {
     public void customise(OpenAPI openApi) {
       final String securitySchemeName = "bearerAuth";
       openApi.addSecurityItem(new SecurityRequirement().addList(securitySchemeName));
-      openApi.components(
-          new Components()
-              .addSecuritySchemes(
-                  securitySchemeName,
-                  new SecurityScheme()
-                      .name(securitySchemeName)
-                      .type(SecurityScheme.Type.HTTP)
-                      .description(
-                          "JWT token with \"iss\" claim filled with the host's code. "
-                              + "The token shall be encoded using the host's secret")
-                      .scheme("bearer")
-                      .bearerFormat("JWT")));
+      openApi
+          .getComponents()
+          .addSecuritySchemes(
+              securitySchemeName,
+              new SecurityScheme()
+                  .name(securitySchemeName)
+                  .type(SecurityScheme.Type.HTTP)
+                  .description(
+                      "JWT token with \"iss\" claim filled with the host's code. "
+                          + "The token shall be encoded using the host's secret")
+                  .scheme("bearer")
+                  .bearerFormat("JWT"));
     }
   }
 }
