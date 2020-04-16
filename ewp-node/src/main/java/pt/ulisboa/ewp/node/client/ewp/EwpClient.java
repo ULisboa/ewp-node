@@ -25,23 +25,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientUnknownErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.AbstractEwpOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpErrorResponseOperationResult;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpProcessorErrorOperationResult;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpResponseAuthenticationErrorOperationResult;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpUnknownErrorResponseOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpInternalErrorOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpInvalidResponseOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.exception.ewp.EwpResponseBodyCannotBeCastToException;
+import pt.ulisboa.ewp.node.exception.ewp.EwpServerAuthenticationFailedException;
+import pt.ulisboa.ewp.node.exception.ewp.EwpServerException;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
@@ -77,9 +77,8 @@ public class EwpClient {
    * @throws EwpClientProcessorException Request/Response processing failed for some reason.
    * @throws EwpClientErrorResponseException Target API returned an error response (see {@see
    *     eu.erasmuswithoutpaper.api.architecture.ErrorResponse}).
-   * @throws EwpClientUnknownErrorResponseException Target API returned an unknown error response.
-   * @throws EwpClientResponseAuthenticationFailedException The obtained response failed
-   *     authentication
+   * @throws pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException Target API
+   *     returned an invalid response.
    */
   @SuppressWarnings("unchecked")
   public <T> EwpSuccessOperationResult<T> executeWithLoggingExpectingSuccess(
@@ -119,17 +118,7 @@ public class EwpClient {
     EwpResponse ewpResponse = null;
     EwpAuthenticationResult responseAuthenticationResult = null;
     try {
-      Client client;
-      try {
-        client = getClient();
-      } catch (NoSuchAlgorithmException
-          | KeyManagementException
-          | UnrecoverableKeyException
-          | KeyStoreException
-          | NoSuchProviderException e) {
-        log.error("Failed to initialize EWP client", e);
-        return new EwpProcessorErrorOperationResult.Builder().request(request).exception(e).build();
-      }
+      Client client = getClient();
 
       WebTarget target = client.target(request.getUrl());
       target.property("http.autoredirect", true);
@@ -143,8 +132,8 @@ public class EwpClient {
 
       sanitizeResponse(response);
 
-      EwpResponse.Builder responseBuilder = new EwpResponse.Builder();
-      responseBuilder.statusCode(response.getStatus());
+      EwpResponse.Builder responseBuilder =
+          new EwpResponse.Builder(HttpStatus.resolve(response.getStatus()));
       responseBuilder.mediaType(response.getMediaType().toString());
 
       response
@@ -166,47 +155,60 @@ public class EwpClient {
       responseAuthenticationResult =
           responseAuthenticationVerifier.verifyAgainstMethod(request, ewpResponse);
       if (!responseAuthenticationResult.isValid()) {
-        return new EwpResponseAuthenticationErrorOperationResult.Builder()
-            .request(request)
-            .response(ewpResponse)
-            .responseAuthenticationResult(responseAuthenticationResult)
-            .build();
+        throw new EwpServerAuthenticationFailedException(
+            request, ewpResponse, responseAuthenticationResult);
       }
 
-      if (!ewpResponse.isOk()) {
-        try {
-          ErrorResponse errorResponse =
-              EwpResponseUtils.readResponseBody(ewpResponse, ErrorResponse.class);
-          return new EwpErrorResponseOperationResult.Builder()
-              .request(request)
-              .response(ewpResponse)
-              .responseAuthenticationResult(responseAuthenticationResult)
-              .errorResponse(errorResponse)
-              .build();
+      return resolveResponseToOperationStatus(
+          request, expectedResponseBodyType, ewpResponse, responseAuthenticationResult);
 
-        } catch (EwpResponseBodyCannotBeCastToException e) {
-          log.error("Failed to read error response's body", e);
-          return new EwpUnknownErrorResponseOperationResult.Builder()
-              .request(request)
-              .response(ewpResponse)
-              .responseAuthenticationResult(responseAuthenticationResult)
-              .error(ewpResponse.getRawBody())
-              .build();
-        }
-      }
+    } catch (NoSuchAlgorithmException
+        | KeyManagementException
+        | UnrecoverableKeyException
+        | KeyStoreException
+        | NoSuchProviderException e) {
+      log.error("Failed to initialize EWP client", e);
+      return new EwpInternalErrorOperationResult.Builder().request(request).exception(e).build();
 
-      T responseBody;
-      try {
-        responseBody = EwpResponseUtils.readResponseBody(ewpResponse, expectedResponseBodyType);
-      } catch (EwpResponseBodyCannotBeCastToException e) {
-        return new EwpProcessorErrorOperationResult.Builder()
-            .request(request)
-            .response(ewpResponse)
-            .responseAuthenticationResult(responseAuthenticationResult)
-            .exception(e)
-            .build();
-      }
+    } catch (EwpServerAuthenticationFailedException | EwpResponseBodyCannotBeCastToException e) {
+      log.error("Invalid server's response", e);
+      return new EwpInvalidResponseOperationResult.Builder(e)
+          .request(request)
+          .response(ewpResponse)
+          .responseAuthenticationResult(responseAuthenticationResult)
+          .build();
 
+    } catch (Exception e) {
+      log.error("Failed to execute request", e);
+      return new EwpInternalErrorOperationResult.Builder()
+          .request(request)
+          .response(ewpResponse)
+          .responseAuthenticationResult(responseAuthenticationResult)
+          .exception(e)
+          .build();
+    }
+  }
+
+  private <T> AbstractEwpOperationResult resolveResponseToOperationStatus(
+      EwpRequest request,
+      Class<T> expectedResponseBodyType,
+      EwpResponse ewpResponse,
+      EwpAuthenticationResult responseAuthenticationResult)
+      throws EwpResponseBodyCannotBeCastToException {
+    if (ewpResponse.isClientError()) {
+      return resolveClientErrorToOperationResult(
+          request, ewpResponse, responseAuthenticationResult);
+
+    } else if (ewpResponse.isServerError()) {
+      return new EwpInvalidResponseOperationResult.Builder(
+              new EwpServerException(request, ewpResponse))
+          .request(request)
+          .response(ewpResponse)
+          .responseAuthenticationResult(responseAuthenticationResult)
+          .build();
+
+    } else if (ewpResponse.isSuccess()) {
+      T responseBody = EwpResponseUtils.readResponseBody(ewpResponse, expectedResponseBodyType);
       return new EwpSuccessOperationResult.Builder<T>()
           .request(request)
           .response(ewpResponse)
@@ -214,13 +216,33 @@ public class EwpClient {
           .responseBody(responseBody)
           .build();
 
-    } catch (Exception e) {
-      log.error("Failed to execute request", e);
-      return new EwpProcessorErrorOperationResult.Builder()
+    } else {
+      throw new IllegalStateException(
+          "Cannot handle response's status code: " + ewpResponse.getStatus());
+    }
+  }
+
+  private AbstractEwpOperationResult resolveClientErrorToOperationResult(
+      EwpRequest request,
+      EwpResponse ewpResponse,
+      EwpAuthenticationResult responseAuthenticationResult)
+      throws EwpResponseBodyCannotBeCastToException {
+    if (HttpStatus.UNAUTHORIZED.equals(ewpResponse.getStatus())
+        || HttpStatus.FORBIDDEN.equals(ewpResponse.getStatus())) {
+      return new EwpInternalErrorOperationResult.Builder()
           .request(request)
           .response(ewpResponse)
           .responseAuthenticationResult(responseAuthenticationResult)
-          .exception(e)
+          .exception(new IllegalStateException("Client authentication failed"))
+          .build();
+    } else {
+      ErrorResponse errorResponse =
+          EwpResponseUtils.readResponseBody(ewpResponse, ErrorResponse.class);
+      return new EwpErrorResponseOperationResult.Builder()
+          .request(request)
+          .response(ewpResponse)
+          .responseAuthenticationResult(responseAuthenticationResult)
+          .errorResponse(errorResponse)
           .build();
     }
   }

@@ -20,9 +20,9 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientResponseAuthenticationFailedException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientUnknownErrorResponseException;
+import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
 import pt.ulisboa.ewp.node.utils.PojoUtils;
 
 @ControllerAdvice(annotations = ForwardEwpApi.class)
@@ -70,16 +70,24 @@ public class ForwardEwpApiClientExceptionHandler {
     return ForwardEwpApiResponseUtils.toRequestErrorResponseEntity(errorMessages);
   }
 
-  @ExceptionHandler({EwpClientProcessorException.class})
-  public ResponseEntity<ForwardEwpApiResponse> handleEwpClientProcessorException(
-      EwpClientProcessorException exception) {
-    return ForwardEwpApiResponseUtils.toProcessorErrorResponseEntity(exception.getMessage());
+  @ExceptionHandler({NoEwpApiForHeiIdException.class})
+  public ResponseEntity<ForwardEwpApiResponse> handleNoEwpApiForHeiIdException(
+      NoEwpApiForHeiIdException exception) throws NoSuchFieldException {
+    List<String> errorMessages = new ArrayList<>();
+    errorMessages.add(exception.getMessage());
+    return ForwardEwpApiResponseUtils.toRequestErrorResponseEntity(errorMessages);
   }
 
-  @ExceptionHandler({EwpClientResponseAuthenticationFailedException.class})
-  public ResponseEntity<ForwardEwpApiResponse> handleEwpClientResponseAuthenticationFailedException(
-      EwpClientResponseAuthenticationFailedException exception) {
-    return ForwardEwpApiResponseUtils.toResponseAuthenticationErrorResponseEntity(
+  @ExceptionHandler({EwpClientProcessorException.class})
+  public ResponseEntity<ForwardEwpApiResponse> handleEwpClientInternalException(
+      EwpClientProcessorException exception) {
+    return ForwardEwpApiResponseUtils.toInternalErrorResponseEntity(exception.getMessage());
+  }
+
+  @ExceptionHandler({EwpClientInvalidResponseException.class})
+  public ResponseEntity<ForwardEwpApiResponse> handleEwpClientInvalidResponseException(
+      EwpClientInvalidResponseException exception) {
+    return ForwardEwpApiResponseUtils.toInvalidResponseEntity(
         exception.getResponse(), exception.getResponseAuthenticationResult());
   }
 
@@ -92,19 +100,12 @@ public class ForwardEwpApiClientExceptionHandler {
         exception.getErrorResponse());
   }
 
-  @ExceptionHandler({EwpClientUnknownErrorResponseException.class})
-  public ResponseEntity<ForwardEwpApiResponse> handleEwpClientUnknownErrorResponseException(
-      EwpClientUnknownErrorResponseException exception) {
-    return ForwardEwpApiResponseUtils.toUnknownErrorResponseEntity(
-        exception.getResponse(), exception.getResponseAuthenticationResult(), exception.getError());
-  }
-
   @ExceptionHandler({Exception.class})
   public ResponseEntity<ForwardEwpApiResponse> handleException(Exception exception) {
     log.warn("Handling exception", exception);
     if (exception.getMessage() == null) {
-      return ForwardEwpApiResponseUtils.toProcessorErrorResponseEntity("Internal server error");
+      return ForwardEwpApiResponseUtils.toInternalErrorResponseEntity("Internal server error");
     }
-    return ForwardEwpApiResponseUtils.toProcessorErrorResponseEntity(exception.getMessage());
+    return ForwardEwpApiResponseUtils.toInternalErrorResponseEntity(exception.getMessage());
   }
 }

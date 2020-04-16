@@ -19,14 +19,9 @@ public abstract class AbstractErrorEwpOperationResult extends AbstractEwpOperati
 
   public abstract AbstractEwpClientErrorException toClientException();
 
-  public EwpProcessorErrorOperationResult asProcessorError() {
-    assert errorType == EwpOperationResultErrorType.PROCESSOR_ERROR;
-    return (EwpProcessorErrorOperationResult) this;
-  }
-
-  public EwpResponseAuthenticationErrorOperationResult asResponseAuthenticationError() {
-    assert errorType == EwpOperationResultErrorType.RESPONSE_AUTHENTICATION_ERROR;
-    return (EwpResponseAuthenticationErrorOperationResult) this;
+  public EwpInternalErrorOperationResult asProcessorError() {
+    assert errorType == EwpOperationResultErrorType.INTERNAL_ERROR;
+    return (EwpInternalErrorOperationResult) this;
   }
 
   public EwpErrorResponseOperationResult asErrorResponse() {
@@ -34,18 +29,18 @@ public abstract class AbstractErrorEwpOperationResult extends AbstractEwpOperati
     return (EwpErrorResponseOperationResult) this;
   }
 
-  public EwpUnknownErrorResponseOperationResult asUnknownErrorResponse() {
-    assert errorType == EwpOperationResultErrorType.UNKNOWN_ERROR_RESPONSE;
-    return (EwpUnknownErrorResponseOperationResult) this;
+  public EwpInvalidResponseOperationResult asInvalidServerResponse() {
+    assert errorType == EwpOperationResultErrorType.INVALID_RESPONSE;
+    return (EwpInvalidResponseOperationResult) this;
   }
 
   public abstract static class Builder<T extends Builder<T>>
       extends AbstractEwpOperationResult.Builder<T> {}
 
   public enum EwpOperationResultErrorType {
-    PROCESSOR_ERROR,
+    INTERNAL_ERROR,
     RESPONSE_AUTHENTICATION_ERROR,
     ERROR_RESPONSE,
-    UNKNOWN_ERROR_RESPONSE
+    INVALID_RESPONSE
   }
 }

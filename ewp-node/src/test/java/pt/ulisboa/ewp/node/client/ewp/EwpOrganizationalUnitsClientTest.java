@@ -29,7 +29,7 @@ public class EwpOrganizationalUnitsClientTest extends AbstractTest {
         Arrays.asList("5653486D96841E16E0530B501E0A4594", "5653486D96871E16E0530B501E0A4594");
     EwpSuccessOperationResult<OunitsResponse> response =
         client.findByOunitIds(heiId, organizationalUnitIds);
-    assertThat(response.getResponse().getStatusCode(), equalTo(200));
+    assertThat(response.getResponse().getStatus(), equalTo(200));
     assertThat(response.getResponseAuthenticationResult().isValid(), equalTo(true));
     assertThat(response.getResponseBody(), notNullValue());
     assertThat(response.getResponseBody().getOunit().size(), equalTo(organizationalUnitIds.size()));

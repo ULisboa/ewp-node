@@ -69,7 +69,7 @@ public class EwpClientTest extends AbstractTest {
             new EwpRequest(
                 HttpMethod.GET, "https://dev-registry.erasmuswithoutpaper.eu/catalogue-v1.xml"),
             Catalogue.class);
-    assertThat(result.getResponse().getStatusCode(), equalTo(HttpStatus.OK.value()));
+    assertThat(result.getResponse().getStatus(), equalTo(HttpStatus.OK.value()));
     assertThat(result.getResponseBody(), notNullValue());
     assertThat(result.getResponseBody().getHost(), notNullValue());
   }
@@ -81,7 +81,7 @@ public class EwpClientTest extends AbstractTest {
             new EwpRequest(
                 HttpMethod.GET, "https://dev-registry.erasmuswithoutpaper.eu/manifest.xml"),
             Manifest.class);
-    assertThat(clientResponse.getResponse().getStatusCode(), equalTo(HttpStatus.OK.value()));
+    assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK.value()));
     assertThat(clientResponse.getResponseBody(), notNullValue());
     assertThat(clientResponse.getResponseBody().getHost(), notNullValue());
   }
@@ -119,7 +119,7 @@ public class EwpClientTest extends AbstractTest {
                 .queryParams(params)
                 .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE),
             Response.class);
-    assertThat(clientResponse.getResponse().getStatusCode(), equalTo(HttpStatus.OK.value()));
+    assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK.value()));
     assertThat(clientResponse.getResponseAuthenticationResult().isValid(), equalTo(true));
     assertThat(clientResponse.getResponseBody().getEcho().get(0), equalTo(testEchoValue));
   }
@@ -146,7 +146,7 @@ public class EwpClientTest extends AbstractTest {
                 .bodyParams(params)
                 .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE),
             Response.class);
-    assertThat(clientResponse.getResponse().getStatusCode(), equalTo(HttpStatus.OK.value()));
+    assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK.value()));
     assertThat(clientResponse.getResponseAuthenticationResult().isValid(), equalTo(true));
     assertThat(clientResponse.getResponseBody().getEcho().get(0), equalTo(testEchoValue));
   }

@@ -106,7 +106,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
 
     HttpResponseLog responseLog =
         HttpResponseLog.create(
-            response.getStatusCode(),
+            response.getStatus().value(),
             toHttpHeaderCollection(response.getHeaders()),
             response.getRawBody());
     responseLog.getHeaders().forEach(header -> header.setResponseLog(responseLog));

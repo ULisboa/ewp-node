@@ -34,7 +34,7 @@ public class ForwardEwpApiResponseUtils {
     ForwardEwpApiResponse response =
         toSuccessForwardEwpApiResponse(ewpResponse, responseAuthenticationResult, responseBody);
 
-    return ResponseEntity.status(HttpStatus.resolve(ewpResponse.getStatusCode()))
+    return ResponseEntity.status(ewpResponse.getStatus())
         .contentType(MediaType.APPLICATION_XML)
         .body(response);
   }
@@ -52,7 +52,7 @@ public class ForwardEwpApiResponseUtils {
         .body(responseBody);
   }
 
-  public static ResponseEntity<ForwardEwpApiResponse> toProcessorErrorResponseEntity(
+  public static ResponseEntity<ForwardEwpApiResponse> toInternalErrorResponseEntity(
       String errorMessage) {
     ForwardEwpApiResponse response = createResponseWithMessages(ResultType.PROCESSOR_ERROR);
 
@@ -71,11 +71,11 @@ public class ForwardEwpApiResponseUtils {
         createResponseWithMessages(ResultType.RESPONSE_AUTHENTICATION_ERROR);
 
     OriginalResponse originalResponse = new OriginalResponse();
-    originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatusCode()));
+    originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatus().value()));
     originalResponse.setAuthenticationResult(toAuthenticationResult(responseAuthenticationResult));
     response.setOriginalResponse(originalResponse);
 
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
         .contentType(MediaType.APPLICATION_XML)
         .body(response);
   }
@@ -87,29 +87,29 @@ public class ForwardEwpApiResponseUtils {
     ForwardEwpApiResponse response = createResponseWithMessages(ResultType.ERROR_RESPONSE);
 
     OriginalResponse originalResponse = new OriginalResponse();
-    originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatusCode()));
+    originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatus().value()));
     originalResponse.setAuthenticationResult(toAuthenticationResult(responseAuthenticationResult));
     ForwardEwpApiResponse.OriginalResponse.Body responseBody = new Body();
     responseBody.setAny(errorResponse);
     originalResponse.setBody(responseBody);
     response.setOriginalResponse(originalResponse);
 
-    return ResponseEntity.status(HttpStatus.resolve(ewpResponse.getStatusCode()))
+    return ResponseEntity.status(HttpStatus.resolve(ewpResponse.getStatus().value()))
         .contentType(MediaType.APPLICATION_XML)
         .body(response);
   }
 
-  public static ResponseEntity<ForwardEwpApiResponse> toUnknownErrorResponseEntity(
-      EwpResponse ewpResponse, EwpAuthenticationResult responseAuthenticationResult, String error) {
+  public static ResponseEntity<ForwardEwpApiResponse> toInvalidResponseEntity(
+      EwpResponse ewpResponse, EwpAuthenticationResult responseAuthenticationResult) {
     ForwardEwpApiResponse response = createResponseWithMessages(ResultType.UNKNOWN_ERROR_RESPONSE);
 
     OriginalResponse originalResponse = new OriginalResponse();
-    originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatusCode()));
+    originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatus().value()));
     originalResponse.setAuthenticationResult(toAuthenticationResult(responseAuthenticationResult));
-    originalResponse.setUnknownRawBody(error);
+    originalResponse.setUnknownRawBody(ewpResponse.getRawBody());
     response.setOriginalResponse(originalResponse);
 
-    return ResponseEntity.status(HttpStatus.resolve(ewpResponse.getStatusCode()))
+    return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
         .contentType(MediaType.APPLICATION_XML)
         .body(response);
   }
@@ -121,7 +121,7 @@ public class ForwardEwpApiResponseUtils {
     ForwardEwpApiResponse response = createResponseWithMessages(ResultType.SUCCESS);
 
     OriginalResponse originalResponse = new OriginalResponse();
-    originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatusCode()));
+    originalResponse.setStatusCode(BigInteger.valueOf(ewpResponse.getStatus().value()));
     originalResponse.setAuthenticationResult(
         ForwardEwpApiResponseUtils.toAuthenticationResult(responseAuthenticationResult));
     Body body = new Body();

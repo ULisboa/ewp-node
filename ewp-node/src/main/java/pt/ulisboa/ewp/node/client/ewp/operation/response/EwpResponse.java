@@ -2,24 +2,25 @@ package pt.ulisboa.ewp.node.client.ewp.operation.response;
 
 import java.io.Serializable;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
 
 public class EwpResponse implements Serializable {
 
-  private int statusCode = -1;
+  private HttpStatus status;
   private String mediaType;
   private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
   private String rawBody = "";
 
   protected EwpResponse(Builder builder) {
-    this.statusCode = builder.statusCode;
+    this.status = builder.status;
     this.mediaType = builder.mediaType;
     this.headers = builder.headers;
     this.rawBody = builder.rawBody;
   }
 
-  public int getStatusCode() {
-    return statusCode;
+  public HttpStatus getStatus() {
+    return status;
   }
 
   public String getMediaType() {
@@ -34,28 +35,27 @@ public class EwpResponse implements Serializable {
     return rawBody;
   }
 
-  public boolean isOk() {
-    return 100 <= statusCode && statusCode < 400;
+  public boolean isSuccess() {
+    return status.is2xxSuccessful();
   }
 
-  public boolean isError() {
-    return !isOk();
+  public boolean isClientError() {
+    return status.is4xxClientError();
+  }
+
+  public boolean isServerError() {
+    return status.is5xxServerError();
   }
 
   public static class Builder {
 
-    private int statusCode = -1;
+    private HttpStatus status;
     private String mediaType;
     private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
     private String rawBody = "";
 
-    public Builder statusCode(int statusCode) {
-      this.statusCode = statusCode;
-      return this;
-    }
-
-    public int statusCode() {
-      return statusCode;
+    public Builder(HttpStatus status) {
+      this.status = status;
     }
 
     public Builder mediaType(String mediaType) {

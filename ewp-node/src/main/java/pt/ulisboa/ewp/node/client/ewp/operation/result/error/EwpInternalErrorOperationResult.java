@@ -5,12 +5,12 @@ import java.io.StringWriter;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 
-public class EwpProcessorErrorOperationResult extends AbstractErrorEwpOperationResult {
+public class EwpInternalErrorOperationResult extends AbstractErrorEwpOperationResult {
 
   private final Exception exception;
 
-  protected EwpProcessorErrorOperationResult(Builder builder) {
-    super(EwpOperationResultErrorType.PROCESSOR_ERROR, builder);
+  protected EwpInternalErrorOperationResult(Builder builder) {
+    super(EwpOperationResultErrorType.INTERNAL_ERROR, builder);
     this.exception = builder.exception;
   }
 
@@ -50,8 +50,8 @@ public class EwpProcessorErrorOperationResult extends AbstractErrorEwpOperationR
       return this;
     }
 
-    public EwpProcessorErrorOperationResult build() {
-      return new EwpProcessorErrorOperationResult(this);
+    public EwpInternalErrorOperationResult build() {
+      return new EwpInternalErrorOperationResult(this);
     }
   }
 }

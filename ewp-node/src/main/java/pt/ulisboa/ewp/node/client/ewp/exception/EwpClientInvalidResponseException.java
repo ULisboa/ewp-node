@@ -4,22 +4,22 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
 
-public class EwpClientUnknownErrorResponseException extends AbstractEwpClientErrorException {
+public class EwpClientInvalidResponseException extends AbstractEwpClientErrorException {
 
   private EwpRequest request;
   private EwpResponse response;
   private EwpAuthenticationResult responseAuthenticationResult;
-  private String error;
+  private Exception exception;
 
-  public EwpClientUnknownErrorResponseException(
+  public EwpClientInvalidResponseException(
       EwpRequest request,
       EwpResponse response,
       EwpAuthenticationResult responseAuthenticationResult,
-      String error) {
+      Exception exception) {
     this.request = request;
     this.response = response;
     this.responseAuthenticationResult = responseAuthenticationResult;
-    this.error = error;
+    this.exception = exception;
   }
 
   public EwpRequest getRequest() {
@@ -34,12 +34,12 @@ public class EwpClientUnknownErrorResponseException extends AbstractEwpClientErr
     return responseAuthenticationResult;
   }
 
-  public String getError() {
-    return error;
+  public Exception getException() {
+    return exception;
   }
 
   @Override
   public String getMessage() {
-    return "Unknown EWP error response: " + error;
+    return "Invalid server response: " + exception.getMessage();
   }
 }
