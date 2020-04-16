@@ -5,12 +5,14 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 import eu.erasmuswithoutpaper.api.courses.CoursesResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
@@ -41,7 +44,8 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
   @Operation(
       summary = "EWP Courses Forward API.",
       tags = {"Forward EWP API"})
-  public ResponseEntity<?> coursesGet(@Valid @RequestParam CoursesRequestDto requestDto)
+  public ResponseEntity<ForwardEwpApiResponse> coursesGet(
+      @Valid @ParameterObject @RequestParam CoursesRequestDto requestDto)
       throws AbstractEwpClientErrorException {
     return getCourses(
         requestDto.getHeiId(),
@@ -52,11 +56,13 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
         requestDto.getLoisAtDate());
   }
 
-  @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(
+      consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Courses Forward API.",
       tags = {"Forward EWP API"})
-  public ResponseEntity<?> coursesPost(@Valid @RequestParam CoursesRequestDto requestDto)
+  public ResponseEntity<ForwardEwpApiResponse> coursesPost(@Valid CoursesRequestDto requestDto)
       throws AbstractEwpClientErrorException {
     return getCourses(
         requestDto.getHeiId(),
@@ -68,7 +74,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
   }
 
   // NOTE: currently only allows to obtain by LOS IDs or LOS codes (not both simultaneously)
-  private ResponseEntity<?> getCourses(
+  private ResponseEntity<ForwardEwpApiResponse> getCourses(
       String heiId,
       List<String> losIds,
       List<String> losCodes,
@@ -88,12 +94,25 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
   private static class CoursesRequestDto {
 
     @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID)
+    @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
+        description = "HEI ID (SCHAC code) to look up")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
+        description = "HEI ID (SCHAC code) to look up")
     @NotNull
     @Size(min = 1)
     private String heiId;
 
     @ParamName(value = ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID)
     @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID,
+        description =
+            "Must be set if no "
+                + ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE
+                + " is provided.")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID,
         description =
             "Must be set if no "
                 + ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE
@@ -102,19 +121,42 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
 
     @ParamName(value = ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE)
     @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE,
+        description =
+            "Must be set if no " + ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID + " is provided.")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE,
         description =
             "Must be set if no " + ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID + " is provided.")
     private List<String> losCodes = new ArrayList<>();
 
     @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOIS_BEFORE)
+    @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_BEFORE,
+        description = "Look up LOIS before a given date")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_BEFORE,
+        description = "Look up LOIS before a given date")
     @DateTimeFormat(iso = DATE)
     private LocalDate loisBefore;
 
     @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AFTER)
+    @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AFTER,
+        description = "Look up LOIS after a given date")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AFTER,
+        description = "Look up LOIS after a given date")
     @DateTimeFormat(iso = DATE)
     private LocalDate loisAfter;
 
     @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE)
+    @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE,
+        description = "Look up LOIS at a given date")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE,
+        description = "Look up LOIS at a given date")
     @DateTimeFormat(iso = DATE)
     private LocalDate loisAtDate;
 

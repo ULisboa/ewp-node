@@ -3,11 +3,13 @@ package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 import eu.erasmuswithoutpaper.api.ounits.OunitsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
@@ -37,8 +40,8 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
   @Operation(
       summary = "EWP Organizational Units Forward API.",
       tags = {"Forward EWP API"})
-  public ResponseEntity<?> organizationalUnitsGet(
-      @Valid @RequestParam OrganizationalUnitsRequestDto requestDto)
+  public ResponseEntity<ForwardEwpApiResponse> organizationalUnitsGet(
+      @Valid @ParameterObject @RequestParam OrganizationalUnitsRequestDto requestDto)
       throws AbstractEwpClientErrorException {
     return getOrganizationalUnits(
         requestDto.getHeiId(),
@@ -46,13 +49,14 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
         requestDto.getOrganizationalUnitCodes());
   }
 
-  @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(
+      consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Organizational Units Forward API.",
       tags = {"Forward EWP API"})
-  public ResponseEntity<?> organizationalUnitsPost(
-      @Valid @RequestParam OrganizationalUnitsRequestDto requestDto)
-      throws AbstractEwpClientErrorException {
+  public ResponseEntity<ForwardEwpApiResponse> organizationalUnitsPost(
+      @Valid OrganizationalUnitsRequestDto requestDto) throws AbstractEwpClientErrorException {
     return getOrganizationalUnits(
         requestDto.getHeiId(),
         requestDto.getOrganizationalUnitIds(),
@@ -60,7 +64,7 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
   }
 
   // NOTE: currently only allows to obtain by ounit IDs or ounit codes (not both simultaneously)
-  private ResponseEntity<?> getOrganizationalUnits(
+  private ResponseEntity<ForwardEwpApiResponse> getOrganizationalUnits(
       String heiId, List<String> organizationalUnitIds, List<String> organizationalUnitCodes)
       throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<OunitsResponse> ounitsResponse;
@@ -75,12 +79,25 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
   private static class OrganizationalUnitsRequestDto {
 
     @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID)
+    @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
+        description = "HEI ID (SCHAC code) to look up")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
+        description = "HEI ID (SCHAC code) to look up")
     @NotNull
     @Size(min = 1)
     private String heiId;
 
     @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_ID)
     @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_ID,
+        description =
+            "Must be set if no "
+                + ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE
+                + " is provided.")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_ID,
         description =
             "Must be set if no "
                 + ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE
@@ -89,6 +106,13 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
 
     @ParamName(value = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE)
     @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE,
+        description =
+            "Must be set if no "
+                + ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_ID
+                + " is provided.")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE,
         description =
             "Must be set if no "
                 + ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_ID

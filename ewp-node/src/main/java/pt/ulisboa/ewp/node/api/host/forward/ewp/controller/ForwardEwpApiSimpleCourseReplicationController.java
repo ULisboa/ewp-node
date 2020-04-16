@@ -4,10 +4,13 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 
 import eu.erasmuswithoutpaper.api.courses.replication.CourseReplicationResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.ZonedDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
@@ -39,24 +43,25 @@ public class ForwardEwpApiSimpleCourseReplicationController
   @Operation(
       summary = "EWP Simple Course Replication Forward API.",
       tags = {"Forward EWP API"})
-  public ResponseEntity<?> simpleCourseReplicationGet(
-      @Valid @RequestParam SimpleCourseReplicationRequestDto requestDto)
+  public ResponseEntity<ForwardEwpApiResponse> simpleCourseReplicationGet(
+      @Valid @ParameterObject @RequestParam SimpleCourseReplicationRequestDto requestDto)
       throws AbstractEwpClientErrorException {
     return getCourses(requestDto.getHeiId(), requestDto.getModifiedSince());
   }
 
-  @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(
+      consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Simple Course Replication Forward API.",
       tags = {"Forward EWP API"})
-  public ResponseEntity<?> simpleCourseReplicationPost(
-      @Valid @RequestParam SimpleCourseReplicationRequestDto requestDto)
-      throws AbstractEwpClientErrorException {
+  public ResponseEntity<ForwardEwpApiResponse> simpleCourseReplicationPost(
+      @Valid SimpleCourseReplicationRequestDto requestDto) throws AbstractEwpClientErrorException {
     return getCourses(requestDto.getHeiId(), requestDto.getModifiedSince());
   }
 
-  private ResponseEntity<?> getCourses(String heiId, ZonedDateTime modifiedSince)
-      throws AbstractEwpClientErrorException {
+  private ResponseEntity<ForwardEwpApiResponse> getCourses(
+      String heiId, ZonedDateTime modifiedSince) throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<CourseReplicationResponse> courseReplicationResponse =
         client.findAllCourses(heiId, modifiedSince);
     return createResponseEntityFromOperationResult(courseReplicationResponse);
@@ -65,11 +70,23 @@ public class ForwardEwpApiSimpleCourseReplicationController
   private static class SimpleCourseReplicationRequestDto {
 
     @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID)
+    @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
+        description = "HEI ID (SCHAC code) to look up")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
+        description = "HEI ID (SCHAC code) to look up")
     @NotNull
     @Size(min = 1)
     private String heiId;
 
     @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_MODIFIED_SINCE)
+    @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_MODIFIED_SINCE,
+        description = "Find LOS modified since a given date")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_MODIFIED_SINCE,
+        description = "Find LOS modified since a given date")
     @DateTimeFormat(iso = DATE_TIME)
     private ZonedDateTime modifiedSince;
 

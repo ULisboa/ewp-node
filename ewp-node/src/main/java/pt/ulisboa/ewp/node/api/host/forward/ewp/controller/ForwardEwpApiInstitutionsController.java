@@ -2,9 +2,12 @@ package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
 import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
@@ -34,22 +38,26 @@ public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiCo
   @Operation(
       summary = "EWP Institutions Forward API.",
       tags = {"Forward EWP API"})
-  public ResponseEntity<?> institutionsGet(@Valid @RequestParam InstitutionsRequestDto requestDto)
+  public ResponseEntity<ForwardEwpApiResponse> institutionsGet(
+      @Valid @ParameterObject @RequestParam InstitutionsRequestDto requestDto)
       throws AbstractEwpClientErrorException {
     return getInstitution(requestDto.getHeiId());
   }
 
-  @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(
+      consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Institutions Forward API.",
       tags = {"Forward EWP API"})
-  public ResponseEntity<?> institutionsPost(@Valid @RequestParam InstitutionsRequestDto requestDto)
-      throws AbstractEwpClientErrorException {
+  public ResponseEntity<ForwardEwpApiResponse> institutionsPost(
+      @Valid InstitutionsRequestDto requestDto) throws AbstractEwpClientErrorException {
     return getInstitution(requestDto.getHeiId());
   }
 
   // NOTE: currently only allows one HEI ID each time
-  private ResponseEntity<?> getInstitution(String heiId) throws AbstractEwpClientErrorException {
+  private ResponseEntity<ForwardEwpApiResponse> getInstitution(String heiId)
+      throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<InstitutionsResponse> institutionsResponse =
         institutionClient.find(heiId);
     return createResponseEntityFromOperationResult(institutionsResponse);
@@ -58,6 +66,12 @@ public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiCo
   private static class InstitutionsRequestDto {
 
     @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID)
+    @Parameter(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
+        description = "HEI ID (SCHAC code) to look up")
+    @Schema(
+        name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
+        description = "HEI ID (SCHAC code) to look up")
     @NotNull
     @Size(min = 1)
     private String heiId;
