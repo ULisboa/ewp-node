@@ -10,6 +10,11 @@
 <h4 align="center">A generic and flexible EWP node implementation.</h4>
 
 
+## Work in Progress warning
+
+This project is still early in development. Therefore, until the first major version is released, 
+non-backward changes may be introduced.
+
 ## Requirements
 
 To clone and run this project, you'll need [Git](https://git-scm.com) and, depending on your preference,
