@@ -42,7 +42,7 @@ public class ForwardEwpApiSimpleCourseReplicationController
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Simple Course Replication Forward API.",
-      tags = {"Forward EWP API"})
+      tags = {"Simple Course Replication"})
   public ResponseEntity<ForwardEwpApiResponse> simpleCourseReplicationGet(
       @Valid @ParameterObject @RequestParam SimpleCourseReplicationRequestDto requestDto)
       throws AbstractEwpClientErrorException {
@@ -54,7 +54,7 @@ public class ForwardEwpApiSimpleCourseReplicationController
       produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Simple Course Replication Forward API.",
-      tags = {"Forward EWP API"})
+      tags = {"Simple Course Replication"})
   public ResponseEntity<ForwardEwpApiResponse> simpleCourseReplicationPost(
       @Valid SimpleCourseReplicationRequestDto requestDto) throws AbstractEwpClientErrorException {
     return getCourses(requestDto.getHeiId(), requestDto.getModifiedSince());

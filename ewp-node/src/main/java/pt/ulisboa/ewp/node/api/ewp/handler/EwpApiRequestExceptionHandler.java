@@ -1,9 +1,10 @@
 package pt.ulisboa.ewp.node.api.ewp.handler;
 
+import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
+import eu.erasmuswithoutpaper.api.architecture.MultilineString;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -11,10 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.servlet.view.xml.MarshallingView;
-
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
-import eu.erasmuswithoutpaper.api.architecture.MultilineString;
 
 @Component
 public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolver {
@@ -28,7 +26,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
   @Override
   protected ModelAndView doResolveException(
       HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-    if (request.getRequestURI().startsWith(EwpApiConstants.EWP_API_BASE_URI)) {
+    if (request.getRequestURI().startsWith(EwpApiConstants.API_BASE_URI)) {
       HttpServletResponseWithCustomSendError responseWithCustomSendError =
           new HttpServletResponseWithCustomSendError(response);
       super.doResolveException(request, responseWithCustomSendError, handler, ex);

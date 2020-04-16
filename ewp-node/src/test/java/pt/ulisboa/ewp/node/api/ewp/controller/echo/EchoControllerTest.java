@@ -97,7 +97,7 @@ public class EchoControllerTest extends AbstractEwpControllerTest {
   @Test
   public void testEchoPutAnonymous() throws Exception {
     this.mockMvc
-        .perform(put(EwpApiConstants.EWP_API_BASE_URI + "echo").accept(MediaType.APPLICATION_XML))
+        .perform(put(EwpApiConstants.API_BASE_URI + "echo").accept(MediaType.APPLICATION_XML))
         .andExpect(status().isUnauthorized());
   }
 
@@ -111,7 +111,7 @@ public class EchoControllerTest extends AbstractEwpControllerTest {
   @Test
   public void testEchoGetAnonymous() throws Exception {
     this.mockMvc
-        .perform(get(EwpApiConstants.EWP_API_BASE_URI + "echo").accept(MediaType.APPLICATION_XML))
+        .perform(get(EwpApiConstants.API_BASE_URI + "echo").accept(MediaType.APPLICATION_XML))
         .andExpect(status().isUnauthorized());
   }
 
@@ -319,7 +319,7 @@ public class EchoControllerTest extends AbstractEwpControllerTest {
   public void testEchoPostAnonymous() throws Exception {
     this.mockMvc
         .perform(
-            post(EwpApiConstants.EWP_API_BASE_URI + "echo")
+            post(EwpApiConstants.API_BASE_URI + "echo")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_XML))
         .andExpect(status().isUnauthorized());
@@ -494,21 +494,21 @@ public class EchoControllerTest extends AbstractEwpControllerTest {
   }
 
   private MockHttpServletRequestBuilder postRequest(List<String> echo) {
-    return post(EwpApiConstants.EWP_API_BASE_URI + "echo")
+    return post(EwpApiConstants.API_BASE_URI + "echo")
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         .content(echo.stream().map(e -> "echo=" + e).collect(Collectors.joining("&")))
         .accept(MediaType.APPLICATION_XML);
   }
 
   private MockHttpServletRequestBuilder getRequest(List<String> echo) {
-    return get(EwpApiConstants.EWP_API_BASE_URI
+    return get(EwpApiConstants.API_BASE_URI
             + "echo?"
             + echo.stream().map(e -> "echo=" + e).collect(Collectors.joining("&")))
         .accept(MediaType.APPLICATION_XML);
   }
 
   private MockHttpServletRequestBuilder putRequest(List<String> echo) {
-    return put(EwpApiConstants.EWP_API_BASE_URI + "echo")
+    return put(EwpApiConstants.API_BASE_URI + "echo")
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         .content(echo.stream().map(e -> "echo=" + e).collect(Collectors.joining("&")))
         .accept(MediaType.APPLICATION_XML);

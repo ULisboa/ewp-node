@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.config.bootstrap.BootstrapProperties;
@@ -23,8 +22,7 @@ public class EwpApiDiscoveryManifestControllerTest extends AbstractEwpController
     MvcResult mvcResult =
         this.mockMvc
             .perform(
-                get(EwpApiConstants.EWP_API_BASE_URI + "manifest")
-                    .accept(MediaType.APPLICATION_XML))
+                get(EwpApiConstants.API_BASE_URI + "manifest").accept(MediaType.APPLICATION_XML))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk())
 
@@ -73,7 +71,7 @@ public class EwpApiDiscoveryManifestControllerTest extends AbstractEwpController
             .andExpect(
                 xpath(
                         "/*[local-name()='manifest']/*[local-name()='host']/*[local-name()='apis-implemented']/*[local-name()='discovery']/url/text()")
-                    .string("https://localhost" + EwpApiConstants.EWP_API_BASE_URI + "manifest"))
+                    .string("https://localhost" + EwpApiConstants.API_BASE_URI + "manifest"))
             .andReturn();
 
     String xml = mvcResult.getResponse().getContentAsString();

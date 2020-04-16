@@ -29,34 +29,40 @@ import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
 @Order(3)
 public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  @Autowired
-  private HttpSignatureService httpSignatureService;
+  @Autowired private HttpSignatureService httpSignatureService;
 
-  @Autowired
-  private SecurityProperties securityProperties;
+  @Autowired private SecurityProperties securityProperties;
 
-  @Autowired
-  private RegistryClient registryClient;
+  @Autowired private RegistryClient registryClient;
 
-  @Autowired
-  private Jaxb2Marshaller jaxb2Marshaller;
+  @Autowired private Jaxb2Marshaller jaxb2Marshaller;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.antMatcher(EwpApiConstants.EWP_API_BASE_URI + "**").cors().and().csrf().disable()
+    http.antMatcher(EwpApiConstants.API_BASE_URI + "**")
+        .cors()
+        .and()
+        .csrf()
+        .disable()
         .authorizeRequests()
-        .antMatchers(EwpApiConstants.EWP_API_BASE_URI + "manifest").permitAll()
-        .antMatchers(EwpApiConstants.EWP_API_BASE_URI + "**").authenticated().and()
+        .antMatchers(EwpApiConstants.API_BASE_URI + "manifest")
+        .permitAll()
+        .antMatchers(EwpApiConstants.API_BASE_URI + "**")
+        .authenticated()
+        .and()
         .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().exceptionHandling()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .exceptionHandling()
         .authenticationEntryPoint(new CustomAuthenticationEntryPoint(jaxb2Marshaller));
 
-    http.addFilterBefore(new EwpApiResponseSignerFilter(httpSignatureService),
-        HeaderWriterFilter.class);
+    http.addFilterBefore(
+        new EwpApiResponseSignerFilter(httpSignatureService), HeaderWriterFilter.class);
 
-    http.addFilterBefore(new EwpApiPreAuthenticationFilter(jaxb2Marshaller),
-        BasicAuthenticationFilter.class);
-    http.addFilterAfter(new EwpApiHttpSignatureAuthenticationFilter(httpSignatureService),
+    http.addFilterBefore(
+        new EwpApiPreAuthenticationFilter(jaxb2Marshaller), BasicAuthenticationFilter.class);
+    http.addFilterAfter(
+        new EwpApiHttpSignatureAuthenticationFilter(httpSignatureService),
         EwpApiPreAuthenticationFilter.class);
     http.addFilterAfter(
         new EwpApiTlsCertificateAuthenticationFilter(securityProperties, registryClient),
@@ -67,11 +73,12 @@ public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private CustomAuthenticationEntryPoint(Jaxb2Marshaller jaxb2Marshaller) {
-    }
+    private CustomAuthenticationEntryPoint(Jaxb2Marshaller jaxb2Marshaller) {}
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response,
+    public void commence(
+        HttpServletRequest request,
+        HttpServletResponse response,
         AuthenticationException authException) {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }

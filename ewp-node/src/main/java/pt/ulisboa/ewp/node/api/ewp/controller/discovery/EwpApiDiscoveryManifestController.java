@@ -1,28 +1,5 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.discovery;
 
-import java.io.IOException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
-import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiManifestEntryStrategy;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
-import pt.ulisboa.ewp.node.domain.entity.Hei;
-import pt.ulisboa.ewp.node.domain.repository.HostRepository;
-import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
-import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 import eu.erasmuswithoutpaper.api.architecture.MultilineString;
 import eu.erasmuswithoutpaper.api.architecture.StringWithOptionalLang;
 import eu.erasmuswithoutpaper.api.discovery.Host;
@@ -30,10 +7,30 @@ import eu.erasmuswithoutpaper.api.discovery.Manifest;
 import eu.erasmuswithoutpaper.api.registry.ApisImplemented;
 import eu.erasmuswithoutpaper.api.registry.OtherHeiId;
 import io.swagger.v3.oas.annotations.Operation;
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.util.Collection;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiManifestEntryStrategy;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
+import pt.ulisboa.ewp.node.domain.entity.Hei;
+import pt.ulisboa.ewp.node.domain.repository.HostRepository;
+import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
+import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
 @RestController
 @EwpApi
-@RequestMapping(EwpApiConstants.EWP_API_BASE_URI + "manifest")
+@RequestMapping(EwpApiConstants.API_BASE_URI + "manifest")
 public class EwpApiDiscoveryManifestController {
 
   @Autowired private KeyStoreService keyStoreService;

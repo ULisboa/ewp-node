@@ -101,6 +101,9 @@ bootstrap:
 # swagger-ui custom path
 springdoc:
   version: '@springdoc.version@'
+  api-docs:
+    groups:
+      enabled: true
 
 logging:
   level:

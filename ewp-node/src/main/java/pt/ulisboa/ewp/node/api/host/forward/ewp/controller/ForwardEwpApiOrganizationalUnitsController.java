@@ -39,7 +39,7 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Organizational Units Forward API.",
-      tags = {"Forward EWP API"})
+      tags = {"Organizational Units"})
   public ResponseEntity<ForwardEwpApiResponse> organizationalUnitsGet(
       @Valid @ParameterObject @RequestParam OrganizationalUnitsRequestDto requestDto)
       throws AbstractEwpClientErrorException {
@@ -54,7 +54,7 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
       produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Organizational Units Forward API.",
-      tags = {"Forward EWP API"})
+      tags = {"Organizational Units"})
   public ResponseEntity<ForwardEwpApiResponse> organizationalUnitsPost(
       @Valid OrganizationalUnitsRequestDto requestDto) throws AbstractEwpClientErrorException {
     return getOrganizationalUnits(

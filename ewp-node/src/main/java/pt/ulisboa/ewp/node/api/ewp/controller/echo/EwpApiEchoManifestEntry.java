@@ -1,13 +1,11 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.echo;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.stereotype.Component;
-
-import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiManifestEntryWithHttpSecurityOptionsStrategy;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import eu.erasmuswithoutpaper.api.architecture.ManifestApiEntryBase;
 import eu.erasmuswithoutpaper.api.echo.Echo;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiManifestEntryWithHttpSecurityOptionsStrategy;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 
 @Component
 public class EwpApiEchoManifestEntry extends EwpApiManifestEntryWithHttpSecurityOptionsStrategy {
@@ -16,7 +14,7 @@ public class EwpApiEchoManifestEntry extends EwpApiManifestEntryWithHttpSecurity
     Echo echo = new Echo();
     echo.setVersion(EwpApiConstants.ECHO_VERSION);
     echo.setAdminNotes(null);
-    echo.setUrl(getBaseUrl(request) + EwpApiConstants.EWP_API_BASE_URI + "echo");
+    echo.setUrl(getBaseUrl(request) + EwpApiConstants.API_BASE_URI + "echo");
     echo.setHttpSecurity(getHttpSecurityOptions());
 
     return echo;

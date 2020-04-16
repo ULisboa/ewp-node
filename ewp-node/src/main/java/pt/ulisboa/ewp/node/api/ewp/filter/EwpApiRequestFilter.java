@@ -31,7 +31,7 @@ public class EwpApiRequestFilter extends OncePerRequestFilter {
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    return !request.getRequestURI().startsWith(EwpApiConstants.EWP_API_BASE_URI);
+    return !request.getRequestURI().startsWith(EwpApiConstants.API_BASE_URI);
   }
 
   @Override
