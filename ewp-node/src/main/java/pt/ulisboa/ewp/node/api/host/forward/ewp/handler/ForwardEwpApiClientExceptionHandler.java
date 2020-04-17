@@ -96,6 +96,7 @@ public class ForwardEwpApiClientExceptionHandler {
 
   @ExceptionHandler({Exception.class})
   public ResponseEntity<ForwardEwpApiResponse> handleException(Exception exception) {
+    log.error("Wrapping exception", exception);
     if (exception.getMessage() == null) {
       MessageService.getInstance().add(Severity.ERROR, "Internal server error");
     } else {
