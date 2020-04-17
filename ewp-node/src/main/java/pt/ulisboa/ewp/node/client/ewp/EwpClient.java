@@ -39,8 +39,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpInternalErrorOpe
 import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpInvalidResponseOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
+import pt.ulisboa.ewp.node.exception.XmlCannotUnmarshallToTypeException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpClientAuthenticationFailedException;
-import pt.ulisboa.ewp.node.exception.ewp.EwpResponseBodyCannotBeCastToException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpServerAuthenticationFailedException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpServerException;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
@@ -48,7 +48,7 @@ import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.response.ResponseAuthenticationVerifier;
-import pt.ulisboa.ewp.node.utils.ewp.EwpResponseUtils;
+import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedKeystore;
 import pt.ulisboa.ewp.node.utils.keystore.KeyStoreUtil;
@@ -171,7 +171,7 @@ public class EwpClient {
       log.error("Failed to initialize EWP client", e);
       return new EwpInternalErrorOperationResult.Builder().request(request).exception(e).build();
 
-    } catch (EwpServerAuthenticationFailedException | EwpResponseBodyCannotBeCastToException e) {
+    } catch (EwpServerAuthenticationFailedException | XmlCannotUnmarshallToTypeException e) {
       log.error("Invalid server's response", e);
       return new EwpInvalidResponseOperationResult.Builder(e)
           .request(request)
@@ -195,7 +195,7 @@ public class EwpClient {
       Class<T> expectedResponseBodyType,
       EwpResponse ewpResponse,
       EwpAuthenticationResult responseAuthenticationResult)
-      throws EwpResponseBodyCannotBeCastToException {
+      throws XmlCannotUnmarshallToTypeException {
     if (ewpResponse.isClientError()) {
       return resolveClientErrorToOperationResult(
           request, ewpResponse, responseAuthenticationResult);
@@ -209,7 +209,7 @@ public class EwpClient {
           .build();
 
     } else if (ewpResponse.isSuccess()) {
-      T responseBody = EwpResponseUtils.readResponseBody(ewpResponse, expectedResponseBodyType);
+      T responseBody = XmlUtils.unmarshall(ewpResponse.getRawBody(), expectedResponseBodyType);
       return new EwpSuccessOperationResult.Builder<T>()
           .request(request)
           .response(ewpResponse)
@@ -227,9 +227,9 @@ public class EwpClient {
       EwpRequest request,
       EwpResponse ewpResponse,
       EwpAuthenticationResult responseAuthenticationResult)
-      throws EwpResponseBodyCannotBeCastToException {
+      throws XmlCannotUnmarshallToTypeException {
     ErrorResponse errorResponse =
-        EwpResponseUtils.readResponseBody(ewpResponse, ErrorResponse.class);
+        XmlUtils.unmarshall(ewpResponse.getRawBody(), ErrorResponse.class);
     if (HttpStatus.UNAUTHORIZED.equals(ewpResponse.getStatus())
         || HttpStatus.FORBIDDEN.equals(ewpResponse.getStatus())) {
       return new EwpInternalErrorOperationResult.Builder()
