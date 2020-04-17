@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
@@ -43,9 +43,10 @@ public class ForwardEwpApiSimpleCourseReplicationController
   @Operation(
       summary = "EWP Simple Course Replication Forward API.",
       tags = {"Simple Course Replication"})
-  public ResponseEntity<ForwardEwpApiResponse> simpleCourseReplicationGet(
-      @Valid @ParameterObject @RequestParam SimpleCourseReplicationRequestDto requestDto)
-      throws AbstractEwpClientErrorException {
+  public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponse>>
+      simpleCourseReplicationGet(
+          @Valid @ParameterObject @RequestParam SimpleCourseReplicationRequestDto requestDto)
+          throws AbstractEwpClientErrorException {
     return getCourses(requestDto.getHeiId(), requestDto.getModifiedSince());
   }
 
@@ -55,12 +56,13 @@ public class ForwardEwpApiSimpleCourseReplicationController
   @Operation(
       summary = "EWP Simple Course Replication Forward API.",
       tags = {"Simple Course Replication"})
-  public ResponseEntity<ForwardEwpApiResponse> simpleCourseReplicationPost(
-      @Valid SimpleCourseReplicationRequestDto requestDto) throws AbstractEwpClientErrorException {
+  public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponse>>
+      simpleCourseReplicationPost(@Valid SimpleCourseReplicationRequestDto requestDto)
+          throws AbstractEwpClientErrorException {
     return getCourses(requestDto.getHeiId(), requestDto.getModifiedSince());
   }
 
-  private ResponseEntity<ForwardEwpApiResponse> getCourses(
+  private ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponse>> getCourses(
       String heiId, ZonedDateTime modifiedSince) throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<CourseReplicationResponse> courseReplicationResponse =
         client.findAllCourses(heiId, modifiedSince);

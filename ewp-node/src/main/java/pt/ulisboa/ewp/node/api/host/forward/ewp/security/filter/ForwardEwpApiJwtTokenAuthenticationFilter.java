@@ -13,7 +13,6 @@ import org.springframework.security.core.AuthenticationException;
 import pt.ulisboa.ewp.node.api.common.security.jwt.AbstractJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.common.security.jwt.JwtAuthenticationUserDetails;
 import pt.ulisboa.ewp.node.api.common.utils.ApiUtils;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ResultType;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiAuthenticationToken;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiHostPrincipal;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
@@ -78,8 +77,7 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
           response,
           HttpServletResponse.SC_UNAUTHORIZED,
           MediaType.APPLICATION_XML,
-          ForwardEwpApiResponseUtils.createResponseWithMessages(
-              ResultType.REQUEST_AUTHENTICATION_ERROR));
+          ForwardEwpApiResponseUtils.createResponseWithMessages());
     } catch (IOException | JAXBException e) {
       logger.error("Failed to write response's body", e);
     }

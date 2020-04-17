@@ -31,6 +31,9 @@ public class EwpServerAuthenticationFailedException extends Exception {
 
   @Override
   public String getMessage() {
-    return "Server authentication failed: " + authenticationResult.getErrorMessage();
+    return "Server authentication failed for authentication method "
+        + authenticationResult.getMethod()
+        + ": "
+        + authenticationResult.getErrorMessage();
   }
 }

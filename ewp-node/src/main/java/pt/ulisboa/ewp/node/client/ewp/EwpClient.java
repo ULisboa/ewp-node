@@ -39,6 +39,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpInternalErrorOpe
 import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpInvalidResponseOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
+import pt.ulisboa.ewp.node.exception.ewp.EwpClientAuthenticationFailedException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpResponseBodyCannotBeCastToException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpServerAuthenticationFailedException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpServerException;
@@ -227,17 +228,19 @@ public class EwpClient {
       EwpResponse ewpResponse,
       EwpAuthenticationResult responseAuthenticationResult)
       throws EwpResponseBodyCannotBeCastToException {
+    ErrorResponse errorResponse =
+        EwpResponseUtils.readResponseBody(ewpResponse, ErrorResponse.class);
     if (HttpStatus.UNAUTHORIZED.equals(ewpResponse.getStatus())
         || HttpStatus.FORBIDDEN.equals(ewpResponse.getStatus())) {
       return new EwpInternalErrorOperationResult.Builder()
           .request(request)
           .response(ewpResponse)
           .responseAuthenticationResult(responseAuthenticationResult)
-          .exception(new IllegalStateException("Client authentication failed"))
+          .exception(
+              new EwpClientAuthenticationFailedException(
+                  request, ewpResponse, errorResponse.getDeveloperMessage().getValue()))
           .build();
     } else {
-      ErrorResponse errorResponse =
-          EwpResponseUtils.readResponseBody(ewpResponse, ErrorResponse.class);
       return new EwpErrorResponseOperationResult.Builder()
           .request(request)
           .response(ewpResponse)

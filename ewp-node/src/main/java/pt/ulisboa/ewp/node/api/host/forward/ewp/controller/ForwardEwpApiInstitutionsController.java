@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
@@ -38,7 +38,7 @@ public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiCo
   @Operation(
       summary = "EWP Institutions Forward API.",
       tags = {"Institutions"})
-  public ResponseEntity<ForwardEwpApiResponse> institutionsGet(
+  public ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponse>> institutionsGet(
       @Valid @ParameterObject @RequestParam InstitutionsRequestDto requestDto)
       throws AbstractEwpClientErrorException {
     return getInstitution(requestDto.getHeiId());
@@ -50,14 +50,14 @@ public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiCo
   @Operation(
       summary = "EWP Institutions Forward API.",
       tags = {"Institutions"})
-  public ResponseEntity<ForwardEwpApiResponse> institutionsPost(
+  public ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponse>> institutionsPost(
       @Valid InstitutionsRequestDto requestDto) throws AbstractEwpClientErrorException {
     return getInstitution(requestDto.getHeiId());
   }
 
   // NOTE: currently only allows one HEI ID each time
-  private ResponseEntity<ForwardEwpApiResponse> getInstitution(String heiId)
-      throws AbstractEwpClientErrorException {
+  private ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponse>> getInstitution(
+      String heiId) throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<InstitutionsResponse> institutionsResponse =
         institutionClient.find(heiId);
     return createResponseEntityFromOperationResult(institutionsResponse);

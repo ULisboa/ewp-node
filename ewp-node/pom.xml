@@ -25,8 +25,6 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <jaxb2.version>2.5.0</jaxb2.version>
-
     <!-- Sonar-JaCoCo properties -->
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -242,69 +240,6 @@
     <testSourceDirectory>src/test/java</testSourceDirectory>
 
     <plugins>
-
-      <plugin>
-        <!-- We use this plugin to ensure that our usage of the
-        maven-jaxb2-plugin is JDK 8 compatible in absence of a fix
-        for jaxb2-maven-plugin. -->
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <version>1.0.0</version>
-        <executions>
-          <execution>
-            <id>set-additional-system-properties</id>
-            <goals>
-              <goal>set-system-properties</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <properties>
-            <property>
-              <name>javax.xml.accessExternalDTD</name>
-              <value>all</value>
-            </property>
-            <property>
-              <name>javax.xml.accessExternalSchema</name>
-              <value>all</value>
-            </property>
-          </properties>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jaxb2-maven-plugin</artifactId>
-        <version>${jaxb2.version}</version>
-        <executions>
-          <execution>
-            <id>xjc</id>
-            <goals>
-              <goal>xjc</goal>
-            </goals>
-            <configuration>
-              <extension>true</extension>
-              <arguments>-Xannotate</arguments>
-            </configuration>
-          </execution>
-        </executions>
-        <configuration>
-          <sources>
-            <source>src/main/resources/xsd</source>
-          </sources>
-          <xjbSources>
-            <source>src/main/resources/xjb</source>
-          </xjbSources>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.jvnet.jaxb2_commons</groupId>
-            <artifactId>jaxb2-basics-annotate</artifactId>
-            <version>1.1.0</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

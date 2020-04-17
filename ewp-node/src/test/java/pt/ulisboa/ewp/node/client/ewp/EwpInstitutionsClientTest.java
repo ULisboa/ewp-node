@@ -8,6 +8,7 @@ import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.AbstractTest;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
@@ -24,7 +25,7 @@ public class EwpInstitutionsClientTest extends AbstractTest {
   public void testGetInstitutions() throws AbstractEwpClientErrorException {
     String heiId = "demo.usos.edu.pl";
     EwpSuccessOperationResult<InstitutionsResponse> response = client.find(heiId);
-    assertThat(response.getResponse().getStatus(), equalTo(200));
+    assertThat(response.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(response.getResponseAuthenticationResult().isValid(), equalTo(true));
     assertThat(response.getResponseBody(), notNullValue());
     assertThat(response.getResponseBody().getHei().size(), equalTo(1));

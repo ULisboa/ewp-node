@@ -31,7 +31,7 @@ import pt.ulisboa.ewp.node.AbstractTest;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
@@ -69,7 +69,7 @@ public class EwpClientTest extends AbstractTest {
             new EwpRequest(
                 HttpMethod.GET, "https://dev-registry.erasmuswithoutpaper.eu/catalogue-v1.xml"),
             Catalogue.class);
-    assertThat(result.getResponse().getStatus(), equalTo(HttpStatus.OK.value()));
+    assertThat(result.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(result.getResponseBody(), notNullValue());
     assertThat(result.getResponseBody().getHost(), notNullValue());
   }
@@ -81,12 +81,12 @@ public class EwpClientTest extends AbstractTest {
             new EwpRequest(
                 HttpMethod.GET, "https://dev-registry.erasmuswithoutpaper.eu/manifest.xml"),
             Manifest.class);
-    assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK.value()));
+    assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(clientResponse.getResponseBody(), notNullValue());
     assertThat(clientResponse.getResponseBody().getHost(), notNullValue());
   }
 
-  @Test(expected = EwpClientErrorResponseException.class)
+  @Test(expected = EwpClientProcessorException.class)
   public void testGetOwnEchoResourceWithoutAuthentication() throws AbstractEwpClientErrorException {
     Map<String, List<String>> params = new HashMap<>();
     params.put(EwpApiParamConstants.PARAM_NAME_ECHO, Collections.singletonList("abc"));
@@ -119,7 +119,7 @@ public class EwpClientTest extends AbstractTest {
                 .queryParams(params)
                 .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE),
             Response.class);
-    assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK.value()));
+    assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(clientResponse.getResponseAuthenticationResult().isValid(), equalTo(true));
     assertThat(clientResponse.getResponseBody().getEcho().get(0), equalTo(testEchoValue));
   }
@@ -146,7 +146,7 @@ public class EwpClientTest extends AbstractTest {
                 .bodyParams(params)
                 .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE),
             Response.class);
-    assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK.value()));
+    assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(clientResponse.getResponseAuthenticationResult().isValid(), equalTo(true));
     assertThat(clientResponse.getResponseBody().getEcho().get(0), equalTo(testEchoValue));
   }

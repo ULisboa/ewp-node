@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
@@ -44,7 +44,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
   @Operation(
       summary = "EWP Courses Forward API.",
       tags = {"Courses"})
-  public ResponseEntity<ForwardEwpApiResponse> coursesGet(
+  public ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponse>> coursesGet(
       @Valid @ParameterObject @RequestParam CoursesRequestDto requestDto)
       throws AbstractEwpClientErrorException {
     return getCourses(
@@ -62,8 +62,8 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
   @Operation(
       summary = "EWP Courses Forward API.",
       tags = {"Courses"})
-  public ResponseEntity<ForwardEwpApiResponse> coursesPost(@Valid CoursesRequestDto requestDto)
-      throws AbstractEwpClientErrorException {
+  public ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponse>> coursesPost(
+      @Valid CoursesRequestDto requestDto) throws AbstractEwpClientErrorException {
     return getCourses(
         requestDto.getHeiId(),
         requestDto.getLosIds(),
@@ -74,7 +74,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
   }
 
   // NOTE: currently only allows to obtain by LOS IDs or LOS codes (not both simultaneously)
-  private ResponseEntity<ForwardEwpApiResponse> getCourses(
+  private ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponse>> getCourses(
       String heiId,
       List<String> losIds,
       List<String> losCodes,
