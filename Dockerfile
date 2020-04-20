@@ -8,7 +8,9 @@ COPY . .
 RUN mvn -B package
 
 # Deploy
-FROM openjdk:8-jre-alpine
+FROM openjdk:11.0-jre-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
 
 COPY --from=builder /build/ewp-node/target/*.jar /opt/app.jar
 

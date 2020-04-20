@@ -7,17 +7,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiAuthenticateMethodResponse;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostPrincipal;
@@ -27,10 +23,12 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
-import sun.security.provider.X509Factory;
 
 /** Filter that attempts to authenticate a request by TLS Certificate. */
 public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilter {
+
+  private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
+  private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
 
   private SecurityProperties securityProperties;
   private RegistryClient registryClient;
@@ -78,8 +76,7 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
     chain.doFilter(request, response);
   }
 
-  private EwpApiAuthenticateMethodResponse authenticate(EwpApiHttpRequestWrapper request)
-      throws AuthenticationException {
+  private EwpApiAuthenticateMethodResponse authenticate(EwpApiHttpRequestWrapper request) {
     X509Certificate[] certificates = null;
 
     if (securityProperties.getClientTls().getHeaderName() != null) {
@@ -94,8 +91,8 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
               Base64.getDecoder()
                   .decode(
                       certificateString
-                          .replaceAll(X509Factory.BEGIN_CERT, "")
-                          .replaceAll(X509Factory.END_CERT, ""));
+                          .replace(BEGIN_CERTIFICATE, "")
+                          .replace(END_CERTIFICATE, ""));
           X509Certificate certificate =
               (X509Certificate)
                   CertificateFactory.getInstance("X.509")
