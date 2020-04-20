@@ -39,8 +39,8 @@ public abstract class AbstractJwtTokenAuthenticationFilter extends BasicAuthenti
     this.tokenSecret = tokenSecret;
   }
 
-  public AbstractJwtTokenAuthenticationFilter(AuthenticationManager authenticationManager,
-      boolean isTokenRequired) {
+  public AbstractJwtTokenAuthenticationFilter(
+      AuthenticationManager authenticationManager, boolean isTokenRequired) {
     super(authenticationManager);
     this.isTokenRequired = isTokenRequired;
   }
@@ -152,6 +152,7 @@ public abstract class AbstractJwtTokenAuthenticationFilter extends BasicAuthenti
     return Optional.ofNullable(tokenSecret);
   }
 
+  @Override
   protected abstract void onUnsuccessfulAuthentication(
       HttpServletRequest request, HttpServletResponse response, AuthenticationException failed);
 

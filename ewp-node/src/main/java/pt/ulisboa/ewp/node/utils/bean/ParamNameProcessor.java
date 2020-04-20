@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,8 @@ public class ParamNameProcessor extends ServletModelAttributeMethodProcessor {
     Map<String, String> paramMappings = this.getParamMappings(target.getClass());
     ParamNameDataBinder paramNameDataBinder =
         new ParamNameDataBinder(target, binder.getObjectName(), paramMappings);
-    requestMappingHandlerAdapter
-        .getWebBindingInitializer()
-        .initBinder(paramNameDataBinder, nativeWebRequest);
+    Objects.requireNonNull(requestMappingHandlerAdapter.getWebBindingInitializer())
+        .initBinder(paramNameDataBinder);
     super.bindRequestParameters(paramNameDataBinder, nativeWebRequest);
   }
 

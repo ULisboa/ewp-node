@@ -2,13 +2,22 @@ package pt.ulisboa.ewp.node.utils.ewp;
 
 import static org.joox.JOOX.$;
 
+import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.httpsig.CliauthHttpsig;
+import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.none.CliauthAnonymous;
+import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.tlscert.CliauthTlscert;
+import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.SrvauthHttpsig;
+import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.SrvauthTlscert;
+import eu.erasmuswithoutpaper.api.courses.Courses;
+import eu.erasmuswithoutpaper.api.courses.replication.SimpleCourseReplication;
+import eu.erasmuswithoutpaper.api.institutions.Institutions;
+import eu.erasmuswithoutpaper.api.ounits.OrganizationalUnits;
+import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
+import eu.erasmuswithoutpaper.registryclient.ApiSearchConditions;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-
 import org.w3c.dom.Element;
-
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
@@ -24,19 +33,10 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthentica
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationHttpSignatureConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationTlsCertificateConfiguration;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.httpsig.CliauthHttpsig;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.none.CliauthAnonymous;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.tlscert.CliauthTlscert;
-import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.SrvauthHttpsig;
-import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.SrvauthTlscert;
-import eu.erasmuswithoutpaper.api.courses.Courses;
-import eu.erasmuswithoutpaper.api.courses.replication.SimpleCourseReplication;
-import eu.erasmuswithoutpaper.api.institutions.Institutions;
-import eu.erasmuswithoutpaper.api.ounits.OrganizationalUnits;
-import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
-import eu.erasmuswithoutpaper.registryclient.ApiSearchConditions;
 
 public class EwpApiUtils {
+
+  private EwpApiUtils() {}
 
   public static Optional<EwpInstitutionApiConfiguration> getInstitutionApiConfiguration(
       RegistryClient registryClient, String heiId) {

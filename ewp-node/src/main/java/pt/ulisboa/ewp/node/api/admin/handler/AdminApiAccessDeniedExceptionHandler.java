@@ -1,7 +1,6 @@
 package pt.ulisboa.ewp.node.api.admin.handler;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
 import pt.ulisboa.ewp.node.api.admin.annotation.AdminApiWithResponseBodyWrapper;
 import pt.ulisboa.ewp.node.api.admin.controller.AdminApi;
 import pt.ulisboa.ewp.node.api.common.dto.ApiOperationStatusDTO;
@@ -27,15 +25,13 @@ public class AdminApiAccessDeniedExceptionHandler {
 
   @Autowired private MessageResolver messages;
 
-  public AdminApiAccessDeniedExceptionHandler() {}
-
   @ExceptionHandler({AccessDeniedException.class})
   @ResponseStatus(HttpStatus.FORBIDDEN)
   @ResponseBody
   public ApiOperationStatusDTO handleException(HttpServletRequest request) {
     log.warn(
         "[ACCESS DENIED] Blocked access to protected resource: \n{}",
-        this.getRequestRepresentation(request).toString());
+        this.getRequestRepresentation(request));
     MessageService.getInstance().add(Severity.ERROR, this.messages.get("error.auth.accessDenied"));
 
     return new ApiOperationStatusDTO(false);

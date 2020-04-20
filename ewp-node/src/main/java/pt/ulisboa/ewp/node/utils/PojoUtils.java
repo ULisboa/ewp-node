@@ -12,17 +12,17 @@ public class PojoUtils {
 
   private PojoUtils() {}
 
-  public static String getUserFriendlyPropertyName(Class<?> clazz, FieldError fieldError)
-      throws NoSuchFieldException {
+  public static String getUserFriendlyPropertyName(Class<?> clazz, FieldError fieldError) {
     String field = fieldError.getField();
     return getUserFriendlyFieldName(clazz, field);
   }
 
   public static String getUserFriendlyPropertyName(ConstraintViolation<?> constraintViolation) {
     Iterator<Path.Node> iterator = constraintViolation.getPropertyPath().iterator();
-
-    String propertyName;
-    for (propertyName = null; iterator.hasNext(); propertyName = iterator.next().getName()) {}
+    String propertyName = null;
+    while (iterator.hasNext()) {
+      propertyName = iterator.next().getName();
+    }
 
     return propertyName;
   }
@@ -45,8 +45,7 @@ public class PojoUtils {
 
   public static Field getDeclaredField(Class<?> clazz, String field) {
     try {
-      Field declaredField = clazz.getDeclaredField(field);
-      return declaredField;
+      return clazz.getDeclaredField(field);
     } catch (NoSuchFieldException e) {
       if (clazz.getSuperclass() != null) {
         return getDeclaredField(clazz.getSuperclass(), field);

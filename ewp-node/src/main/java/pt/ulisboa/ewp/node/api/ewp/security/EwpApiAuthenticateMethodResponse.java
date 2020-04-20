@@ -2,9 +2,7 @@ package pt.ulisboa.ewp.node.api.ewp.security;
 
 import java.util.Collection;
 import java.util.Collections;
-
 import org.springframework.http.HttpStatus;
-
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 
 public class EwpApiAuthenticateMethodResponse {
@@ -29,6 +27,10 @@ public class EwpApiAuthenticateMethodResponse {
     this.errorMessage = errorMessage;
     this.status = status;
     this.heiIdsCoveredByClient = heiIdsCoveredByClient;
+  }
+
+  public EwpAuthenticationMethod getMethod() {
+    return method;
   }
 
   public boolean isUsingMethod() {
@@ -72,7 +74,7 @@ public class EwpApiAuthenticateMethodResponse {
   }
 
   public static class AuthenticateMethodResponseBuilder {
-    private EwpAuthenticationMethod method;
+    private final EwpAuthenticationMethod method;
     private boolean isUsingMethod = true;
     private boolean isRequiredMethodInfoFulfilled = true;
     private String errorMessage;

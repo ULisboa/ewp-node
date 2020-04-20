@@ -131,7 +131,7 @@ public class HttpSignatureService {
       Signature signed = signer.sign("", "", HttpUtils.toHeadersMap(response));
 
       response.addHeader(
-          HttpConstants.HEADER_SIGNATURE, signed.toString().replaceAll("Signature ", ""));
+          HttpConstants.HEADER_SIGNATURE, signed.toString().replace("Signature ", ""));
 
     } catch (IOException | NoSuchAlgorithmException e) {
       log.error("Can't sign response", e);
@@ -466,14 +466,14 @@ public class HttpSignatureService {
                 .build());
       }
     } catch (NoSuchAlgorithmException e) {
-      log.warn(MESSAGE_NO_SUCH_ALGORITHM + ": " + e.getMessage());
+      log.warn(String.format("%s: %s", MESSAGE_NO_SUCH_ALGORITHM, e.getMessage()));
       return Optional.of(
           EwpApiAuthenticateMethodResponse.failureBuilder(
                   EwpAuthenticationMethod.HTTP_SIGNATURE, MESSAGE_NO_SUCH_ALGORITHM)
               .withResponseCode(HttpStatus.BAD_REQUEST)
               .build());
     } catch (MissingRequiredHeaderException e) {
-      log.warn(MESSAGE_MISSING_REQUIRED_HEADER + ": " + e.getMessage());
+      log.warn(String.format("%s: %s", MESSAGE_MISSING_REQUIRED_HEADER, e.getMessage()));
       return Optional.of(
           EwpApiAuthenticateMethodResponse.failureBuilder(
                   EwpAuthenticationMethod.HTTP_SIGNATURE,
@@ -481,14 +481,14 @@ public class HttpSignatureService {
               .withResponseCode(HttpStatus.BAD_REQUEST)
               .build());
     } catch (IOException e) {
-      log.warn("Error reading: " + e.getMessage());
+      log.warn(String.format("Error reading: %s", e.getMessage()));
       return Optional.of(
           EwpApiAuthenticateMethodResponse.failureBuilder(
                   EwpAuthenticationMethod.HTTP_SIGNATURE, e.getMessage())
               .withResponseCode(HttpStatus.BAD_REQUEST)
               .build());
     } catch (SignatureException e) {
-      log.warn("Signature error: " + e.getMessage());
+      log.warn(String.format("Signature error: %s", e.getMessage()));
       return Optional.of(
           EwpApiAuthenticateMethodResponse.failureBuilder(
                   EwpAuthenticationMethod.HTTP_SIGNATURE, e.getMessage())

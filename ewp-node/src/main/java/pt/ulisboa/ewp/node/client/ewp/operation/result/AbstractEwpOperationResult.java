@@ -50,7 +50,7 @@ public abstract class AbstractEwpOperationResult implements Serializable {
   public abstract String getSummary();
 
   @SuppressWarnings("unchecked")
-  public <T> EwpSuccessOperationResult<T> asSuccess(Class<T> responseBodyType) {
+  public <T extends Serializable> EwpSuccessOperationResult<T> asSuccess() {
     assert resultType == EwpOperationResultType.SUCCESS;
     return (EwpSuccessOperationResult<T>) this;
   }

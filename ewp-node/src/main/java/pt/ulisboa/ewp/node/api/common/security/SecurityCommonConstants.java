@@ -2,6 +2,8 @@ package pt.ulisboa.ewp.node.api.common.security;
 
 public class SecurityCommonConstants {
 
+  private SecurityCommonConstants() {}
+
   public static final String HEADER_NAME = "Authorization";
   public static final String BEATER_TOKEN_PREFIX = "Bearer ";
 

@@ -9,7 +9,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -53,7 +52,7 @@ public class EwpNodeApplication {
   @Autowired private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
   public static void main(String[] args) {
-    SpringApplication.run(EwpNodeApplication.class, args);
+    SpringApplication.run(EwpNodeApplication.class);
   }
 
   @PostConstruct
@@ -117,14 +116,12 @@ public class EwpNodeApplication {
     return new BeanPostProcessor() {
 
       @Override
-      public Object postProcessBeforeInitialization(Object bean, String beanName)
-          throws BeansException {
+      public Object postProcessBeforeInitialization(Object bean, String beanName) {
         return bean;
       }
 
       @Override
-      public Object postProcessAfterInitialization(Object bean, String beanName)
-          throws BeansException {
+      public Object postProcessAfterInitialization(Object bean, String beanName) {
         if (bean instanceof RequestMappingHandlerAdapter) {
           RequestMappingHandlerAdapter adapter = (RequestMappingHandlerAdapter) bean;
           List<HandlerMethodArgumentResolver> argumentResolvers =

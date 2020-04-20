@@ -16,8 +16,6 @@ public class ForwardEwpApiAuthenticationTestResponseDTO {
   @XmlElement(name = "host-code", required = true)
   private String hostCode;
 
-  public ForwardEwpApiAuthenticationTestResponseDTO() {}
-
   public String getHostCode() {
     return hostCode;
   }

@@ -1,11 +1,10 @@
 package pt.ulisboa.ewp.node.api.admin.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -15,16 +14,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import pt.ulisboa.ewp.node.api.admin.annotation.AdminApiWithResponseBodyWrapper;
 import pt.ulisboa.ewp.node.api.admin.dto.AdminApiNewUserProfileDTO;
 import pt.ulisboa.ewp.node.api.admin.dto.AdminApiUserProfileDTO;
 import pt.ulisboa.ewp.node.api.admin.security.AdminApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.admin.utils.AdminApiConstants;
+import pt.ulisboa.ewp.node.api.common.dto.ApiOperationStatusDTO;
 import pt.ulisboa.ewp.node.domain.entity.user.UserProfile;
 import pt.ulisboa.ewp.node.domain.mapper.UserProfileMapper;
 import pt.ulisboa.ewp.node.domain.repository.UserProfileRepository;
-import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @AdminApi
@@ -52,7 +50,8 @@ public class AdminApiUserProfileController extends AbstractAdminApiController {
   @Operation(
       summary = "Create user profile.",
       tags = {"admin"})
-  public ResponseEntity<?> create(@Valid @RequestBody AdminApiNewUserProfileDTO body) {
+  public ResponseEntity<ApiOperationStatusDTO> create(
+      @Valid @RequestBody AdminApiNewUserProfileDTO body) {
     boolean success =
         userProfileRepository.persist(UserProfile.create(body.getUsername(), body.getRole()));
     return getCreateEntityApiResponse(success);

@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
 import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
+import java.io.Serializable;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -82,17 +83,16 @@ public class EwpClient {
    *     returned an invalid response.
    */
   @SuppressWarnings("unchecked")
-  public <T> EwpSuccessOperationResult<T> executeWithLoggingExpectingSuccess(
+  public <T extends Serializable> EwpSuccessOperationResult<T> executeWithLoggingExpectingSuccess(
       EwpRequest request, Class<T> responseBodyType) throws AbstractEwpClientErrorException {
     AbstractEwpOperationResult operationResult = executeWithLogging(request, responseBodyType);
-    return getSuccessOperationResult(responseBodyType, operationResult);
+    return getSuccessOperationResult(operationResult);
   }
 
-  private <T> EwpSuccessOperationResult<T> getSuccessOperationResult(
-      Class<T> responseBodyType, AbstractEwpOperationResult operationResult)
-      throws AbstractEwpClientErrorException {
+  private <T extends Serializable> EwpSuccessOperationResult<T> getSuccessOperationResult(
+      AbstractEwpOperationResult operationResult) throws AbstractEwpClientErrorException {
     if (operationResult.isSuccess()) {
-      return operationResult.asSuccess(responseBodyType);
+      return operationResult.asSuccess();
     } else if (operationResult.isError()) {
       throw operationResult.asError().toClientException();
     } else {
@@ -100,7 +100,7 @@ public class EwpClient {
     }
   }
 
-  private <T> AbstractEwpOperationResult executeWithLogging(
+  private <T extends Serializable> AbstractEwpOperationResult executeWithLogging(
       EwpRequest request, Class<T> responseBodyType) {
     ZonedDateTime startProcessingDateTime = ZonedDateTime.now();
     AbstractEwpOperationResult operationResult = execute(request, responseBodyType);
@@ -114,7 +114,7 @@ public class EwpClient {
     return operationResult;
   }
 
-  protected <T> AbstractEwpOperationResult execute(
+  protected <T extends Serializable> AbstractEwpOperationResult execute(
       EwpRequest request, Class<T> expectedResponseBodyType) {
     EwpResponse ewpResponse = null;
     EwpAuthenticationResult responseAuthenticationResult = null;
@@ -190,7 +190,7 @@ public class EwpClient {
     }
   }
 
-  private <T> AbstractEwpOperationResult resolveResponseToOperationStatus(
+  private <T extends Serializable> AbstractEwpOperationResult resolveResponseToOperationStatus(
       EwpRequest request,
       Class<T> expectedResponseBodyType,
       EwpResponse ewpResponse,

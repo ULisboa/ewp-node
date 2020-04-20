@@ -1,10 +1,11 @@
 package pt.ulisboa.ewp.node.api.ewp.security;
 
+import java.io.Serializable;
 import java.util.Collection;
 
-public class EwpApiHostPrincipal {
+public class EwpApiHostPrincipal implements Serializable {
 
-  private Collection<String> heiIdsCoveredByClient;
+  private final Collection<String> heiIdsCoveredByClient;
 
   public EwpApiHostPrincipal(Collection<String> heiIdsCoveredByClient) {
     this.heiIdsCoveredByClient = heiIdsCoveredByClient;

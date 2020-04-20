@@ -29,7 +29,7 @@ public abstract class AccessDeniedResponseHandler implements AccessDeniedHandler
       throws IOException {
     log.warn(
         "[ACCESS DENIED] Blocked access to protected resource: \n{}",
-        getRequestRepresentation(request).toString());
+        getRequestRepresentation(request));
 
     MessageService.getInstance().add(Severity.ERROR, messages.get("error.auth.accessDenied"));
 

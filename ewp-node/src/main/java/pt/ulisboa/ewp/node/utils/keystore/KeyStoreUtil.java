@@ -15,6 +15,8 @@ import java.util.Base64;
 
 public class KeyStoreUtil {
 
+  private KeyStoreUtil() {}
+
   public static void setKeyStoreCertificate(
       KeyStore keyStore,
       String keyStorePassword,

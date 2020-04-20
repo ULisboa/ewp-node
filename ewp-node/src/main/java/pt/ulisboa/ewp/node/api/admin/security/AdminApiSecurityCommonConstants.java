@@ -2,6 +2,8 @@ package pt.ulisboa.ewp.node.api.admin.security;
 
 public class AdminApiSecurityCommonConstants {
 
+  private AdminApiSecurityCommonConstants() {}
+
   public static final String HEADER_NAME = "Authorization";
   public static final String TOKEN_PREFIX = "Bearer ";
 

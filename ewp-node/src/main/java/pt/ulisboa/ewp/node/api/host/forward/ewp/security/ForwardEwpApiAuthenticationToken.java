@@ -1,14 +1,15 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.security;
 
 import java.util.Collections;
+import java.util.Objects;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import pt.ulisboa.ewp.node.api.common.security.jwt.JwtAuthenticationUserDetails;
 
 public class ForwardEwpApiAuthenticationToken extends AbstractAuthenticationToken {
 
-  private JwtAuthenticationUserDetails details;
-  private ForwardEwpApiHostPrincipal principal;
+  private final transient JwtAuthenticationUserDetails details;
+  private final transient ForwardEwpApiHostPrincipal principal;
 
   public ForwardEwpApiAuthenticationToken(
       JwtAuthenticationUserDetails details, ForwardEwpApiHostPrincipal principal) {
@@ -39,5 +40,25 @@ public class ForwardEwpApiAuthenticationToken extends AbstractAuthenticationToke
   @Override
   public String getName() {
     return principal.toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+    ForwardEwpApiAuthenticationToken that = (ForwardEwpApiAuthenticationToken) o;
+    return Objects.equals(details, that.details) && Objects.equals(principal, that.principal);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), details, principal);
   }
 }

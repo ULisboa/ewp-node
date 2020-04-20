@@ -25,7 +25,8 @@ public class ForwardEwpApiAuthenticationController extends AbstractForwardEwpApi
       summary = "EWP Authentication test operation Forward API",
       description = "Used for testing authentication of EWP Forward APIs.",
       tags = {"Authentication"})
-  public ResponseEntity<?> testAuthentication(ForwardEwpApiAuthenticationToken authentication) {
+  public ResponseEntity<ForwardEwpApiAuthenticationTestResponseDTO> testAuthentication(
+      ForwardEwpApiAuthenticationToken authentication) {
     ForwardEwpApiAuthenticationTestResponseDTO response =
         new ForwardEwpApiAuthenticationTestResponseDTO();
     response.setHostCode(authentication.getPrincipal().getHost().getCode());

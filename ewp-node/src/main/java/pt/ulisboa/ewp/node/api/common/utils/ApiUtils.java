@@ -15,6 +15,8 @@ import pt.ulisboa.ewp.node.utils.provider.ApplicationContextProvider;
 
 public class ApiUtils {
 
+  private ApiUtils() {}
+
   public static <T> void writeResponseBody(
       HttpServletResponse response, int statusCode, MediaType mediaType, T data)
       throws IOException, JAXBException {
@@ -42,8 +44,11 @@ public class ApiUtils {
 
     } else if (mediaType.equals(MediaType.APPLICATION_XML)) {
       StringWriter result = new StringWriter();
-      ApplicationContextProvider.getApplicationContext().getBean(Jaxb2Marshaller.class)
-          .getJaxbContext().createMarshaller().marshal(object, result);
+      ApplicationContextProvider.getApplicationContext()
+          .getBean(Jaxb2Marshaller.class)
+          .getJaxbContext()
+          .createMarshaller()
+          .marshal(object, result);
       return result.toString();
 
     } else {

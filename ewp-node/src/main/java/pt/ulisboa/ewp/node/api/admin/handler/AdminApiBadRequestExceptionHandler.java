@@ -1,13 +1,10 @@
 package pt.ulisboa.ewp.node.api.admin.handler;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
 import pt.ulisboa.ewp.node.api.admin.annotation.AdminApiWithResponseBodyWrapper;
 import pt.ulisboa.ewp.node.api.admin.controller.AdminApi;
 import pt.ulisboa.ewp.node.api.common.dto.ApiOperationStatusDTO;
@@ -37,13 +33,10 @@ public class AdminApiBadRequestExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
   public ApiOperationStatusDTO handleArgumentNotValidException(
-      MethodArgumentNotValidException exception) throws NoSuchFieldException {
+      MethodArgumentNotValidException exception) {
     MessageService messageService = MessageService.getInstance();
     List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-    Iterator fieldErrorsIterator = fieldErrors.iterator();
-
-    while (fieldErrorsIterator.hasNext()) {
-      FieldError fieldError = (FieldError) fieldErrorsIterator.next();
+    for (FieldError fieldError : fieldErrors) {
       Message message =
           (new Message.Builder(Severity.ERROR, this.getLocalizedErrorMessage(fieldError)))
               .context(
@@ -63,11 +56,8 @@ public class AdminApiBadRequestExceptionHandler {
       ConstraintViolationException exception) {
     MessageService messageService = MessageService.getInstance();
     Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
-    Iterator constraintViolationsIterator = constraintViolations.iterator();
 
-    while (constraintViolationsIterator.hasNext()) {
-      ConstraintViolation<?> constraintViolation =
-          (ConstraintViolation) constraintViolationsIterator.next();
+    for (ConstraintViolation<?> constraintViolation : constraintViolations) {
       Message message =
           (new Message.Builder(Severity.ERROR, constraintViolation.getMessage()))
               .context(PojoUtils.getUserFriendlyPropertyName(constraintViolation))

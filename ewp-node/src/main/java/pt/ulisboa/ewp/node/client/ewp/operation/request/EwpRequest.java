@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.client.ewp.operation.request;
 
 import com.google.common.base.Strings;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
-public class EwpRequest {
+public class EwpRequest implements Serializable {
 
   private String id = UUID.randomUUID().toString();
   private HttpMethod method;

@@ -4,7 +4,6 @@ import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
@@ -19,8 +18,6 @@ public class EntityAuditListener {
     TransactionSynchronizationManager.registerSynchronization(
         new TransactionSynchronizationAdapter() {
 
-          public void beforeCompletion() {}
-
           @Override
           public void afterCommit() {
             log.info(String.format("Persisted object: %n%s", object));
@@ -32,8 +29,6 @@ public class EntityAuditListener {
   private void onPostUpdate(Object object) {
     TransactionSynchronizationManager.registerSynchronization(
         new TransactionSynchronizationAdapter() {
-
-          public void beforeCompletion() {}
 
           @Override
           public void afterCommit() {

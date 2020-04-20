@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.service.keystore;
 
+import com.google.common.base.Suppliers;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,7 +17,6 @@ import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-
 import org.bouncycastle.operator.OperatorCreationException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.domain.entity.KeyStoreConfiguration;
 import pt.ulisboa.ewp.node.domain.repository.KeyStoreConfigurationRepository;
@@ -38,8 +37,6 @@ import pt.ulisboa.ewp.node.utils.keystore.KeyStoreConstants;
 import pt.ulisboa.ewp.node.utils.keystore.KeyStoreGenerator;
 import pt.ulisboa.ewp.node.utils.keystore.KeyStoreUtil;
 import pt.ulisboa.ewp.node.utils.messaging.Severity;
-
-import com.google.common.base.Suppliers;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -113,7 +110,7 @@ public class KeyStoreService {
         | InvalidKeySpecException
         | SignatureException
         | InvalidKeyException e) {
-      e.printStackTrace();
+      log.error("Failed to persist keystore", e);
       return false;
     }
   }
@@ -159,7 +156,7 @@ public class KeyStoreService {
         | NoSuchAlgorithmException
         | IOException
         | UnrecoverableKeyException e) {
-      log.error("Failed to get and decode stored keystore: " + e.getMessage());
+      log.error("Failed to get and decode stored keystore: {}", e.getMessage());
       throw new RuntimeException(e);
     }
   }

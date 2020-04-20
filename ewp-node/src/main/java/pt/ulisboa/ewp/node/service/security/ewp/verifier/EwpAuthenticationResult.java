@@ -1,12 +1,13 @@
 package pt.ulisboa.ewp.node.service.security.ewp.verifier;
 
+import java.io.Serializable;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 
-public class EwpAuthenticationResult {
+public class EwpAuthenticationResult implements Serializable {
 
-  private EwpAuthenticationMethod method;
-  private boolean isValid;
-  private String errorMessage;
+  private final EwpAuthenticationMethod method;
+  private final boolean isValid;
+  private final String errorMessage;
 
   protected EwpAuthenticationResult(
       EwpAuthenticationMethod method, boolean isValid, String errorMessage) {

@@ -13,6 +13,7 @@ import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
 import eu.erasmuswithoutpaper.api.architecture.MultilineString;
 import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
 import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse.Hei;
+import java.io.Serializable;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,7 +208,7 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
 
     EwpResponse response = new EwpResponse.Builder(HttpStatus.OK).build();
 
-    EwpSuccessOperationResult<Object> successOperationResult =
+    EwpSuccessOperationResult<Serializable> successOperationResult =
         new Builder<>().response(response).responseBody(expectedResponse).build();
     doReturn(successOperationResult).when(client).findAllCourses(heiId, null);
 

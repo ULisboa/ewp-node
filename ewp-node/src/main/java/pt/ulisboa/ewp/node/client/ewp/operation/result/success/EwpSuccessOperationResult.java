@@ -1,8 +1,9 @@
 package pt.ulisboa.ewp.node.client.ewp.operation.result.success;
 
+import java.io.Serializable;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.AbstractEwpOperationResult;
 
-public class EwpSuccessOperationResult<T> extends AbstractEwpOperationResult {
+public class EwpSuccessOperationResult<T extends Serializable> extends AbstractEwpOperationResult {
 
   private final T responseBody;
 
@@ -20,7 +21,8 @@ public class EwpSuccessOperationResult<T> extends AbstractEwpOperationResult {
     return "Success";
   }
 
-  public static class Builder<T> extends AbstractEwpOperationResult.Builder<Builder<T>> {
+  public static class Builder<T extends Serializable>
+      extends AbstractEwpOperationResult.Builder<Builder<T>> {
 
     private T responseBody;
 

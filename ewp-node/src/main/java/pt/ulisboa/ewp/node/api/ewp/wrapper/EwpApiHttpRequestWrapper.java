@@ -48,12 +48,13 @@ public class EwpApiHttpRequestWrapper extends ContentCachingRequestWrapper {
   private void sanitizeRequest(HttpServletRequest request) {
     if (HttpMethod.POST.matches(request.getMethod())) {
       // NOTE: EWP requires to ignore query parameters on a POST request.
-      // However, Tomcat automatically considers them so it is necessary to remove them from the request
+      // However, Tomcat automatically considers them so it is necessary to remove them from the
+      // request
       if (request instanceof RequestFacade) {
         cleanRequestQueryString((RequestFacade) request);
       } else {
         log.warn(
-            "Unknown request type, will not sanitize request: " + request.getClass().getName());
+            "Unknown request type, will not sanitize request: {}", request.getClass().getName());
       }
     }
   }
@@ -151,9 +152,7 @@ public class EwpApiHttpRequestWrapper extends ContentCachingRequestWrapper {
     return headerFilter.test(name.toLowerCase());
   }
 
-  /**
-   * Returns request body. It may be called multiple times.
-   */
+  /** Returns request body. It may be called multiple times. */
   public String getBody() {
     return body;
   }

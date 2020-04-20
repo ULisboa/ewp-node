@@ -9,6 +9,8 @@ import pt.ulisboa.ewp.node.utils.provider.ApplicationContextProvider;
 
 public class XmlUtils {
 
+  private XmlUtils() {}
+
   public static <T> T unmarshall(String xml, Class<T> classType)
       throws XmlCannotUnmarshallToTypeException {
     Jaxb2Marshaller jaxb2Marshaller =

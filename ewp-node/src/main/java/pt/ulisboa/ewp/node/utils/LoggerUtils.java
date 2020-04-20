@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 public class LoggerUtils {
 
+  private LoggerUtils() {}
+
   public static void error(String message, String className) {
     Logger logger = LoggerFactory.getLogger(className);
     logger.error(message);

@@ -10,6 +10,8 @@ import java.util.UUID;
 
 public class SignatureUtils {
 
+  private SignatureUtils() {}
+
   public static boolean verifyKeysMatch(PublicKey publicKey, PrivateKey privateKey)
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
     byte[] data = UUID.randomUUID().toString().getBytes();

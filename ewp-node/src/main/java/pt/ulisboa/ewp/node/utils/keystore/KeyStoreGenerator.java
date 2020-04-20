@@ -17,7 +17,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -28,6 +27,8 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 public class KeyStoreGenerator {
+
+  private KeyStoreGenerator() {}
 
   public static DecodedKeystore generate(String keyStorePassword, String certificateAlias)
       throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException,

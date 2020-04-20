@@ -1,8 +1,13 @@
 package pt.ulisboa.ewp.node.client.ewp.utils;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 
 public class EwpClientConstants {
+
+  private EwpClientConstants() {}
 
   public static final String QUERY_HEI_ID = "hei_id";
   public static final String QUERY_LOS_ID = "los_id";
@@ -19,9 +24,10 @@ public class EwpClientConstants {
   public static final String API_COURSES_NAME = "courses";
   public static final String API_SIMPLE_COURSE_REPLICATION_NAME = "simple-course-replication";
 
-  public static final EwpAuthenticationMethod[] AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER = {
-    EwpAuthenticationMethod.HTTP_SIGNATURE,
-    EwpAuthenticationMethod.TLS,
-    EwpAuthenticationMethod.ANONYMOUS
-  };
+  public static final List<EwpAuthenticationMethod> AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER =
+      Collections.unmodifiableList(
+          Arrays.asList(
+              EwpAuthenticationMethod.HTTP_SIGNATURE,
+              EwpAuthenticationMethod.TLS,
+              EwpAuthenticationMethod.ANONYMOUS));
 }

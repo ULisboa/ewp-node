@@ -2,10 +2,10 @@ package pt.ulisboa.ewp.node.exception;
 
 public class XmlCannotUnmarshallToTypeException extends Exception {
 
-  private String xml;
-  private Class<?> classType;
+  private final String xml;
+  private final Class<?> classType;
 
-  public XmlCannotUnmarshallToTypeException(String xml, Class classType) {
+  public XmlCannotUnmarshallToTypeException(String xml, Class<?> classType) {
     this.xml = xml;
     this.classType = classType;
   }

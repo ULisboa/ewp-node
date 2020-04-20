@@ -6,10 +6,10 @@ import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult
 
 public class EwpClientInvalidResponseException extends AbstractEwpClientErrorException {
 
-  private EwpRequest request;
-  private EwpResponse response;
-  private EwpAuthenticationResult responseAuthenticationResult;
-  private Exception exception;
+  private final EwpRequest request;
+  private final EwpResponse response;
+  private final EwpAuthenticationResult responseAuthenticationResult;
+  private final Exception exception;
 
   public EwpClientInvalidResponseException(
       EwpRequest request,

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -21,7 +20,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import pt.ulisboa.ewp.node.domain.listener.EntityAuditListener;
 
 @Entity
@@ -102,7 +100,7 @@ public class Hei {
   @Override
   public String toString() {
     return String.format(
-        "Hei(host description = %s; id = %s; name = %s; other hei ids = )",
+        "Hei(host description = %s; id = %s; name = %s; other hei ids = %s)",
         host.getDescription(), id, name, otherHeiIds);
   }
 }
