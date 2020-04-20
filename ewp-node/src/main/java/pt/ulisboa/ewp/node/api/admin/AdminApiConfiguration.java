@@ -7,17 +7,16 @@ import org.springdoc.core.GroupedOpenApi;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pt.ulisboa.ewp.node.api.admin.utils.AdminApiConstants;
 
 @Configuration
 public class AdminApiConfiguration {
 
   @Bean
   public GroupedOpenApi adminOpenApi() {
-    String[] pathsToMatch = {AdminApiConstants.API_BASE_URI + "/**"};
+    String[] packagesToScan = {getClass().getPackage().getName()};
     return GroupedOpenApi.builder()
         .setGroup("admin")
-        .pathsToMatch(pathsToMatch)
+        .packagesToScan(packagesToScan)
         .addOpenApiCustomiser(new AdminOpenApiCustomiser())
         .build();
   }

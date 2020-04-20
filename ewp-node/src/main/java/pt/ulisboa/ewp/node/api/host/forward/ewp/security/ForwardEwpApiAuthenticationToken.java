@@ -1,10 +1,8 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.security;
 
 import java.util.Collections;
-
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
 import pt.ulisboa.ewp.node.api.common.security.jwt.JwtAuthenticationUserDetails;
 
 public class ForwardEwpApiAuthenticationToken extends AbstractAuthenticationToken {

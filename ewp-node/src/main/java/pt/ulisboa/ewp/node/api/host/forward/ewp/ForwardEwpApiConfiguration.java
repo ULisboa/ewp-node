@@ -7,7 +7,6 @@ import org.springdoc.core.GroupedOpenApi;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 
 @Configuration
 public class ForwardEwpApiConfiguration {
@@ -16,10 +15,10 @@ public class ForwardEwpApiConfiguration {
 
   @Bean
   public GroupedOpenApi forwardEwpOpenApi() {
-    String[] pathsToMatch = {ForwardEwpApiConstants.API_BASE_URI + "/**"};
+    String[] packagesToScan = {getClass().getPackage().getName()};
     return GroupedOpenApi.builder()
         .setGroup("forward-ewp")
-        .pathsToMatch(pathsToMatch)
+        .packagesToScan(packagesToScan)
         .addOpenApiCustomiser(new ForwardEwpOpenApiCustomiser())
         .build();
   }
@@ -29,6 +28,7 @@ public class ForwardEwpApiConfiguration {
     @Override
     public void customise(OpenAPI openApi) {
       final String securitySchemeName = "bearerAuth";
+      openApi.getInfo().version(API_VERSION);
       openApi.addSecurityItem(new SecurityRequirement().addList(securitySchemeName));
       openApi
           .getComponents()

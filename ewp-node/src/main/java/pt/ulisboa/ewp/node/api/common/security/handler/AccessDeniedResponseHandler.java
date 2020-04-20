@@ -1,22 +1,18 @@
 package pt.ulisboa.ewp.node.api.common.security.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
-
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
 import pt.ulisboa.ewp.node.utils.messaging.Severity;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public abstract class AccessDeniedResponseHandler implements AccessDeniedHandler {
@@ -35,7 +31,7 @@ public abstract class AccessDeniedResponseHandler implements AccessDeniedHandler
         "[ACCESS DENIED] Blocked access to protected resource: \n{}",
         getRequestRepresentation(request).toString());
 
-    MessageService.getInstance().add(Severity.ERROR, messages.get("auth.error.accessDenied"));
+    MessageService.getInstance().add(Severity.ERROR, messages.get("error.auth.accessDenied"));
 
     Object body = getAccessDeniedResponseBody(request, accessDeniedException);
 
