@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
@@ -38,6 +39,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperati
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult.Builder;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
+import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
 @AutoConfigureMockMvc
 public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest extends AbstractTest {
@@ -81,6 +83,8 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
                         SecurityCommonConstants.HEADER_NAME,
                         SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
             .andExpect(status().isBadRequest())
+            .andExpect(
+                header().string(HttpConstants.HEADER_X_HAS_DATA_OBJECT, String.valueOf(false)))
             .andReturn();
 
     ForwardEwpApiResponse responseBody =
@@ -106,6 +110,8 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
                         SecurityCommonConstants.HEADER_NAME,
                         SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
             .andExpect(status().isBadRequest())
+            .andExpect(
+                header().string(HttpConstants.HEADER_X_HAS_DATA_OBJECT, String.valueOf(false)))
             .andReturn();
 
     ForwardEwpApiResponse responseBody =
@@ -188,6 +194,8 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
                         SecurityCommonConstants.HEADER_NAME,
                         SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
             .andExpect(status().isBadRequest())
+            .andExpect(
+                header().string(HttpConstants.HEADER_X_HAS_DATA_OBJECT, String.valueOf(true)))
             .andReturn();
 
     ForwardEwpApiResponseWithData<ErrorResponse> responseBody =

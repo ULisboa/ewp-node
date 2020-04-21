@@ -12,6 +12,9 @@ public class HttpConstants {
   public static final String HEADER_X_REQUEST_ID = "X-Request-Id";
   public static final String HEADER_X_REQUEST_SIGNATURE = "X-Request-Signature";
 
+  /** Used to identify if the response's body has a data object associated */
+  public static final String HEADER_X_HAS_DATA_OBJECT = "X-Has-Data-Object";
+
   public static final String HEADERS_COMMA_SEPARATED_LIST_TOKEN = ", ";
 
   public static final String PROTOCOL_HTTPS = "https";

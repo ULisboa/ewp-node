@@ -10,6 +10,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
+import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.messaging.Message;
 import pt.ulisboa.ewp.node.utils.messaging.Severity;
 
@@ -29,15 +30,17 @@ public class ForwardEwpApiResponseUtils {
     ForwardEwpApiResponse responseBody = createResponseWithMessages();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .contentType(MediaType.APPLICATION_XML)
+        .header(HttpConstants.HEADER_X_HAS_DATA_OBJECT, String.valueOf(false))
         .body(responseBody);
   }
 
   public static ResponseEntity<ForwardEwpApiResponseWithData<ErrorResponse>> toErrorResponseEntity(
-      EwpResponse ewpResponse, ErrorResponse errorResponse) {
+      ErrorResponse errorResponse) {
     ForwardEwpApiResponseWithData<ErrorResponse> response =
         createResponseWithMessagesAndData(errorResponse);
-    return ResponseEntity.status(ewpResponse.getStatus())
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .contentType(MediaType.APPLICATION_XML)
+        .header(HttpConstants.HEADER_X_HAS_DATA_OBJECT, String.valueOf(true))
         .body(response);
   }
 

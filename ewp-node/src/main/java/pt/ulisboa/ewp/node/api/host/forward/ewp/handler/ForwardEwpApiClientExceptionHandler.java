@@ -96,10 +96,10 @@ public class ForwardEwpApiClientExceptionHandler {
   }
 
   @ExceptionHandler({EwpClientErrorResponseException.class})
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ForwardEwpApiResponseWithData<ErrorResponse>>
       handleEwpClientErrorResponseException(EwpClientErrorResponseException exception) {
-    return ForwardEwpApiResponseUtils.toErrorResponseEntity(
-        exception.getResponse(), exception.getErrorResponse());
+    return ForwardEwpApiResponseUtils.toErrorResponseEntity(exception.getErrorResponse());
   }
 
   @ExceptionHandler({AccessDeniedException.class})

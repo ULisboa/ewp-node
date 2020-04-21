@@ -230,8 +230,14 @@ public class EwpClient {
       throws XmlCannotUnmarshallToTypeException {
     ErrorResponse errorResponse =
         XmlUtils.unmarshall(ewpResponse.getRawBody(), ErrorResponse.class);
-    if (HttpStatus.UNAUTHORIZED.equals(ewpResponse.getStatus())
-        || HttpStatus.FORBIDDEN.equals(ewpResponse.getStatus())) {
+    if (HttpStatus.BAD_REQUEST.equals(ewpResponse.getStatus())) {
+      return new EwpErrorResponseOperationResult.Builder()
+          .request(request)
+          .response(ewpResponse)
+          .responseAuthenticationResult(responseAuthenticationResult)
+          .errorResponse(errorResponse)
+          .build();
+    } else {
       return new EwpInternalErrorOperationResult.Builder()
           .request(request)
           .response(ewpResponse)
@@ -239,13 +245,6 @@ public class EwpClient {
           .exception(
               new EwpClientAuthenticationFailedException(
                   request, ewpResponse, errorResponse.getDeveloperMessage().getValue()))
-          .build();
-    } else {
-      return new EwpErrorResponseOperationResult.Builder()
-          .request(request)
-          .response(ewpResponse)
-          .responseAuthenticationResult(responseAuthenticationResult)
-          .errorResponse(errorResponse)
           .build();
     }
   }
