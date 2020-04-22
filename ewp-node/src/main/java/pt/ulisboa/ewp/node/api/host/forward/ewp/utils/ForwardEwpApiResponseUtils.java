@@ -26,6 +26,12 @@ public class ForwardEwpApiResponseUtils {
         .body(response);
   }
 
+  public static <T> ResponseEntity<ForwardEwpApiResponseWithData<T>> toOkResponseEntity(
+      T responseBody) {
+    ForwardEwpApiResponseWithData<T> response = createResponseWithMessagesAndData(responseBody);
+    return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(response);
+  }
+
   public static ResponseEntity<ForwardEwpApiResponse> toBadRequestResponseEntity() {
     ForwardEwpApiResponse responseBody = createResponseWithMessages();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
