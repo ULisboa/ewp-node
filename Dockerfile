@@ -12,7 +12,7 @@ FROM openjdk:11.0-jre-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends wget
 
-COPY --from=builder /build/ewp-node/target/*.jar /opt/app.jar
+COPY --from=builder /build/target/*.jar /opt/app.jar
 
 ENV SPRING_CONFIG_LOCATION=/config/application.yml
 VOLUME /config
