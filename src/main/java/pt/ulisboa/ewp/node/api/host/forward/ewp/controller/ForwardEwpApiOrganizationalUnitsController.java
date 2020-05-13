@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.springdoc.api.annotations.ParameterObject;
@@ -19,10 +20,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.EwpOrganizationalUnitsClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
@@ -35,6 +38,22 @@ import pt.ulisboa.ewp.node.utils.bean.ParamName;
 public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardEwpApiController {
 
   @Autowired private EwpOrganizationalUnitsClient organizationalUnitClient;
+
+  @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
+  @Operation(
+      summary = "Returns the specification for the API when considering a given HEI ID.",
+      description =
+          "The specification returned contains the maximum number of ounit IDs and codes that the target HEI ID accepts per request.",
+      tags = {"Organizational Units"})
+  public ResponseEntity<
+          ForwardEwpApiResponseWithData<
+              ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO>>
+      getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
+    ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO apiSpecification =
+        organizationalUnitClient.getApiSpecification(heiId);
+    return ResponseEntity.ok(
+        ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(apiSpecification));
+  }
 
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
