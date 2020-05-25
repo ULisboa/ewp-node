@@ -9,6 +9,6 @@ public class HealthCheckResourceTest extends AbstractResourceTest {
 
   @Test
   public void testSuccessHealthCheck() throws Exception {
-    this.mockMvc.perform(get("/rest/healthcheck")).andExpect(status().isOk());
+    this.mockMvc.perform(get("/api/healthcheck")).andExpect(status().isOk());
   }
 }

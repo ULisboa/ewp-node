@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import java.util.UUID;
+import javax.servlet.Filter;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import pt.ulisboa.ewp.node.AbstractTest;
+import pt.ulisboa.ewp.node.api.common.filter.CustomUrlRewriteFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.filter.ForwardEwpApiRequestFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
@@ -25,22 +27,23 @@ import pt.ulisboa.ewp.node.service.http.log.host.HostHttpCommunicationLogService
 
 public class ForwardEwpApiAuthenticationControllerTest extends AbstractTest {
 
-  @Autowired
-  private WebApplicationContext wac;
+  @Autowired private WebApplicationContext wac;
 
-  @Autowired
-  private HostRepository hostRepository;
+  @Autowired private HostRepository hostRepository;
 
-  @Autowired
-  private HostHttpCommunicationLogService hostCommunicationLogService;
+  @Autowired private HostHttpCommunicationLogService hostCommunicationLogService;
 
   private MockMvc mockMvc;
 
   @Before
   public void setup() {
-    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
-        .addFilter(new ForwardEwpApiRequestFilter(hostCommunicationLogService))
-        .apply(springSecurity()).build();
+    Filter urlRewriteFilter = wac.getBean(CustomUrlRewriteFilter.class);
+    this.mockMvc =
+        MockMvcBuilders.webAppContextSetup(this.wac)
+            .addFilters(
+                urlRewriteFilter, new ForwardEwpApiRequestFilter(hostCommunicationLogService))
+            .apply(springSecurity())
+            .build();
   }
 
   @Test

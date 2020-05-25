@@ -6,7 +6,6 @@
 <urlrewrite>
   <rule>
     <name>REST URI prefix to API URI prefix</name>
-    <condition name="host" operator="notequal">www.yourdomain.com</condition>
     <from>^/rest/(.*)$</from>
     <to type="forward">/api/$1</to>
   </rule>

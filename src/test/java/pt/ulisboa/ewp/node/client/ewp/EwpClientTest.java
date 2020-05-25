@@ -91,7 +91,7 @@ public class EwpClientTest extends AbstractTest {
     Map<String, List<String>> params = new HashMap<>();
     params.put(EwpApiParamConstants.PARAM_NAME_ECHO, Collections.singletonList("abc"));
     ewpClient.executeWithLoggingExpectingSuccess(
-        new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/rest/ewp/echo")
+        new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
             .queryParams(params)
             .authenticationMethod(EwpAuthenticationMethod.ANONYMOUS),
         Response.class);
@@ -115,7 +115,7 @@ public class EwpClientTest extends AbstractTest {
     params.put(EwpApiParamConstants.PARAM_NAME_ECHO, Collections.singletonList(testEchoValue));
     EwpSuccessOperationResult<Response> clientResponse =
         ewpClient.executeWithLoggingExpectingSuccess(
-            new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/rest/ewp/echo")
+            new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
                 .queryParams(params)
                 .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE),
             Response.class);
@@ -142,7 +142,7 @@ public class EwpClientTest extends AbstractTest {
     params.put(EwpApiParamConstants.PARAM_NAME_ECHO, Collections.singletonList(testEchoValue));
     EwpSuccessOperationResult<Response> clientResponse =
         ewpClient.executeWithLoggingExpectingSuccess(
-            new EwpRequest(HttpMethod.POST, "http://localhost:" + serverPort + "/rest/ewp/echo")
+            new EwpRequest(HttpMethod.POST, "http://localhost:" + serverPort + "/api/ewp/echo")
                 .bodyParams(params)
                 .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE),
             Response.class);

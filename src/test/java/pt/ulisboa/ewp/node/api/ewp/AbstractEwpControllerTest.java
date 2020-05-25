@@ -20,6 +20,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.TreeSet;
 import java.util.UUID;
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -38,6 +39,7 @@ import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
 import pt.ulisboa.ewp.node.api.AbstractResourceTest;
+import pt.ulisboa.ewp.node.api.common.filter.CustomUrlRewriteFilter;
 import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestFilter;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
@@ -58,9 +60,10 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
 
   @Before
   public void setup() {
+    Filter urlRewriteFilter = wac.getBean(CustomUrlRewriteFilter.class);
     this.mockMvc =
         MockMvcBuilders.webAppContextSetup(this.wac)
-            .addFilters(new EwpApiRequestFilter(ewpHttpCommunicationLogService))
+            .addFilters(new EwpApiRequestFilter(ewpHttpCommunicationLogService), urlRewriteFilter)
             .apply(springSecurity())
             .build();
   }
