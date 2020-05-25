@@ -4,5 +4,5 @@ public class ForwardEwpApiConstants {
 
   private ForwardEwpApiConstants() {}
 
-  public static final String API_BASE_URI = "/rest/forward/ewp/";
+  public static final String API_BASE_URI = "/api/forward/ewp/";
 }

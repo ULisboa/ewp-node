@@ -4,5 +4,5 @@ public class AdminApiConstants {
 
   private AdminApiConstants() {}
 
-  public static final String API_BASE_URI = "/rest/admin/";
+  public static final String API_BASE_URI = "/api/admin/";
 }
