@@ -35,7 +35,8 @@ security:
   # Configuration for the Client TLS Certificate authentication
   clientTls:
     # Header of the request where the certificate is embedded
-    headerName: ssl-client-cert
+    headerName: x-ssl-client-cert
+    encoding: hex
 
   # Configuration of the keystore used for authentication (such as, HTTP Signatures)
   keyStore:

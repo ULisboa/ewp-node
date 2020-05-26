@@ -4,13 +4,16 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -87,16 +90,8 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
           String certificateString =
               URLDecoder.decode(encodedCertificateString, StandardCharsets.UTF_8.name())
                   .replaceAll("[\r\n\t]", "");
-          byte[] decodedCertificate =
-              Base64.getDecoder()
-                  .decode(
-                      certificateString
-                          .replace(BEGIN_CERTIFICATE, "")
-                          .replace(END_CERTIFICATE, ""));
-          X509Certificate certificate =
-              (X509Certificate)
-                  CertificateFactory.getInstance("X.509")
-                      .generateCertificate(new ByteArrayInputStream(decodedCertificate));
+          X509Certificate certificate = decodeCertificate(certificateString);
+          logger.info("Subject DN: " + certificate.getSubjectDN().getName());
           if (certificate != null) {
             certificates = new X509Certificate[] {certificate};
           }
@@ -137,5 +132,33 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
     return EwpApiAuthenticateMethodResponse.successBuilder(
             EwpAuthenticationMethod.TLS, registryClient.getHeisCoveredByCertificate(certificate))
         .build();
+  }
+
+  private X509Certificate decodeCertificate(String certificateString)
+      throws CertificateException, DecoderException {
+    logger.info(
+        "Decoding certificate (supposedly encoded as "
+            + securityProperties.getClientTls().getEncoding()
+            + "):\n"
+            + certificateString);
+    String sanitizedCertificateString =
+        certificateString.replace(BEGIN_CERTIFICATE, "").replace(END_CERTIFICATE, "");
+    byte[] decodedCertificate;
+    switch (securityProperties.getClientTls().getEncoding()) {
+      case BASE64:
+        decodedCertificate = Base64.decodeBase64(sanitizedCertificateString);
+        break;
+
+      case HEX:
+        decodedCertificate = Hex.decodeHex(sanitizedCertificateString);
+        break;
+
+      default:
+        throw new IllegalStateException(
+            "Unknown encoding: " + securityProperties.getClientTls().getEncoding());
+    }
+    return (X509Certificate)
+        CertificateFactory.getInstance("X.509")
+            .generateCertificate(new ByteArrayInputStream(decodedCertificate));
   }
 }
