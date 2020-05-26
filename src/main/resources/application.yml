@@ -33,6 +33,10 @@ security:
   # allowMissingClientCertificate: false
 
   # Configuration for the Client TLS Certificate authentication
+  # If a reverse proxy does SSL termination then that reverse proxy must be
+  # configured to optionally verify client certificates, passing them, if present,
+  # through the header indicated by the attribute clientTls.headerName below.
+  # The encoding must also be defined, whether Base64 or HEX.
   clientTls:
     # Header of the request where the certificate is embedded
     headerName: x-ssl-client-cert

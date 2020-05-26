@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -86,7 +87,12 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
       String clientTlsHeaderName = securityProperties.getClientTls().getHeaderName();
       try {
         String encodedCertificateString = request.getHeader(clientTlsHeaderName);
-        if (encodedCertificateString != null) {
+        if (StringUtils.isNotEmpty(encodedCertificateString)) {
+          logger.info(
+              "Received header "
+                  + clientTlsHeaderName
+                  + " with value: \n"
+                  + encodedCertificateString);
           String certificateString =
               URLDecoder.decode(encodedCertificateString, StandardCharsets.UTF_8.name())
                   .replaceAll("[\r\n\t]", "");
@@ -136,11 +142,6 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
 
   private X509Certificate decodeCertificate(String certificateString)
       throws CertificateException, DecoderException {
-    logger.info(
-        "Decoding certificate (supposedly encoded as "
-            + securityProperties.getClientTls().getEncoding()
-            + "):\n"
-            + certificateString);
     String sanitizedCertificateString =
         certificateString.replace(BEGIN_CERTIFICATE, "").replace(END_CERTIFICATE, "");
     byte[] decodedCertificate;
