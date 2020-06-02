@@ -1,7 +1,6 @@
 package pt.ulisboa.ewp.node.domain.entity.http;
 
 import java.util.Collection;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,12 +13,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
+import pt.ulisboa.ewp.node.utils.StringUtils;
 
 @Entity
 @Table(name = "HTTP_REQUEST_LOG")
 public class HttpRequestLog {
+
+  private static final int MAX_BODY_LENGTH = (int) Math.pow(2, 15);
 
   private long id;
   private HttpCommunicationLog communication;
@@ -35,7 +36,7 @@ public class HttpRequestLog {
     this.method = method;
     this.url = url;
     this.headers = headers;
-    this.body = body;
+    this.body = StringUtils.truncateWithSuffix(body, MAX_BODY_LENGTH, "====TRUNCATED====");
   }
 
   @Id
