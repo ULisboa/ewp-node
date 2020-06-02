@@ -4,6 +4,7 @@ import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Collection;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -17,13 +18,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiHeiIdsResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.EwpInstitutionsClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
 @RestController
@@ -32,7 +36,21 @@ import pt.ulisboa.ewp.node.utils.bean.ParamName;
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
 public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiController {
 
+  @Autowired private RegistryClient registryClient;
+
   @Autowired private EwpInstitutionsClient institutionClient;
+
+  @GetMapping(value = "/hei-ids", produces = MediaType.APPLICATION_XML_VALUE)
+  @Operation(
+      summary = "EWP Institutions Forward API.",
+      tags = {"Institutions"})
+  public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiHeiIdsResponseDTO>>
+      getAllHeiIds() {
+    Collection<String> heiIds = registryClient.getAllHeiIds();
+    return ResponseEntity.ok(
+        ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(
+            new ForwardEwpApiHeiIdsResponseDTO(heiIds)));
+  }
 
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(

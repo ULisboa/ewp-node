@@ -1,23 +1,22 @@
 package pt.ulisboa.ewp.node.client.ewp.registry;
 
+import eu.erasmuswithoutpaper.registryclient.ApiSearchConditions;
+import eu.erasmuswithoutpaper.registryclient.ClientImpl;
+import eu.erasmuswithoutpaper.registryclient.ClientImplOptions;
+import eu.erasmuswithoutpaper.registryclient.DefaultCatalogueFetcher;
+import eu.erasmuswithoutpaper.registryclient.HeiEntry;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Collection;
-
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
-
 import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
-import eu.erasmuswithoutpaper.registryclient.ApiSearchConditions;
-import eu.erasmuswithoutpaper.registryclient.ClientImpl;
-import eu.erasmuswithoutpaper.registryclient.ClientImplOptions;
-import eu.erasmuswithoutpaper.registryclient.DefaultCatalogueFetcher;
 
 @Service
 public class RegistryClient {
@@ -77,5 +76,9 @@ public class RegistryClient {
 
   public Element findApi(ApiSearchConditions conditions) {
     return client.findApi(conditions);
+  }
+
+  public Collection<String> getAllHeiIds() {
+    return client.getAllHeis().stream().map(HeiEntry::getId).collect(Collectors.toList());
   }
 }
