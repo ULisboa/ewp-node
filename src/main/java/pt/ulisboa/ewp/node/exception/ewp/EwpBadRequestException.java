@@ -13,6 +13,11 @@ public class EwpBadRequestException extends RuntimeException {
   }
 
   @Override
+  public String getMessage() {
+    return getDeveloperMessage();
+  }
+
+  @Override
   public String toString() {
     return "EwpBadRequestException{" + "developerMessage='" + developerMessage + '\'' + '}';
   }

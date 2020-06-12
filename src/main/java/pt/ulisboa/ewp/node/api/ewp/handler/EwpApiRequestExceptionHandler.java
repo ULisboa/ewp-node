@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
+import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
 import pt.ulisboa.ewp.node.utils.ewp.EwpApiUtils;
 
 @Component
@@ -29,15 +30,29 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
     if (request.getRequestURI().startsWith(EwpApiConstants.API_BASE_URI)) {
       HttpServletResponseWithCustomSendError responseWithCustomSendError =
           new HttpServletResponseWithCustomSendError(response);
-      super.doResolveException(request, responseWithCustomSendError, handler, ex);
-
-      if (responseWithCustomSendError.getStatus() == HttpStatus.OK.value()) {
-        responseWithCustomSendError.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      ModelAndView modelAndView =
+          super.doResolveException(request, responseWithCustomSendError, handler, ex);
+      if (modelAndView == null) {
+        if (ex instanceof EwpBadRequestException) {
+          modelAndView = handleEwpBadRequestException((EwpBadRequestException) ex, response);
+        } else {
+          modelAndView = handleUnknownException(ex, response);
+        }
       }
-
-      return createModelAndViewFromException(ex);
+      return modelAndView;
     }
     return null;
+  }
+
+  private ModelAndView handleEwpBadRequestException(
+      EwpBadRequestException exception, HttpServletResponse response) {
+    response.setStatus(HttpStatus.BAD_REQUEST.value());
+    return createModelAndViewFromException(exception);
+  }
+
+  private ModelAndView handleUnknownException(Exception exception, HttpServletResponse response) {
+    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    return createModelAndViewFromException(exception);
   }
 
   private ModelAndView createModelAndViewFromException(Exception ex) {
