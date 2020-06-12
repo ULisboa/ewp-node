@@ -38,6 +38,8 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
         } else {
           modelAndView = handleUnknownException(ex, response);
         }
+      } else {
+        fillModelAndViewWithException(modelAndView, ex);
       }
       return modelAndView;
     }
@@ -57,13 +59,16 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
 
   private ModelAndView createModelAndViewFromException(Exception ex) {
     ModelAndView modelAndView = new ModelAndView();
+    fillModelAndViewWithException(modelAndView, ex);
+    return modelAndView;
+  }
 
+  private void fillModelAndViewWithException(ModelAndView modelAndView, Exception ex) {
     MarshallingView marshallingView = new MarshallingView();
     marshallingView.setMarshaller(jaxb2Marshaller);
     modelAndView.setView(marshallingView);
 
     modelAndView.addObject(createErrorResponse(ex));
-    return modelAndView;
   }
 
   private ErrorResponse createErrorResponse(Exception exception) {
