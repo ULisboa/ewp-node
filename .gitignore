@@ -12,3 +12,4 @@
 /.tern-project
 **/logs/
 .directory
+plugins/

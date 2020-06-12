@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
-import eu.erasmuswithoutpaper.api.architecture.MultilineString;
 import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
 import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse.Hei;
 import java.io.Serializable;
@@ -39,6 +38,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperati
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult.Builder;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
+import pt.ulisboa.ewp.node.utils.ewp.EwpApiUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
 @AutoConfigureMockMvc
@@ -175,10 +175,7 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
   public void testSimpleCourseReplicationGet_Authenticated_ErrorResponse() throws Exception {
     String heiId = "demo";
 
-    ErrorResponse errorResponse = new ErrorResponse();
-    MultilineString multilineString = new MultilineString();
-    multilineString.setValue("Test");
-    errorResponse.setDeveloperMessage(multilineString);
+    ErrorResponse errorResponse = EwpApiUtils.createErrorResponseWithDeveloperMessage("Test");
 
     EwpResponse response = new EwpResponse.Builder(HttpStatus.BAD_REQUEST).build();
 

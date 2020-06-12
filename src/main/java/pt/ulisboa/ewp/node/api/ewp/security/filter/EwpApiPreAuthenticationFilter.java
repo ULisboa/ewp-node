@@ -1,14 +1,12 @@
 package pt.ulisboa.ewp.node.api.ewp.security.filter;
 
 import java.io.IOException;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.stream.StreamResult;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,13 +14,11 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.firewall.FirewalledRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import pt.ulisboa.ewp.node.api.ewp.security.exception.EwpApiSecurityException;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
+import pt.ulisboa.ewp.node.utils.ewp.EwpApiUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
-import eu.erasmuswithoutpaper.api.architecture.MultilineString;
 
 /** Filter that prepares the environment for further EWP authentication methods. */
 public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
@@ -61,7 +57,9 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
         response.addHeader(HttpConstants.HEADER_WANT_DIGEST, "SHA-256");
 
         writeResponseBody(
-            response, createErrorResponse("No authorization method found in the request"));
+            response,
+            EwpApiUtils.createErrorResponseWithDeveloperMessage(
+                "No authorization method found in the request"));
       }
     } catch (AuthenticationException exception) {
       fillResponseWithAuthenticationError(response, exception);
@@ -80,15 +78,8 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
       }
     }
 
-    writeResponseBody(response, createErrorResponse(exception.getMessage()));
-  }
-
-  private ErrorResponse createErrorResponse(String exceptionMessage) {
-    ErrorResponse errorResponse = new ErrorResponse();
-    MultilineString message = new MultilineString();
-    message.setValue(exceptionMessage);
-    errorResponse.setDeveloperMessage(message);
-    return errorResponse;
+    writeResponseBody(
+        response, EwpApiUtils.createErrorResponseWithDeveloperMessage(exception.getMessage()));
   }
 
   private void writeResponseBody(HttpServletResponse response, Object object) throws IOException {

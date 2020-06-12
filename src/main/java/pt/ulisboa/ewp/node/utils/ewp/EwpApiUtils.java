@@ -2,6 +2,8 @@ package pt.ulisboa.ewp.node.utils.ewp;
 
 import static org.joox.JOOX.$;
 
+import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
+import eu.erasmuswithoutpaper.api.architecture.MultilineString;
 import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.httpsig.CliauthHttpsig;
 import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.none.CliauthAnonymous;
 import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.tlscert.CliauthTlscert;
@@ -252,5 +254,13 @@ public class EwpApiUtils {
                   return false;
               }
             });
+  }
+
+  public static ErrorResponse createErrorResponseWithDeveloperMessage(String developerMessage) {
+    ErrorResponse errorResponse = new ErrorResponse();
+    MultilineString message = new MultilineString();
+    message.setValue(developerMessage);
+    errorResponse.setDeveloperMessage(message);
+    return errorResponse;
   }
 }

@@ -8,13 +8,18 @@ import eu.erasmuswithoutpaper.api.registry.ApisImplemented;
 import eu.erasmuswithoutpaper.api.registry.OtherHeiId;
 import io.swagger.v3.oas.annotations.Operation;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Collection;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +37,11 @@ import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 @EwpApi
 @RequestMapping(EwpApiConstants.API_BASE_URI + "manifest")
 public class EwpApiDiscoveryManifestController {
+
+  @Value("${baseContextPath}")
+  private String baseContextPath;
+
+  @Autowired private Logger log;
 
   @Autowired private KeyStoreService keyStoreService;
 
@@ -59,37 +69,45 @@ public class EwpApiDiscoveryManifestController {
     DecodedCertificateAndKey decodedCertificateAndKeyFromStorage =
         keyStoreService.getDecodedCertificateAndKeyFromStorage();
 
+    String baseUrl = getBaseUrl(request);
+
     hostRepository
         .findAll()
         .forEach(
-            hostConfiguration -> {
-              Host host = new Host();
-              host.getAdminEmail().add(hostConfiguration.getAdminEmail());
+            hostConfiguration ->
+                hostConfiguration
+                    .getCoveredHeis()
+                    .forEach(
+                        coveredHei -> {
+                          Host host = new Host();
+                          host.getAdminEmail().add(hostConfiguration.getAdminEmail());
 
-              MultilineString adminNotes = new MultilineString();
-              adminNotes.setValue(hostConfiguration.getAdminNotes());
-              host.setAdminNotes(adminNotes);
+                          MultilineString adminNotes = new MultilineString();
+                          adminNotes.setValue(hostConfiguration.getAdminNotes());
+                          host.setAdminNotes(adminNotes);
 
-              host.setApisImplemented(getApisImplemented(request));
-              host.setInstitutionsCovered(
-                  getInstitutionsCovered(hostConfiguration.getCoveredHeis()));
-              host.setClientCredentialsInUse(
-                  getClientCredentialsInUse(decodedCertificateAndKeyFromStorage));
-              host.setServerCredentialsInUse(
-                  getServerCredentialsInUse(decodedCertificateAndKeyFromStorage));
-              manifest.getHost().add(host);
-            });
+                          host.setApisImplemented(
+                              getApisImplemented(coveredHei.getSchacCode(), baseUrl));
+
+                          Host.InstitutionsCovered institutionsCovered =
+                              new Host.InstitutionsCovered();
+                          institutionsCovered.getHei().add(createHei(coveredHei));
+                          host.setInstitutionsCovered(institutionsCovered);
+
+                          host.setClientCredentialsInUse(
+                              getClientCredentialsInUse(decodedCertificateAndKeyFromStorage));
+                          host.setServerCredentialsInUse(
+                              getServerCredentialsInUse(decodedCertificateAndKeyFromStorage));
+                          manifest.getHost().add(host);
+                        }));
   }
 
-  private Host.InstitutionsCovered getInstitutionsCovered(Collection<Hei> coveredHeis) {
-    Host.InstitutionsCovered institutionsCovered = new Host.InstitutionsCovered();
-    coveredHeis.forEach(coveredHei -> institutionsCovered.getHei().add(createHei(coveredHei)));
-    return institutionsCovered;
-  }
-
-  private ApisImplemented getApisImplemented(HttpServletRequest request) {
+  private ApisImplemented getApisImplemented(String heiId, String baseUrl) {
     ApisImplemented apisImplemented = new ApisImplemented();
-    manifestEntries.forEach(me -> apisImplemented.getAny().add(me.getManifestEntry(request)));
+    manifestEntries.stream()
+        .map(me -> me.getManifestEntry(heiId, baseUrl))
+        .filter(Optional::isPresent)
+        .forEach(me -> apisImplemented.getAny().add(me.get()));
     return apisImplemented;
   }
 
@@ -147,5 +165,20 @@ public class EwpApiDiscoveryManifestController {
             });
 
     return hei;
+  }
+
+  private String getBaseUrl(HttpServletRequest request) {
+    try {
+      URL requestUrl = new URL(request.getRequestURL().toString());
+      return new URL(
+              "https://"
+                  + requestUrl.getHost()
+                  + (requestUrl.getPort() == -1 ? "" : ":" + requestUrl.getPort())
+                  + baseContextPath)
+          .toString();
+    } catch (MalformedURLException e) {
+      log.error("Failed to get base URL", e);
+    }
+    return null;
   }
 }

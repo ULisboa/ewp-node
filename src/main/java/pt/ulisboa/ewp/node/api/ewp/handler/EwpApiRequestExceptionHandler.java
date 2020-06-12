@@ -1,7 +1,6 @@
 package pt.ulisboa.ewp.node.api.ewp.handler;
 
 import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
-import eu.erasmuswithoutpaper.api.architecture.MultilineString;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -13,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
+import pt.ulisboa.ewp.node.utils.ewp.EwpApiUtils;
 
 @Component
 public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolver {
@@ -54,18 +54,14 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
   private ErrorResponse createErrorResponse(Exception exception) {
     logger.error("Handling unknown exception", exception);
 
-    ErrorResponse errorResponse = new ErrorResponse();
-    MultilineString message = new MultilineString();
-
+    String developerMessage;
     if (exception.getMessage() != null) {
-      message.setValue(exception.getMessage());
+      developerMessage = exception.getMessage();
     } else {
-      message.setValue("Unknown internal server error");
+      developerMessage = "Unknown internal server error";
     }
 
-    errorResponse.setDeveloperMessage(message);
-
-    return errorResponse;
+    return EwpApiUtils.createErrorResponseWithDeveloperMessage(developerMessage);
   }
 
   /**

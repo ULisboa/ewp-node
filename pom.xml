@@ -53,6 +53,11 @@
       <artifactId>ewp-connector-api</artifactId>
       <version>2.0.0</version>
     </dependency>
+    <dependency>
+      <groupId>pt.ulisboa</groupId>
+      <artifactId>ewp-host-plugin-skeleton</artifactId>
+      <version>0.1.0</version>
+    </dependency>
 
     <dependency>
       <groupId>org.tomitribe</groupId>

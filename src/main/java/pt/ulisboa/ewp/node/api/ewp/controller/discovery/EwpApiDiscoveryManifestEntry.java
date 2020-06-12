@@ -2,7 +2,7 @@ package pt.ulisboa.ewp.node.api.ewp.controller.discovery;
 
 import eu.erasmuswithoutpaper.api.architecture.ManifestApiEntryBase;
 import eu.erasmuswithoutpaper.api.discovery.Discovery;
-import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiManifestEntryStrategy;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
@@ -11,11 +11,11 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 public class EwpApiDiscoveryManifestEntry extends EwpApiManifestEntryStrategy {
 
   @Override
-  public ManifestApiEntryBase getManifestEntry(HttpServletRequest request) {
+  public Optional<ManifestApiEntryBase> getManifestEntry(String heiId, String baseUrl) {
     Discovery discovery = new Discovery();
     discovery.setVersion(EwpApiConstants.DISCOVERY_VERSION);
     discovery.setAdminNotes(null);
-    discovery.setUrl(getBaseUrl(request) + EwpApiConstants.API_BASE_URI + "manifest");
-    return discovery;
+    discovery.setUrl(baseUrl + EwpApiConstants.API_BASE_URI + "manifest");
+    return Optional.of(discovery);
   }
 }

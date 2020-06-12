@@ -117,3 +117,12 @@ logging:
         web:
           filter:
             CommonsRequestLoggingFilter: DEBUG
+
+# Plugins configuration
+# Here it is possible to pass configuration to a given plugin by its plugin ID.
+# For instance, in the example below, a property example.key belonging to a plugin with ID
+# ewp-host-plugin-demo is defined.
+plugins:
+  ewp-host-plugin-demo:
+    example:
+      key: test
