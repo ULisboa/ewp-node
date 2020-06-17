@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.plugin.manager.host;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import org.pf4j.Plugin;
 import org.pf4j.PluginFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -26,7 +28,9 @@ public class HostPluginManager extends DefaultPluginManager {
 
   private final Map<String, HostPlugin> heiIdToPluginMap = new HashMap<>();
 
-  public HostPluginManager() {
+  public HostPluginManager(@Value("${plugins.path}") String pluginsPath) {
+    super(Path.of(pluginsPath));
+    LOGGER.info("Preparing to load plugins from path: {}", super.pluginsRoot.toAbsolutePath());
     init();
   }
 
