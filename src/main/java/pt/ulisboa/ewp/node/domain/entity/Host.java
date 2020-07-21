@@ -2,7 +2,6 @@ package pt.ulisboa.ewp.node.domain.entity;
 
 import java.util.Collection;
 import java.util.HashSet;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,9 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.HostForwardEwpApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.host.notification.HostNotificationApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.http.log.host.HostHttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.listener.EntityAuditListener;
 
@@ -33,7 +30,6 @@ public class Host {
   private String adminNotes;
 
   private HostForwardEwpApiConfiguration forwardEwpApiConfiguration;
-  private HostNotificationApiConfiguration notificationApiConfiguration;
   private Collection<Hei> coveredHeis = new HashSet<>();
   private Collection<HostHttpCommunicationLog> httpCommunicationLogs = new HashSet<>();
 
@@ -103,17 +99,6 @@ public class Host {
     this.forwardEwpApiConfiguration = forwardEwpApiConfiguration;
   }
 
-  @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinColumn(name = "notification_api_configuration_id")
-  public HostNotificationApiConfiguration getNotificationApiConfiguration() {
-    return notificationApiConfiguration;
-  }
-
-  public void setNotificationApiConfiguration(
-      HostNotificationApiConfiguration notificationApiConfiguration) {
-    this.notificationApiConfiguration = notificationApiConfiguration;
-  }
-
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "host", cascade = CascadeType.ALL)
   public Collection<Hei> getCoveredHeis() {
     return coveredHeis;
@@ -128,8 +113,7 @@ public class Host {
     return httpCommunicationLogs;
   }
 
-  public void setHttpCommunicationLogs(
-      Collection<HostHttpCommunicationLog> httpCommunicationLogs) {
+  public void setHttpCommunicationLogs(Collection<HostHttpCommunicationLog> httpCommunicationLogs) {
     this.httpCommunicationLogs = httpCommunicationLogs;
   }
 

@@ -9,24 +9,19 @@ import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.transaction.Transactional;
-
 import org.bouncycastle.operator.OperatorCreationException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import pt.ulisboa.ewp.node.config.bootstrap.BootstrapProperties;
 import pt.ulisboa.ewp.node.config.bootstrap.HostBootstrapProperties;
 import pt.ulisboa.ewp.node.config.bootstrap.HostCoveredHeiBootstrapProperties;
 import pt.ulisboa.ewp.node.config.bootstrap.HostForwardEwpApiBootstrapProperties;
-import pt.ulisboa.ewp.node.config.bootstrap.HostNotificationApiBootstrapProperties;
 import pt.ulisboa.ewp.node.domain.entity.Hei;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.entity.OtherHeiId;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.HostForwardEwpApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.host.notification.HostNotificationApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.user.UserProfile;
 import pt.ulisboa.ewp.node.domain.entity.user.UserRole;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
@@ -81,7 +76,6 @@ public class BootstrapService {
             hostBootstrapProperties.getAdminNotes());
 
     createHostForwardEwpApiConfiguration(host, hostBootstrapProperties.getForwardEwpApi());
-    createHostNotificationApiConfiguration(host, hostBootstrapProperties.getNotificationApi());
 
     hostBootstrapProperties
         .getCoveredHeis()
@@ -97,13 +91,6 @@ public class BootstrapService {
     HostForwardEwpApiConfiguration forwardEwpApiConfiguration =
         HostForwardEwpApiConfiguration.create(host, forwardEwpApiProperties.getSecret());
     host.setForwardEwpApiConfiguration(forwardEwpApiConfiguration);
-  }
-
-  private void createHostNotificationApiConfiguration(
-      Host host, HostNotificationApiBootstrapProperties notificationApiProperties) {
-    HostNotificationApiConfiguration notificationEwpConfiguration =
-        HostNotificationApiConfiguration.create(host, notificationApiProperties.getSecret());
-    host.setNotificationApiConfiguration(notificationEwpConfiguration);
   }
 
   private Hei createHei(Host host, HostCoveredHeiBootstrapProperties coveredHeiProperties) {

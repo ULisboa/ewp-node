@@ -9,7 +9,6 @@ public class HostBootstrapProperties {
   private String adminEmail;
   private String adminNotes;
   private HostForwardEwpApiBootstrapProperties forwardEwpApi;
-  private HostNotificationApiBootstrapProperties notificationApi;
   private List<HostCoveredHeiBootstrapProperties> coveredHeis;
 
   public String getCode() {
@@ -50,14 +49,6 @@ public class HostBootstrapProperties {
 
   public void setForwardEwpApi(HostForwardEwpApiBootstrapProperties forwardEwpApi) {
     this.forwardEwpApi = forwardEwpApi;
-  }
-
-  public HostNotificationApiBootstrapProperties getNotificationApi() {
-    return notificationApi;
-  }
-
-  public void setNotificationApi(HostNotificationApiBootstrapProperties notificationApi) {
-    this.notificationApi = notificationApi;
   }
 
   public List<HostCoveredHeiBootstrapProperties> getCoveredHeis() {

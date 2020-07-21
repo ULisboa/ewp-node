@@ -73,14 +73,6 @@ bootstrap:
         # was effectively produced by the host.
         # Hence, both host and EWP node must know this secret.
         secret: sample-host-forward-ewp-api-secret
-      # Configuration of the notification API of the host
-      notificationApi:
-        baseUrl: https://example.com/rest
-        # Secret key that the EWP node will use when generating a JWT token.
-        # This secret key is used on the host to assert that the received JWT token
-        # was effectively produced by the EWP node.
-        # Hence, both host and EWP node must know this secret.
-        secret: sample-host-notification-api-secret
       coveredHeis:
         - schacCode: sample.edu
           names:
