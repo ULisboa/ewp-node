@@ -1,16 +1,9 @@
 package pt.ulisboa.ewp.node.service.bootstrap;
 
-import java.io.IOException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.transaction.Transactional;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +21,6 @@ import pt.ulisboa.ewp.node.domain.repository.HostRepository;
 import pt.ulisboa.ewp.node.domain.repository.KeyStoreConfigurationRepository;
 import pt.ulisboa.ewp.node.domain.repository.UserProfileRepository;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
-import pt.ulisboa.ewp.node.utils.keystore.DecodedKeystore;
 
 @Service
 @Transactional
@@ -47,11 +39,8 @@ public class BootstrapService {
   @Autowired private UserProfileRepository userProfileRepository;
 
   public void bootstrap() {
-    log.info("Preparing to bootstrap");
     bootstrapEwpHosts();
-    bootstrapKeystoreConfiguration();
     bootstrapUserProfiles();
-    log.info("Finished bootstrapping");
   }
 
   private void bootstrapEwpHosts() {
@@ -117,29 +106,6 @@ public class BootstrapService {
             });
 
     return hei;
-  }
-
-  private void bootstrapKeystoreConfiguration() {
-    if (keyStoreConfigurationRepository.getInstance() == null) {
-      log.info("Bootstrapping keystore configuration");
-      try {
-        DecodedKeystore generatedDecodedKeystore = keystoreService.generateKeystore();
-        keystoreService.persistKeystore(generatedDecodedKeystore);
-
-      } catch (KeyStoreException
-          | OperatorCreationException
-          | NoSuchProviderException
-          | IOException
-          | NoSuchAlgorithmException
-          | CertificateException
-          | UnrecoverableKeyException e) {
-        log.error("Failed to persist generated keystore", e);
-        System.exit(1);
-      }
-    } else {
-      log.info(
-          "Skipping bootstrap of keystore configuration (keystore configuration was found on database)");
-    }
   }
 
   private void bootstrapUserProfiles() {

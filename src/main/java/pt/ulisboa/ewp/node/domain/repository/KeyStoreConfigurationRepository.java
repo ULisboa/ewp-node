@@ -1,22 +1,16 @@
 package pt.ulisboa.ewp.node.domain.repository;
 
+import com.google.common.base.Strings;
 import java.util.Collection;
-
-import javax.transaction.Transactional;
-
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
-
 import pt.ulisboa.ewp.node.domain.entity.KeyStoreConfiguration;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
 
-import com.google.common.base.Strings;
-
 @Repository
-@Transactional
 public class KeyStoreConfigurationRepository extends AbstractRepository<KeyStoreConfiguration> {
 
   @Autowired @Lazy private MessageResolver messages;
@@ -32,7 +26,7 @@ public class KeyStoreConfigurationRepository extends AbstractRepository<KeyStore
 
   @Override
   protected boolean checkDomainConstraints(KeyStoreConfiguration entity) throws DomainException {
-    if (findAll().stream().anyMatch(kc -> kc != entity)) {
+    if (findAll().stream().anyMatch(kc -> kc != entity && kc.getId() != entity.getId())) {
       throw new DomainException(messages.get("error.keystore.configuration.only.one.can.exist"));
     }
 

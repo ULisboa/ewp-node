@@ -40,14 +40,14 @@ public abstract class AbstractRepository<T> {
     try {
       checkDomainConstraints(entity);
     } catch (DomainException e) {
-      MessageService.getInstance().add(Severity.ERROR, e.getMessage());
       log.error("Failed to persist entity", e);
+      MessageService.getInstance().add(Severity.ERROR, e.getMessage());
       return false;
     }
 
     return runInSession(
         session -> {
-          session.persist(entity);
+          session.saveOrUpdate(entity);
           return true;
         });
   }

@@ -4,7 +4,6 @@ import java.security.Key;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.util.Base64;
-
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class DecodedCertificateAndKey {
@@ -46,6 +45,10 @@ public class DecodedCertificateAndKey {
 
   public String getFormattedCertificate() {
     return this.formattedCertificate;
+  }
+
+  public Certificate getCertificate() {
+    return certificate;
   }
 
   public Key getPrivateKey() {

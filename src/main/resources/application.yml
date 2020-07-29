@@ -44,6 +44,8 @@ security:
 
   # Configuration of the keystore used for authentication (such as, HTTP Signatures)
   keyStore:
+    # When true, the application will try to import the keystore of the embedded server's SSL configuration
+    importFromSsl: true
     # For how long the keystore is cached locally.
     # When a new keystore is created it will take this amount of time to use the new keystore
     cacheValidityInSeconds: 60

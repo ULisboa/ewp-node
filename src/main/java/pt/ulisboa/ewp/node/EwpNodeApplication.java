@@ -16,6 +16,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
@@ -32,6 +33,7 @@ import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.domain.utils.DatabaseProperties;
 import pt.ulisboa.ewp.node.service.bootstrap.BootstrapService;
+import pt.ulisboa.ewp.node.service.bootstrap.KeystoreBootstrapService;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.utils.bean.ParamNameProcessor;
 
@@ -45,9 +47,11 @@ import pt.ulisboa.ewp.node.utils.bean.ParamNameProcessor;
     })
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
+@EnableCaching(proxyTargetClass = true)
 public class EwpNodeApplication {
 
   @Autowired private BootstrapService bootstrapService;
+  @Autowired private KeystoreBootstrapService keystoreBootstrapService;
 
   @Autowired private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
@@ -58,6 +62,7 @@ public class EwpNodeApplication {
   @PostConstruct
   private void init() {
     bootstrapService.bootstrap();
+    keystoreBootstrapService.bootstrap();
   }
 
   /** Injects a logger configured for the class requiring an injected logger. */

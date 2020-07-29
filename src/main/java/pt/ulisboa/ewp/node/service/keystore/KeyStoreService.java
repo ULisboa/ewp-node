@@ -24,6 +24,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.domain.entity.KeyStoreConfiguration;
 import pt.ulisboa.ewp.node.domain.repository.KeyStoreConfigurationRepository;
@@ -41,6 +42,7 @@ import pt.ulisboa.ewp.node.utils.messaging.Severity;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+@Transactional
 public class KeyStoreService {
 
   @Autowired private Logger log;
@@ -56,6 +58,10 @@ public class KeyStoreService {
   public KeyStoreService(SecurityProperties securityProperties) {
     this.securityProperties = securityProperties;
     initKeyStoreSuppliers();
+  }
+
+  public boolean isInitialized() {
+    return keyStoreConfigurationRepository.getInstance() != null;
   }
 
   private void initKeyStoreSuppliers() {
