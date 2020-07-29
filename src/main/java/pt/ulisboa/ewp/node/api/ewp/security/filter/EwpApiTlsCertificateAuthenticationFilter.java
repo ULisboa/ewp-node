@@ -88,7 +88,7 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
       try {
         String encodedCertificateString = request.getHeader(clientTlsHeaderName);
         if (StringUtils.isNotEmpty(encodedCertificateString)) {
-          logger.info(
+          logger.debug(
               "Received header "
                   + clientTlsHeaderName
                   + " with value: \n"
@@ -97,9 +97,10 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
               URLDecoder.decode(encodedCertificateString, StandardCharsets.UTF_8.name())
                   .replaceAll("[\r\n\t]", "");
           X509Certificate certificate = decodeCertificate(certificateString);
-          logger.info("Subject DN: " + certificate.getSubjectDN().getName());
           if (certificate != null) {
             certificates = new X509Certificate[] {certificate};
+          } else {
+            logger.error("Failed to decode certificate from header: " + encodedCertificateString);
           }
         }
       } catch (Exception e) {
@@ -133,6 +134,15 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
               "None of the client certificates is valid in the EWP network")
           .withResponseCode(HttpStatus.FORBIDDEN)
           .build();
+    }
+
+    if (certificate != null) {
+      if (certificate.getSubjectDN() != null) {
+        logger.info(
+            "Received certificate with subject DN: " + certificate.getSubjectDN().getName());
+      } else {
+        logger.info("Received certificate without subject DN");
+      }
     }
 
     return EwpApiAuthenticateMethodResponse.successBuilder(
