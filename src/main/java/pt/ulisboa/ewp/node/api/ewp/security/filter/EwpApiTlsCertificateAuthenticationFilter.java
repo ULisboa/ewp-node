@@ -26,6 +26,7 @@ import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
+import pt.ulisboa.ewp.node.utils.CertificateUtils;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
 
 /** Filter that attempts to authenticate a request by TLS Certificate. */
@@ -127,6 +128,23 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
           .build();
     }
 
+    if (certificates != null) {
+      logger.info("Received certificates: ");
+      for (X509Certificate certificate : certificates) {
+        String fingerprint = CertificateUtils.extractFingerprint(certificate);
+        if (certificate.getSubjectDN() != null) {
+          logger.info(
+              "\t- "
+                  + fingerprint
+                  + ": (Subject DN: "
+                  + certificate.getSubjectDN().getName()
+                  + ")");
+        } else {
+          logger.info("\t- " + fingerprint + ": (Without subject DN)");
+        }
+      }
+    }
+
     X509Certificate certificate = registryClient.getCertificateKnownInEwpNetwork(certificates);
     if (certificate == null && !securityProperties.isAllowMissingClientCertificate()) {
       return EwpApiAuthenticateMethodResponse.failureBuilder(
@@ -134,15 +152,6 @@ public class EwpApiTlsCertificateAuthenticationFilter extends OncePerRequestFilt
               "None of the client certificates is valid in the EWP network")
           .withResponseCode(HttpStatus.FORBIDDEN)
           .build();
-    }
-
-    if (certificate != null) {
-      if (certificate.getSubjectDN() != null) {
-        logger.info(
-            "Received certificate with subject DN: " + certificate.getSubjectDN().getName());
-      } else {
-        logger.info("Received certificate without subject DN");
-      }
     }
 
     return EwpApiAuthenticateMethodResponse.successBuilder(

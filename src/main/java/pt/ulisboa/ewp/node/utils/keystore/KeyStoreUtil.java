@@ -1,13 +1,10 @@
 package pt.ulisboa.ewp.node.utils.keystore;
 
-import java.io.ByteArrayInputStream;
 import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -30,13 +27,6 @@ public class KeyStoreUtil {
         certificateAlias,
         new KeyStore.PrivateKeyEntry(privateKey, certificateChain),
         new KeyStore.PasswordProtection(keyStorePassword.toCharArray()));
-  }
-
-  public static X509Certificate parseCertificate(byte[] certificateBytes)
-      throws CertificateException {
-    CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-    ByteArrayInputStream certificateInputStream = new ByteArrayInputStream(certificateBytes);
-    return (X509Certificate) certificateFactory.generateCertificate(certificateInputStream);
   }
 
   public static PrivateKey parsePrivateKey(String algorithm, byte[] privateKeyBytes)

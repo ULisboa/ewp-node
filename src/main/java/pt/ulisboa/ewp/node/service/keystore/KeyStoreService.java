@@ -29,6 +29,7 @@ import pt.ulisboa.ewp.node.domain.entity.KeyStoreConfiguration;
 import pt.ulisboa.ewp.node.domain.repository.KeyStoreConfigurationRepository;
 import pt.ulisboa.ewp.node.exception.keystore.KeysDoNotMatchException;
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
+import pt.ulisboa.ewp.node.utils.CertificateUtils;
 import pt.ulisboa.ewp.node.utils.SignatureUtils;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
@@ -82,7 +83,7 @@ public class KeyStoreService {
   public boolean persistKeystoreWithCertificateAndKey(
       byte[] certificateBytes, byte[] privateKeyBytes) {
     try {
-      X509Certificate certificate = KeyStoreUtil.parseCertificate(certificateBytes);
+      X509Certificate certificate = CertificateUtils.parseCertificate(certificateBytes);
       PrivateKey privateKey =
           KeyStoreUtil.parsePrivateKey(certificate.getPublicKey().getAlgorithm(), privateKeyBytes);
 
