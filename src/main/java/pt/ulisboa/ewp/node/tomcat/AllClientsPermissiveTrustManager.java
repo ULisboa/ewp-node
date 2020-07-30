@@ -45,6 +45,7 @@ public class AllClientsPermissiveTrustManager implements X509TrustManager {
 
   @Override
   public X509Certificate[] getAcceptedIssuers() {
-    return standardTrustManager.getAcceptedIssuers();
+    // NOTE return none, so to indicate we support self signed also
+    return new X509Certificate[0];
   }
 }
