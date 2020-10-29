@@ -35,7 +35,8 @@ import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
 @RestController
 @EwpApi
-@RequestMapping(EwpApiConstants.API_BASE_URI + "manifest")
+@RequestMapping(
+    value = {EwpApiConstants.API_BASE_URI + "manifest", EwpApiConstants.REST_BASE_URI + "manifest"})
 public class EwpApiDiscoveryManifestController {
 
   @Value("${baseContextPath}")
@@ -69,8 +70,6 @@ public class EwpApiDiscoveryManifestController {
     DecodedCertificateAndKey decodedCertificateAndKeyFromStorage =
         keyStoreService.getDecodedCertificateAndKeyFromStorage();
 
-    String baseUrl = getBaseUrl(request);
-
     hostRepository
         .findAll()
         .forEach(
@@ -87,7 +86,7 @@ public class EwpApiDiscoveryManifestController {
                           host.setAdminNotes(adminNotes);
 
                           host.setApisImplemented(
-                              getApisImplemented(coveredHei.getSchacCode(), baseUrl));
+                              getApisImplemented(request, coveredHei.getSchacCode()));
 
                           Host.InstitutionsCovered institutionsCovered =
                               new Host.InstitutionsCovered();
@@ -102,10 +101,13 @@ public class EwpApiDiscoveryManifestController {
                         }));
   }
 
-  private ApisImplemented getApisImplemented(String heiId, String baseUrl) {
+  private ApisImplemented getApisImplemented(HttpServletRequest originalRequest, String heiId) {
     ApisImplemented apisImplemented = new ApisImplemented();
     manifestEntries.stream()
-        .map(me -> me.getManifestEntry(heiId, baseUrl))
+        .map(
+            me ->
+                me.getManifestEntry(
+                    heiId, getBaseUrl(originalRequest, me instanceof EwpApiDiscoveryManifestEntry)))
         .filter(Optional::isPresent)
         .forEach(me -> apisImplemented.getAny().add(me.get()));
     return apisImplemented;
@@ -167,18 +169,30 @@ public class EwpApiDiscoveryManifestController {
     return hei;
   }
 
-  private String getBaseUrl(HttpServletRequest request) {
+  private String getBaseUrl(HttpServletRequest request, boolean supportRestBaseUri) {
     try {
       URL requestUrl = new URL(request.getRequestURL().toString());
+      String completeBaseUri = baseContextPath + getBaseApiUri(request, supportRestBaseUri);
       return new URL(
               "https://"
                   + requestUrl.getHost()
                   + (requestUrl.getPort() == -1 ? "" : ":" + requestUrl.getPort())
-                  + baseContextPath)
+                  + completeBaseUri)
           .toString();
     } catch (MalformedURLException e) {
       log.error("Failed to get base URL", e);
     }
     return null;
+  }
+
+  private String getBaseApiUri(HttpServletRequest request, boolean supportRestBaseUri) {
+    String requestURI = request.getRequestURI();
+    if (supportRestBaseUri && requestURI.startsWith(EwpApiConstants.REST_BASE_URI)) {
+      // NOTE: Backwards compatibility in case EWP registry has already
+      // the manifest registered with base URI EwpApiConstants.REST_BASE_URI
+      return EwpApiConstants.REST_BASE_URI;
+    } else {
+      return EwpApiConstants.API_BASE_URI;
+    }
   }
 }

@@ -32,7 +32,7 @@ public class EwpApiInstitutionsManifestEntry
     Institutions institutions = new Institutions();
     institutions.setVersion(EwpApiConstants.INSTITUTIONS_VERSION);
     institutions.setAdminNotes(null);
-    institutions.setUrl(baseUrl + EwpApiConstants.API_BASE_URI + "institutions");
+    institutions.setUrl(baseUrl + "institutions");
     institutions.setMaxHeiIds(BigInteger.valueOf(EwpApiConstants.MAX_HEI_IDS));
     institutions.setHttpSecurity(getHttpSecurityOptions());
     return Optional.of(institutions);

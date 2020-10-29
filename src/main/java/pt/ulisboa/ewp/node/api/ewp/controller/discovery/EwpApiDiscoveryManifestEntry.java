@@ -15,7 +15,7 @@ public class EwpApiDiscoveryManifestEntry extends EwpApiManifestEntryStrategy {
     Discovery discovery = new Discovery();
     discovery.setVersion(EwpApiConstants.DISCOVERY_VERSION);
     discovery.setAdminNotes(null);
-    discovery.setUrl(baseUrl + EwpApiConstants.API_BASE_URI + "manifest");
+    discovery.setUrl(baseUrl + "manifest");
     return Optional.of(discovery);
   }
 }

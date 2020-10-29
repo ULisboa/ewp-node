@@ -14,7 +14,7 @@ public class EwpApiEchoManifestEntry extends EwpApiManifestEntryWithHttpSecurity
     Echo echo = new Echo();
     echo.setVersion(EwpApiConstants.ECHO_VERSION);
     echo.setAdminNotes(null);
-    echo.setUrl(baseUrl + EwpApiConstants.API_BASE_URI + "echo");
+    echo.setUrl(baseUrl + "echo");
     echo.setHttpSecurity(getHttpSecurityOptions());
 
     return Optional.of(echo);

@@ -32,7 +32,7 @@ public class EwpApiOrganizationalUnitsManifestEntry
     OrganizationalUnits manifestEntry = new OrganizationalUnits();
     manifestEntry.setVersion(EwpApiConstants.ORGANIZATIONAL_UNITS_VERSION);
     manifestEntry.setAdminNotes(null);
-    manifestEntry.setUrl(baseUrl + EwpApiConstants.API_BASE_URI + "ounits");
+    manifestEntry.setUrl(baseUrl + "ounits");
     manifestEntry.setMaxOunitIds(BigInteger.valueOf(provider.getMaxOunitIdsPerRequest()));
     manifestEntry.setMaxOunitCodes(BigInteger.valueOf(provider.getMaxOunitCodesPerRequest()));
     manifestEntry.setHttpSecurity(getHttpSecurityOptions());
