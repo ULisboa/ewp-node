@@ -193,7 +193,7 @@ public class HttpSignatureService {
     Key key = decodedCertificateAndKey.getPrivateKey();
 
     Signer signer = new Signer(key, signature);
-    String queryParams = requestUri.getQuery() == null ? "" : "?" + requestUri.getQuery();
+    String queryParams = requestUri.getRawQuery() == null ? "" : "?" + requestUri.getRawQuery();
     Map<String, String> headersMapWithHostHeader = HttpUtils.toHeadersMap(headers);
     headersMapWithHostHeader.put(HttpHeaders.HOST, HttpUtils.getHostHeaderValue(requestUri));
     Signature signed =
