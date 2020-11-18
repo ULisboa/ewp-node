@@ -12,9 +12,9 @@ public class EwpClientConstants {
   public static final String QUERY_HEI_ID = "hei_id";
   public static final String QUERY_LOS_ID = "los_id";
   public static final String QUERY_LOS_CODE = "los_code";
+  public static final String QUERY_LOS_AT_DATE = "los_at_date";
   public static final String QUERY_LOIS_BEFORE = "lois_before";
   public static final String QUERY_LOIS_AFTER = "lois_after";
-  public static final String QUERY_LOIS_AT_DATE = "los_at_date";
   public static final String QUERY_MODIFIED_SINCE = "modified_since";
   public static final String QUERY_ORGANIZATIONAL_UNIT_CODE = "ounit_code";
   public static final String QUERY_ORGANIZATIONAL_UNIT_ID = "ounit_id";

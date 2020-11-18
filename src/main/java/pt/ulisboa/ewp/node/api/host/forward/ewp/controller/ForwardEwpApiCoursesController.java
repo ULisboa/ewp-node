@@ -71,7 +71,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
         requestDto.getLosCodes(),
         requestDto.getLoisBefore(),
         requestDto.getLoisAfter(),
-        requestDto.getLoisAtDate());
+        requestDto.getLosAtDate());
   }
 
   @PostMapping(
@@ -88,7 +88,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
         requestDto.getLosCodes(),
         requestDto.getLoisBefore(),
         requestDto.getLoisAfter(),
-        requestDto.getLoisAtDate());
+        requestDto.getLosAtDate());
   }
 
   // NOTE: currently only allows to obtain by LOS IDs or LOS codes (not both simultaneously)
@@ -98,13 +98,13 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
       List<String> losCodes,
       LocalDate loisBefore,
       LocalDate loisAfter,
-      LocalDate loisAtDate)
+      LocalDate losAtDate)
       throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<CoursesResponse> coursesResponse;
     if (!losIds.isEmpty()) {
-      coursesResponse = client.findByLosIds(heiId, losIds, loisBefore, loisAfter, loisAtDate);
+      coursesResponse = client.findByLosIds(heiId, losIds, loisBefore, loisAfter, losAtDate);
     } else {
-      coursesResponse = client.findByLosCodes(heiId, losCodes, loisBefore, loisAfter, loisAtDate);
+      coursesResponse = client.findByLosCodes(heiId, losCodes, loisBefore, loisAfter, losAtDate);
     }
     return createResponseEntityFromOperationResult(coursesResponse);
   }
@@ -168,15 +168,15 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
     @DateTimeFormat(iso = DATE)
     private LocalDate loisAfter;
 
-    @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE)
+    @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOS_AT_DATE)
     @Parameter(
-        name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE,
-        description = "Look up LOIS at a given date")
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_AT_DATE,
+        description = "Look up LOS at a given date")
     @Schema(
-        name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AT_DATE,
-        description = "Look up LOIS at a given date")
+        name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_AT_DATE,
+        description = "Look up LOS at a given date")
     @DateTimeFormat(iso = DATE)
-    private LocalDate loisAtDate;
+    private LocalDate losAtDate;
 
     public String getHeiId() {
       return heiId;
@@ -218,12 +218,12 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
       this.loisAfter = loisAfter;
     }
 
-    public LocalDate getLoisAtDate() {
-      return loisAtDate;
+    public LocalDate getLosAtDate() {
+      return losAtDate;
     }
 
-    public void setLoisAtDate(LocalDate loisAtDate) {
-      this.loisAtDate = loisAtDate;
+    public void setLosAtDate(LocalDate losAtDate) {
+      this.losAtDate = losAtDate;
     }
   }
 }

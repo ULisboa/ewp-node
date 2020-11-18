@@ -42,7 +42,7 @@ public class EwpCoursesClient {
       Collection<String> losIds,
       LocalDate loisBeforeDate,
       LocalDate loisAfterDate,
-      LocalDate loisAtDate)
+      LocalDate losAtDate)
       throws AbstractEwpClientErrorException {
     EwpCourseApiConfiguration api = getApiConfiguration(heiId);
 
@@ -61,9 +61,9 @@ public class EwpCoursesClient {
       queryParams.put(
           EwpClientConstants.QUERY_LOIS_AFTER, Collections.singletonList(loisAfterDate.toString()));
     }
-    if (loisAtDate != null) {
+    if (losAtDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOIS_AT_DATE, Collections.singletonList(loisAtDate.toString()));
+          EwpClientConstants.QUERY_LOS_AT_DATE, Collections.singletonList(losAtDate.toString()));
     }
     request.queryParams(queryParams);
 
@@ -75,7 +75,7 @@ public class EwpCoursesClient {
       Collection<String> losCodes,
       LocalDate loisBeforeDate,
       LocalDate loisAfterDate,
-      LocalDate loisAtDate)
+      LocalDate losAtDate)
       throws AbstractEwpClientErrorException {
     EwpCourseApiConfiguration api = getApiConfiguration(heiId);
 
@@ -94,9 +94,9 @@ public class EwpCoursesClient {
       queryParams.put(
           EwpClientConstants.QUERY_LOIS_AFTER, Collections.singletonList(loisAfterDate.toString()));
     }
-    if (loisAtDate != null) {
+    if (losAtDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOIS_AT_DATE, Collections.singletonList(loisAtDate.toString()));
+          EwpClientConstants.QUERY_LOS_AT_DATE, Collections.singletonList(losAtDate.toString()));
     }
     request.queryParams(queryParams);
 
