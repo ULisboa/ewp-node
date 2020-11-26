@@ -59,12 +59,13 @@ public class EwpApiInstitutionsController {
       throw new EwpBadRequestException("At least one valid HEI ID must be provided");
     }
 
-    Map<String, InstitutionsHostProvider> heiIdToProviderMap =
-        hostPluginManager.getProviderPerHeiId(heiIds, InstitutionsHostProvider.class);
-    if (heiIdToProviderMap.size() > EwpApiConstants.MAX_HEI_IDS) {
+    if (heiIds.size() > EwpApiConstants.MAX_HEI_IDS) {
       throw new EwpBadRequestException(
           "Maximum number of valid HEI IDs per request is " + EwpApiConstants.MAX_HEI_IDS);
     }
+
+    Map<String, InstitutionsHostProvider> heiIdToProviderMap =
+        hostPluginManager.getProviderPerHeiId(heiIds, InstitutionsHostProvider.class);
 
     InstitutionsResponse response = new InstitutionsResponse();
     heiIdToProviderMap.entrySet().stream()
