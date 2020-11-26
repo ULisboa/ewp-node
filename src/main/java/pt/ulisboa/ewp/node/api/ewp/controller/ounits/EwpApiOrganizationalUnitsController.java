@@ -40,6 +40,8 @@ public class EwpApiOrganizationalUnitsController {
           List<String> ounitIds,
       @RequestParam(value = EwpApiParamConstants.PARAM_NAME_OUNIT_CODE, required = false)
           List<String> ounitCodes) {
+    ounitIds = ounitIds != null ? ounitIds : Collections.emptyList();
+    ounitCodes = ounitCodes != null ? ounitCodes : Collections.emptyList();
     return ounits(heiId, ounitIds, ounitCodes);
   }
 
