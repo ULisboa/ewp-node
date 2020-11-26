@@ -55,6 +55,10 @@ public class EwpApiInstitutionsController {
   }
 
   private ResponseEntity<InstitutionsResponse> institutions(List<String> heiIds) {
+    if (heiIds.isEmpty()) {
+      throw new EwpBadRequestException("At least one valid HEI ID must be provided");
+    }
+
     Map<String, InstitutionsHostProvider> heiIdToProviderMap =
         hostPluginManager.getProviderPerHeiId(heiIds, InstitutionsHostProvider.class);
     if (heiIdToProviderMap.size() > EwpApiConstants.MAX_HEI_IDS) {
