@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.institutions;
 
-import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
+import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class EwpApiInstitutionsController {
   @Operation(
       summary = "Institutions API.",
       tags = {"ewp"})
-  public ResponseEntity<InstitutionsResponse> institutionsGet(
+  public ResponseEntity<InstitutionsResponseV2> institutionsGet(
       @RequestParam(value = EwpApiParamConstants.PARAM_NAME_HEI_ID, defaultValue = "")
           List<String> heiIds) {
     return institutions(heiIds);
@@ -45,7 +45,7 @@ public class EwpApiInstitutionsController {
   @Operation(
       summary = "Institutions API.",
       tags = {"ewp"})
-  public ResponseEntity<InstitutionsResponse> institutionsPost(
+  public ResponseEntity<InstitutionsResponseV2> institutionsPost(
       @RequestParam(value = EwpApiParamConstants.PARAM_NAME_HEI_ID, required = false)
           List<String> heiIds) {
     if (heiIds == null) {
@@ -54,7 +54,7 @@ public class EwpApiInstitutionsController {
     return institutions(heiIds);
   }
 
-  private ResponseEntity<InstitutionsResponse> institutions(List<String> heiIds) {
+  private ResponseEntity<InstitutionsResponseV2> institutions(List<String> heiIds) {
     if (heiIds.isEmpty()) {
       throw new EwpBadRequestException("At least one valid HEI ID must be provided");
     }
@@ -67,7 +67,7 @@ public class EwpApiInstitutionsController {
     Map<String, InstitutionsHostProvider> heiIdToProviderMap =
         hostPluginManager.getProviderPerHeiId(heiIds, InstitutionsHostProvider.class);
 
-    InstitutionsResponse response = new InstitutionsResponse();
+    InstitutionsResponseV2 response = new InstitutionsResponseV2();
     heiIdToProviderMap.entrySet().stream()
         .map(entry -> entry.getValue().findByHeiId(entry.getKey()))
         .filter(Optional::isPresent)

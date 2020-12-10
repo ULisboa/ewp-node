@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
@@ -21,7 +22,7 @@ public class EwpRequest implements Serializable {
   private Map<String, List<String>> bodyParams = new HashMap<>();
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.TLS;
 
-  public EwpRequest(HttpMethod method, String urlWithoutQueryParams) {
+  public EwpRequest(HttpMethod method, @NotNull String urlWithoutQueryParams) {
     this.method = method;
     this.urlWithoutQueryParams = urlWithoutQueryParams;
   }

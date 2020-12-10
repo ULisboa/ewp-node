@@ -2,7 +2,6 @@ package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
 import java.math.BigInteger;
 import java.util.Collection;
-
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 
@@ -10,8 +9,9 @@ public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
 
   public static final String API_NAME = "Organizational Units API";
 
-  protected BigInteger maxOunitIds;
-  protected BigInteger maxOunitCodes;
+  private String url;
+  private BigInteger maxOunitIds;
+  private BigInteger maxOunitCodes;
 
   public EwpOrganizationalUnitApiConfiguration(
       String url,
@@ -19,9 +19,18 @@ public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxOunitIds,
       BigInteger maxOunitCodes) {
-    super(url, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    this.url = url;
     this.maxOunitIds = maxOunitIds;
     this.maxOunitCodes = maxOunitCodes;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
   }
 
   public BigInteger getMaxOunitIds() {
@@ -38,5 +47,18 @@ public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
 
   public void setMaxOunitCodes(BigInteger maxOunitCodes) {
     this.maxOunitCodes = maxOunitCodes;
+  }
+
+  @Override
+  public String toString() {
+    return "EwpOrganizationalUnitApiConfiguration{"
+        + "url='"
+        + url
+        + '\''
+        + ", maxOunitIds="
+        + maxOunitIds
+        + ", maxOunitCodes="
+        + maxOunitCodes
+        + '}';
   }
 }

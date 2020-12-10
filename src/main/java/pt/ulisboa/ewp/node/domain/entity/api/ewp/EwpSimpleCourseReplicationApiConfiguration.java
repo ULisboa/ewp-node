@@ -1,7 +1,6 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
 import java.util.Collection;
-
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 
@@ -9,15 +8,25 @@ public class EwpSimpleCourseReplicationApiConfiguration extends EwpApiConfigurat
 
   public static final String API_NAME = "Simple Course Replication API";
 
-  protected boolean modifiedSinceSupported;
+  private String url;
+  private boolean modifiedSinceSupported;
 
   public EwpSimpleCourseReplicationApiConfiguration(
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       boolean modifiedSinceSupported) {
-    super(url, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    this.url = url;
     this.modifiedSinceSupported = modifiedSinceSupported;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
   }
 
   public boolean isModifiedSinceSupported() {
@@ -26,5 +35,16 @@ public class EwpSimpleCourseReplicationApiConfiguration extends EwpApiConfigurat
 
   public void setModifiedSinceSupported(boolean modifiedSinceSupported) {
     this.modifiedSinceSupported = modifiedSinceSupported;
+  }
+
+  @Override
+  public String toString() {
+    return "EwpSimpleCourseReplicationApiConfiguration{"
+        + "url='"
+        + url
+        + '\''
+        + ", modifiedSinceSupported="
+        + modifiedSinceSupported
+        + '}';
   }
 }

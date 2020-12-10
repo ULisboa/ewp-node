@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
-import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
+import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +27,7 @@ public class EwpInstitutionsClient {
     this.ewpClient = ewpClient;
   }
 
-  public EwpSuccessOperationResult<InstitutionsResponse> find(String heiId)
+  public EwpSuccessOperationResult<InstitutionsResponseV2> find(String heiId)
       throws AbstractEwpClientErrorException {
     Optional<EwpInstitutionApiConfiguration> apiOptional =
         EwpApiUtils.getInstitutionApiConfiguration(registryClient, heiId);
@@ -43,6 +43,6 @@ public class EwpInstitutionsClient {
     queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
     request.queryParams(queryParams);
 
-    return ewpClient.executeWithLoggingExpectingSuccess(request, InstitutionsResponse.class);
+    return ewpClient.executeWithLoggingExpectingSuccess(request, InstitutionsResponseV2.class);
   }
 }

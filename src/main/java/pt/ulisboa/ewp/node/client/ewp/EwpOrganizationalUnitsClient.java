@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
-import eu.erasmuswithoutpaper.api.ounits.OunitsResponse;
+import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class EwpOrganizationalUnitsClient {
         apiConfiguration.getMaxOunitCodes().intValueExact());
   }
 
-  public EwpSuccessOperationResult<OunitsResponse> findByOunitIds(
+  public EwpSuccessOperationResult<OunitsResponseV2> findByOunitIds(
       String heiId, Collection<String> organizationalUnitIds)
       throws AbstractEwpClientErrorException {
     EwpOrganizationalUnitApiConfiguration api = getApiConfiguration(heiId);
@@ -52,10 +52,10 @@ public class EwpOrganizationalUnitsClient {
         EwpClientConstants.QUERY_ORGANIZATIONAL_UNIT_ID, new ArrayList<>(organizationalUnitIds));
     request.queryParams(queryParams);
 
-    return ewpClient.executeWithLoggingExpectingSuccess(request, OunitsResponse.class);
+    return ewpClient.executeWithLoggingExpectingSuccess(request, OunitsResponseV2.class);
   }
 
-  public EwpSuccessOperationResult<OunitsResponse> findByOunitCodes(
+  public EwpSuccessOperationResult<OunitsResponseV2> findByOunitCodes(
       String heiId, Collection<String> organizationalUnitCodes)
       throws AbstractEwpClientErrorException {
     EwpOrganizationalUnitApiConfiguration api = getApiConfiguration(heiId);
@@ -70,7 +70,7 @@ public class EwpOrganizationalUnitsClient {
         new ArrayList<>(organizationalUnitCodes));
     request.queryParams(queryParams);
 
-    return ewpClient.executeWithLoggingExpectingSuccess(request, OunitsResponse.class);
+    return ewpClient.executeWithLoggingExpectingSuccess(request, OunitsResponseV2.class);
   }
 
   protected EwpOrganizationalUnitApiConfiguration getApiConfiguration(String heiId) {

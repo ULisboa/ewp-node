@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
+import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +24,7 @@ public class EwpInstitutionsClientTest extends AbstractTest {
   @Test
   public void testGetInstitutions() throws AbstractEwpClientErrorException {
     String heiId = "demo.usos.edu.pl";
-    EwpSuccessOperationResult<InstitutionsResponse> response = client.find(heiId);
+    EwpSuccessOperationResult<InstitutionsResponseV2> response = client.find(heiId);
     assertThat(response.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(response.getResponseAuthenticationResult().isValid(), equalTo(true));
     assertThat(response.getResponseBody(), notNullValue());

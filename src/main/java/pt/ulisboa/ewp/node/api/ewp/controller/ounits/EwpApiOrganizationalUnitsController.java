@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.ounits;
 
-import eu.erasmuswithoutpaper.api.ounits.OunitsResponse;
+import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +34,7 @@ public class EwpApiOrganizationalUnitsController {
   @Operation(
       summary = "Organizational Units API.",
       tags = {"ewp"})
-  public ResponseEntity<OunitsResponse> ounitsGet(
+  public ResponseEntity<OunitsResponseV2> ounitsGet(
       @RequestParam(value = EwpApiParamConstants.PARAM_NAME_HEI_ID, defaultValue = "") String heiId,
       @RequestParam(value = EwpApiParamConstants.PARAM_NAME_OUNIT_ID, required = false)
           List<String> ounitIds,
@@ -49,7 +49,7 @@ public class EwpApiOrganizationalUnitsController {
   @Operation(
       summary = "Organizational Units API.",
       tags = {"ewp"})
-  public ResponseEntity<OunitsResponse> ounitsPost(
+  public ResponseEntity<OunitsResponseV2> ounitsPost(
       @RequestParam(value = EwpApiParamConstants.PARAM_NAME_HEI_ID, defaultValue = "") String heiId,
       @RequestParam(value = EwpApiParamConstants.PARAM_NAME_OUNIT_ID, required = false)
           List<String> ounitIds,
@@ -60,7 +60,7 @@ public class EwpApiOrganizationalUnitsController {
     return ounits(heiId, ounitIds, ounitCodes);
   }
 
-  private ResponseEntity<OunitsResponse> ounits(
+  private ResponseEntity<OunitsResponseV2> ounits(
       String heiId, List<String> ounitIds, List<String> ounitCodes) {
     Optional<OrganizationalUnitsHostProvider> providerOptional =
         hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class);
@@ -86,7 +86,7 @@ public class EwpApiOrganizationalUnitsController {
     }
   }
 
-  private ResponseEntity<OunitsResponse> ounitsByIds(
+  private ResponseEntity<OunitsResponseV2> ounitsByIds(
       OrganizationalUnitsHostProvider provider, String heiId, List<String> ounitIds) {
     if (ounitIds.size() > provider.getMaxOunitIdsPerRequest()) {
       throw new EwpBadRequestException(
@@ -94,12 +94,12 @@ public class EwpApiOrganizationalUnitsController {
               + provider.getMaxOunitIdsPerRequest());
     }
 
-    OunitsResponse response = new OunitsResponse();
+    OunitsResponseV2 response = new OunitsResponseV2();
     response.getOunit().addAll(provider.findByHeiIdAndOunitIds(heiId, ounitIds));
     return ResponseEntity.ok(response);
   }
 
-  private ResponseEntity<OunitsResponse> ounitsByCodes(
+  private ResponseEntity<OunitsResponseV2> ounitsByCodes(
       OrganizationalUnitsHostProvider provider, String heiId, List<String> ounitCodes) {
     if (ounitCodes.size() > provider.getMaxOunitCodesPerRequest()) {
       throw new EwpBadRequestException(
@@ -107,7 +107,7 @@ public class EwpApiOrganizationalUnitsController {
               + provider.getMaxOunitCodesPerRequest());
     }
 
-    OunitsResponse response = new OunitsResponse();
+    OunitsResponseV2 response = new OunitsResponseV2();
     response.getOunit().addAll(provider.findByHeiIdAndOunitCodes(heiId, ounitCodes));
     return ResponseEntity.ok(response);
   }

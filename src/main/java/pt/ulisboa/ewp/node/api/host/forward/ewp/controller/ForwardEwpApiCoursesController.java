@@ -2,7 +2,7 @@ package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 
-import eu.erasmuswithoutpaper.api.courses.CoursesResponse;
+import eu.erasmuswithoutpaper.api.courses.v0.CoursesResponseV0;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -62,7 +62,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
   @Operation(
       summary = "EWP Courses Forward API.",
       tags = {"Courses"})
-  public ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponse>> coursesGet(
+  public ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponseV0>> coursesGet(
       @Valid @ParameterObject @RequestParam CoursesRequestDto requestDto)
       throws AbstractEwpClientErrorException {
     return getCourses(
@@ -80,7 +80,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
   @Operation(
       summary = "EWP Courses Forward API.",
       tags = {"Courses"})
-  public ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponse>> coursesPost(
+  public ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponseV0>> coursesPost(
       @Valid CoursesRequestDto requestDto) throws AbstractEwpClientErrorException {
     return getCourses(
         requestDto.getHeiId(),
@@ -92,7 +92,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
   }
 
   // NOTE: currently only allows to obtain by LOS IDs or LOS codes (not both simultaneously)
-  private ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponse>> getCourses(
+  private ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponseV0>> getCourses(
       String heiId,
       List<String> losIds,
       List<String> losCodes,
@@ -100,7 +100,7 @@ public class ForwardEwpApiCoursesController extends AbstractForwardEwpApiControl
       LocalDate loisAfter,
       LocalDate losAtDate)
       throws AbstractEwpClientErrorException {
-    EwpSuccessOperationResult<CoursesResponse> coursesResponse;
+    EwpSuccessOperationResult<CoursesResponseV0> coursesResponse;
     if (!losIds.isEmpty()) {
       coursesResponse = client.findByLosIds(heiId, losIds, loisBefore, loisAfter, losAtDate);
     } else {

@@ -2,7 +2,7 @@ package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
-import eu.erasmuswithoutpaper.api.courses.replication.CourseReplicationResponse;
+import eu.erasmuswithoutpaper.api.courses.replication.v1.CourseReplicationResponseV1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -43,7 +43,7 @@ public class ForwardEwpApiSimpleCourseReplicationController
   @Operation(
       summary = "EWP Simple Course Replication Forward API.",
       tags = {"Simple Course Replication"})
-  public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponse>>
+  public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponseV1>>
       simpleCourseReplicationGet(
           @Valid @ParameterObject @RequestParam SimpleCourseReplicationRequestDto requestDto)
           throws AbstractEwpClientErrorException {
@@ -56,15 +56,15 @@ public class ForwardEwpApiSimpleCourseReplicationController
   @Operation(
       summary = "EWP Simple Course Replication Forward API.",
       tags = {"Simple Course Replication"})
-  public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponse>>
+  public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponseV1>>
       simpleCourseReplicationPost(@Valid SimpleCourseReplicationRequestDto requestDto)
           throws AbstractEwpClientErrorException {
     return getCourses(requestDto.getHeiId(), requestDto.getModifiedSince());
   }
 
-  private ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponse>> getCourses(
+  private ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponseV1>> getCourses(
       String heiId, ZonedDateTime modifiedSince) throws AbstractEwpClientErrorException {
-    EwpSuccessOperationResult<CourseReplicationResponse> courseReplicationResponse =
+    EwpSuccessOperationResult<CourseReplicationResponseV1> courseReplicationResponse =
         client.findAllCourses(heiId, modifiedSince);
     return createResponseEntityFromOperationResult(courseReplicationResponse);
   }

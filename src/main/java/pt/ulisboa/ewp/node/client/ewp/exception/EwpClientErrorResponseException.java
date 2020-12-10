@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp.exception;
 
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
+import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
@@ -10,13 +10,13 @@ public class EwpClientErrorResponseException extends AbstractEwpClientErrorExcep
   private final EwpRequest request;
   private final EwpResponse response;
   private final EwpAuthenticationResult responseAuthenticationResult;
-  private final ErrorResponse errorResponse;
+  private final ErrorResponseV1 errorResponse;
 
   public EwpClientErrorResponseException(
       EwpRequest request,
       EwpResponse response,
       EwpAuthenticationResult responseAuthenticationResult,
-      ErrorResponse errorResponse) {
+      ErrorResponseV1 errorResponse) {
     this.request = request;
     this.response = response;
     this.responseAuthenticationResult = responseAuthenticationResult;
@@ -35,7 +35,7 @@ public class EwpClientErrorResponseException extends AbstractEwpClientErrorExcep
     return responseAuthenticationResult;
   }
 
-  public ErrorResponse getErrorResponse() {
+  public ErrorResponseV1 getErrorResponse() {
     return errorResponse;
   }
 

@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
-import eu.erasmuswithoutpaper.api.courses.CoursesResponse;
+import eu.erasmuswithoutpaper.api.courses.v0.CoursesResponseV0;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,7 +37,7 @@ public class EwpCoursesClient {
         api.getMaxLosIds().intValueExact(), api.getMaxLosCodes().intValueExact());
   }
 
-  public EwpSuccessOperationResult<CoursesResponse> findByLosIds(
+  public EwpSuccessOperationResult<CoursesResponseV0> findByLosIds(
       String heiId,
       Collection<String> losIds,
       LocalDate loisBeforeDate,
@@ -67,10 +67,10 @@ public class EwpCoursesClient {
     }
     request.queryParams(queryParams);
 
-    return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponse.class);
+    return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponseV0.class);
   }
 
-  public EwpSuccessOperationResult<CoursesResponse> findByLosCodes(
+  public EwpSuccessOperationResult<CoursesResponseV0> findByLosCodes(
       String heiId,
       Collection<String> losCodes,
       LocalDate loisBeforeDate,
@@ -100,7 +100,7 @@ public class EwpCoursesClient {
     }
     request.queryParams(queryParams);
 
-    return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponse.class);
+    return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponseV0.class);
   }
 
   protected EwpCourseApiConfiguration getApiConfiguration(String heiId) {

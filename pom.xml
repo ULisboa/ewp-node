@@ -12,7 +12,7 @@
 
   <groupId>pt.ulisboa</groupId>
   <artifactId>ewp-node</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
 
   <name>EWP Node</name>
@@ -51,12 +51,12 @@
     <dependency>
       <groupId>pt.ulisboa</groupId>
       <artifactId>ewp-connector-api</artifactId>
-      <version>2.0.0</version>
+      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>pt.ulisboa</groupId>
       <artifactId>ewp-host-plugin-skeleton</artifactId>
-      <version>0.1.4</version>
+      <version>0.2.0</version>
     </dependency>
 
     <dependency>

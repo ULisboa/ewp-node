@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
-import eu.erasmuswithoutpaper.api.courses.replication.CourseReplicationResponse;
+import eu.erasmuswithoutpaper.api.courses.replication.v1.CourseReplicationResponseV1;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -29,7 +29,7 @@ public class EwpSimpleCourseReplicationClient {
     this.ewpClient = ewpClient;
   }
 
-  public EwpSuccessOperationResult<CourseReplicationResponse> findAllCourses(
+  public EwpSuccessOperationResult<CourseReplicationResponseV1> findAllCourses(
       String heiId, ZonedDateTime modifiedSince) throws AbstractEwpClientErrorException {
     Optional<EwpSimpleCourseReplicationApiConfiguration> apiOptional =
         EwpApiUtils.getSimpleCourseReplicationApiConfiguration(registryClient, heiId);
@@ -51,6 +51,6 @@ public class EwpSimpleCourseReplicationClient {
     }
     request.queryParams(queryParams);
 
-    return ewpClient.executeWithLoggingExpectingSuccess(request, CourseReplicationResponse.class);
+    return ewpClient.executeWithLoggingExpectingSuccess(request, CourseReplicationResponseV1.class);
   }
 }

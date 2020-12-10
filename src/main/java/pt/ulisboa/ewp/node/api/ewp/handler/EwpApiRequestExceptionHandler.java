@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.api.ewp.handler;
 
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
+import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -71,7 +71,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
     modelAndView.addObject(createErrorResponse(ex));
   }
 
-  private ErrorResponse createErrorResponse(Exception exception) {
+  private ErrorResponseV1 createErrorResponse(Exception exception) {
     logger.error("Handling unknown exception", exception);
 
     String developerMessage;

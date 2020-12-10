@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.echo;
 
-import eu.erasmuswithoutpaper.api.echo.Response;
+import eu.erasmuswithoutpaper.api.echo.v2.ResponseV2;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class EwpApiEchoController {
   @Operation(
       summary = "Echo API.",
       tags = {"ewp"})
-  public ResponseEntity<Response> echoGet(
+  public ResponseEntity<ResponseV2> echoGet(
       EwpApiHostAuthenticationToken authentication,
       @RequestParam(value = EwpApiParamConstants.PARAM_NAME_ECHO, defaultValue = "")
           List<String> echo) {
@@ -37,7 +37,7 @@ public class EwpApiEchoController {
   @Operation(
       summary = "Echo API.",
       tags = {"ewp"})
-  public ResponseEntity<Response> echoPost(
+  public ResponseEntity<ResponseV2> echoPost(
       EwpApiHostAuthenticationToken authentication,
       @RequestParam(value = EwpApiParamConstants.PARAM_NAME_ECHO, required = false)
           List<String> echo) {
@@ -47,9 +47,9 @@ public class EwpApiEchoController {
     return echo(authentication.getPrincipal().getHeiIdsCoveredByClient(), echo);
   }
 
-  private ResponseEntity<Response> echo(
+  private ResponseEntity<ResponseV2> echo(
       Collection<String> heiIdsCoveredByClient, List<String> echo) {
-    Response response = new Response();
+    ResponseV2 response = new ResponseV2();
     response.getEcho().addAll(echo);
     response.getHeiId().addAll(heiIdsCoveredByClient);
 

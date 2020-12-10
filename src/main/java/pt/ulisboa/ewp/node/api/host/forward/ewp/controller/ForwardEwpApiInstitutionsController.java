@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
-import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
+import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -56,7 +56,7 @@ public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiCo
   @Operation(
       summary = "EWP Institutions Forward API.",
       tags = {"Institutions"})
-  public ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponse>> institutionsGet(
+  public ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> institutionsGet(
       @Valid @ParameterObject @RequestParam InstitutionsRequestDto requestDto)
       throws AbstractEwpClientErrorException {
     return getInstitution(requestDto.getHeiId());
@@ -68,15 +68,15 @@ public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiCo
   @Operation(
       summary = "EWP Institutions Forward API.",
       tags = {"Institutions"})
-  public ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponse>> institutionsPost(
+  public ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> institutionsPost(
       @Valid InstitutionsRequestDto requestDto) throws AbstractEwpClientErrorException {
     return getInstitution(requestDto.getHeiId());
   }
 
   // NOTE: currently only allows one HEI ID each time
-  private ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponse>> getInstitution(
+  private ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> getInstitution(
       String heiId) throws AbstractEwpClientErrorException {
-    EwpSuccessOperationResult<InstitutionsResponse> institutionsResponse =
+    EwpSuccessOperationResult<InstitutionsResponseV2> institutionsResponse =
         institutionClient.find(heiId);
     return createResponseEntityFromOperationResult(institutionsResponse);
   }

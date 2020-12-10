@@ -6,9 +6,9 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-import eu.erasmuswithoutpaper.api.discovery.Manifest;
-import eu.erasmuswithoutpaper.api.echo.Response;
-import eu.erasmuswithoutpaper.api.registry.Catalogue;
+import eu.erasmuswithoutpaper.api.discovery.v5.ManifestV5;
+import eu.erasmuswithoutpaper.api.echo.v2.ResponseV2;
+import eu.erasmuswithoutpaper.api.registry.v1.CatalogueV1;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -64,11 +64,11 @@ public class EwpClientTest extends AbstractTest {
 
   @Test
   public void testGetDevRegistryCatalogue() throws AbstractEwpClientErrorException {
-    EwpSuccessOperationResult<Catalogue> result =
+    EwpSuccessOperationResult<CatalogueV1> result =
         ewpClient.executeWithLoggingExpectingSuccess(
             new EwpRequest(
                 HttpMethod.GET, "https://dev-registry.erasmuswithoutpaper.eu/catalogue-v1.xml"),
-            Catalogue.class);
+            CatalogueV1.class);
     assertThat(result.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(result.getResponseBody(), notNullValue());
     assertThat(result.getResponseBody().getHost(), notNullValue());
@@ -76,11 +76,11 @@ public class EwpClientTest extends AbstractTest {
 
   @Test
   public void testGetDevRegistryManifestAnonymous() throws AbstractEwpClientErrorException {
-    EwpSuccessOperationResult<Manifest> clientResponse =
+    EwpSuccessOperationResult<ManifestV5> clientResponse =
         ewpClient.executeWithLoggingExpectingSuccess(
             new EwpRequest(
                 HttpMethod.GET, "https://dev-registry.erasmuswithoutpaper.eu/manifest.xml"),
-            Manifest.class);
+            ManifestV5.class);
     assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(clientResponse.getResponseBody(), notNullValue());
     assertThat(clientResponse.getResponseBody().getHost(), notNullValue());
@@ -94,7 +94,7 @@ public class EwpClientTest extends AbstractTest {
         new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
             .queryParams(params)
             .authenticationMethod(EwpAuthenticationMethod.ANONYMOUS),
-        Response.class);
+        ResponseV2.class);
   }
 
   @Test
@@ -113,12 +113,12 @@ public class EwpClientTest extends AbstractTest {
     String testEchoValue = "abc";
     Map<String, List<String>> params = new HashMap<>();
     params.put(EwpApiParamConstants.PARAM_NAME_ECHO, Collections.singletonList(testEchoValue));
-    EwpSuccessOperationResult<Response> clientResponse =
+    EwpSuccessOperationResult<ResponseV2> clientResponse =
         ewpClient.executeWithLoggingExpectingSuccess(
             new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
                 .queryParams(params)
                 .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE),
-            Response.class);
+            ResponseV2.class);
     assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(clientResponse.getResponseAuthenticationResult().isValid(), equalTo(true));
     assertThat(clientResponse.getResponseBody().getEcho().get(0), equalTo(testEchoValue));
@@ -140,12 +140,12 @@ public class EwpClientTest extends AbstractTest {
     String testEchoValue = "abc";
     Map<String, List<String>> params = new HashMap<>();
     params.put(EwpApiParamConstants.PARAM_NAME_ECHO, Collections.singletonList(testEchoValue));
-    EwpSuccessOperationResult<Response> clientResponse =
+    EwpSuccessOperationResult<ResponseV2> clientResponse =
         ewpClient.executeWithLoggingExpectingSuccess(
             new EwpRequest(HttpMethod.POST, "http://localhost:" + serverPort + "/api/ewp/echo")
                 .bodyParams(params)
                 .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE),
-            Response.class);
+            ResponseV2.class);
     assertThat(clientResponse.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(clientResponse.getResponseAuthenticationResult().isValid(), equalTo(true));
     assertThat(clientResponse.getResponseBody().getEcho().get(0), equalTo(testEchoValue));

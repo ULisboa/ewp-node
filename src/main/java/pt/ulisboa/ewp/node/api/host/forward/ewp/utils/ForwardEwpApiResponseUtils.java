@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.utils;
 
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
+import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -40,9 +40,9 @@ public class ForwardEwpApiResponseUtils {
         .body(responseBody);
   }
 
-  public static ResponseEntity<ForwardEwpApiResponseWithData<ErrorResponse>> toErrorResponseEntity(
-      ErrorResponse errorResponse) {
-    ForwardEwpApiResponseWithData<ErrorResponse> response =
+  public static ResponseEntity<ForwardEwpApiResponseWithData<ErrorResponseV1>>
+      toErrorResponseEntity(ErrorResponseV1 errorResponse) {
+    ForwardEwpApiResponseWithData<ErrorResponseV1> response =
         createResponseWithMessagesAndData(errorResponse);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .contentType(MediaType.APPLICATION_XML)

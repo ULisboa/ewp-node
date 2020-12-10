@@ -10,9 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
-import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse;
-import eu.erasmuswithoutpaper.api.institutions.InstitutionsResponse.Hei;
+import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
+import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2;
+import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2.Hei;
 import java.io.Serializable;
 import org.junit.Before;
 import org.junit.Test;
@@ -173,7 +173,7 @@ public class ForwardEwpApiInstitutionsControllerIntegrationTest extends Abstract
   public void testInstitutionsGet_Authenticated_ErrorResponse() throws Exception {
     String heiId = "demo";
 
-    ErrorResponse errorResponse = EwpApiUtils.createErrorResponseWithDeveloperMessage("Test");
+    ErrorResponseV1 errorResponse = EwpApiUtils.createErrorResponseWithDeveloperMessage("Test");
 
     EwpResponse response = new EwpResponse.Builder(HttpStatus.BAD_REQUEST).build();
 
@@ -193,7 +193,7 @@ public class ForwardEwpApiInstitutionsControllerIntegrationTest extends Abstract
                 header().string(HttpConstants.HEADER_X_HAS_DATA_OBJECT, String.valueOf(true)))
             .andReturn();
 
-    ForwardEwpApiResponseWithData<ErrorResponse> responseBody =
+    ForwardEwpApiResponseWithData<ErrorResponseV1> responseBody =
         XmlUtils.unmarshall(
             result.getResponse().getContentAsString(), ForwardEwpApiResponseWithData.class);
     assertThat(responseBody.getMessages()).hasSize(0);
@@ -204,7 +204,7 @@ public class ForwardEwpApiInstitutionsControllerIntegrationTest extends Abstract
   @Test
   public void testInstitutionsGet_Authenticated_Success() throws Exception {
     String heiId = "demo";
-    InstitutionsResponse expectedResponse = new InstitutionsResponse();
+    InstitutionsResponseV2 expectedResponse = new InstitutionsResponseV2();
     Hei hei = new Hei();
     hei.setHeiId(heiId);
     expectedResponse.getHei().add(hei);
@@ -225,7 +225,7 @@ public class ForwardEwpApiInstitutionsControllerIntegrationTest extends Abstract
             .andExpect(status().isOk())
             .andReturn();
 
-    ForwardEwpApiResponseWithData<InstitutionsResponse> responseBody =
+    ForwardEwpApiResponseWithData<InstitutionsResponseV2> responseBody =
         XmlUtils.unmarshall(
             result.getResponse().getContentAsString(), ForwardEwpApiResponseWithData.class);
     assertThat(responseBody.getMessages()).hasSize(0);

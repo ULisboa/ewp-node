@@ -1,7 +1,7 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.ounits;
 
-import eu.erasmuswithoutpaper.api.architecture.ManifestApiEntryBase;
-import eu.erasmuswithoutpaper.api.ounits.OrganizationalUnits;
+import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
+import eu.erasmuswithoutpaper.api.ounits.v2.OrganizationalUnitsV2;
 import java.math.BigInteger;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class EwpApiOrganizationalUnitsManifestEntry
   }
 
   @Override
-  public Optional<ManifestApiEntryBase> getManifestEntry(String heiId, String baseUrl) {
+  public Optional<ManifestApiEntryBaseV1> getManifestEntry(String heiId, String baseUrl) {
     Optional<OrganizationalUnitsHostProvider> providerOptional =
         hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class);
     if (providerOptional.isEmpty()) {
@@ -29,7 +29,7 @@ public class EwpApiOrganizationalUnitsManifestEntry
     }
     OrganizationalUnitsHostProvider provider = providerOptional.get();
 
-    OrganizationalUnits manifestEntry = new OrganizationalUnits();
+    OrganizationalUnitsV2 manifestEntry = new OrganizationalUnitsV2();
     manifestEntry.setVersion(EwpApiConstants.ORGANIZATIONAL_UNITS_VERSION);
     manifestEntry.setAdminNotes(null);
     manifestEntry.setUrl(baseUrl + "ounits");

@@ -1,7 +1,7 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.institutions;
 
-import eu.erasmuswithoutpaper.api.architecture.ManifestApiEntryBase;
-import eu.erasmuswithoutpaper.api.institutions.Institutions;
+import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
+import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
 import java.math.BigInteger;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class EwpApiInstitutionsManifestEntry
   }
 
   @Override
-  public Optional<ManifestApiEntryBase> getManifestEntry(String heiId, String baseUrl) {
+  public Optional<ManifestApiEntryBaseV1> getManifestEntry(String heiId, String baseUrl) {
     Optional<InstitutionsHostProvider> providerOptional =
         hostPluginManager.getProvider(heiId, InstitutionsHostProvider.class);
     if (providerOptional.isEmpty()) {
@@ -29,7 +29,7 @@ public class EwpApiInstitutionsManifestEntry
     }
     InstitutionsHostProvider provider = providerOptional.get();
 
-    Institutions institutions = new Institutions();
+    InstitutionsV2 institutions = new InstitutionsV2();
     institutions.setVersion(EwpApiConstants.INSTITUTIONS_VERSION);
     institutions.setAdminNotes(null);
     institutions.setUrl(baseUrl + "institutions");

@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp;
 
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
+import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import java.io.Serializable;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -228,8 +228,8 @@ public class EwpClient {
       EwpResponse ewpResponse,
       EwpAuthenticationResult responseAuthenticationResult)
       throws XmlCannotUnmarshallToTypeException {
-    ErrorResponse errorResponse =
-        XmlUtils.unmarshall(ewpResponse.getRawBody(), ErrorResponse.class);
+    ErrorResponseV1 errorResponse =
+        XmlUtils.unmarshall(ewpResponse.getRawBody(), ErrorResponseV1.class);
     if (HttpStatus.BAD_REQUEST.equals(ewpResponse.getStatus())) {
       return new EwpErrorResponseOperationResult.Builder()
           .request(request)

@@ -3,8 +3,8 @@ package pt.ulisboa.ewp.node.api.ewp.controller.ounits;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import eu.erasmuswithoutpaper.api.ounits.OunitsResponse;
-import eu.erasmuswithoutpaper.api.ounits.OunitsResponse.Ounit;
+import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2;
+import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2.Ounit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -82,7 +82,7 @@ public class EwpApiOrganizationalUnitsControllerTest extends AbstractEwpControll
     Mockito.when(hostPluginManager.getProvider(validHeiId, OrganizationalUnitsHostProvider.class))
         .thenReturn(Optional.of(provider));
 
-    ResponseEntity<OunitsResponse> response =
+    ResponseEntity<OunitsResponseV2> response =
         controller.ounitsGet(validHeiId, validOunitIds, Collections.emptyList());
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isNotNull();
@@ -129,7 +129,7 @@ public class EwpApiOrganizationalUnitsControllerTest extends AbstractEwpControll
     Mockito.when(hostPluginManager.getProvider(validHeiId, OrganizationalUnitsHostProvider.class))
         .thenReturn(Optional.of(provider));
 
-    ResponseEntity<OunitsResponse> response =
+    ResponseEntity<OunitsResponseV2> response =
         controller.ounitsGet(validHeiId, Collections.emptyList(), validOunitCodes);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isNotNull();

@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.handler;
 
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
+import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -97,7 +97,7 @@ public class ForwardEwpApiClientExceptionHandler {
 
   @ExceptionHandler({EwpClientErrorResponseException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<ForwardEwpApiResponseWithData<ErrorResponse>>
+  public ResponseEntity<ForwardEwpApiResponseWithData<ErrorResponseV1>>
       handleEwpClientErrorResponseException(EwpClientErrorResponseException exception) {
     return ForwardEwpApiResponseUtils.toErrorResponseEntity(exception.getErrorResponse());
   }

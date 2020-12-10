@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
-import eu.erasmuswithoutpaper.api.ounits.OunitsResponse;
+import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -59,7 +59,7 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
   @Operation(
       summary = "EWP Organizational Units Forward API.",
       tags = {"Organizational Units"})
-  public ResponseEntity<ForwardEwpApiResponseWithData<OunitsResponse>> organizationalUnitsGet(
+  public ResponseEntity<ForwardEwpApiResponseWithData<OunitsResponseV2>> organizationalUnitsGet(
       @Valid @ParameterObject @RequestParam OrganizationalUnitsRequestDto requestDto)
       throws AbstractEwpClientErrorException {
     return getOrganizationalUnits(
@@ -74,7 +74,7 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
   @Operation(
       summary = "EWP Organizational Units Forward API.",
       tags = {"Organizational Units"})
-  public ResponseEntity<ForwardEwpApiResponseWithData<OunitsResponse>> organizationalUnitsPost(
+  public ResponseEntity<ForwardEwpApiResponseWithData<OunitsResponseV2>> organizationalUnitsPost(
       @Valid OrganizationalUnitsRequestDto requestDto) throws AbstractEwpClientErrorException {
     return getOrganizationalUnits(
         requestDto.getHeiId(),
@@ -83,10 +83,10 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
   }
 
   // NOTE: currently only allows to obtain by ounit IDs or ounit codes (not both simultaneously)
-  private ResponseEntity<ForwardEwpApiResponseWithData<OunitsResponse>> getOrganizationalUnits(
+  private ResponseEntity<ForwardEwpApiResponseWithData<OunitsResponseV2>> getOrganizationalUnits(
       String heiId, List<String> organizationalUnitIds, List<String> organizationalUnitCodes)
       throws AbstractEwpClientErrorException {
-    EwpSuccessOperationResult<OunitsResponse> ounitsResponse;
+    EwpSuccessOperationResult<OunitsResponseV2> ounitsResponse;
     if (!organizationalUnitIds.isEmpty()) {
       ounitsResponse = organizationalUnitClient.findByOunitIds(heiId, organizationalUnitIds);
     } else {

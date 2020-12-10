@@ -1,19 +1,19 @@
 package pt.ulisboa.ewp.node.client.ewp.operation.result.error;
 
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
+import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 
 public class EwpErrorResponseOperationResult extends AbstractErrorEwpOperationResult {
 
-  private final ErrorResponse errorResponse;
+  private final ErrorResponseV1 errorResponse;
 
   protected EwpErrorResponseOperationResult(Builder builder) {
     super(EwpOperationResultErrorType.ERROR_RESPONSE, builder);
     this.errorResponse = builder.errorResponse;
   }
 
-  public ErrorResponse getErrorResponse() {
+  public ErrorResponseV1 getErrorResponse() {
     return errorResponse;
   }
 
@@ -30,13 +30,13 @@ public class EwpErrorResponseOperationResult extends AbstractErrorEwpOperationRe
 
   public static class Builder extends AbstractErrorEwpOperationResult.Builder<Builder> {
 
-    private ErrorResponse errorResponse;
+    private ErrorResponseV1 errorResponse;
 
-    public ErrorResponse errorResponse() {
+    public ErrorResponseV1 errorResponse() {
       return errorResponse;
     }
 
-    public Builder errorResponse(ErrorResponse errorResponse) {
+    public Builder errorResponse(ErrorResponseV1 errorResponse) {
       this.errorResponse = errorResponse;
       return this;
     }

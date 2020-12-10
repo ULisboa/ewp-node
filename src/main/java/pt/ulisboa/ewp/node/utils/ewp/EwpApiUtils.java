@@ -2,17 +2,18 @@ package pt.ulisboa.ewp.node.utils.ewp;
 
 import static org.joox.JOOX.$;
 
-import eu.erasmuswithoutpaper.api.architecture.ErrorResponse;
-import eu.erasmuswithoutpaper.api.architecture.MultilineString;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.httpsig.CliauthHttpsig;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.none.CliauthAnonymous;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.tlscert.CliauthTlscert;
-import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.SrvauthHttpsig;
-import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.SrvauthTlscert;
-import eu.erasmuswithoutpaper.api.courses.Courses;
-import eu.erasmuswithoutpaper.api.courses.replication.SimpleCourseReplication;
-import eu.erasmuswithoutpaper.api.institutions.Institutions;
-import eu.erasmuswithoutpaper.api.ounits.OrganizationalUnits;
+import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
+import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringV1;
+import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.httpsig.v1.CliauthHttpsigV1;
+import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.none.v1.CliauthAnonymousV1;
+import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.tlscert.v1.CliauthTlscertV1;
+import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.v1.SrvauthHttpsigV1;
+import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.v1.SrvauthTlscertV1;
+import eu.erasmuswithoutpaper.api.courses.replication.v1.SimpleCourseReplicationV1;
+import eu.erasmuswithoutpaper.api.courses.v0.CoursesV0;
+import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
+import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
+import eu.erasmuswithoutpaper.api.ounits.v2.OrganizationalUnitsV2;
 import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
 import eu.erasmuswithoutpaper.registryclient.ApiSearchConditions;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
@@ -42,16 +44,16 @@ public class EwpApiUtils {
 
   public static Optional<EwpInstitutionApiConfiguration> getInstitutionApiConfiguration(
       RegistryClient registryClient, String heiId) {
-    Optional<Institutions> apiElementOptional =
+    Optional<InstitutionsV2> apiElementOptional =
         getApiElement(
             registryClient,
             heiId,
             EwpClientConstants.API_INSTITUTIONS_LOCAL_NAME,
-            Institutions.class);
+            InstitutionsV2.class);
     if (!apiElementOptional.isPresent()) {
       return Optional.empty();
     }
-    Institutions apiElement = apiElementOptional.get();
+    InstitutionsV2 apiElement = apiElementOptional.get();
 
     return Optional.of(
         new EwpInstitutionApiConfiguration(
@@ -63,16 +65,16 @@ public class EwpApiUtils {
 
   public static Optional<EwpOrganizationalUnitApiConfiguration>
       getOrganizationalUnitApiConfiguration(RegistryClient registryClient, String heiId) {
-    Optional<OrganizationalUnits> apiElementOptional =
+    Optional<OrganizationalUnitsV2> apiElementOptional =
         getApiElement(
             registryClient,
             heiId,
             EwpClientConstants.API_ORGANIZATIONAL_UNITS_NAME,
-            OrganizationalUnits.class);
+            OrganizationalUnitsV2.class);
     if (!apiElementOptional.isPresent()) {
       return Optional.empty();
     }
-    OrganizationalUnits apiElement = apiElementOptional.get();
+    OrganizationalUnitsV2 apiElement = apiElementOptional.get();
 
     return Optional.of(
         new EwpOrganizationalUnitApiConfiguration(
@@ -85,12 +87,12 @@ public class EwpApiUtils {
 
   public static Optional<EwpCourseApiConfiguration> getCourseApiConfiguration(
       RegistryClient registryClient, String heiId) {
-    Optional<Courses> apiElementOptional =
-        getApiElement(registryClient, heiId, EwpClientConstants.API_COURSES_NAME, Courses.class);
+    Optional<CoursesV0> apiElementOptional =
+        getApiElement(registryClient, heiId, EwpClientConstants.API_COURSES_NAME, CoursesV0.class);
     if (!apiElementOptional.isPresent()) {
       return Optional.empty();
     }
-    Courses apiElement = apiElementOptional.get();
+    CoursesV0 apiElement = apiElementOptional.get();
 
     return Optional.of(
         new EwpCourseApiConfiguration(
@@ -103,16 +105,16 @@ public class EwpApiUtils {
 
   public static Optional<EwpSimpleCourseReplicationApiConfiguration>
       getSimpleCourseReplicationApiConfiguration(RegistryClient registryClient, String heiId) {
-    Optional<SimpleCourseReplication> apiElementOptional =
+    Optional<SimpleCourseReplicationV1> apiElementOptional =
         getApiElement(
             registryClient,
             heiId,
             EwpClientConstants.API_SIMPLE_COURSE_REPLICATION_NAME,
-            SimpleCourseReplication.class);
+            SimpleCourseReplicationV1.class);
     if (!apiElementOptional.isPresent()) {
       return Optional.empty();
     }
-    SimpleCourseReplication apiElement = apiElementOptional.get();
+    SimpleCourseReplicationV1 apiElement = apiElementOptional.get();
 
     return Optional.of(
         new EwpSimpleCourseReplicationApiConfiguration(
@@ -120,6 +122,30 @@ public class EwpApiUtils {
             getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
             getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
             apiElement.isSupportsModifiedSince()));
+  }
+
+  public static Optional<EwpInterinstitutionalAgreementApiConfiguration>
+      getInterinstitutionalAgreementApiConfiguration(RegistryClient registryClient, String heiId) {
+    Optional<IiasV4> apiElementOptional =
+        getApiElement(
+            registryClient,
+            heiId,
+            EwpClientConstants.API_INTERINSTITUTIONAL_AGREEMENTS_NAME,
+            IiasV4.class);
+    if (!apiElementOptional.isPresent()) {
+      return Optional.empty();
+    }
+    IiasV4 apiElement = apiElementOptional.get();
+
+    return Optional.of(
+        new EwpInterinstitutionalAgreementApiConfiguration(
+            apiElement.getIndexUrl(),
+            apiElement.getGetUrl(),
+            getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
+            getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
+            apiElement.getMaxIiaIds(),
+            apiElement.getMaxIiaCodes(),
+            apiElement.getSendsNotifications() != null));
   }
 
   private static <T> Optional<T> getApiElement(
@@ -130,8 +156,7 @@ public class EwpApiUtils {
     if (apiElement == null) {
       return Optional.empty();
     }
-    return Optional.of(
-        $(registryClient.findApi(apiSearchConditions)).unmarshalOne(elementClassType));
+    return Optional.of($(apiElement).unmarshalOne(elementClassType));
   }
 
   public static Collection<EwpClientAuthenticationConfiguration>
@@ -140,12 +165,12 @@ public class EwpApiUtils {
     if (httpSecurityOptions != null) {
       List<Object> clientAuthMethods = httpSecurityOptions.getClientAuthMethods().getAny();
       for (Object object : clientAuthMethods) {
-        if (object instanceof CliauthHttpsig) {
+        if (object instanceof CliauthHttpsigV1) {
           result.add(new EwpClientAuthenticationHttpSignatureConfiguration());
-        } else if (object instanceof CliauthAnonymous) {
+        } else if (object instanceof CliauthAnonymousV1) {
           result.add(new EwpClientAuthenticationAnonymousConfiguration());
-        } else if (object instanceof CliauthTlscert) {
-          CliauthTlscert clientAuthTlsCert = (CliauthTlscert) object;
+        } else if (object instanceof CliauthTlscertV1) {
+          CliauthTlscertV1 clientAuthTlsCert = (CliauthTlscertV1) object;
           result.add(
               new EwpClientAuthenticationTlsCertificateConfiguration(
                   clientAuthTlsCert.isAllowsSelfSigned()));
@@ -167,9 +192,9 @@ public class EwpApiUtils {
     if (httpSecurityOptions != null) {
       List<Object> serverAuthMethods = httpSecurityOptions.getServerAuthMethods().getAny();
       for (Object object : serverAuthMethods) {
-        if (object instanceof SrvauthHttpsig) {
+        if (object instanceof SrvauthHttpsigV1) {
           result.add(new EwpServerAuthenticationHttpSignatureConfiguration());
-        } else if (object instanceof SrvauthTlscert) {
+        } else if (object instanceof SrvauthTlscertV1) {
           result.add(new EwpServerAuthenticationTlsCertificateConfiguration());
         } else {
           throw new IllegalArgumentException(
@@ -202,7 +227,7 @@ public class EwpApiUtils {
     }
 
     throw new IllegalStateException(
-        "Failed to find an admissible authentication method for API: " + api.getUrl());
+        "Failed to find an admissible authentication method for API: " + api);
   }
 
   public static boolean doesApiSupportAuthenticationMethod(
@@ -256,9 +281,9 @@ public class EwpApiUtils {
             });
   }
 
-  public static ErrorResponse createErrorResponseWithDeveloperMessage(String developerMessage) {
-    ErrorResponse errorResponse = new ErrorResponse();
-    MultilineString message = new MultilineString();
+  public static ErrorResponseV1 createErrorResponseWithDeveloperMessage(String developerMessage) {
+    ErrorResponseV1 errorResponse = new ErrorResponseV1();
+    MultilineStringV1 message = new MultilineStringV1();
     message.setValue(developerMessage);
     errorResponse.setDeveloperMessage(message);
     return errorResponse;

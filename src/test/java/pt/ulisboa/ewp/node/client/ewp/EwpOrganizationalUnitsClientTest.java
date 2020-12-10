@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import eu.erasmuswithoutpaper.api.ounits.OunitsResponse;
+import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class EwpOrganizationalUnitsClientTest extends AbstractTest {
     String heiId = "demo.usos.edu.pl";
     Collection<String> organizationalUnitIds =
         Arrays.asList("5653486D96841E16E0530B501E0A4594", "5653486D96871E16E0530B501E0A4594");
-    EwpSuccessOperationResult<OunitsResponse> response =
+    EwpSuccessOperationResult<OunitsResponseV2> response =
         client.findByOunitIds(heiId, organizationalUnitIds);
     assertThat(response.getResponse().getStatus(), equalTo(HttpStatus.OK));
     assertThat(response.getResponseAuthenticationResult().isValid(), equalTo(true));

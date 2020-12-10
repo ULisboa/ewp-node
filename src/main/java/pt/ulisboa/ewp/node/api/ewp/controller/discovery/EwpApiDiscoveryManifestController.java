@@ -1,11 +1,11 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.discovery;
 
-import eu.erasmuswithoutpaper.api.architecture.MultilineString;
-import eu.erasmuswithoutpaper.api.architecture.StringWithOptionalLang;
-import eu.erasmuswithoutpaper.api.discovery.Host;
-import eu.erasmuswithoutpaper.api.discovery.Manifest;
-import eu.erasmuswithoutpaper.api.registry.ApisImplemented;
-import eu.erasmuswithoutpaper.api.registry.OtherHeiId;
+import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringV1;
+import eu.erasmuswithoutpaper.api.architecture.v1.StringWithOptionalLangV1;
+import eu.erasmuswithoutpaper.api.discovery.v5.HostV5;
+import eu.erasmuswithoutpaper.api.discovery.v5.ManifestV5;
+import eu.erasmuswithoutpaper.api.registry.v1.ApisImplementedV1;
+import eu.erasmuswithoutpaper.api.registry.v1.OtherHeiIdV1;
 import io.swagger.v3.oas.annotations.Operation;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -54,17 +54,17 @@ public class EwpApiDiscoveryManifestController {
   @Operation(
       summary = "Discovery manifest API.",
       tags = {"ewp"})
-  public ResponseEntity<Manifest> manifest(HttpServletRequest request)
+  public ResponseEntity<ManifestV5> manifest(HttpServletRequest request)
       throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
           KeyStoreException, IOException {
-    Manifest manifest = new Manifest();
+    ManifestV5 manifest = new ManifestV5();
 
     setHosts(request, manifest);
 
     return ResponseEntity.ok(manifest);
   }
 
-  private void setHosts(HttpServletRequest request, Manifest manifest)
+  private void setHosts(HttpServletRequest request, ManifestV5 manifest)
       throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
           KeyStoreException, IOException {
     DecodedCertificateAndKey decodedCertificateAndKeyFromStorage =
@@ -78,18 +78,18 @@ public class EwpApiDiscoveryManifestController {
                     .getCoveredHeis()
                     .forEach(
                         coveredHei -> {
-                          Host host = new Host();
+                          HostV5 host = new HostV5();
                           host.getAdminEmail().add(hostConfiguration.getAdminEmail());
 
-                          MultilineString adminNotes = new MultilineString();
+                          MultilineStringV1 adminNotes = new MultilineStringV1();
                           adminNotes.setValue(hostConfiguration.getAdminNotes());
                           host.setAdminNotes(adminNotes);
 
                           host.setApisImplemented(
                               getApisImplemented(request, coveredHei.getSchacCode()));
 
-                          Host.InstitutionsCovered institutionsCovered =
-                              new Host.InstitutionsCovered();
+                          HostV5.InstitutionsCovered institutionsCovered =
+                              new HostV5.InstitutionsCovered();
                           institutionsCovered.getHei().add(createHei(coveredHei));
                           host.setInstitutionsCovered(institutionsCovered);
 
@@ -101,8 +101,8 @@ public class EwpApiDiscoveryManifestController {
                         }));
   }
 
-  private ApisImplemented getApisImplemented(HttpServletRequest originalRequest, String heiId) {
-    ApisImplemented apisImplemented = new ApisImplemented();
+  private ApisImplementedV1 getApisImplemented(HttpServletRequest originalRequest, String heiId) {
+    ApisImplementedV1 apisImplemented = new ApisImplementedV1();
     manifestEntries.stream()
         .map(
             me ->
@@ -113,13 +113,13 @@ public class EwpApiDiscoveryManifestController {
     return apisImplemented;
   }
 
-  private Host.ClientCredentialsInUse getClientCredentialsInUse(
+  private HostV5.ClientCredentialsInUse getClientCredentialsInUse(
       DecodedCertificateAndKey decodedCertificateAndKey) {
-    Host.ClientCredentialsInUse clientCredentialsInUse = null;
+    HostV5.ClientCredentialsInUse clientCredentialsInUse = null;
 
     String certificate = decodedCertificateAndKey.getFormattedCertificate();
     if (certificate != null) {
-      clientCredentialsInUse = new Host.ClientCredentialsInUse();
+      clientCredentialsInUse = new HostV5.ClientCredentialsInUse();
       clientCredentialsInUse.getCertificate().add(certificate);
 
       String formattedRsaPublicKey = decodedCertificateAndKey.getFormattedRsaPublicKey();
@@ -129,28 +129,29 @@ public class EwpApiDiscoveryManifestController {
     return clientCredentialsInUse;
   }
 
-  private Host.ServerCredentialsInUse getServerCredentialsInUse(
+  private HostV5.ServerCredentialsInUse getServerCredentialsInUse(
       DecodedCertificateAndKey decodedCertificateAndKey) {
-    Host.ServerCredentialsInUse serverCredentialsInUse = null;
+    HostV5.ServerCredentialsInUse serverCredentialsInUse = null;
 
     String rsaPublicKey = decodedCertificateAndKey.getFormattedRsaPublicKey();
     if (rsaPublicKey != null) {
-      serverCredentialsInUse = new Host.ServerCredentialsInUse();
+      serverCredentialsInUse = new HostV5.ServerCredentialsInUse();
       serverCredentialsInUse.getRsaPublicKey().add(rsaPublicKey);
     }
 
     return serverCredentialsInUse;
   }
 
-  private eu.erasmuswithoutpaper.api.registry.Hei createHei(Hei heiConfiguration) {
-    eu.erasmuswithoutpaper.api.registry.Hei hei = new eu.erasmuswithoutpaper.api.registry.Hei();
+  private eu.erasmuswithoutpaper.api.registry.v1.HeiV1 createHei(Hei heiConfiguration) {
+    eu.erasmuswithoutpaper.api.registry.v1.HeiV1 hei =
+        new eu.erasmuswithoutpaper.api.registry.v1.HeiV1();
     hei.setId(heiConfiguration.getSchacCode());
 
     heiConfiguration
         .getOtherHeiIds()
         .forEach(
             otherHeiIdConfiguration -> {
-              OtherHeiId otherHeiId = new OtherHeiId();
+              OtherHeiIdV1 otherHeiId = new OtherHeiIdV1();
               otherHeiId.setType(otherHeiIdConfiguration.getType());
               otherHeiId.setValue(otherHeiIdConfiguration.getValue());
               hei.getOtherId().add(otherHeiId);
@@ -160,7 +161,7 @@ public class EwpApiDiscoveryManifestController {
         .getName()
         .forEach(
             (locale, name) -> {
-              StringWithOptionalLang stringWithOptionalLang = new StringWithOptionalLang();
+              StringWithOptionalLangV1 stringWithOptionalLang = new StringWithOptionalLangV1();
               stringWithOptionalLang.setLang(locale.toLanguageTag());
               stringWithOptionalLang.setValue(name);
               hei.getName().add(stringWithOptionalLang);
