@@ -15,9 +15,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.firewall.FirewalledRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.exception.EwpApiSecurityException;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
-import pt.ulisboa.ewp.node.utils.ewp.EwpApiUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
 /** Filter that prepares the environment for further EWP authentication methods. */

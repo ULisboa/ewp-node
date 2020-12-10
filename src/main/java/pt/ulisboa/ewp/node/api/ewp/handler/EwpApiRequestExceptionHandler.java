@@ -12,8 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
-import pt.ulisboa.ewp.node.utils.ewp.EwpApiUtils;
 
 @Component
 public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolver {

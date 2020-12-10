@@ -2,8 +2,8 @@ package pt.ulisboa.ewp.node.client.ewp.exception;
 
 public class NoEwpApiForHeiIdException extends RuntimeException {
 
-  private String heiId;
-  private String ewpApiName;
+  private final String heiId;
+  private final String ewpApiName;
 
   public NoEwpApiForHeiIdException(String heiId, String ewpApiName) {
     this.heiId = heiId;

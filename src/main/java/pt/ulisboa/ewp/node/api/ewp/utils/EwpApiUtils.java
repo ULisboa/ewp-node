@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.utils.ewp;
+package pt.ulisboa.ewp.node.api.ewp.utils;
 
 import static org.joox.JOOX.$;
 
@@ -11,7 +11,6 @@ import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.v1.Srvauth
 import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.v1.SrvauthTlscertV1;
 import eu.erasmuswithoutpaper.api.courses.replication.v1.SimpleCourseReplicationV1;
 import eu.erasmuswithoutpaper.api.courses.v0.CoursesV0;
-import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
 import eu.erasmuswithoutpaper.api.ounits.v2.OrganizationalUnitsV2;
 import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
@@ -26,7 +25,6 @@ import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
@@ -37,6 +35,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthentica
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationHttpSignatureConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationTlsCertificateConfiguration;
+import pt.ulisboa.ewp.node.utils.SemanticVersion;
 
 public class EwpApiUtils {
 
@@ -49,6 +48,7 @@ public class EwpApiUtils {
             registryClient,
             heiId,
             EwpClientConstants.API_INSTITUTIONS_LOCAL_NAME,
+            2,
             InstitutionsV2.class);
     if (!apiElementOptional.isPresent()) {
       return Optional.empty();
@@ -70,6 +70,7 @@ public class EwpApiUtils {
             registryClient,
             heiId,
             EwpClientConstants.API_ORGANIZATIONAL_UNITS_NAME,
+            2,
             OrganizationalUnitsV2.class);
     if (!apiElementOptional.isPresent()) {
       return Optional.empty();
@@ -88,7 +89,8 @@ public class EwpApiUtils {
   public static Optional<EwpCourseApiConfiguration> getCourseApiConfiguration(
       RegistryClient registryClient, String heiId) {
     Optional<CoursesV0> apiElementOptional =
-        getApiElement(registryClient, heiId, EwpClientConstants.API_COURSES_NAME, CoursesV0.class);
+        getApiElement(
+            registryClient, heiId, EwpClientConstants.API_COURSES_NAME, 0, CoursesV0.class);
     if (!apiElementOptional.isPresent()) {
       return Optional.empty();
     }
@@ -110,6 +112,7 @@ public class EwpApiUtils {
             registryClient,
             heiId,
             EwpClientConstants.API_SIMPLE_COURSE_REPLICATION_NAME,
+            1,
             SimpleCourseReplicationV1.class);
     if (!apiElementOptional.isPresent()) {
       return Optional.empty();
@@ -124,39 +127,40 @@ public class EwpApiUtils {
             apiElement.isSupportsModifiedSince()));
   }
 
-  public static Optional<EwpInterinstitutionalAgreementApiConfiguration>
-      getInterinstitutionalAgreementApiConfiguration(RegistryClient registryClient, String heiId) {
-    Optional<IiasV4> apiElementOptional =
-        getApiElement(
-            registryClient,
-            heiId,
-            EwpClientConstants.API_INTERINSTITUTIONAL_AGREEMENTS_NAME,
-            IiasV4.class);
-    if (!apiElementOptional.isPresent()) {
+  public static <T> Optional<T> getApiElement(
+      RegistryClient registryClient,
+      String heiId,
+      String apiLocalName,
+      int wantedMajorVersion,
+      Class<T> elementClassType) {
+    Optional<Element> rawApiElementOptional =
+        getRawApiElement(registryClient, heiId, apiLocalName, wantedMajorVersion);
+    if (rawApiElementOptional.isEmpty()) {
       return Optional.empty();
     }
-    IiasV4 apiElement = apiElementOptional.get();
-
-    return Optional.of(
-        new EwpInterinstitutionalAgreementApiConfiguration(
-            apiElement.getIndexUrl(),
-            apiElement.getGetUrl(),
-            getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
-            getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
-            apiElement.getMaxIiaIds(),
-            apiElement.getMaxIiaCodes(),
-            apiElement.getSendsNotifications() != null));
+    Element rawApiElement = rawApiElementOptional.get();
+    return Optional.of($(rawApiElement).unmarshalOne(elementClassType));
   }
 
-  private static <T> Optional<T> getApiElement(
-      RegistryClient registryClient, String heiId, String apiLocalName, Class<T> elementClassType) {
+  public static Optional<Element> getRawApiElement(
+      RegistryClient registryClient, String heiId, String apiLocalName, int wantedMajorVersion) {
     ApiSearchConditions apiSearchConditions =
         new ApiSearchConditions().setRequiredHei(heiId).setApiClassRequired(null, apiLocalName);
-    Element apiElement = registryClient.findApi(apiSearchConditions);
-    if (apiElement == null) {
+    Element rawApiElement = registryClient.findApi(apiSearchConditions);
+    if (rawApiElement == null) {
       return Optional.empty();
     }
-    return Optional.of($(apiElement).unmarshalOne(elementClassType));
+
+    SemanticVersion semanticVersion = getSemanticVersionFromRawApiElement(rawApiElement);
+    if (semanticVersion.getMajorVersion() != wantedMajorVersion) {
+      return Optional.empty();
+    }
+    return Optional.of(rawApiElement);
+  }
+
+  public static SemanticVersion getSemanticVersionFromRawApiElement(Element rawApiElement) {
+    String rawVersion = rawApiElement.getAttribute("version");
+    return SemanticVersion.createFromSemanticVersion(rawVersion);
   }
 
   public static Collection<EwpClientAuthenticationConfiguration>

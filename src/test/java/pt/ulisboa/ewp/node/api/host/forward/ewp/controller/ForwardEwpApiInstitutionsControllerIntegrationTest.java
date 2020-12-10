@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import pt.ulisboa.ewp.node.AbstractTest;
 import pt.ulisboa.ewp.node.api.common.security.SecurityCommonConstants;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.Message.MessageSeverity;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -38,7 +39,6 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperati
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult.Builder;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
-import pt.ulisboa.ewp.node.utils.ewp.EwpApiUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
 @AutoConfigureMockMvc

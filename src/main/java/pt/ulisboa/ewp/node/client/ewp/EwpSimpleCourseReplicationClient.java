@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
@@ -16,7 +17,6 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperati
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
-import pt.ulisboa.ewp.node.utils.ewp.EwpApiUtils;
 
 @Service
 public class EwpSimpleCourseReplicationClient {
