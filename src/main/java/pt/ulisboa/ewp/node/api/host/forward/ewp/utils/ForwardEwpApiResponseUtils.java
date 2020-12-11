@@ -19,6 +19,12 @@ public class ForwardEwpApiResponseUtils {
   private ForwardEwpApiResponseUtils() {}
 
   public static <T> ResponseEntity<ForwardEwpApiResponseWithData<T>> toSuccessResponseEntity(
+      T responseBody) {
+    ForwardEwpApiResponseWithData<T> response = createResponseWithMessagesAndData(responseBody);
+    return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(response);
+  }
+
+  public static <T> ResponseEntity<ForwardEwpApiResponseWithData<T>> toSuccessResponseEntity(
       EwpResponse ewpResponse, T responseBody) {
     ForwardEwpApiResponseWithData<T> response = createResponseWithMessagesAndData(responseBody);
     return ResponseEntity.status(ewpResponse.getStatus())

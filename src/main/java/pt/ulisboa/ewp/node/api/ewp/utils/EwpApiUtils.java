@@ -15,6 +15,8 @@ import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
 import eu.erasmuswithoutpaper.api.ounits.v2.OrganizationalUnitsV2;
 import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
 import eu.erasmuswithoutpaper.registryclient.ApiSearchConditions;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -142,12 +144,21 @@ public class EwpApiUtils {
     return Optional.of($(rawApiElement).unmarshalOne(elementClassType));
   }
 
+  public static List<Integer> getSupportedMajorVersions(
+      RegistryClient registryClient, String heiId, String apiLocalName) {
+    Collection<Element> rawApiElements = getRawApiElements(registryClient, heiId, apiLocalName);
+    List<Integer> result = new ArrayList<>();
+    for (Element rawApiElement : rawApiElements) {
+      SemanticVersion semanticVersion = getSemanticVersionFromRawApiElement(rawApiElement);
+      result.add(semanticVersion.getMajorVersion());
+    }
+    return result;
+  }
+
   public static Optional<Element> getRawApiElement(
       RegistryClient registryClient, String heiId, String apiLocalName, int wantedMajorVersion) {
-    ApiSearchConditions apiSearchConditions =
-        new ApiSearchConditions().setRequiredHei(heiId).setApiClassRequired(null, apiLocalName);
-    Collection<Element> rawApiElements = registryClient.findApis(apiSearchConditions);
-    if (rawApiElements == null || rawApiElements.isEmpty()) {
+    Collection<Element> rawApiElements = getRawApiElements(registryClient, heiId, apiLocalName);
+    if (rawApiElements.isEmpty()) {
       return Optional.empty();
     }
 
@@ -158,6 +169,17 @@ public class EwpApiUtils {
       }
     }
     return Optional.empty();
+  }
+
+  public static Collection<Element> getRawApiElements(
+      RegistryClient registryClient, String heiId, String apiLocalName) {
+    ApiSearchConditions apiSearchConditions =
+        new ApiSearchConditions().setRequiredHei(heiId).setApiClassRequired(null, apiLocalName);
+    Collection<Element> rawApiElements = registryClient.findApis(apiSearchConditions);
+    if (rawApiElements == null) {
+      return new ArrayDeque<>();
+    }
+    return rawApiElements;
   }
 
   public static SemanticVersion getSemanticVersionFromRawApiElement(Element rawApiElement) {
