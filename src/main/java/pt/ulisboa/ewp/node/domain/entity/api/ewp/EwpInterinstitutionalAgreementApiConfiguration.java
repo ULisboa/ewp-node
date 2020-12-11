@@ -26,6 +26,7 @@ public class EwpInterinstitutionalAgreementApiConfiguration extends EwpApiConfig
     super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.indexUrl = indexUrl;
     this.getUrl = getUrl;
+    this.maxIiaIds = maxIiaIds;
     this.maxIiaCodes = maxIiaCodes;
     this.sendsNotifications = sendsNotifications;
   }

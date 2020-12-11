@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
@@ -21,6 +22,14 @@ public class EwpInterInstitutionalAgreementsV3Client
   public EwpInterInstitutionalAgreementsV3Client(
       RegistryClient registryClient, EwpClient ewpClient) {
     super(registryClient, ewpClient);
+  }
+
+  public ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO getApiSpecification(
+      String heiId) {
+    EwpInterinstitutionalAgreementApiConfiguration apiConfiguration = getApiConfiguration(heiId);
+    return new ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO(
+        apiConfiguration.getMaxIiaIds().intValueExact(),
+        apiConfiguration.getMaxIiaCodes().intValueExact());
   }
 
   public EwpSuccessOperationResult<IiasIndexResponseV3> findAllByHeiIds(
