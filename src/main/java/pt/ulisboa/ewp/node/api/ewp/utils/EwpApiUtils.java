@@ -146,16 +146,18 @@ public class EwpApiUtils {
       RegistryClient registryClient, String heiId, String apiLocalName, int wantedMajorVersion) {
     ApiSearchConditions apiSearchConditions =
         new ApiSearchConditions().setRequiredHei(heiId).setApiClassRequired(null, apiLocalName);
-    Element rawApiElement = registryClient.findApi(apiSearchConditions);
-    if (rawApiElement == null) {
+    Collection<Element> rawApiElements = registryClient.findApis(apiSearchConditions);
+    if (rawApiElements == null || rawApiElements.isEmpty()) {
       return Optional.empty();
     }
 
-    SemanticVersion semanticVersion = getSemanticVersionFromRawApiElement(rawApiElement);
-    if (semanticVersion.getMajorVersion() != wantedMajorVersion) {
-      return Optional.empty();
+    for (Element rawApiElement : rawApiElements) {
+      SemanticVersion semanticVersion = getSemanticVersionFromRawApiElement(rawApiElement);
+      if (semanticVersion.getMajorVersion() == wantedMajorVersion) {
+        return Optional.of(rawApiElement);
+      }
     }
-    return Optional.of(rawApiElement);
+    return Optional.empty();
   }
 
   public static SemanticVersion getSemanticVersionFromRawApiElement(Element rawApiElement) {

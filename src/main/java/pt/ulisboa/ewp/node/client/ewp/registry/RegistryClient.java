@@ -78,6 +78,10 @@ public class RegistryClient {
     return client.findApi(conditions);
   }
 
+  public Collection<Element> findApis(ApiSearchConditions conditions) {
+    return client.findApis(conditions);
+  }
+
   public Collection<String> getAllHeiIds() {
     return client.getAllHeis().stream().map(HeiEntry::getId).collect(Collectors.toList());
   }
