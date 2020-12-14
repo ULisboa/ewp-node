@@ -20,6 +20,7 @@ public class InterInstitutionalAgreementsGetRequestDto {
   @ParamName(value = EwpApiParamConstants.IIA_CODE)
   private List<String> iiaCodes = new ArrayList<>();
 
+  @ParamName(value = EwpApiParamConstants.SEND_PDF)
   private Boolean sendPdf;
 
   public String getHeiId() {
