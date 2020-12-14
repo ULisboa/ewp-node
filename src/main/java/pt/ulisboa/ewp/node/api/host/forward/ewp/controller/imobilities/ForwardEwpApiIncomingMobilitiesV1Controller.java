@@ -53,7 +53,7 @@ public class ForwardEwpApiIncomingMobilitiesV1Controller extends AbstractForward
       produces = MediaType.APPLICATION_XML_VALUE,
       value = "/get")
   public ResponseEntity<ForwardEwpApiResponseWithData<ImobilitiesGetResponseV1>>
-      findBySendingHeiIdAndOmobilityIds(
+      findByReceivingHeiIdAndOmobilityIds(
           @Valid ForwardEwpApiIncomingMobilitiesGetRequestDto requestDto)
           throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<ImobilitiesGetResponseV1> response =
