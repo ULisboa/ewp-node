@@ -23,7 +23,6 @@ import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdAndMajorVersionE
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilitiesApiConfiguration;
 
 @Service
@@ -109,7 +108,7 @@ public class EwpOutgoingMobilitiesV1Client {
             OmobilitiesV1.class);
     if (apiElementOptional.isEmpty()) {
       throw new NoEwpApiForHeiIdAndMajorVersionException(
-          heiId, EwpInterinstitutionalAgreementApiConfiguration.API_NAME, API_MAJOR_VERSION);
+          heiId, EwpOutgoingMobilitiesApiConfiguration.API_NAME, API_MAJOR_VERSION);
     }
     OmobilitiesV1 apiElement = apiElementOptional.get();
 

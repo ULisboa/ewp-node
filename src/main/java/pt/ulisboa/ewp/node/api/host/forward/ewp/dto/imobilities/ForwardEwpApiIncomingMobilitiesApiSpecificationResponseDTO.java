@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.dto.imobilities;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,15 +10,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(
     name = "",
     propOrder = {"maxOmobilityIds"})
-@XmlRootElement(name = "omobilities-api-specification-response")
-public class ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO {
+@XmlRootElement(name = "imobilities-api-specification-response")
+public class ForwardEwpApiIncomingMobilitiesApiSpecificationResponseDTO {
 
   @XmlElement(name = "max-omobility-ids", required = true)
   private int maxOmobilityIds;
 
-  public ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO() {}
+  public ForwardEwpApiIncomingMobilitiesApiSpecificationResponseDTO() {}
 
-  public ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO(int maxOmobilityIds) {
+  public ForwardEwpApiIncomingMobilitiesApiSpecificationResponseDTO(int maxOmobilityIds) {
     this.maxOmobilityIds = maxOmobilityIds;
   }
 
