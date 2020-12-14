@@ -10,71 +10,55 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
 public class CoursesRequestDto {
 
-  @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID)
-  @Parameter(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
-      description = "HEI ID (SCHAC code) to look up")
-  @Schema(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
-      description = "HEI ID (SCHAC code) to look up")
+  @ParamName(EwpApiParamConstants.HEI_ID)
+  @Parameter(name = EwpApiParamConstants.HEI_ID, description = "HEI ID (SCHAC code) to look up")
+  @Schema(name = EwpApiParamConstants.HEI_ID, description = "HEI ID (SCHAC code) to look up")
   @NotNull
   @Size(min = 1)
   private String heiId;
 
-  @ParamName(value = ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID)
+  @ParamName(value = EwpApiParamConstants.LOS_ID)
   @Parameter(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID,
-      description =
-          "Must be set if no " + ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE + " is provided.")
+      name = EwpApiParamConstants.LOS_ID,
+      description = "Must be set if no " + EwpApiParamConstants.LOS_CODE + " is provided.")
   @Schema(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID,
-      description =
-          "Must be set if no " + ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE + " is provided.")
+      name = EwpApiParamConstants.LOS_ID,
+      description = "Must be set if no " + EwpApiParamConstants.LOS_CODE + " is provided.")
   private List<String> losIds = new ArrayList<>();
 
-  @ParamName(value = ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE)
+  @ParamName(value = EwpApiParamConstants.LOS_CODE)
   @Parameter(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE,
-      description =
-          "Must be set if no " + ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID + " is provided.")
+      name = EwpApiParamConstants.LOS_CODE,
+      description = "Must be set if no " + EwpApiParamConstants.LOS_ID + " is provided.")
   @Schema(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_CODE,
-      description =
-          "Must be set if no " + ForwardEwpApiParamConstants.PARAM_NAME_LOS_ID + " is provided.")
+      name = EwpApiParamConstants.LOS_CODE,
+      description = "Must be set if no " + EwpApiParamConstants.LOS_ID + " is provided.")
   private List<String> losCodes = new ArrayList<>();
 
-  @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOIS_BEFORE)
+  @ParamName(EwpApiParamConstants.LOIS_BEFORE)
   @Parameter(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_BEFORE,
+      name = EwpApiParamConstants.LOIS_BEFORE,
       description = "Look up LOIS before a given date")
-  @Schema(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_BEFORE,
-      description = "Look up LOIS before a given date")
+  @Schema(name = EwpApiParamConstants.LOIS_BEFORE, description = "Look up LOIS before a given date")
   @DateTimeFormat(iso = DATE)
   private LocalDate loisBefore;
 
-  @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AFTER)
+  @ParamName(EwpApiParamConstants.LOIS_AFTER)
   @Parameter(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AFTER,
+      name = EwpApiParamConstants.LOIS_AFTER,
       description = "Look up LOIS after a given date")
-  @Schema(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_LOIS_AFTER,
-      description = "Look up LOIS after a given date")
+  @Schema(name = EwpApiParamConstants.LOIS_AFTER, description = "Look up LOIS after a given date")
   @DateTimeFormat(iso = DATE)
   private LocalDate loisAfter;
 
-  @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_LOS_AT_DATE)
-  @Parameter(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_AT_DATE,
-      description = "Look up LOS at a given date")
-  @Schema(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_LOS_AT_DATE,
-      description = "Look up LOS at a given date")
+  @ParamName(EwpApiParamConstants.LOS_AT_DATE)
+  @Parameter(name = EwpApiParamConstants.LOS_AT_DATE, description = "Look up LOS at a given date")
+  @Schema(name = EwpApiParamConstants.LOS_AT_DATE, description = "Look up LOS at a given date")
   @DateTimeFormat(iso = DATE)
   private LocalDate losAtDate;
 

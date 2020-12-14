@@ -7,20 +7,20 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
 
 @Service
 public class EwpInstitutionsClient {
 
-  private RegistryClient registryClient;
-  private EwpClient ewpClient;
+  private final RegistryClient registryClient;
+  private final EwpClient ewpClient;
 
   public EwpInstitutionsClient(RegistryClient registryClient, EwpClient ewpClient) {
     this.registryClient = registryClient;
@@ -31,7 +31,7 @@ public class EwpInstitutionsClient {
       throws AbstractEwpClientErrorException {
     Optional<EwpInstitutionApiConfiguration> apiOptional =
         EwpApiUtils.getInstitutionApiConfiguration(registryClient, heiId);
-    if (!apiOptional.isPresent()) {
+    if (apiOptional.isEmpty()) {
       throw new NoEwpApiForHeiIdException(heiId, EwpInstitutionApiConfiguration.API_NAME);
     }
     EwpInstitutionApiConfiguration api = apiOptional.get();
@@ -40,7 +40,7 @@ public class EwpInstitutionsClient {
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
 
     HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
+    queryParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
     request.queryParams(queryParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, InstitutionsResponseV2.class);

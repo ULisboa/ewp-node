@@ -28,8 +28,7 @@ public class EwpApiEchoController {
       tags = {"ewp"})
   public ResponseEntity<ResponseV2> echoGet(
       EwpApiHostAuthenticationToken authentication,
-      @RequestParam(value = EwpApiParamConstants.PARAM_NAME_ECHO, defaultValue = "")
-          List<String> echo) {
+      @RequestParam(value = EwpApiParamConstants.ECHO, defaultValue = "") List<String> echo) {
     return echo(authentication.getPrincipal().getHeiIdsCoveredByClient(), echo);
   }
 
@@ -39,8 +38,7 @@ public class EwpApiEchoController {
       tags = {"ewp"})
   public ResponseEntity<ResponseV2> echoPost(
       EwpApiHostAuthenticationToken authentication,
-      @RequestParam(value = EwpApiParamConstants.PARAM_NAME_ECHO, required = false)
-          List<String> echo) {
+      @RequestParam(value = EwpApiParamConstants.ECHO, required = false) List<String> echo) {
     if (echo == null) {
       echo = new ArrayList<>();
     }

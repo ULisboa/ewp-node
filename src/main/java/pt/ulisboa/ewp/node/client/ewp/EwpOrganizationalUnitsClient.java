@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
@@ -16,7 +17,6 @@ import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
 
 @Service
@@ -47,9 +47,8 @@ public class EwpOrganizationalUnitsClient {
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
 
     HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
-    queryParams.put(
-        EwpClientConstants.QUERY_ORGANIZATIONAL_UNIT_ID, new ArrayList<>(organizationalUnitIds));
+    queryParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
+    queryParams.put(EwpApiParamConstants.OUNIT_ID, new ArrayList<>(organizationalUnitIds));
     request.queryParams(queryParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, OunitsResponseV2.class);
@@ -64,10 +63,8 @@ public class EwpOrganizationalUnitsClient {
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
 
     HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
-    queryParams.put(
-        EwpClientConstants.QUERY_ORGANIZATIONAL_UNIT_CODE,
-        new ArrayList<>(organizationalUnitCodes));
+    queryParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
+    queryParams.put(EwpApiParamConstants.OUNIT_CODE, new ArrayList<>(organizationalUnitCodes));
     request.queryParams(queryParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, OunitsResponseV2.class);

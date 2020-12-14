@@ -89,7 +89,7 @@ public class EwpClientTest extends AbstractTest {
   @Test(expected = EwpClientProcessorException.class)
   public void testGetOwnEchoResourceWithoutAuthentication() throws AbstractEwpClientErrorException {
     Map<String, List<String>> params = new HashMap<>();
-    params.put(EwpApiParamConstants.PARAM_NAME_ECHO, Collections.singletonList("abc"));
+    params.put(EwpApiParamConstants.ECHO, Collections.singletonList("abc"));
     ewpClient.executeWithLoggingExpectingSuccess(
         new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
             .queryParams(params)
@@ -112,7 +112,7 @@ public class EwpClientTest extends AbstractTest {
 
     String testEchoValue = "abc";
     Map<String, List<String>> params = new HashMap<>();
-    params.put(EwpApiParamConstants.PARAM_NAME_ECHO, Collections.singletonList(testEchoValue));
+    params.put(EwpApiParamConstants.ECHO, Collections.singletonList(testEchoValue));
     EwpSuccessOperationResult<ResponseV2> clientResponse =
         ewpClient.executeWithLoggingExpectingSuccess(
             new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
@@ -139,7 +139,7 @@ public class EwpClientTest extends AbstractTest {
 
     String testEchoValue = "abc";
     Map<String, List<String>> params = new HashMap<>();
-    params.put(EwpApiParamConstants.PARAM_NAME_ECHO, Collections.singletonList(testEchoValue));
+    params.put(EwpApiParamConstants.ECHO, Collections.singletonList(testEchoValue));
     EwpSuccessOperationResult<ResponseV2> clientResponse =
         ewpClient.executeWithLoggingExpectingSuccess(
             new EwpRequest(HttpMethod.POST, "http://localhost:" + serverPort + "/api/ewp/echo")

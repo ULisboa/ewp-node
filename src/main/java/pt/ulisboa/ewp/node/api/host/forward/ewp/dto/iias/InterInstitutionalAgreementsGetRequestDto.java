@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
 public class InterInstitutionalAgreementsGetRequestDto {
 
-  @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID)
+  @ParamName(EwpApiParamConstants.HEI_ID)
   @NotNull
   @Size(min = 1)
   private String heiId;
 
-  @ParamName(value = ForwardEwpApiParamConstants.PARAM_NAME_IIA_ID)
+  @ParamName(value = EwpApiParamConstants.IIA_ID)
   private List<String> iiaIds = new ArrayList<>();
 
-  @ParamName(value = ForwardEwpApiParamConstants.PARAM_NAME_IIA_CODE)
+  @ParamName(value = EwpApiParamConstants.IIA_CODE)
   private List<String> iiaCodes = new ArrayList<>();
 
   private Boolean sendPdf;

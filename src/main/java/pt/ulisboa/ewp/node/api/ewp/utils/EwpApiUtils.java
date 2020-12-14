@@ -49,10 +49,10 @@ public class EwpApiUtils {
         getApiElement(
             registryClient,
             heiId,
-            EwpClientConstants.API_INSTITUTIONS_LOCAL_NAME,
+            EwpApiConstants.API_INSTITUTIONS_LOCAL_NAME,
             2,
             InstitutionsV2.class);
-    if (!apiElementOptional.isPresent()) {
+    if (apiElementOptional.isEmpty()) {
       return Optional.empty();
     }
     InstitutionsV2 apiElement = apiElementOptional.get();
@@ -71,10 +71,10 @@ public class EwpApiUtils {
         getApiElement(
             registryClient,
             heiId,
-            EwpClientConstants.API_ORGANIZATIONAL_UNITS_NAME,
+            EwpApiConstants.API_ORGANIZATIONAL_UNITS_NAME,
             2,
             OrganizationalUnitsV2.class);
-    if (!apiElementOptional.isPresent()) {
+    if (apiElementOptional.isEmpty()) {
       return Optional.empty();
     }
     OrganizationalUnitsV2 apiElement = apiElementOptional.get();
@@ -91,9 +91,8 @@ public class EwpApiUtils {
   public static Optional<EwpCourseApiConfiguration> getCourseApiConfiguration(
       RegistryClient registryClient, String heiId) {
     Optional<CoursesV0> apiElementOptional =
-        getApiElement(
-            registryClient, heiId, EwpClientConstants.API_COURSES_NAME, 0, CoursesV0.class);
-    if (!apiElementOptional.isPresent()) {
+        getApiElement(registryClient, heiId, EwpApiConstants.API_COURSES_NAME, 0, CoursesV0.class);
+    if (apiElementOptional.isEmpty()) {
       return Optional.empty();
     }
     CoursesV0 apiElement = apiElementOptional.get();
@@ -113,10 +112,10 @@ public class EwpApiUtils {
         getApiElement(
             registryClient,
             heiId,
-            EwpClientConstants.API_SIMPLE_COURSE_REPLICATION_NAME,
+            EwpApiConstants.API_SIMPLE_COURSE_REPLICATION_NAME,
             1,
             SimpleCourseReplicationV1.class);
-    if (!apiElementOptional.isPresent()) {
+    if (apiElementOptional.isEmpty()) {
       return Optional.empty();
     }
     SimpleCourseReplicationV1 apiElement = apiElementOptional.get();
@@ -239,8 +238,6 @@ public class EwpApiUtils {
   /**
    * Returns the "best" supported API authentication method using a predefined list of
    * authentication methods order.
-   *
-   * @return
    */
   public static EwpAuthenticationMethod getBestSupportedApiAuthenticationMethod(
       EwpApiConfiguration api) {

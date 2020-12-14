@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
 
 @Service
@@ -43,10 +43,10 @@ public class EwpSimpleCourseReplicationClient {
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
 
     HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
+    queryParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
     if (modifiedSince != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_MODIFIED_SINCE,
+          EwpApiParamConstants.MODIFIED_SINCE,
           Collections.singletonList(DateTimeFormatter.ISO_DATE_TIME.format(modifiedSince)));
     }
     request.queryParams(queryParams);

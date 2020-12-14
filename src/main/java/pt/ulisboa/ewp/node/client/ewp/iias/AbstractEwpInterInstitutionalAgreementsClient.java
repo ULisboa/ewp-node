@@ -12,6 +12,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
@@ -19,7 +21,6 @@ import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdAndMajorVersionE
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApiConfiguration;
 
 @Service
@@ -47,20 +48,19 @@ public abstract class AbstractEwpInterInstitutionalAgreementsClient {
         EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
     HashMap<String, List<String>> bodyParams = new HashMap<>();
-    bodyParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
+    bodyParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
 
     if (partnerHeiId != null) {
-      bodyParams.put(
-          EwpClientConstants.QUERY_PARTNER_HEI_ID, Collections.singletonList(partnerHeiId));
+      bodyParams.put(EwpApiParamConstants.PARTNER_HEI_ID, Collections.singletonList(partnerHeiId));
     }
 
     if (receivingAcademicYearIds != null) {
-      bodyParams.put(EwpClientConstants.QUERY_RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearIds);
+      bodyParams.put(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearIds);
     }
 
     if (modifiedSince != null) {
       bodyParams.put(
-          EwpClientConstants.QUERY_MODIFIED_SINCE,
+          EwpApiParamConstants.MODIFIED_SINCE,
           Collections.singletonList(DateTimeFormatter.ISO_DATE_TIME.format(modifiedSince)));
     }
 
@@ -81,12 +81,11 @@ public abstract class AbstractEwpInterInstitutionalAgreementsClient {
         EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
     HashMap<String, List<String>> bodyParams = new HashMap<>();
-    bodyParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
-    bodyParams.put(EwpClientConstants.QUERY_IIA_ID, new ArrayList<>(iiaIds));
+    bodyParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
+    bodyParams.put(EwpApiParamConstants.IIA_ID, new ArrayList<>(iiaIds));
 
     if (sendPdf != null) {
-      bodyParams.put(
-          EwpClientConstants.QUERY_SEND_PDF, Collections.singletonList(sendPdf.toString()));
+      bodyParams.put(EwpApiParamConstants.SEND_PDF, Collections.singletonList(sendPdf.toString()));
     }
 
     request.bodyParams(bodyParams);
@@ -106,12 +105,11 @@ public abstract class AbstractEwpInterInstitutionalAgreementsClient {
         EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
     HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
-    queryParams.put(EwpClientConstants.QUERY_IIA_CODE, new ArrayList<>(iiaCodes));
+    queryParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
+    queryParams.put(EwpApiParamConstants.IIA_CODE, new ArrayList<>(iiaCodes));
 
     if (sendPdf != null) {
-      queryParams.put(
-          EwpClientConstants.QUERY_SEND_PDF, Collections.singletonList(sendPdf.toString()));
+      queryParams.put(EwpApiParamConstants.SEND_PDF, Collections.singletonList(sendPdf.toString()));
     }
 
     request.bodyParams(queryParams);
@@ -128,7 +126,7 @@ public abstract class AbstractEwpInterInstitutionalAgreementsClient {
         EwpApiUtils.getApiElement(
             registryClient,
             heiId,
-            EwpClientConstants.API_INTERINSTITUTIONAL_AGREEMENTS_NAME,
+            EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENTS_NAME,
             wantedMajorVersion,
             apiConfigurationElementClassType);
     if (apiElementOptional.isEmpty()) {

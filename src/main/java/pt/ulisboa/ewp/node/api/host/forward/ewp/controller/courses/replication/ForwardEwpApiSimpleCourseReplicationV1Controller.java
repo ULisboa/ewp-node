@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -23,7 +24,6 @@ import pt.ulisboa.ewp.node.client.ewp.EwpSimpleCourseReplicationClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 
 @RestController
 @ForwardEwpApi
@@ -72,6 +72,6 @@ public class ForwardEwpApiSimpleCourseReplicationV1Controller
 
   @Override
   public String getApiLocalName() {
-    return EwpClientConstants.API_SIMPLE_COURSE_REPLICATION_NAME;
+    return EwpApiConstants.API_SIMPLE_COURSE_REPLICATION_NAME;
   }
 }

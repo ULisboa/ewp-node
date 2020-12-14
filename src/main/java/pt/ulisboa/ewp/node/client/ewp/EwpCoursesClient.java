@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiCoursesApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
@@ -17,7 +18,6 @@ import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
 
 @Service
@@ -50,20 +50,19 @@ public class EwpCoursesClient {
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
 
     HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
-    queryParams.put(EwpClientConstants.QUERY_LOS_ID, new ArrayList<>(losIds));
+    queryParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
+    queryParams.put(EwpApiParamConstants.LOS_ID, new ArrayList<>(losIds));
     if (loisBeforeDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOIS_BEFORE,
-          Collections.singletonList(loisBeforeDate.toString()));
+          EwpApiParamConstants.LOIS_BEFORE, Collections.singletonList(loisBeforeDate.toString()));
     }
     if (loisAfterDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOIS_AFTER, Collections.singletonList(loisAfterDate.toString()));
+          EwpApiParamConstants.LOIS_AFTER, Collections.singletonList(loisAfterDate.toString()));
     }
     if (losAtDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOS_AT_DATE, Collections.singletonList(losAtDate.toString()));
+          EwpApiParamConstants.LOS_AT_DATE, Collections.singletonList(losAtDate.toString()));
     }
     request.queryParams(queryParams);
 
@@ -83,20 +82,19 @@ public class EwpCoursesClient {
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
 
     HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
-    queryParams.put(EwpClientConstants.QUERY_LOS_CODE, new ArrayList<>(losCodes));
+    queryParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
+    queryParams.put(EwpApiParamConstants.LOS_CODE, new ArrayList<>(losCodes));
     if (loisBeforeDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOIS_BEFORE,
-          Collections.singletonList(loisBeforeDate.toString()));
+          EwpApiParamConstants.LOIS_BEFORE, Collections.singletonList(loisBeforeDate.toString()));
     }
     if (loisAfterDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOIS_AFTER, Collections.singletonList(loisAfterDate.toString()));
+          EwpApiParamConstants.LOIS_AFTER, Collections.singletonList(loisAfterDate.toString()));
     }
     if (losAtDate != null) {
       queryParams.put(
-          EwpClientConstants.QUERY_LOS_AT_DATE, Collections.singletonList(losAtDate.toString()));
+          EwpApiParamConstants.LOS_AT_DATE, Collections.singletonList(losAtDate.toString()));
     }
     request.queryParams(queryParams);
 

@@ -36,7 +36,7 @@ public class EwpApiInstitutionsController {
       summary = "Institutions API.",
       tags = {"ewp"})
   public ResponseEntity<InstitutionsResponseV2> institutionsGet(
-      @RequestParam(value = EwpApiParamConstants.PARAM_NAME_HEI_ID, defaultValue = "")
+      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "")
           List<String> heiIds) {
     return institutions(heiIds);
   }
@@ -46,7 +46,7 @@ public class EwpApiInstitutionsController {
       summary = "Institutions API.",
       tags = {"ewp"})
   public ResponseEntity<InstitutionsResponseV2> institutionsPost(
-      @RequestParam(value = EwpApiParamConstants.PARAM_NAME_HEI_ID, required = false)
+      @RequestParam(value = EwpApiParamConstants.HEI_ID, required = false)
           List<String> heiIds) {
     if (heiIds == null) {
       heiIds = new ArrayList<>();

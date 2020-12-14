@@ -6,46 +6,34 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
 public class OrganizationalUnitsRequestDto {
 
-  @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID)
-  @Parameter(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
-      description = "HEI ID (SCHAC code) to look up")
-  @Schema(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
-      description = "HEI ID (SCHAC code) to look up")
+  @ParamName(EwpApiParamConstants.HEI_ID)
+  @Parameter(name = EwpApiParamConstants.HEI_ID, description = "HEI ID (SCHAC code) to look up")
+  @Schema(name = EwpApiParamConstants.HEI_ID, description = "HEI ID (SCHAC code) to look up")
   @NotNull
   @Size(min = 1)
   private String heiId;
 
-  @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_ID)
+  @ParamName(EwpApiParamConstants.OUNIT_ID)
   @Parameter(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_ID,
-      description =
-          "Must be set if no "
-              + ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE
-              + " is provided.")
+      name = EwpApiParamConstants.OUNIT_ID,
+      description = "Must be set if no " + EwpApiParamConstants.OUNIT_CODE + " is provided.")
   @Schema(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_ID,
-      description =
-          "Must be set if no "
-              + ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE
-              + " is provided.")
+      name = EwpApiParamConstants.OUNIT_ID,
+      description = "Must be set if no " + EwpApiParamConstants.OUNIT_CODE + " is provided.")
   private List<String> organizationalUnitIds = new ArrayList<>();
 
-  @ParamName(value = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE)
+  @ParamName(value = EwpApiParamConstants.OUNIT_CODE)
   @Parameter(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE,
-      description =
-          "Must be set if no " + ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_ID + " is provided.")
+      name = EwpApiParamConstants.OUNIT_CODE,
+      description = "Must be set if no " + EwpApiParamConstants.OUNIT_ID + " is provided.")
   @Schema(
-      name = ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_CODE,
-      description =
-          "Must be set if no " + ForwardEwpApiParamConstants.PARAM_NAME_OUNIT_ID + " is provided.")
+      name = EwpApiParamConstants.OUNIT_CODE,
+      description = "Must be set if no " + EwpApiParamConstants.OUNIT_ID + " is provided.")
   private List<String> organizationalUnitCodes = new ArrayList<>();
 
   public String getHeiId() {

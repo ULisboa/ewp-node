@@ -35,10 +35,10 @@ public class EwpApiOrganizationalUnitsController {
       summary = "Organizational Units API.",
       tags = {"ewp"})
   public ResponseEntity<OunitsResponseV2> ounitsGet(
-      @RequestParam(value = EwpApiParamConstants.PARAM_NAME_HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.PARAM_NAME_OUNIT_ID, required = false)
+      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
+      @RequestParam(value = EwpApiParamConstants.OUNIT_ID, required = false)
           List<String> ounitIds,
-      @RequestParam(value = EwpApiParamConstants.PARAM_NAME_OUNIT_CODE, required = false)
+      @RequestParam(value = EwpApiParamConstants.OUNIT_CODE, required = false)
           List<String> ounitCodes) {
     ounitIds = ounitIds != null ? ounitIds : Collections.emptyList();
     ounitCodes = ounitCodes != null ? ounitCodes : Collections.emptyList();
@@ -50,10 +50,10 @@ public class EwpApiOrganizationalUnitsController {
       summary = "Organizational Units API.",
       tags = {"ewp"})
   public ResponseEntity<OunitsResponseV2> ounitsPost(
-      @RequestParam(value = EwpApiParamConstants.PARAM_NAME_HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.PARAM_NAME_OUNIT_ID, required = false)
+      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
+      @RequestParam(value = EwpApiParamConstants.OUNIT_ID, required = false)
           List<String> ounitIds,
-      @RequestParam(value = EwpApiParamConstants.PARAM_NAME_OUNIT_CODE, required = false)
+      @RequestParam(value = EwpApiParamConstants.OUNIT_CODE, required = false)
           List<String> ounitCodes) {
     ounitIds = ounitIds != null ? ounitIds : Collections.emptyList();
     ounitCodes = ounitCodes != null ? ounitCodes : Collections.emptyList();
