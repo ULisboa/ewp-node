@@ -19,6 +19,8 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementA
 public class EwpInterInstitutionalAgreementsV4Client
     extends AbstractEwpInterInstitutionalAgreementsClient {
 
+  private static final int API_MAJOR_VERSION = 3;
+
   public EwpInterInstitutionalAgreementsV4Client(
       RegistryClient registryClient, EwpClient ewpClient) {
     super(registryClient, ewpClient);
@@ -60,14 +62,14 @@ public class EwpInterInstitutionalAgreementsV4Client
       String heiId, Collection<String> iiaCodes, Boolean sendPdf)
       throws AbstractEwpClientErrorException {
     EwpInterinstitutionalAgreementApiConfiguration apiConfiguration = getApiConfiguration(heiId);
-    return super.findByHeiIdAndIiaIds(
+    return super.findByHeiIdAndIiaCodes(
         heiId, iiaCodes, sendPdf, apiConfiguration, IiasGetResponseV4.class);
   }
 
   public EwpInterinstitutionalAgreementApiConfiguration getApiConfiguration(String heiId) {
     return getApiConfiguration(
         heiId,
-        4,
+        API_MAJOR_VERSION,
         IiasV4.class,
         EwpInterInstitutionalAgreementsV4Client::readApiConfigurationElement);
   }

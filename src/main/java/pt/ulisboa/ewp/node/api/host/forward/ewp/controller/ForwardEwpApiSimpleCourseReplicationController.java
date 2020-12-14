@@ -28,6 +28,8 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstant
 import pt.ulisboa.ewp.node.client.ewp.EwpSimpleCourseReplicationClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
+import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
 @RestController
@@ -38,6 +40,10 @@ public class ForwardEwpApiSimpleCourseReplicationController
     extends AbstractForwardEwpApiController {
 
   @Autowired private EwpSimpleCourseReplicationClient client;
+
+  public ForwardEwpApiSimpleCourseReplicationController(RegistryClient registryClient) {
+    super(registryClient);
+  }
 
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
@@ -67,6 +73,11 @@ public class ForwardEwpApiSimpleCourseReplicationController
     EwpSuccessOperationResult<CourseReplicationResponseV1> courseReplicationResponse =
         client.findAllCourses(heiId, modifiedSince);
     return createResponseEntityFromOperationResult(courseReplicationResponse);
+  }
+
+  @Override
+  public String getApiLocalName() {
+    return EwpClientConstants.API_SIMPLE_COURSE_REPLICATION_NAME;
   }
 
   private static class SimpleCourseReplicationRequestDto {

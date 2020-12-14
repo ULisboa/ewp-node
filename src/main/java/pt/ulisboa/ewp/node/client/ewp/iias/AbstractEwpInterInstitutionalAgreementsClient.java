@@ -46,26 +46,25 @@ public abstract class AbstractEwpInterInstitutionalAgreementsClient {
     request.authenticationMethod(
         EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
-    HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
+    HashMap<String, List<String>> bodyParams = new HashMap<>();
+    bodyParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
 
     if (partnerHeiId != null) {
-      queryParams.put(
+      bodyParams.put(
           EwpClientConstants.QUERY_PARTNER_HEI_ID, Collections.singletonList(partnerHeiId));
     }
 
     if (receivingAcademicYearIds != null) {
-      queryParams.put(
-          EwpClientConstants.QUERY_RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearIds);
+      bodyParams.put(EwpClientConstants.QUERY_RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearIds);
     }
 
     if (modifiedSince != null) {
-      queryParams.put(
+      bodyParams.put(
           EwpClientConstants.QUERY_MODIFIED_SINCE,
           Collections.singletonList(DateTimeFormatter.ISO_DATE_TIME.format(modifiedSince)));
     }
 
-    request.bodyParams(queryParams);
+    request.bodyParams(bodyParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, responseType);
   }
@@ -81,16 +80,16 @@ public abstract class AbstractEwpInterInstitutionalAgreementsClient {
     request.authenticationMethod(
         EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
-    HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
-    queryParams.put(EwpClientConstants.QUERY_IIA_ID, new ArrayList<>(iiaIds));
+    HashMap<String, List<String>> bodyParams = new HashMap<>();
+    bodyParams.put(EwpClientConstants.QUERY_HEI_ID, Collections.singletonList(heiId));
+    bodyParams.put(EwpClientConstants.QUERY_IIA_ID, new ArrayList<>(iiaIds));
 
     if (sendPdf != null) {
-      queryParams.put(
+      bodyParams.put(
           EwpClientConstants.QUERY_SEND_PDF, Collections.singletonList(sendPdf.toString()));
     }
 
-    request.bodyParams(queryParams);
+    request.bodyParams(bodyParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, responseType);
   }

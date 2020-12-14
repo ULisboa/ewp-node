@@ -13,27 +13,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.InterInstitutionalAgreementsGetRequestDto;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.InterInstitutionalAgreementsIndexRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.iias.EwpInterInstitutionalAgreementsV4Client;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
 @ForwardEwpApi
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "iias/v4")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
 public class ForwardEwpApiInterInstitutionalAgreementsV4Controller
-    extends AbstractForwardEwpApiInterInstitutionalAgreementsController {
+    extends AbstractForwardEwpApiController {
 
   private final EwpInterInstitutionalAgreementsV4Client client;
 
   public ForwardEwpApiInterInstitutionalAgreementsV4Controller(
-      EwpInterInstitutionalAgreementsV4Client client) {
+      RegistryClient registryClient, EwpInterInstitutionalAgreementsV4Client client) {
+    super(registryClient);
     this.client = client;
   }
 
@@ -82,5 +87,10 @@ public class ForwardEwpApiInterInstitutionalAgreementsV4Controller
           client.findByHeiIdAndIiaCodes(requestDto.getHeiId(), iiaCodes, requestDto.getSendPdf());
     }
     return createResponseEntityFromOperationResult(response);
+  }
+
+  @Override
+  public String getApiLocalName() {
+    throw new UnsupportedOperationException();
   }
 }

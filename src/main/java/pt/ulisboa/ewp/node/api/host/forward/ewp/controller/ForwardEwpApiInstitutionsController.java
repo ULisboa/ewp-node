@@ -28,6 +28,7 @@ import pt.ulisboa.ewp.node.client.ewp.EwpInstitutionsClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
+import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
 @RestController
@@ -39,6 +40,10 @@ public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiCo
   @Autowired private RegistryClient registryClient;
 
   @Autowired private EwpInstitutionsClient institutionClient;
+
+  public ForwardEwpApiInstitutionsController(RegistryClient registryClient) {
+    super(registryClient);
+  }
 
   @GetMapping(value = "/hei-ids", produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
@@ -79,6 +84,11 @@ public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiCo
     EwpSuccessOperationResult<InstitutionsResponseV2> institutionsResponse =
         institutionClient.find(heiId);
     return createResponseEntityFromOperationResult(institutionsResponse);
+  }
+
+  @Override
+  public String getApiLocalName() {
+    return EwpClientConstants.API_INSTITUTIONS_LOCAL_NAME;
   }
 
   private static class InstitutionsRequestDto {

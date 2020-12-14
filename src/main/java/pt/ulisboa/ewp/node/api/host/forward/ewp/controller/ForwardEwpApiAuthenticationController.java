@@ -14,6 +14,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiAuthentica
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
+import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
 @ForwardEwpApi
@@ -21,6 +22,10 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
 @Validated
 public class ForwardEwpApiAuthenticationController extends AbstractForwardEwpApiController {
+
+  public ForwardEwpApiAuthenticationController(RegistryClient registryClient) {
+    super(registryClient);
+  }
 
   @GetMapping(value = "/test", produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
@@ -33,5 +38,10 @@ public class ForwardEwpApiAuthenticationController extends AbstractForwardEwpApi
         new ForwardEwpApiAuthenticationTestResponseDTO();
     response.setHostCode(authentication.getPrincipal().getHost().getCode());
     return ForwardEwpApiResponseUtils.toOkResponseEntity(response);
+  }
+
+  @Override
+  public String getApiLocalName() {
+    throw new UnsupportedOperationException();
   }
 }

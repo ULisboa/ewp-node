@@ -29,6 +29,8 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils
 import pt.ulisboa.ewp.node.client.ewp.EwpOrganizationalUnitsClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
+import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
 @RestController
@@ -38,6 +40,10 @@ import pt.ulisboa.ewp.node.utils.bean.ParamName;
 public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardEwpApiController {
 
   @Autowired private EwpOrganizationalUnitsClient organizationalUnitClient;
+
+  public ForwardEwpApiOrganizationalUnitsController(RegistryClient registryClient) {
+    super(registryClient);
+  }
 
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
@@ -93,6 +99,11 @@ public class ForwardEwpApiOrganizationalUnitsController extends AbstractForwardE
       ounitsResponse = organizationalUnitClient.findByOunitCodes(heiId, organizationalUnitCodes);
     }
     return createResponseEntityFromOperationResult(ounitsResponse);
+  }
+
+  @Override
+  public String getApiLocalName() {
+    return EwpClientConstants.API_ORGANIZATIONAL_UNITS_NAME;
   }
 
   private static class OrganizationalUnitsRequestDto {
