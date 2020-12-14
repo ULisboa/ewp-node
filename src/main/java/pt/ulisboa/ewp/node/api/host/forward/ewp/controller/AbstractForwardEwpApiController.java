@@ -37,5 +37,9 @@ public abstract class AbstractForwardEwpApiController {
         successOperationResult.getResponse(), successOperationResult.getResponseBody());
   }
 
+  public RegistryClient getRegistryClient() {
+    return registryClient;
+  }
+
   public abstract String getApiLocalName();
 }

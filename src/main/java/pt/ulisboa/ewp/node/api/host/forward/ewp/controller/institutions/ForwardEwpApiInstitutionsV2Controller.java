@@ -1,15 +1,10 @@
-package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.institutions;
 
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Collection;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import org.springdoc.api.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -18,31 +13,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiHeiIdsResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.institutions.InstitutionsRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.EwpInstitutionsClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
-import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
 @RestController
 @ForwardEwpApi
-@RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "institutions")
+@RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "institutions/v2")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
-public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiController {
+public class ForwardEwpApiInstitutionsV2Controller extends AbstractForwardEwpApiController {
 
-  @Autowired private RegistryClient registryClient;
+  private final EwpInstitutionsClient client;
 
-  @Autowired private EwpInstitutionsClient institutionClient;
-
-  public ForwardEwpApiInstitutionsController(RegistryClient registryClient) {
+  public ForwardEwpApiInstitutionsV2Controller(
+      RegistryClient registryClient, EwpInstitutionsClient client) {
     super(registryClient);
+    this.client = client;
   }
 
   @GetMapping(value = "/hei-ids", produces = MediaType.APPLICATION_XML_VALUE)
@@ -51,7 +46,7 @@ public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiCo
       tags = {"Institutions"})
   public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiHeiIdsResponseDTO>>
       getAllHeiIds() {
-    Collection<String> heiIds = registryClient.getAllHeiIds();
+    Collection<String> heiIds = getRegistryClient().getAllHeiIds();
     return ResponseEntity.ok(
         ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(
             new ForwardEwpApiHeiIdsResponseDTO(heiIds)));
@@ -81,35 +76,12 @@ public class ForwardEwpApiInstitutionsController extends AbstractForwardEwpApiCo
   // NOTE: currently only allows one HEI ID each time
   private ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> getInstitution(
       String heiId) throws AbstractEwpClientErrorException {
-    EwpSuccessOperationResult<InstitutionsResponseV2> institutionsResponse =
-        institutionClient.find(heiId);
+    EwpSuccessOperationResult<InstitutionsResponseV2> institutionsResponse = client.find(heiId);
     return createResponseEntityFromOperationResult(institutionsResponse);
   }
 
   @Override
   public String getApiLocalName() {
-    return EwpClientConstants.API_INSTITUTIONS_LOCAL_NAME;
-  }
-
-  private static class InstitutionsRequestDto {
-
-    @ParamName(ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID)
-    @Parameter(
-        name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
-        description = "HEI ID (SCHAC code) to look up")
-    @Schema(
-        name = ForwardEwpApiParamConstants.PARAM_NAME_HEI_ID,
-        description = "HEI ID (SCHAC code) to look up")
-    @NotNull
-    @Size(min = 1)
-    private String heiId;
-
-    public String getHeiId() {
-      return heiId;
-    }
-
-    public void setHeiId(String heiId) {
-      this.heiId = heiId;
-    }
+    throw new UnsupportedOperationException();
   }
 }

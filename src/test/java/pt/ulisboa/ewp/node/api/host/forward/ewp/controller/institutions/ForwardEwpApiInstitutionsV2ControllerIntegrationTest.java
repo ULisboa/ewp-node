@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.institutions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -30,29 +30,29 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.Message.MessageSeverity;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
-import pt.ulisboa.ewp.node.client.ewp.EwpSimpleCourseReplicationClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpInstitutionsClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult.Builder;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
 @AutoConfigureMockMvc
-public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest extends AbstractTest {
+public class ForwardEwpApiInstitutionsV2ControllerIntegrationTest extends AbstractTest {
 
   private static final String TOKEN_SECRET = "sample-host-forward-ewp-api-secret";
   private static final String HOST_CODE = "sample-host";
 
-  private static final String API_FIND_ALL_URI =
-      ForwardEwpApiConstants.API_BASE_URI + "courses/replication";
+  private static final String API_FIND_URI =
+      ForwardEwpApiConstants.API_BASE_URI + "institutions/v2";
 
   @Autowired private MockMvc mockMvc;
 
-  @SpyBean private EwpSimpleCourseReplicationClient client;
+  @SpyBean private EwpInstitutionsClient client;
 
   private String jwtToken;
 
@@ -62,9 +62,9 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
   }
 
   @Test
-  public void testSimpleCourseReplicationGet_NotAuthenticated() throws Exception {
+  public void testInstitutionsGet_NotAuthenticated() throws Exception {
     mockMvc
-        .perform(get(API_FIND_ALL_URI))
+        .perform(get(API_FIND_URI))
         .andDo(MockMvcResultHandlers.print())
         .andExpect(status().isUnauthorized())
         .andExpect(xpath("/forward-ewp-api-response/messages/message[1]/severity").string("ERROR"))
@@ -74,11 +74,11 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
   }
 
   @Test
-  public void testSimpleCourseReplicationGet_Authenticated_NoParameters() throws Exception {
+  public void testInstitutionsGet_Authenticated_NoParameters() throws Exception {
     MvcResult result =
         mockMvc
             .perform(
-                get(API_FIND_ALL_URI)
+                get(API_FIND_URI)
                     .header(
                         SecurityCommonConstants.HEADER_NAME,
                         SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
@@ -95,17 +95,17 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
   }
 
   @Test
-  public void testSimpleCourseReplicationGet_Authenticated_NoHeiApiForHeiId() throws Exception {
+  public void testInstitutionsGet_Authenticated_NoHeiApiForHeiId() throws Exception {
     String heiId = "demo";
 
     NoEwpApiForHeiIdException exception =
-        new NoEwpApiForHeiIdException(heiId, EwpSimpleCourseReplicationApiConfiguration.API_NAME);
-    doThrow(exception).when(client).findAllCourses(heiId, null);
+        new NoEwpApiForHeiIdException(heiId, EwpInstitutionApiConfiguration.API_NAME);
+    doThrow(exception).when(client).find(heiId);
 
     MvcResult result =
         mockMvc
             .perform(
-                get(API_FIND_ALL_URI + "?hei_id=" + heiId)
+                get(API_FIND_URI + "?hei_id=" + heiId)
                     .header(
                         SecurityCommonConstants.HEADER_NAME,
                         SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
@@ -122,16 +122,16 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
   }
 
   @Test
-  public void testSimpleCourseReplicationGet_Authenticated_InternalException() throws Exception {
+  public void testInstitutionsGet_Authenticated_InternalException() throws Exception {
     String heiId = "demo";
 
     RuntimeException exception = new RuntimeException("Test");
-    doThrow(exception).when(client).findAllCourses(heiId, null);
+    doThrow(exception).when(client).find(heiId);
 
     MvcResult result =
         mockMvc
             .perform(
-                get(API_FIND_ALL_URI + "?hei_id=" + heiId)
+                get(API_FIND_URI + "?hei_id=" + heiId)
                     .header(
                         SecurityCommonConstants.HEADER_NAME,
                         SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
@@ -146,18 +146,17 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
   }
 
   @Test
-  public void testSimpleCourseReplicationGet_Authenticated_InvalidServerResponse()
-      throws Exception {
+  public void testInstitutionsGet_Authenticated_InvalidServerResponse() throws Exception {
     String heiId = "demo";
 
     EwpClientInvalidResponseException exception =
         new EwpClientInvalidResponseException(null, null, null, new IllegalStateException("Test"));
-    doThrow(exception).when(client).findAllCourses(heiId, null);
+    doThrow(exception).when(client).find(heiId);
 
     MvcResult result =
         mockMvc
             .perform(
-                get(API_FIND_ALL_URI + "?hei_id=" + heiId)
+                get(API_FIND_URI + "?hei_id=" + heiId)
                     .header(
                         SecurityCommonConstants.HEADER_NAME,
                         SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
@@ -172,7 +171,7 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
   }
 
   @Test
-  public void testSimpleCourseReplicationGet_Authenticated_ErrorResponse() throws Exception {
+  public void testInstitutionsGet_Authenticated_ErrorResponse() throws Exception {
     String heiId = "demo";
 
     ErrorResponseV1 errorResponse = EwpApiUtils.createErrorResponseWithDeveloperMessage("Test");
@@ -181,12 +180,12 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
 
     EwpClientErrorResponseException exception =
         new EwpClientErrorResponseException(null, response, null, errorResponse);
-    doThrow(exception).when(client).findAllCourses(heiId, null);
+    doThrow(exception).when(client).find(heiId);
 
     MvcResult result =
         mockMvc
             .perform(
-                get(API_FIND_ALL_URI + "?hei_id=" + heiId)
+                get(API_FIND_URI + "?hei_id=" + heiId)
                     .header(
                         SecurityCommonConstants.HEADER_NAME,
                         SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
@@ -204,7 +203,7 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
   }
 
   @Test
-  public void testSimpleCourseReplicationGet_Authenticated_Success() throws Exception {
+  public void testInstitutionsGet_Authenticated_Success() throws Exception {
     String heiId = "demo";
     InstitutionsResponseV2 expectedResponse = new InstitutionsResponseV2();
     Hei hei = new Hei();
@@ -215,12 +214,12 @@ public class ForwardEwpApiSimpleCourseReplicationControllerIntegrationTest exten
 
     EwpSuccessOperationResult<Serializable> successOperationResult =
         new Builder<>().response(response).responseBody(expectedResponse).build();
-    doReturn(successOperationResult).when(client).findAllCourses(heiId, null);
+    doReturn(successOperationResult).when(client).find(heiId);
 
     MvcResult result =
         mockMvc
             .perform(
-                get(API_FIND_ALL_URI + "?hei_id=" + heiId)
+                get(API_FIND_URI + "?hei_id=" + heiId)
                     .header(
                         SecurityCommonConstants.HEADER_NAME,
                         SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
