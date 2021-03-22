@@ -22,7 +22,8 @@ public class HostPluginFactory extends DefaultPluginFactory {
   private void processPluginPropertiesAwareInterface(Plugin plugin) {
     if (plugin instanceof PluginPropertiesAware) {
       PluginPropertiesAware pluginAware = (PluginPropertiesAware) plugin;
-      pluginAware.setPluginPropertiesProxy(new DefaultPluginPropertiesProxy(plugin));
+      pluginAware.setPluginPropertiesProxy(
+          new DefaultPluginPropertiesProxy(plugin.getWrapper().getPluginId()));
     }
   }
 }

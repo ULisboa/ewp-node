@@ -53,3 +53,10 @@ bootstrap:
               value: S S01
             - type: erasmus-charter
               value: 123456
+
+plugins:
+  path: plugins/
+
+  ewp-host-plugin-demo:
+    example:
+      key: test
