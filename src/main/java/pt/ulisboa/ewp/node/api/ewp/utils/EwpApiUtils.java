@@ -243,67 +243,13 @@ public class EwpApiUtils {
       EwpApiConfiguration api) {
     for (EwpAuthenticationMethod authenticationMethod :
         EwpClientConstants.AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER) {
-      if (EwpApiUtils.doesApiSupportAuthenticationMethod(
-          api.getSupportedClientAuthenticationMethods(),
-          api.getSupportedServerAuthenticationMethods(),
-          authenticationMethod)) {
+      if (api.supportsAuthenticationMethod(authenticationMethod)) {
         return authenticationMethod;
       }
     }
 
     throw new IllegalStateException(
         "Failed to find an admissible authentication method for API: " + api);
-  }
-
-  public static boolean doesApiSupportAuthenticationMethod(
-      Collection<EwpClientAuthenticationConfiguration> clientAuthenticationConfigurations,
-      Collection<EwpServerAuthenticationConfiguration> serverAuthenticationConfigurations,
-      EwpAuthenticationMethod authenticationMethod) {
-    return doesClientSupportAuthenticationMethod(
-            clientAuthenticationConfigurations, authenticationMethod)
-        && doesServerSupportAuthenticationMethod(
-            serverAuthenticationConfigurations, authenticationMethod);
-  }
-
-  public static boolean doesServerSupportAuthenticationMethod(
-      Collection<EwpServerAuthenticationConfiguration> serverAuthenticationConfigurations,
-      EwpAuthenticationMethod authenticationMethod) {
-    return serverAuthenticationConfigurations.stream()
-        .anyMatch(
-            c -> {
-              switch (authenticationMethod) {
-                case HTTP_SIGNATURE:
-                  return c.isHttpSignature();
-
-                case TLS:
-                  return c.isTlsCertificate();
-
-                default:
-                  return false;
-              }
-            });
-  }
-
-  public static boolean doesClientSupportAuthenticationMethod(
-      Collection<EwpClientAuthenticationConfiguration> clientAuthenticationConfigurations,
-      EwpAuthenticationMethod authenticationMethod) {
-    return clientAuthenticationConfigurations.stream()
-        .anyMatch(
-            c -> {
-              switch (authenticationMethod) {
-                case HTTP_SIGNATURE:
-                  return c.isHttpSignature();
-
-                case TLS:
-                  return c.isTlsCertificate();
-
-                case ANONYMOUS:
-                  return c.isAnonymous();
-
-                default:
-                  return false;
-              }
-            });
   }
 
   public static ErrorResponseV1 createErrorResponseWithDeveloperMessage(String developerMessage) {

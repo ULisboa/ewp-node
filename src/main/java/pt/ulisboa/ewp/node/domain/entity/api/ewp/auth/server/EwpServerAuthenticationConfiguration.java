@@ -1,8 +1,8 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server;
 
-public abstract class EwpServerAuthenticationConfiguration {
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 
-  public abstract boolean isHttpSignature();
+public interface EwpServerAuthenticationConfiguration {
 
-  public abstract boolean isTlsCertificate();
+  EwpAuthenticationMethod getAuthenticationMethod();
 }

@@ -1,7 +1,9 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client;
 
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
+
 public class EwpClientAuthenticationTlsCertificateConfiguration
-    extends EwpClientAuthenticationConfiguration {
+    implements EwpClientAuthenticationConfiguration {
 
   private boolean allowSelfSigned;
 
@@ -18,17 +20,7 @@ public class EwpClientAuthenticationTlsCertificateConfiguration
   }
 
   @Override
-  public boolean isAnonymous() {
-    return false;
-  }
-
-  @Override
-  public boolean isHttpSignature() {
-    return false;
-  }
-
-  @Override
-  public boolean isTlsCertificate() {
-    return true;
+  public EwpAuthenticationMethod getAuthenticationMethod() {
+    return EwpAuthenticationMethod.TLS;
   }
 }

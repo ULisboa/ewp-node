@@ -1,20 +1,12 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client;
 
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
+
 public class EwpClientAuthenticationAnonymousConfiguration
-    extends EwpClientAuthenticationConfiguration {
+    implements EwpClientAuthenticationConfiguration {
 
   @Override
-  public boolean isAnonymous() {
-    return true;
-  }
-
-  @Override
-  public boolean isHttpSignature() {
-    return false;
-  }
-
-  @Override
-  public boolean isTlsCertificate() {
-    return false;
+  public EwpAuthenticationMethod getAuthenticationMethod() {
+    return EwpAuthenticationMethod.ANONYMOUS;
   }
 }
