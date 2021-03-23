@@ -2,11 +2,7 @@ package pt.ulisboa.ewp.node.client.ewp.iias;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -22,6 +18,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApiConfiguration;
+import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
 public abstract class AbstractEwpInterInstitutionalAgreementsClient {
@@ -47,23 +44,11 @@ public abstract class AbstractEwpInterInstitutionalAgreementsClient {
     request.authenticationMethod(
         EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
-    HashMap<String, List<String>> bodyParams = new HashMap<>();
-    bodyParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
-
-    if (partnerHeiId != null) {
-      bodyParams.put(EwpApiParamConstants.PARTNER_HEI_ID, Collections.singletonList(partnerHeiId));
-    }
-
-    if (receivingAcademicYearIds != null) {
-      bodyParams.put(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearIds);
-    }
-
-    if (modifiedSince != null) {
-      bodyParams.put(
-          EwpApiParamConstants.MODIFIED_SINCE,
-          Collections.singletonList(DateTimeFormatter.ISO_DATE_TIME.format(modifiedSince)));
-    }
-
+    HttpParams bodyParams = new HttpParams();
+    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    bodyParams.param(EwpApiParamConstants.PARTNER_HEI_ID, partnerHeiId);
+    bodyParams.param(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearIds);
+    bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
     request.bodyParams(bodyParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, responseType);
@@ -80,14 +65,10 @@ public abstract class AbstractEwpInterInstitutionalAgreementsClient {
     request.authenticationMethod(
         EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
-    HashMap<String, List<String>> bodyParams = new HashMap<>();
-    bodyParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
-    bodyParams.put(EwpApiParamConstants.IIA_ID, new ArrayList<>(iiaIds));
-
-    if (sendPdf != null) {
-      bodyParams.put(EwpApiParamConstants.SEND_PDF, Collections.singletonList(sendPdf.toString()));
-    }
-
+    HttpParams bodyParams = new HttpParams();
+    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    bodyParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
+    bodyParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
     request.bodyParams(bodyParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, responseType);
@@ -104,14 +85,10 @@ public abstract class AbstractEwpInterInstitutionalAgreementsClient {
     request.authenticationMethod(
         EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
-    HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
-    queryParams.put(EwpApiParamConstants.IIA_CODE, new ArrayList<>(iiaCodes));
-
-    if (sendPdf != null) {
-      queryParams.put(EwpApiParamConstants.SEND_PDF, Collections.singletonList(sendPdf.toString()));
-    }
-
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.IIA_CODE, iiaCodes);
+    queryParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
     request.bodyParams(queryParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, responseType);

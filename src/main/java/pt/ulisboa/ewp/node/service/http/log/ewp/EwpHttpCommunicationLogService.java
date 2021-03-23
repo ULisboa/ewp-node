@@ -94,7 +94,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
             HttpMethod.fromString(request.getMethod().name()),
             request.getUrl(),
             toHttpHeaderCollection(request.getHeaders()),
-            HttpUtils.serializeFormData(request.getBodyParams()));
+            HttpUtils.serializeFormData(request.getBodyParams().asMap()));
     requestLog.getHeaders().forEach(header -> header.setRequestLog(requestLog));
     return requestLog;
   }

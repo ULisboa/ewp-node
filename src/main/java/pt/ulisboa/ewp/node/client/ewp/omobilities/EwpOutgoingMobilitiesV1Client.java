@@ -4,11 +4,7 @@ import eu.erasmuswithoutpaper.api.omobilities.v1.OmobilitiesV1;
 import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.OmobilitiesGetResponseV1;
 import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.OmobilitiesIndexResponseV1;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpMethod;
@@ -24,6 +20,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilitiesApiConfiguration;
+import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
 public class EwpOutgoingMobilitiesV1Client {
@@ -57,25 +54,11 @@ public class EwpOutgoingMobilitiesV1Client {
     request.authenticationMethod(
         EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
-    HashMap<String, List<String>> bodyParams = new HashMap<>();
-    bodyParams.put(EwpApiParamConstants.SENDING_HEI_ID, Collections.singletonList(sendingHeiId));
-
-    if (receivingHeiIds != null && !receivingHeiIds.isEmpty()) {
-      bodyParams.put(EwpApiParamConstants.RECEIVING_HEI_ID, receivingHeiIds);
-    }
-
-    if (receivingAcademicYearId != null) {
-      bodyParams.put(
-          EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID,
-          Collections.singletonList(receivingAcademicYearId));
-    }
-
-    if (modifiedSince != null) {
-      bodyParams.put(
-          EwpApiParamConstants.MODIFIED_SINCE,
-          Collections.singletonList(DateTimeFormatter.ISO_DATE_TIME.format(modifiedSince)));
-    }
-
+    HttpParams bodyParams = new HttpParams();
+    bodyParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
+    bodyParams.param(EwpApiParamConstants.RECEIVING_HEI_ID, receivingHeiIds);
+    bodyParams.param(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearId);
+    bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
     request.bodyParams(bodyParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, OmobilitiesIndexResponseV1.class);
@@ -89,10 +72,9 @@ public class EwpOutgoingMobilitiesV1Client {
     request.authenticationMethod(
         EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
-    HashMap<String, List<String>> bodyParams = new HashMap<>();
-    bodyParams.put(EwpApiParamConstants.SENDING_HEI_ID, Collections.singletonList(sendingHeiId));
-    bodyParams.put(EwpApiParamConstants.OMOBILITY_ID, new ArrayList<>(omobilityIds));
-
+    HttpParams bodyParams = new HttpParams();
+    bodyParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
+    bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, omobilityIds);
     request.bodyParams(bodyParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, OmobilitiesGetResponseV1.class);

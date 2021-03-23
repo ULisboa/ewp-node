@@ -2,14 +2,13 @@ package pt.ulisboa.ewp.node.client.ewp.operation.request;
 
 import com.google.common.base.Strings;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
+import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
 public class EwpRequest implements Serializable {
@@ -18,8 +17,8 @@ public class EwpRequest implements Serializable {
   private HttpMethod method;
   private String urlWithoutQueryParams;
   private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
-  private Map<String, List<String>> queryParams = new HashMap<>();
-  private Map<String, List<String>> bodyParams = new HashMap<>();
+  private HttpParams queryParams = new HttpParams();
+  private HttpParams bodyParams = new HttpParams();
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.TLS;
 
   public EwpRequest(HttpMethod method, @NotNull String urlWithoutQueryParams) {
@@ -63,20 +62,20 @@ public class EwpRequest implements Serializable {
     return this;
   }
 
-  public Map<String, List<String>> getQueryParams() {
+  public HttpParams getQueryParams() {
     return queryParams;
   }
 
-  public EwpRequest queryParams(Map<String, List<String>> queryParams) {
+  public EwpRequest queryParams(HttpParams queryParams) {
     this.queryParams = queryParams;
     return this;
   }
 
-  public Map<String, List<String>> getBodyParams() {
+  public HttpParams getBodyParams() {
     return bodyParams;
   }
 
-  public EwpRequest bodyParams(Map<String, List<String>> bodyParams) {
+  public EwpRequest bodyParams(HttpParams bodyParams) {
     this.bodyParams = bodyParams;
     return this;
   }
@@ -92,7 +91,7 @@ public class EwpRequest implements Serializable {
 
   public String getUrl() {
     StringBuilder url = new StringBuilder(urlWithoutQueryParams);
-    String queryString = HttpUtils.serializeQueryString(queryParams);
+    String queryString = HttpUtils.serializeQueryString(queryParams.asMap());
     if (!Strings.isNullOrEmpty(queryString)) {
       url.append('?').append(queryString);
     }

@@ -14,10 +14,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +33,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperati
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
+import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
 @SpringBootTest(
@@ -88,8 +85,8 @@ public class EwpClientTest extends AbstractTest {
 
   @Test(expected = EwpClientProcessorException.class)
   public void testGetOwnEchoResourceWithoutAuthentication() throws AbstractEwpClientErrorException {
-    Map<String, List<String>> params = new HashMap<>();
-    params.put(EwpApiParamConstants.ECHO, Collections.singletonList("abc"));
+    HttpParams params = new HttpParams();
+    params.param(EwpApiParamConstants.ECHO, "abc");
     ewpClient.executeWithLoggingExpectingSuccess(
         new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
             .queryParams(params)
@@ -111,8 +108,8 @@ public class EwpClientTest extends AbstractTest {
         .findRsaPublicKey(decodedCertificateAndKey.getPublicKeyFingerprint());
 
     String testEchoValue = "abc";
-    Map<String, List<String>> params = new HashMap<>();
-    params.put(EwpApiParamConstants.ECHO, Collections.singletonList(testEchoValue));
+    HttpParams params = new HttpParams();
+    params.param(EwpApiParamConstants.ECHO, testEchoValue);
     EwpSuccessOperationResult<ResponseV2> clientResponse =
         ewpClient.executeWithLoggingExpectingSuccess(
             new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
@@ -138,8 +135,8 @@ public class EwpClientTest extends AbstractTest {
         .findRsaPublicKey(decodedCertificateAndKey.getPublicKeyFingerprint());
 
     String testEchoValue = "abc";
-    Map<String, List<String>> params = new HashMap<>();
-    params.put(EwpApiParamConstants.ECHO, Collections.singletonList(testEchoValue));
+    HttpParams params = new HttpParams();
+    params.param(EwpApiParamConstants.ECHO, testEchoValue);
     EwpSuccessOperationResult<ResponseV2> clientResponse =
         ewpClient.executeWithLoggingExpectingSuccess(
             new EwpRequest(HttpMethod.POST, "http://localhost:" + serverPort + "/api/ewp/echo")

@@ -298,7 +298,7 @@ public class EwpClient {
   }
 
   private Invocation buildPostRequest(Invocation.Builder requestBuilder, EwpRequest request) {
-    String formData = HttpUtils.serializeFormData(request.getBodyParams());
+    String formData = HttpUtils.serializeFormData(request.getBodyParams().asMap());
     Entity<String> entity = Entity.entity(formData, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
     return requestBuilder.buildPost(entity);
   }
@@ -308,7 +308,7 @@ public class EwpClient {
       httpSignatureService.signRequest(
           request.getMethod().name(),
           target.getUri(),
-          HttpUtils.serializeFormData(request.getBodyParams()),
+          HttpUtils.serializeFormData(request.getBodyParams().asMap()),
           request.getId(),
           request::header);
     }

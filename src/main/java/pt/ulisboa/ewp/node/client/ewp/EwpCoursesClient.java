@@ -2,11 +2,7 @@ package pt.ulisboa.ewp.node.client.ewp;
 
 import eu.erasmuswithoutpaper.api.courses.v0.CoursesResponseV0;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -19,6 +15,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
+import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
 public class EwpCoursesClient {
@@ -49,21 +46,12 @@ public class EwpCoursesClient {
     EwpRequest request = new EwpRequest(HttpMethod.GET, api.getUrl());
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
 
-    HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
-    queryParams.put(EwpApiParamConstants.LOS_ID, new ArrayList<>(losIds));
-    if (loisBeforeDate != null) {
-      queryParams.put(
-          EwpApiParamConstants.LOIS_BEFORE, Collections.singletonList(loisBeforeDate.toString()));
-    }
-    if (loisAfterDate != null) {
-      queryParams.put(
-          EwpApiParamConstants.LOIS_AFTER, Collections.singletonList(loisAfterDate.toString()));
-    }
-    if (losAtDate != null) {
-      queryParams.put(
-          EwpApiParamConstants.LOS_AT_DATE, Collections.singletonList(losAtDate.toString()));
-    }
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.LOS_ID, losIds);
+    queryParams.param(EwpApiParamConstants.LOIS_BEFORE, loisBeforeDate);
+    queryParams.param(EwpApiParamConstants.LOIS_AFTER, loisAfterDate);
+    queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
     request.queryParams(queryParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponseV0.class);
@@ -81,21 +69,12 @@ public class EwpCoursesClient {
     EwpRequest request = new EwpRequest(HttpMethod.GET, api.getUrl());
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
 
-    HashMap<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
-    queryParams.put(EwpApiParamConstants.LOS_CODE, new ArrayList<>(losCodes));
-    if (loisBeforeDate != null) {
-      queryParams.put(
-          EwpApiParamConstants.LOIS_BEFORE, Collections.singletonList(loisBeforeDate.toString()));
-    }
-    if (loisAfterDate != null) {
-      queryParams.put(
-          EwpApiParamConstants.LOIS_AFTER, Collections.singletonList(loisAfterDate.toString()));
-    }
-    if (losAtDate != null) {
-      queryParams.put(
-          EwpApiParamConstants.LOS_AT_DATE, Collections.singletonList(losAtDate.toString()));
-    }
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.LOS_CODE, losCodes);
+    queryParams.param(EwpApiParamConstants.LOIS_BEFORE, loisBeforeDate);
+    queryParams.param(EwpApiParamConstants.LOIS_AFTER, loisAfterDate);
+    queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
     request.queryParams(queryParams);
 
     return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponseV0.class);
