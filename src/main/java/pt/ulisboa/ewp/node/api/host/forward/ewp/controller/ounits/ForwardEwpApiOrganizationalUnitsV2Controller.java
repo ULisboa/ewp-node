@@ -22,9 +22,9 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ounits.OrganizationalUnitsRe
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
-import pt.ulisboa.ewp.node.client.ewp.EwpOrganizationalUnitsClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.ounits.EwpOrganizationalUnitsV2Client;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
@@ -33,10 +33,10 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
 public class ForwardEwpApiOrganizationalUnitsV2Controller extends AbstractForwardEwpApiController {
 
-  private final EwpOrganizationalUnitsClient client;
+  private final EwpOrganizationalUnitsV2Client client;
 
   public ForwardEwpApiOrganizationalUnitsV2Controller(
-      RegistryClient registryClient, EwpOrganizationalUnitsClient client) {
+      RegistryClient registryClient, EwpOrganizationalUnitsV2Client client) {
     super(registryClient);
     this.client = client;
   }

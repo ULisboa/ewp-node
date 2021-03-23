@@ -30,10 +30,10 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.Message.MessageSeverity;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
-import pt.ulisboa.ewp.node.client.ewp.EwpInstitutionsClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
+import pt.ulisboa.ewp.node.client.ewp.institutions.EwpInstitutionsV2Client;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult.Builder;
@@ -52,7 +52,8 @@ public class ForwardEwpApiInstitutionsV2ControllerIntegrationTest extends Abstra
 
   @Autowired private MockMvc mockMvc;
 
-  @SpyBean private EwpInstitutionsClient client;
+  @SpyBean
+  private EwpInstitutionsV2Client client;
 
   private String jwtToken;
 

@@ -1,35 +1,33 @@
-package pt.ulisboa.ewp.node.client.ewp;
+package pt.ulisboa.ewp.node.client.ewp.courses;
 
 import eu.erasmuswithoutpaper.api.courses.v0.CoursesResponseV0;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiCoursesApiSpecificationResponseDTO;
+import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
+import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpCoursesClient {
+public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> {
 
-  private RegistryClient registryClient;
-  private EwpClient ewpClient;
-
-  public EwpCoursesClient(RegistryClient registryClient, EwpClient ewpClient) {
-    this.registryClient = registryClient;
-    this.ewpClient = ewpClient;
+  public EwpCoursesV0Client(RegistryClient registryClient, EwpClient ewpClient) {
+    super(registryClient, ewpClient);
   }
 
   public ForwardEwpApiCoursesApiSpecificationResponseDTO getApiSpecification(String heiId) {
-    EwpCourseApiConfiguration api = getApiConfiguration(heiId);
+    EwpCourseApiConfiguration api = getApiConfigurationForHeiId(heiId);
     return new ForwardEwpApiCoursesApiSpecificationResponseDTO(
         api.getMaxLosIds().intValueExact(), api.getMaxLosCodes().intValueExact());
   }
@@ -41,7 +39,7 @@ public class EwpCoursesClient {
       LocalDate loisAfterDate,
       LocalDate losAtDate)
       throws AbstractEwpClientErrorException {
-    EwpCourseApiConfiguration api = getApiConfiguration(heiId);
+    EwpCourseApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     EwpRequest request = new EwpRequest(HttpMethod.GET, api.getUrl());
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
@@ -64,7 +62,7 @@ public class EwpCoursesClient {
       LocalDate loisAfterDate,
       LocalDate losAtDate)
       throws AbstractEwpClientErrorException {
-    EwpCourseApiConfiguration api = getApiConfiguration(heiId);
+    EwpCourseApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     EwpRequest request = new EwpRequest(HttpMethod.GET, api.getUrl());
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
@@ -80,12 +78,8 @@ public class EwpCoursesClient {
     return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponseV0.class);
   }
 
-  protected EwpCourseApiConfiguration getApiConfiguration(String heiId) {
-    Optional<EwpCourseApiConfiguration> apiOptional =
-        EwpApiUtils.getCourseApiConfiguration(registryClient, heiId);
-    if (apiOptional.isEmpty()) {
-      throw new NoEwpApiForHeiIdException(heiId, EwpCourseApiConfiguration.API_NAME);
-    }
-    return apiOptional.get();
+  @Override
+  public EwpApiGeneralSpecification<?, EwpCourseApiConfiguration> getApiGeneralSpecification() {
+    return EwpApiGeneralSpecifications.COURSES_V0;
   }
 }

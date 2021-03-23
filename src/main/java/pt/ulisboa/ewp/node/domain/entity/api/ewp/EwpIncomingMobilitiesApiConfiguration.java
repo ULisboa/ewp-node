@@ -1,7 +1,9 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
+import eu.erasmuswithoutpaper.api.imobilities.v1.ImobilitiesV1;
 import java.math.BigInteger;
 import java.util.Collection;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 
@@ -47,6 +49,15 @@ public class EwpIncomingMobilitiesApiConfiguration extends EwpApiConfiguration {
 
   public void setSendsNotifications(boolean sendsNotifications) {
     this.sendsNotifications = sendsNotifications;
+  }
+
+  public static EwpIncomingMobilitiesApiConfiguration create(ImobilitiesV1 apiElement) {
+    return new EwpIncomingMobilitiesApiConfiguration(
+        apiElement.getGetUrl(),
+        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
+        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
+        apiElement.getMaxOmobilityIds(),
+        apiElement.getSendsNotifications() != null);
   }
 
   @Override

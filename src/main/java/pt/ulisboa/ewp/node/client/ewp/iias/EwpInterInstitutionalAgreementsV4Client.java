@@ -1,25 +1,29 @@
 package pt.ulisboa.ewp.node.client.ewp.iias;
 
-import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
 import eu.erasmuswithoutpaper.api.iias.v4.endpoints.IiasGetResponseV4;
 import eu.erasmuswithoutpaper.api.iias.v4.endpoints.IiasIndexResponseV4;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO;
+import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApiConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
+import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
+import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
 public class EwpInterInstitutionalAgreementsV4Client
-    extends AbstractEwpInterInstitutionalAgreementsClient {
-
-  private static final int API_MAJOR_VERSION = 3;
+    extends EwpApiClient<EwpInterinstitutionalAgreementApiConfiguration> {
 
   public EwpInterInstitutionalAgreementsV4Client(
       RegistryClient registryClient, EwpClient ewpClient) {
@@ -28,7 +32,8 @@ public class EwpInterInstitutionalAgreementsV4Client
 
   public ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO getApiSpecification(
       String heiId) {
-    EwpInterinstitutionalAgreementApiConfiguration apiConfiguration = getApiConfiguration(heiId);
+    EwpInterinstitutionalAgreementApiConfiguration apiConfiguration =
+        getApiConfigurationForHeiId(heiId);
     return new ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO(
         apiConfiguration.getMaxIiaIds().intValueExact(),
         apiConfiguration.getMaxIiaCodes().intValueExact());
@@ -40,49 +45,58 @@ public class EwpInterInstitutionalAgreementsV4Client
       List<String> receivingAcademicYearIds,
       ZonedDateTime modifiedSince)
       throws AbstractEwpClientErrorException {
-    EwpInterinstitutionalAgreementApiConfiguration apiConfiguration = getApiConfiguration(heiId);
-    return super.findAllByHeiIds(
-        heiId,
-        partnerHeiId,
-        receivingAcademicYearIds,
-        modifiedSince,
-        apiConfiguration,
-        IiasIndexResponseV4.class);
+    EwpInterinstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
+
+    EwpRequest request = new EwpRequest(HttpMethod.POST, api.getIndexUrl());
+    request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
+
+    HttpParams bodyParams = new HttpParams();
+    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    bodyParams.param(EwpApiParamConstants.PARTNER_HEI_ID, partnerHeiId);
+    bodyParams.param(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearIds);
+    bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
+    request.bodyParams(bodyParams);
+
+    return ewpClient.executeWithLoggingExpectingSuccess(request, IiasIndexResponseV4.class);
   }
 
   public EwpSuccessOperationResult<IiasGetResponseV4> findByHeiIdAndIiaIds(
       String heiId, Collection<String> iiaIds, Boolean sendPdf)
       throws AbstractEwpClientErrorException {
-    EwpInterinstitutionalAgreementApiConfiguration apiConfiguration = getApiConfiguration(heiId);
-    return super.findByHeiIdAndIiaIds(
-        heiId, iiaIds, sendPdf, apiConfiguration, IiasGetResponseV4.class);
+    EwpInterinstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
+
+    EwpRequest request = new EwpRequest(HttpMethod.POST, api.getGetUrl());
+    request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
+
+    HttpParams bodyParams = new HttpParams();
+    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    bodyParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
+    bodyParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
+    request.bodyParams(bodyParams);
+
+    return ewpClient.executeWithLoggingExpectingSuccess(request, IiasGetResponseV4.class);
   }
 
   public EwpSuccessOperationResult<IiasGetResponseV4> findByHeiIdAndIiaCodes(
       String heiId, Collection<String> iiaCodes, Boolean sendPdf)
       throws AbstractEwpClientErrorException {
-    EwpInterinstitutionalAgreementApiConfiguration apiConfiguration = getApiConfiguration(heiId);
-    return super.findByHeiIdAndIiaCodes(
-        heiId, iiaCodes, sendPdf, apiConfiguration, IiasGetResponseV4.class);
+    EwpInterinstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
+
+    EwpRequest request = new EwpRequest(HttpMethod.POST, api.getGetUrl());
+    request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.IIA_CODE, iiaCodes);
+    queryParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
+    request.bodyParams(queryParams);
+
+    return ewpClient.executeWithLoggingExpectingSuccess(request, IiasGetResponseV4.class);
   }
 
-  public EwpInterinstitutionalAgreementApiConfiguration getApiConfiguration(String heiId) {
-    return getApiConfiguration(
-        heiId,
-        API_MAJOR_VERSION,
-        IiasV4.class,
-        EwpInterInstitutionalAgreementsV4Client::readApiConfigurationElement);
-  }
-
-  private static EwpInterinstitutionalAgreementApiConfiguration readApiConfigurationElement(
-      IiasV4 apiElement) {
-    return new EwpInterinstitutionalAgreementApiConfiguration(
-        apiElement.getIndexUrl(),
-        apiElement.getGetUrl(),
-        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
-        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
-        apiElement.getMaxIiaIds(),
-        apiElement.getMaxIiaCodes(),
-        apiElement.getSendsNotifications() != null);
+  @Override
+  public EwpApiGeneralSpecification<?, EwpInterinstitutionalAgreementApiConfiguration>
+  getApiGeneralSpecification() {
+    return EwpApiGeneralSpecifications.INTERINSTITUTIONAL_AGREEMENT_V4;
   }
 }

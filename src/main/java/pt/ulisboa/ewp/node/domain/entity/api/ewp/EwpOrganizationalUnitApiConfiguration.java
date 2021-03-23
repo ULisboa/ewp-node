@@ -1,7 +1,9 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
+import eu.erasmuswithoutpaper.api.ounits.v2.OrganizationalUnitsV2;
 import java.math.BigInteger;
 import java.util.Collection;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 
@@ -47,6 +49,15 @@ public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
 
   public void setMaxOunitCodes(BigInteger maxOunitCodes) {
     this.maxOunitCodes = maxOunitCodes;
+  }
+
+  public static EwpOrganizationalUnitApiConfiguration create(OrganizationalUnitsV2 apiElement) {
+    return new EwpOrganizationalUnitApiConfiguration(
+        apiElement.getUrl(),
+        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
+        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
+        apiElement.getMaxOunitIds(),
+        apiElement.getMaxOunitCodes());
   }
 
   @Override

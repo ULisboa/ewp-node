@@ -23,7 +23,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.courses.CoursesRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
-import pt.ulisboa.ewp.node.client.ewp.EwpCoursesClient;
+import pt.ulisboa.ewp.node.client.ewp.courses.EwpCoursesV0Client;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
@@ -34,9 +34,10 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
 public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiController {
 
-  private final EwpCoursesClient client;
+  private final EwpCoursesV0Client client;
 
-  public ForwardEwpApiCoursesV0Controller(RegistryClient registryClient, EwpCoursesClient client) {
+  public ForwardEwpApiCoursesV0Controller(RegistryClient registryClient,
+      EwpCoursesV0Client client) {
     super(registryClient);
     this.client = client;
   }

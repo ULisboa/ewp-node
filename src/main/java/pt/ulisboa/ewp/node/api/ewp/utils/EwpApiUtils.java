@@ -9,10 +9,6 @@ import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.none.v1.CliauthAno
 import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.tlscert.v1.CliauthTlscertV1;
 import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.v1.SrvauthHttpsigV1;
 import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.v1.SrvauthTlscertV1;
-import eu.erasmuswithoutpaper.api.courses.replication.v1.SimpleCourseReplicationV1;
-import eu.erasmuswithoutpaper.api.courses.v0.CoursesV0;
-import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
-import eu.erasmuswithoutpaper.api.ounits.v2.OrganizationalUnitsV2;
 import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
 import eu.erasmuswithoutpaper.registryclient.ApiSearchConditions;
 import java.util.ArrayDeque;
@@ -21,14 +17,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import org.w3c.dom.Element;
+import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdAndMajorVersionException;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationAnonymousConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
@@ -41,91 +35,28 @@ import pt.ulisboa.ewp.node.utils.SemanticVersion;
 
 public class EwpApiUtils {
 
-  private EwpApiUtils() {}
+  private EwpApiUtils() {
+  }
 
-  public static Optional<EwpInstitutionApiConfiguration> getInstitutionApiConfiguration(
-      RegistryClient registryClient, String heiId) {
-    Optional<InstitutionsV2> apiElementOptional =
+  public static <T, C> C getApiConfiguration(
+      RegistryClient registryClient,
+      String heiId,
+      String apiLocalName,
+      int wantedMajorVersion,
+      Class<T> apiConfigurationElementClassType,
+      Function<T, C> apiConfigurationTransformer)
+      throws NoEwpApiForHeiIdAndMajorVersionException {
+    Optional<T> apiElementOptional =
         getApiElement(
             registryClient,
             heiId,
-            EwpApiConstants.API_INSTITUTIONS_LOCAL_NAME,
-            2,
-            InstitutionsV2.class);
+            apiLocalName,
+            wantedMajorVersion,
+            apiConfigurationElementClassType);
     if (apiElementOptional.isEmpty()) {
-      return Optional.empty();
+      throw new NoEwpApiForHeiIdAndMajorVersionException(heiId, apiLocalName, wantedMajorVersion);
     }
-    InstitutionsV2 apiElement = apiElementOptional.get();
-
-    return Optional.of(
-        new EwpInstitutionApiConfiguration(
-            apiElement.getUrl(),
-            getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
-            getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
-            apiElement.getMaxHeiIds()));
-  }
-
-  public static Optional<EwpOrganizationalUnitApiConfiguration>
-      getOrganizationalUnitApiConfiguration(RegistryClient registryClient, String heiId) {
-    Optional<OrganizationalUnitsV2> apiElementOptional =
-        getApiElement(
-            registryClient,
-            heiId,
-            EwpApiConstants.API_ORGANIZATIONAL_UNITS_NAME,
-            2,
-            OrganizationalUnitsV2.class);
-    if (apiElementOptional.isEmpty()) {
-      return Optional.empty();
-    }
-    OrganizationalUnitsV2 apiElement = apiElementOptional.get();
-
-    return Optional.of(
-        new EwpOrganizationalUnitApiConfiguration(
-            apiElement.getUrl(),
-            getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
-            getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
-            apiElement.getMaxOunitIds(),
-            apiElement.getMaxOunitCodes()));
-  }
-
-  public static Optional<EwpCourseApiConfiguration> getCourseApiConfiguration(
-      RegistryClient registryClient, String heiId) {
-    Optional<CoursesV0> apiElementOptional =
-        getApiElement(registryClient, heiId, EwpApiConstants.API_COURSES_NAME, 0, CoursesV0.class);
-    if (apiElementOptional.isEmpty()) {
-      return Optional.empty();
-    }
-    CoursesV0 apiElement = apiElementOptional.get();
-
-    return Optional.of(
-        new EwpCourseApiConfiguration(
-            apiElement.getUrl(),
-            getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
-            getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
-            apiElement.getMaxLosIds(),
-            apiElement.getMaxLosCodes()));
-  }
-
-  public static Optional<EwpSimpleCourseReplicationApiConfiguration>
-      getSimpleCourseReplicationApiConfiguration(RegistryClient registryClient, String heiId) {
-    Optional<SimpleCourseReplicationV1> apiElementOptional =
-        getApiElement(
-            registryClient,
-            heiId,
-            EwpApiConstants.API_SIMPLE_COURSE_REPLICATION_NAME,
-            1,
-            SimpleCourseReplicationV1.class);
-    if (apiElementOptional.isEmpty()) {
-      return Optional.empty();
-    }
-    SimpleCourseReplicationV1 apiElement = apiElementOptional.get();
-
-    return Optional.of(
-        new EwpSimpleCourseReplicationApiConfiguration(
-            apiElement.getUrl(),
-            getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
-            getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
-            apiElement.isSupportsModifiedSince()));
+    return apiConfigurationTransformer.apply(apiElementOptional.get());
   }
 
   public static <T> Optional<T> getApiElement(

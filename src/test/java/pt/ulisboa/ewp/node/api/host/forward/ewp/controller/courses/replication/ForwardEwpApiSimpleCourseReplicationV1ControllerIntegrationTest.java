@@ -30,7 +30,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.Message.MessageSeverity;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
-import pt.ulisboa.ewp.node.client.ewp.EwpSimpleCourseReplicationClient;
+import pt.ulisboa.ewp.node.client.ewp.courses.replication.EwpSimpleCourseReplicationV1Client;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
@@ -52,7 +52,8 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
 
   @Autowired private MockMvc mockMvc;
 
-  @SpyBean private EwpSimpleCourseReplicationClient client;
+  @SpyBean
+  private EwpSimpleCourseReplicationV1Client client;
 
   private String jwtToken;
 

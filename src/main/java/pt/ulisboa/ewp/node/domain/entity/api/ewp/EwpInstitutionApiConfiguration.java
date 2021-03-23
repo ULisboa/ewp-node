@@ -1,7 +1,9 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
+import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
 import java.math.BigInteger;
 import java.util.Collection;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 
@@ -36,6 +38,14 @@ public class EwpInstitutionApiConfiguration extends EwpApiConfiguration {
 
   public void setMaxHeiIds(BigInteger maxHeiIds) {
     this.maxHeiIds = maxHeiIds;
+  }
+
+  public static EwpInstitutionApiConfiguration create(InstitutionsV2 apiElement) {
+    return new EwpInstitutionApiConfiguration(
+        apiElement.getUrl(),
+        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
+        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
+        apiElement.getMaxHeiIds());
   }
 
   @Override

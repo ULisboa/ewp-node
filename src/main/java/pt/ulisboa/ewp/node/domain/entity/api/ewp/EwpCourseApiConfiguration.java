@@ -1,7 +1,9 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
+import eu.erasmuswithoutpaper.api.courses.v0.CoursesV0;
 import java.math.BigInteger;
 import java.util.Collection;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 
@@ -60,5 +62,14 @@ public class EwpCourseApiConfiguration extends EwpApiConfiguration {
         + ", maxLosCodes="
         + maxLosCodes
         + '}';
+  }
+
+  public static EwpCourseApiConfiguration create(CoursesV0 apiElement) {
+    return new EwpCourseApiConfiguration(
+        apiElement.getUrl(),
+        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
+        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
+        apiElement.getMaxLosIds(),
+        apiElement.getMaxLosCodes());
   }
 }

@@ -1,43 +1,37 @@
 package pt.ulisboa.ewp.node.client.ewp.omobilities;
 
-import eu.erasmuswithoutpaper.api.omobilities.v1.OmobilitiesV1;
 import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.OmobilitiesGetResponseV1;
 import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.OmobilitiesIndexResponseV1;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO;
+import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdAndMajorVersionException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilitiesApiConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
+import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpOutgoingMobilitiesV1Client {
-
-  private static final int API_MAJOR_VERSION = 1;
-
-  private final RegistryClient registryClient;
-  private final EwpClient ewpClient;
+public class EwpOutgoingMobilitiesV1Client extends
+    EwpApiClient<EwpOutgoingMobilitiesApiConfiguration> {
 
   public EwpOutgoingMobilitiesV1Client(RegistryClient registryClient, EwpClient ewpClient) {
-    this.registryClient = registryClient;
-    this.ewpClient = ewpClient;
+    super(registryClient, ewpClient);
   }
 
   public ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO getApiSpecification(
       String heiId) {
-    EwpOutgoingMobilitiesApiConfiguration apiConfiguration = getApiConfiguration(heiId);
+    EwpOutgoingMobilitiesApiConfiguration apiConfiguration = getApiConfigurationForHeiId(heiId);
     return new ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO(
         apiConfiguration.getMaxOmobilityIds().intValueExact());
   }
@@ -48,7 +42,8 @@ public class EwpOutgoingMobilitiesV1Client {
       String receivingAcademicYearId,
       ZonedDateTime modifiedSince)
       throws AbstractEwpClientErrorException {
-    EwpOutgoingMobilitiesApiConfiguration apiConfiguration = getApiConfiguration(sendingHeiId);
+    EwpOutgoingMobilitiesApiConfiguration apiConfiguration = getApiConfigurationForHeiId(
+        sendingHeiId);
 
     EwpRequest request = new EwpRequest(HttpMethod.POST, apiConfiguration.getIndexUrl());
     request.authenticationMethod(
@@ -66,7 +61,8 @@ public class EwpOutgoingMobilitiesV1Client {
 
   public EwpSuccessOperationResult<OmobilitiesGetResponseV1> findBySendingHeiIdAndOmobilityIds(
       String sendingHeiId, Collection<String> omobilityIds) throws AbstractEwpClientErrorException {
-    EwpOutgoingMobilitiesApiConfiguration apiConfiguration = getApiConfiguration(sendingHeiId);
+    EwpOutgoingMobilitiesApiConfiguration apiConfiguration = getApiConfigurationForHeiId(
+        sendingHeiId);
 
     EwpRequest request = new EwpRequest(HttpMethod.POST, apiConfiguration.getGetUrl());
     request.authenticationMethod(
@@ -80,26 +76,8 @@ public class EwpOutgoingMobilitiesV1Client {
     return ewpClient.executeWithLoggingExpectingSuccess(request, OmobilitiesGetResponseV1.class);
   }
 
-  public EwpOutgoingMobilitiesApiConfiguration getApiConfiguration(String heiId) {
-    Optional<OmobilitiesV1> apiElementOptional =
-        EwpApiUtils.getApiElement(
-            registryClient,
-            heiId,
-            EwpApiConstants.API_OUTGOING_MOBILITIES_NAME,
-            API_MAJOR_VERSION,
-            OmobilitiesV1.class);
-    if (apiElementOptional.isEmpty()) {
-      throw new NoEwpApiForHeiIdAndMajorVersionException(
-          heiId, EwpOutgoingMobilitiesApiConfiguration.API_NAME, API_MAJOR_VERSION);
-    }
-    OmobilitiesV1 apiElement = apiElementOptional.get();
-
-    return new EwpOutgoingMobilitiesApiConfiguration(
-        apiElement.getIndexUrl(),
-        apiElement.getGetUrl(),
-        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
-        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
-        apiElement.getMaxOmobilityIds(),
-        apiElement.getSendsNotifications() != null);
+  @Override
+  public EwpApiGeneralSpecification<?, EwpOutgoingMobilitiesApiConfiguration> getApiGeneralSpecification() {
+    return EwpApiGeneralSpecifications.OUTGOING_MOBILITIES_V1;
   }
 }
