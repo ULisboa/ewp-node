@@ -2,7 +2,6 @@ package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.courses.replication;
 
 import eu.erasmuswithoutpaper.api.courses.replication.v1.CourseReplicationResponseV1;
 import io.swagger.v3.oas.annotations.Operation;
-import java.time.ZonedDateTime;
 import javax.validation.Valid;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.http.MediaType;
@@ -48,7 +47,7 @@ public class ForwardEwpApiSimpleCourseReplicationV1Controller
       simpleCourseReplicationGet(
           @Valid @ParameterObject @RequestParam SimpleCourseReplicationRequestDto requestDto)
           throws AbstractEwpClientErrorException {
-    return getCourses(requestDto.getHeiId(), requestDto.getModifiedSince());
+    return getCourses(requestDto);
   }
 
   @PostMapping(
@@ -60,13 +59,13 @@ public class ForwardEwpApiSimpleCourseReplicationV1Controller
   public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponseV1>>
       simpleCourseReplicationPost(@Valid SimpleCourseReplicationRequestDto requestDto)
           throws AbstractEwpClientErrorException {
-    return getCourses(requestDto.getHeiId(), requestDto.getModifiedSince());
+    return getCourses(requestDto);
   }
 
   private ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponseV1>> getCourses(
-      String heiId, ZonedDateTime modifiedSince) throws AbstractEwpClientErrorException {
+      SimpleCourseReplicationRequestDto requestDto) throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<CourseReplicationResponseV1> courseReplicationResponse =
-        client.findAllCourses(heiId, modifiedSince);
+        client.findAllCourses(requestDto.getHeiId(), requestDto.getModifiedSince());
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(courseReplicationResponse);
   }
 }

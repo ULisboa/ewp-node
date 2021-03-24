@@ -44,10 +44,9 @@ public class ForwardEwpApiOutgoingMobilitiesV1Controller extends AbstractForward
   public ResponseEntity<
           ForwardEwpApiResponseWithData<ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO>>
       getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
-    ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO apiSpecification =
-        client.getApiSpecification(heiId);
     return ResponseEntity.ok(
-        ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(apiSpecification));
+        ForwardEwpApiResponseUtils
+            .createResponseWithMessagesAndData(client.getApiSpecification(heiId)));
   }
 
   @PostMapping(

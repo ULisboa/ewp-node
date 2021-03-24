@@ -45,7 +45,7 @@ public class ForwardEwpApiInstitutionsV2Controller extends AbstractForwardEwpApi
   public ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> institutionsGet(
       @Valid @ParameterObject @RequestParam InstitutionsRequestDto requestDto)
       throws AbstractEwpClientErrorException {
-    return getInstitution(requestDto.getHeiId());
+    return getInstitution(requestDto);
   }
 
   @PostMapping(
@@ -56,13 +56,14 @@ public class ForwardEwpApiInstitutionsV2Controller extends AbstractForwardEwpApi
       tags = {"Institutions"})
   public ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> institutionsPost(
       @Valid InstitutionsRequestDto requestDto) throws AbstractEwpClientErrorException {
-    return getInstitution(requestDto.getHeiId());
+    return getInstitution(requestDto);
   }
 
   // NOTE: currently only allows one HEI ID each time
   private ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> getInstitution(
-      String heiId) throws AbstractEwpClientErrorException {
-    EwpSuccessOperationResult<InstitutionsResponseV2> institutionsResponse = client.find(heiId);
+      InstitutionsRequestDto requestDto) throws AbstractEwpClientErrorException {
+    EwpSuccessOperationResult<InstitutionsResponseV2> institutionsResponse =
+        client.find(requestDto.getHeiId());
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(institutionsResponse);
   }
 }

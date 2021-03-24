@@ -47,10 +47,9 @@ public class ForwardEwpApiInterInstitutionalAgreementsV3Controller
           ForwardEwpApiResponseWithData<
               ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO>>
       getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
-    ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO apiSpecification =
-        client.getApiSpecification(heiId);
     return ResponseEntity.ok(
-        ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(apiSpecification));
+        ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(
+            client.getApiSpecification(heiId)));
   }
 
   @PostMapping(

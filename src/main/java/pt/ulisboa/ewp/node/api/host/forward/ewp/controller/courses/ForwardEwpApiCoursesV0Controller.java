@@ -2,8 +2,6 @@ package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.courses;
 
 import eu.erasmuswithoutpaper.api.courses.v0.CoursesResponseV0;
 import io.swagger.v3.oas.annotations.Operation;
-import java.time.LocalDate;
-import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import org.springdoc.api.annotations.ParameterObject;
@@ -36,8 +34,8 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
 
   private final EwpCoursesV0Client client;
 
-  public ForwardEwpApiCoursesV0Controller(RegistryClient registryClient,
-      EwpCoursesV0Client client) {
+  public ForwardEwpApiCoursesV0Controller(
+      RegistryClient registryClient, EwpCoursesV0Client client) {
     super(registryClient);
     this.client = client;
   }
@@ -51,10 +49,9 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
   public ResponseEntity<
           ForwardEwpApiResponseWithData<ForwardEwpApiCoursesApiSpecificationResponseDTO>>
       getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
-    ForwardEwpApiCoursesApiSpecificationResponseDTO apiSpecification =
-        client.getApiSpecification(heiId);
     return ResponseEntity.ok(
-        ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(apiSpecification));
+        ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(
+            client.getApiSpecification(heiId)));
   }
 
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
@@ -64,13 +61,7 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
   public ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponseV0>> coursesGet(
       @Valid @ParameterObject @RequestParam CoursesRequestDto requestDto)
       throws AbstractEwpClientErrorException {
-    return getCourses(
-        requestDto.getHeiId(),
-        requestDto.getLosIds(),
-        requestDto.getLosCodes(),
-        requestDto.getLoisBefore(),
-        requestDto.getLoisAfter(),
-        requestDto.getLosAtDate());
+    return getCourses(requestDto);
   }
 
   @PostMapping(
@@ -81,29 +72,29 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
       tags = {"Courses"})
   public ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponseV0>> coursesPost(
       @Valid CoursesRequestDto requestDto) throws AbstractEwpClientErrorException {
-    return getCourses(
-        requestDto.getHeiId(),
-        requestDto.getLosIds(),
-        requestDto.getLosCodes(),
-        requestDto.getLoisBefore(),
-        requestDto.getLoisAfter(),
-        requestDto.getLosAtDate());
+    return getCourses(requestDto);
   }
 
   // NOTE: currently only allows to obtain by LOS IDs or LOS codes (not both simultaneously)
   private ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponseV0>> getCourses(
-      String heiId,
-      List<String> losIds,
-      List<String> losCodes,
-      LocalDate loisBefore,
-      LocalDate loisAfter,
-      LocalDate losAtDate)
-      throws AbstractEwpClientErrorException {
+      CoursesRequestDto requestDto) throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<CoursesResponseV0> coursesResponse;
-    if (!losIds.isEmpty()) {
-      coursesResponse = client.findByLosIds(heiId, losIds, loisBefore, loisAfter, losAtDate);
+    if (!requestDto.getLosIds().isEmpty()) {
+      coursesResponse =
+          client.findByLosIds(
+              requestDto.getHeiId(),
+              requestDto.getLosIds(),
+              requestDto.getLoisBefore(),
+              requestDto.getLoisAfter(),
+              requestDto.getLosAtDate());
     } else {
-      coursesResponse = client.findByLosCodes(heiId, losCodes, loisBefore, loisAfter, losAtDate);
+      coursesResponse =
+          client.findByLosCodes(
+              requestDto.getHeiId(),
+              requestDto.getLosCodes(),
+              requestDto.getLoisBefore(),
+              requestDto.getLoisAfter(),
+              requestDto.getLosAtDate());
     }
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(coursesResponse);
   }
