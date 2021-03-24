@@ -130,28 +130,7 @@ public class EwpClient {
       log.info("Sending EWP request to: {}", request.getUrl());
 
       Response response = invocation.invoke();
-
-      sanitizeResponse(response);
-
-      EwpResponse.Builder responseBuilder =
-          new EwpResponse.Builder(HttpStatus.resolve(response.getStatus()));
-      responseBuilder.mediaType(response.getMediaType().toString());
-
-      response
-          .getHeaders()
-          .forEach(
-              (headerName, headerValues) ->
-                  responseBuilder.header(
-                      headerName,
-                      headerValues.stream().map(String::valueOf).collect(Collectors.toList())));
-
-      if (response.hasEntity()) {
-        response.bufferEntity();
-
-        responseBuilder.rawBody(response.readEntity(String.class));
-      }
-
-      ewpResponse = responseBuilder.build();
+      ewpResponse = toEwpResponse(response);
 
       responseAuthenticationResult =
           responseAuthenticationVerifier.verifyAgainstMethod(request, ewpResponse);
@@ -188,6 +167,30 @@ public class EwpClient {
           .exception(e)
           .build();
     }
+  }
+
+  private EwpResponse toEwpResponse(Response response) {
+    sanitizeResponse(response);
+
+    EwpResponse.Builder responseBuilder =
+        new EwpResponse.Builder(HttpStatus.resolve(response.getStatus()));
+    responseBuilder.mediaType(response.getMediaType().toString());
+
+    response
+        .getHeaders()
+        .forEach(
+            (headerName, headerValues) ->
+                responseBuilder.header(
+                    headerName,
+                    headerValues.stream().map(String::valueOf).collect(Collectors.toList())));
+
+    if (response.hasEntity()) {
+      response.bufferEntity();
+
+      responseBuilder.rawBody(response.readEntity(String.class));
+    }
+
+    return responseBuilder.build();
   }
 
   private <T extends Serializable> AbstractEwpOperationResult resolveResponseToOperationStatus(
@@ -252,7 +255,7 @@ public class EwpClient {
   private void sanitizeResponse(Response response) {
     // NOTE: sanitize possibly wrong XML content type header
     // namely, some servers respond with a Content-Type like "xml;charset=ISO-8859-1" which is not
-    // considered corrected for Jersey since it contains only the subtype and not the type
+    // considered correct for Jersey since it contains only the subtype and not the type
     String contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
     if (contentType.matches("[ \t]*xml[ \t]*;[ \t]*charset=.*")) {
       String correctContentType = contentType.replace("xml", "application/xml");
