@@ -4,11 +4,6 @@ import static org.joox.JOOX.$;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringV1;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.httpsig.v1.CliauthHttpsigV1;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.none.v1.CliauthAnonymousV1;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.tlscert.v1.CliauthTlscertV1;
-import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.v1.SrvauthHttpsigV1;
-import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.v1.SrvauthTlscertV1;
 import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
 import eu.erasmuswithoutpaper.registryclient.ApiSearchConditions;
 import java.util.ArrayDeque;
@@ -24,12 +19,11 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationAnonymousConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationHttpSignatureConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfigurationFactory;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationTlsCertificateConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationHttpSignatureConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfigurationFactory;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationTlsCertificateConfiguration;
 import pt.ulisboa.ewp.node.utils.SemanticVersion;
 
@@ -123,19 +117,7 @@ public class EwpApiUtils {
     if (httpSecurityOptions != null) {
       List<Object> clientAuthMethods = httpSecurityOptions.getClientAuthMethods().getAny();
       for (Object object : clientAuthMethods) {
-        if (object instanceof CliauthHttpsigV1) {
-          result.add(new EwpClientAuthenticationHttpSignatureConfiguration());
-        } else if (object instanceof CliauthAnonymousV1) {
-          result.add(new EwpClientAuthenticationAnonymousConfiguration());
-        } else if (object instanceof CliauthTlscertV1) {
-          CliauthTlscertV1 clientAuthTlsCert = (CliauthTlscertV1) object;
-          result.add(
-              new EwpClientAuthenticationTlsCertificateConfiguration(
-                  clientAuthTlsCert.isAllowsSelfSigned()));
-        } else {
-          throw new IllegalArgumentException(
-              "Unknown client authentication method: " + object.getClass().getCanonicalName());
-        }
+        result.add(EwpClientAuthenticationConfigurationFactory.getInstance().create(object));
       }
     } else {
       // Default authentication methods according to EWP documentation
@@ -150,14 +132,7 @@ public class EwpApiUtils {
     if (httpSecurityOptions != null) {
       List<Object> serverAuthMethods = httpSecurityOptions.getServerAuthMethods().getAny();
       for (Object object : serverAuthMethods) {
-        if (object instanceof SrvauthHttpsigV1) {
-          result.add(new EwpServerAuthenticationHttpSignatureConfiguration());
-        } else if (object instanceof SrvauthTlscertV1) {
-          result.add(new EwpServerAuthenticationTlsCertificateConfiguration());
-        } else {
-          throw new IllegalArgumentException(
-              "Unknown server authentication method: " + object.getClass().getCanonicalName());
-        }
+        result.add(EwpServerAuthenticationConfigurationFactory.getInstance().create(object));
       }
     } else {
       // Default authentication methods according to EWP documentation
