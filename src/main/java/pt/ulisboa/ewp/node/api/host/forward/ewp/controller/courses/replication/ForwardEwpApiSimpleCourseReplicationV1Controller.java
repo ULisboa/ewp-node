@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.courses.replication.SimpleCourseReplicationRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.courses.replication.EwpSimpleCourseReplicationV1Client;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
@@ -67,11 +67,6 @@ public class ForwardEwpApiSimpleCourseReplicationV1Controller
       String heiId, ZonedDateTime modifiedSince) throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<CourseReplicationResponseV1> courseReplicationResponse =
         client.findAllCourses(heiId, modifiedSince);
-    return createResponseEntityFromOperationResult(courseReplicationResponse);
-  }
-
-  @Override
-  public String getApiLocalName() {
-    return EwpApiConstants.API_SIMPLE_COURSE_REPLICATION_NAME;
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(courseReplicationResponse);
   }
 }

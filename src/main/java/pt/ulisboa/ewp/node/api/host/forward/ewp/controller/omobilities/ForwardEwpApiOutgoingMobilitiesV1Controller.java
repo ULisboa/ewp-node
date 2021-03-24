@@ -63,7 +63,7 @@ public class ForwardEwpApiOutgoingMobilitiesV1Controller extends AbstractForward
             requestDto.getReceivingHeiIds(),
             requestDto.getReceivingAcademicYearId(),
             requestDto.getModifiedSince());
-    return createResponseEntityFromOperationResult(response);
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
   @PostMapping(
@@ -77,11 +77,6 @@ public class ForwardEwpApiOutgoingMobilitiesV1Controller extends AbstractForward
     EwpSuccessOperationResult<OmobilitiesGetResponseV1> response =
         client.findBySendingHeiIdAndOmobilityIds(
             requestDto.getSendingHeiId(), requestDto.getOmobilityIds());
-    return createResponseEntityFromOperationResult(response);
-  }
-
-  @Override
-  public String getApiLocalName() {
-    throw new UnsupportedOperationException();
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 }

@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.utils;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.messaging.Message;
@@ -16,7 +18,15 @@ import pt.ulisboa.ewp.node.utils.messaging.Severity;
 
 public class ForwardEwpApiResponseUtils {
 
-  private ForwardEwpApiResponseUtils() {}
+  private ForwardEwpApiResponseUtils() {
+  }
+
+  public static <T extends Serializable>
+  ResponseEntity<ForwardEwpApiResponseWithData<T>> toSuccessResponseEntity(
+      EwpSuccessOperationResult<T> successOperationResult) {
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(
+        successOperationResult.getResponse(), successOperationResult.getResponseBody());
+  }
 
   public static <T> ResponseEntity<ForwardEwpApiResponseWithData<T>> toSuccessResponseEntity(
       T responseBody) {

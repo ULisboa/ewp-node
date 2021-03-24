@@ -94,11 +94,6 @@ public class ForwardEwpApiOrganizationalUnitsV2Controller extends AbstractForwar
     } else {
       ounitsResponse = client.findByOunitCodes(heiId, organizationalUnitCodes);
     }
-    return createResponseEntityFromOperationResult(ounitsResponse);
-  }
-
-  @Override
-  public String getApiLocalName() {
-    throw new UnsupportedOperationException();
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(ounitsResponse);
   }
 }

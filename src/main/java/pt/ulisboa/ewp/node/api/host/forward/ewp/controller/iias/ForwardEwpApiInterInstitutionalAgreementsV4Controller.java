@@ -66,7 +66,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV4Controller
             requestDto.getPartnerHeiId(),
             requestDto.getReceivingAcademicYearIds(),
             requestDto.getModifiedSince());
-    return createResponseEntityFromOperationResult(response);
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
   @PostMapping(
@@ -86,11 +86,6 @@ public class ForwardEwpApiInterInstitutionalAgreementsV4Controller
       response =
           client.findByHeiIdAndIiaCodes(requestDto.getHeiId(), iiaCodes, requestDto.getSendPdf());
     }
-    return createResponseEntityFromOperationResult(response);
-  }
-
-  @Override
-  public String getApiLocalName() {
-    throw new UnsupportedOperationException();
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 }

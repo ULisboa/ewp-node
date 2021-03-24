@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiGeneralController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiHeiIdsResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -22,7 +22,8 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 @ForwardEwpApi
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "institutions")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
-public class ForwardEwpApiInstitutionsGeneralController extends AbstractForwardEwpApiController {
+public class ForwardEwpApiInstitutionsGeneralController extends
+    AbstractForwardEwpApiGeneralController {
 
   public ForwardEwpApiInstitutionsGeneralController(RegistryClient registryClient) {
     super(registryClient);

@@ -18,6 +18,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithDat
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.institutions.InstitutionsRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.institutions.EwpInstitutionsV2Client;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
@@ -62,11 +63,6 @@ public class ForwardEwpApiInstitutionsV2Controller extends AbstractForwardEwpApi
   private ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> getInstitution(
       String heiId) throws AbstractEwpClientErrorException {
     EwpSuccessOperationResult<InstitutionsResponseV2> institutionsResponse = client.find(heiId);
-    return createResponseEntityFromOperationResult(institutionsResponse);
-  }
-
-  @Override
-  public String getApiLocalName() {
-    throw new UnsupportedOperationException();
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(institutionsResponse);
   }
 }

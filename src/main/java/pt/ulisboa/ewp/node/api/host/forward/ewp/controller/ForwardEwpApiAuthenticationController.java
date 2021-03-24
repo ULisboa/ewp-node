@@ -39,9 +39,4 @@ public class ForwardEwpApiAuthenticationController extends AbstractForwardEwpApi
     response.setHostCode(authentication.getPrincipal().getHost().getCode());
     return ForwardEwpApiResponseUtils.toOkResponseEntity(response);
   }
-
-  @Override
-  public String getApiLocalName() {
-    throw new UnsupportedOperationException();
-  }
 }

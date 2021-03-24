@@ -59,11 +59,6 @@ public class ForwardEwpApiIncomingMobilitiesV1Controller extends AbstractForward
     EwpSuccessOperationResult<ImobilitiesGetResponseV1> response =
         client.findByReceivingHeiIdAndOmobilityIds(
             requestDto.getReceivingHeiId(), requestDto.getOmobilityIds());
-    return createResponseEntityFromOperationResult(response);
-  }
-
-  @Override
-  public String getApiLocalName() {
-    throw new UnsupportedOperationException();
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 }

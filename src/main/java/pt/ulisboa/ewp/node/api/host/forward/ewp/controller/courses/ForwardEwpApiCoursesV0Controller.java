@@ -105,11 +105,6 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
     } else {
       coursesResponse = client.findByLosCodes(heiId, losCodes, loisBefore, loisAfter, losAtDate);
     }
-    return createResponseEntityFromOperationResult(coursesResponse);
-  }
-
-  @Override
-  public String getApiLocalName() {
-    throw new UnsupportedOperationException();
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(coursesResponse);
   }
 }
