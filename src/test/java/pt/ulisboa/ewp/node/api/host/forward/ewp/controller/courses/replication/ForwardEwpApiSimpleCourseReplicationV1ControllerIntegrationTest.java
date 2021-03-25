@@ -14,8 +14,8 @@ import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2;
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2.Hei;
 import java.io.Serializable;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -57,7 +57,7 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
 
   private String jwtToken;
 
-  @Before
+  @BeforeEach
   public void beforeTest() {
     jwtToken = JWT.create().withIssuer(HOST_CODE).sign(Algorithm.HMAC256(TOKEN_SECRET.getBytes()));
   }

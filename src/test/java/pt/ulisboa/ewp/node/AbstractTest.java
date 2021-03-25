@@ -1,18 +1,18 @@
 package pt.ulisboa.ewp.node;
 
-import org.junit.AfterClass;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = EwpNodeApplication.class)
 @ActiveProfiles(profiles = {"dev", "test"})
 @ContextConfiguration(classes = EwpNodeApplication.class)
 public abstract class AbstractTest {
 
-  @AfterClass
+  @AfterAll
   public static void destroy() {}
 }

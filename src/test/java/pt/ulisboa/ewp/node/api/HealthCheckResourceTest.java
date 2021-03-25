@@ -3,7 +3,7 @@ package pt.ulisboa.ewp.node.api;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HealthCheckResourceTest extends AbstractResourceTest {
 

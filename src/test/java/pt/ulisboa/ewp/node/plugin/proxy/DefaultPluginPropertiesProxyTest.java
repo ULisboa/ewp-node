@@ -2,7 +2,7 @@ package pt.ulisboa.ewp.node.plugin.proxy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import pt.ulisboa.ewp.node.AbstractTest;
 
 public class DefaultPluginPropertiesProxyTest extends AbstractTest {

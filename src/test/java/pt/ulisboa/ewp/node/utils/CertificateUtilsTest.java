@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CertificateUtilsTest {
 

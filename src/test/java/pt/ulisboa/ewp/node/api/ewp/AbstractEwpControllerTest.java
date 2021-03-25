@@ -23,7 +23,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -68,7 +68,7 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
 
   protected MockMvc mockMvc;
 
-  @Before
+  @BeforeEach
   public void setup() {
     this.mockMvc =
         MockMvcBuilders.webAppContextSetup(this.wac)

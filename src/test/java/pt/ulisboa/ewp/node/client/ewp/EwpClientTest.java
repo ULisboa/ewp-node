@@ -2,7 +2,8 @@ package pt.ulisboa.ewp.node.client.ewp;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -14,7 +15,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -83,15 +84,17 @@ public class EwpClientTest extends AbstractTest {
     assertThat(clientResponse.getResponseBody().getHost(), notNullValue());
   }
 
-  @Test(expected = EwpClientProcessorException.class)
+  @Test
   public void testGetOwnEchoResourceWithoutAuthentication() throws AbstractEwpClientErrorException {
     HttpParams params = new HttpParams();
     params.param(EwpApiParamConstants.ECHO, "abc");
-    ewpClient.executeWithLoggingExpectingSuccess(
-        new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
-            .queryParams(params)
-            .authenticationMethod(EwpAuthenticationMethod.ANONYMOUS),
-        ResponseV2.class);
+    assertThrows(EwpClientProcessorException.class, () -> {
+      ewpClient.executeWithLoggingExpectingSuccess(
+          new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
+              .queryParams(params)
+              .authenticationMethod(EwpAuthenticationMethod.ANONYMOUS),
+          ResponseV2.class);
+    });
   }
 
   @Test
