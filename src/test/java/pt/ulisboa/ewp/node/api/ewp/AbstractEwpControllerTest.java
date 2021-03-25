@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -45,7 +46,6 @@ import org.tomitribe.auth.signatures.Signer;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.api.AbstractResourceTest;
 import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestFilter;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
@@ -54,7 +54,9 @@ import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
-@SpringBootTest(classes = {EwpNodeApplication.class})
+@SpringBootTest(
+    classes = {EwpNodeApplication.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
 
   @Autowired
@@ -77,46 +79,49 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
             .build();
   }
 
-  protected ResultActions executeGetRequest(RegistryClient registryClient, String relativeUri,
-      HttpParams params)
+  protected void assertBadRequest(
+      RegistryClient registryClient,
+      HttpMethod method, String uri, HttpParams params,
+      String errorMessage)
       throws Exception {
-    RequestPostProcessor securityRequestProcessor =
-        tlsRequestProcessor(
-            registryClient, Collections.singletonList(UUID.randomUUID().toString()));
-
-    MockHttpServletRequestBuilder requestBuilder =
-        MockMvcRequestBuilders.get(
-            EwpApiConstants.API_BASE_URI + relativeUri + "?" + params.toString())
-            .with(securityRequestProcessor);
-
-    return this.mockMvc.perform(requestBuilder).andDo(MockMvcResultHandlers.print());
-  }
-
-  protected ResultActions executePostRequest(RegistryClient registryClient, String relativeUri,
-      HttpParams params)
-      throws Exception {
-    RequestPostProcessor securityRequestProcessor =
-        tlsRequestProcessor(
-            registryClient, Collections.singletonList(UUID.randomUUID().toString()));
-
-    MockHttpServletRequestBuilder requestBuilder =
-        MockMvcRequestBuilders.post(EwpApiConstants.API_BASE_URI + relativeUri)
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .content(params.toString())
-            .with(securityRequestProcessor);
-
-    return this.mockMvc.perform(requestBuilder).andDo(MockMvcResultHandlers.print());
-  }
-
-  protected void assertBadRequest(RegistryClient registryClient,
-      MockHttpServletRequestBuilder requestBuilder, String errorMessage)
-      throws Exception {
-    assertErrorRequest(
-        requestBuilder,
-        tlsRequestProcessor(
-            registryClient, Collections.singletonList(UUID.randomUUID().toString())),
-        HttpStatus.BAD_REQUEST,
+    assertErrorRequest(registryClient, method, uri, params, HttpStatus.BAD_REQUEST,
         errorMessage);
+  }
+
+  protected void assertErrorRequest(
+      RegistryClient registryClient,
+      HttpMethod method, String uri, HttpParams params,
+      HttpStatus expectedHttpStatus,
+      String errorMessage)
+      throws Exception {
+    MvcResult mvcResult = executeRequest(registryClient, method, uri, params)
+        .andExpect(status().is(expectedHttpStatus.value()))
+        .andExpect(xpath("/error-response/developer-message").string(errorMessage))
+        .andReturn();
+
+    validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/common-types.xsd");
+  }
+
+  protected ResultActions executeRequest(
+      RegistryClient registryClient, HttpMethod method, String uri, HttpParams params)
+      throws Exception {
+    MockHttpServletRequestBuilder requestBuilder =
+        MockMvcRequestBuilders.request(method, uri)
+            .with(httpParamsProcessor(params));
+
+    return executeRequest(registryClient, requestBuilder);
+  }
+
+  protected ResultActions executeRequest(
+      RegistryClient registryClient, MockHttpServletRequestBuilder requestBuilder)
+      throws Exception {
+    RequestPostProcessor securityRequestProcessor =
+        tlsRequestProcessor(
+            registryClient, Collections.singletonList(UUID.randomUUID().toString()));
+
+    requestBuilder = requestBuilder.with(securityRequestProcessor);
+
+    return this.mockMvc.perform(requestBuilder).andDo(MockMvcResultHandlers.print());
   }
 
   protected void assertErrorRequest(
@@ -140,6 +145,20 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
             .andReturn();
 
     validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/common-types.xsd");
+  }
+
+  protected RequestPostProcessor httpParamsProcessor(HttpParams params) {
+    return request -> {
+      switch (request.getMethod()) {
+        case "POST":
+        case "PUT":
+          request.setContentType(MediaType.APPLICATION_FORM_URLENCODED.toString());
+          break;
+      }
+      params.asMap()
+          .forEach((key, value) -> request.addParameter(key, value.toArray(new String[0])));
+      return request;
+    };
   }
 
   protected RequestPostProcessor tlsRequestProcessor(

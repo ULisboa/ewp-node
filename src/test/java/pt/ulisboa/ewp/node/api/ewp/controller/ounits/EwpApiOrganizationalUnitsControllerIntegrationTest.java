@@ -14,15 +14,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.OrganizationalUnitsHostProvider;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerTest;
@@ -34,8 +34,10 @@ import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @SpringBootTest(
-    classes = {EwpNodeApplication.class,
-        EwpApiOrganizationalUnitsControllerIntegrationTest.Config.class})
+    classes = {
+        EwpNodeApplication.class,
+        EwpApiOrganizationalUnitsControllerIntegrationTest.Config.class
+    })
 public class EwpApiOrganizationalUnitsControllerIntegrationTest extends AbstractEwpControllerTest {
 
   @Autowired
@@ -60,21 +62,23 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends Abstract
     }
   }
 
-  @Test
-  public void testOunitGet_UnknownHeiId() throws Exception {
+  @ParameterizedTest
+  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  public void testOunitRetrieval_UnknownHeiId(HttpMethod method) throws Exception {
     String unknownHeiId = "test";
 
     Mockito.when(hostPluginManager.getProvider(unknownHeiId, OrganizationalUnitsHostProvider.class))
         .thenReturn(Optional.empty());
 
-    MockHttpServletRequestBuilder requestBuilder =
-        MockMvcRequestBuilders.get(
-            EwpApiConstants.API_BASE_URI + "ounits?hei_id=" + unknownHeiId + "&ounit_id=a");
-    assertBadRequest(registryClient, requestBuilder, "Unknown HEI ID: " + unknownHeiId);
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, unknownHeiId);
+    assertBadRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams,
+        "Unknown HEI ID: " + unknownHeiId);
   }
 
-  @Test
-  public void testOunitGet_ValidHeiIdAndTwoValidOunitIds() throws Exception {
+  @ParameterizedTest
+  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  public void testOunitRetrieval_ValidHeiIdAndTwoValidOunitIds(HttpMethod method) throws Exception {
     String validHeiId = "test";
     List<String> validOunitIds = Arrays.asList("a1", "b2");
 
@@ -97,7 +101,7 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends Abstract
     validOunitIds.forEach(ounitId -> queryParams.param(EwpApiParamConstants.OUNIT_ID, ounitId));
 
     String responseXml =
-        executeGetRequest(registryClient, "ounits", queryParams)
+        executeRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams)
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -110,8 +114,10 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends Abstract
     assertThat(response.getOunit().get(1).getOunitId()).isEqualTo(validOunitIds.get(1));
   }
 
-  @Test
-  public void testOunitGet_ValidHeiIdAndTwoValidOunitCodes() throws Exception {
+  @ParameterizedTest
+  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  public void testOunitRetrieval_ValidHeiIdAndTwoValidOunitCodes(HttpMethod method)
+      throws Exception {
     String validHeiId = "test";
     List<String> validOunitCodes = Arrays.asList("a1", "b2");
 
@@ -126,7 +132,9 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends Abstract
     ounit2.setOunitCode(validOunitCodes.get(1));
     mockProvider.register(validHeiId, ounit2);
 
-    Mockito.when(hostPluginManager.getProvider(validHeiId, OrganizationalUnitsHostProvider.class))
+    Mockito.when(
+        hostPluginManager.getProvider(
+            validHeiId, OrganizationalUnitsHostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     HttpParams queryParams = new HttpParams();
@@ -135,7 +143,7 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends Abstract
         ounitCode -> queryParams.param(EwpApiParamConstants.OUNIT_CODE, ounitCode));
 
     String responseXml =
-        executeGetRequest(registryClient, "ounits", queryParams)
+        executeRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams)
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -146,43 +154,6 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends Abstract
     assertThat(response.getOunit()).hasSize(validOunitCodes.size());
     assertThat(response.getOunit().get(0).getOunitCode()).isEqualTo(validOunitCodes.get(0));
     assertThat(response.getOunit().get(1).getOunitCode()).isEqualTo(validOunitCodes.get(1));
-  }
-
-  @Test
-  public void testOunitPost_ValidHeiIdAndTwoValidOunitIds() throws Exception {
-    String validHeiId = "test";
-    List<String> validOunitIds = Arrays.asList("a1", "b2");
-
-    MockOrganizationalUnitsHostProvider mockProvider =
-        new MockOrganizationalUnitsHostProvider(2, 0);
-
-    Ounit ounit1 = new Ounit();
-    ounit1.setOunitId(validOunitIds.get(0));
-    mockProvider.register(validHeiId, ounit1);
-
-    Ounit ounit2 = new Ounit();
-    ounit2.setOunitId(validOunitIds.get(1));
-    mockProvider.register(validHeiId, ounit2);
-
-    Mockito.when(hostPluginManager.getProvider(validHeiId, OrganizationalUnitsHostProvider.class))
-        .thenReturn(Optional.of(mockProvider));
-
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, validHeiId);
-    validOunitIds.forEach(ounitId -> queryParams.param(EwpApiParamConstants.OUNIT_ID, ounitId));
-
-    String responseXml =
-        executePostRequest(registryClient, "ounits", queryParams)
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-    OunitsResponseV2 response = XmlUtils.unmarshall(responseXml, OunitsResponseV2.class);
-
-    assertThat(response).isNotNull();
-    assertThat(response.getOunit()).hasSize(validOunitIds.size());
-    assertThat(response.getOunit().get(0).getOunitId()).isEqualTo(validOunitIds.get(0));
-    assertThat(response.getOunit().get(1).getOunitId()).isEqualTo(validOunitIds.get(1));
   }
 
   private static class MockOrganizationalUnitsHostProvider extends OrganizationalUnitsHostProvider {
