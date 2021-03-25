@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MultivaluedMap;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.UriUtils;
 
@@ -81,21 +80,17 @@ public class HttpUtils {
   public static String serializeFormData(Map<String, List<String>> params) {
     final StringBuilder sb = new StringBuilder();
 
-    try {
-      for (Map.Entry<String, List<String>> entry : params.entrySet()) {
-        for (String value : entry.getValue()) {
-          if (sb.length() > 0) {
-            sb.append('&');
-          }
-          sb.append(entry.getKey());
-          if (value != null) {
-            sb.append('=');
-            sb.append(value);
-          }
+    for (Map.Entry<String, List<String>> entry : params.entrySet()) {
+      for (String value : entry.getValue()) {
+        if (sb.length() > 0) {
+          sb.append('&');
+        }
+        sb.append(entry.getKey());
+        if (value != null) {
+          sb.append('=');
+          sb.append(value);
         }
       }
-    } catch (Exception e) {
-      LoggerFactory.getLogger(HttpUtils.class).error("Failed to convert form data ", e);
     }
 
     return UriUtils.encodeQuery(sb.toString(), "UTF-8");
