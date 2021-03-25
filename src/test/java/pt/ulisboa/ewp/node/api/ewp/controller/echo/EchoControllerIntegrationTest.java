@@ -2,7 +2,7 @@ package pt.ulisboa.ewp.node.api.ewp.controller.echo;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -64,17 +64,18 @@ import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
-@SpringBootTest(classes = {EwpNodeApplication.class, EchoControllerTest.Config.class})
-public class EchoControllerTest extends AbstractEwpControllerTest {
+@SpringBootTest(classes = {EwpNodeApplication.class,
+    EchoControllerIntegrationTest.Config.class})
+public class EchoControllerIntegrationTest extends AbstractEwpControllerTest {
 
   private static final String[] EXPECTED_SIGNATURE_HEADERS_WITH_DATE = {
-    HttpSignatureService.HEADER_REQUEST_TARGET,
-    HttpHeaders.HOST,
-    HttpHeaders.DATE,
-    HttpConstants.HEADER_DIGEST,
-    HttpConstants.HEADER_X_REQUEST_ID,
-    HttpConstants.HEADER_ACCEPT_SIGNATURE,
-    HttpConstants.HEADER_WANT_DIGEST
+      HttpSignatureService.HEADER_REQUEST_TARGET,
+      HttpHeaders.HOST,
+      HttpHeaders.DATE,
+      HttpConstants.HEADER_DIGEST,
+      HttpConstants.HEADER_X_REQUEST_ID,
+      HttpConstants.HEADER_ACCEPT_SIGNATURE,
+      HttpConstants.HEADER_WANT_DIGEST
   };
 
   private static final Collection<String> EXPECTED_HEI_IDS =
@@ -90,7 +91,7 @@ public class EchoControllerTest extends AbstractEwpControllerTest {
     @Bean
     @Primary
     public RegistryClient getRegistryClient() {
-      return mock(RegistryClient.class);
+      return spy(RegistryClient.class);
     }
   }
 
@@ -600,7 +601,7 @@ public class EchoControllerTest extends AbstractEwpControllerTest {
       public boolean matches(Object item) {
         Node node = (Node) item;
         Collection<String> obtainedHeiIds = getChildrenTextContents(node, "hei-id");
-        assertThat(obtainedHeiIds, equalTo(EchoControllerTest.EXPECTED_HEI_IDS));
+        assertThat(obtainedHeiIds, equalTo(EchoControllerIntegrationTest.EXPECTED_HEI_IDS));
         return true;
       }
 

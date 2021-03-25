@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.util.UriUtils;
 
 public class HttpParams implements Serializable {
 
@@ -53,5 +54,25 @@ public class HttpParams implements Serializable {
     if (values != null) {
       this.params.get(key).addAll(values);
     }
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder();
+
+    for (Map.Entry<String, List<String>> entry : params.entrySet()) {
+      for (String value : entry.getValue()) {
+        if (sb.length() > 0) {
+          sb.append('&');
+        }
+        sb.append(entry.getKey());
+        if (value != null) {
+          sb.append('=');
+          sb.append(value);
+        }
+      }
+    }
+
+    return UriUtils.encodeQuery(sb.toString(), "UTF-8");
   }
 }

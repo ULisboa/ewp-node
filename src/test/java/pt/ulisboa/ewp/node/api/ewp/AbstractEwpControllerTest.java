@@ -18,18 +18,23 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.TreeSet;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -37,22 +42,29 @@ import org.springframework.web.context.WebApplicationContext;
 import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
+import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.api.AbstractResourceTest;
 import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestFilter;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
 import pt.ulisboa.ewp.node.utils.XmlValidator;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
+import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
+@SpringBootTest(classes = {EwpNodeApplication.class})
 public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
 
-  @Autowired private WebApplicationContext wac;
+  @Autowired
+  private WebApplicationContext wac;
 
-  @Autowired private XmlValidator xmlValidator;
+  @Autowired
+  private XmlValidator xmlValidator;
 
-  @Autowired private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
+  @Autowired
+  private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
   protected MockMvc mockMvc;
 
@@ -65,6 +77,48 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
             .build();
   }
 
+  protected ResultActions executeGetRequest(RegistryClient registryClient, String relativeUri,
+      HttpParams params)
+      throws Exception {
+    RequestPostProcessor securityRequestProcessor =
+        tlsRequestProcessor(
+            registryClient, Collections.singletonList(UUID.randomUUID().toString()));
+
+    MockHttpServletRequestBuilder requestBuilder =
+        MockMvcRequestBuilders.get(
+            EwpApiConstants.API_BASE_URI + relativeUri + "?" + params.toString())
+            .with(securityRequestProcessor);
+
+    return this.mockMvc.perform(requestBuilder).andDo(MockMvcResultHandlers.print());
+  }
+
+  protected ResultActions executePostRequest(RegistryClient registryClient, String relativeUri,
+      HttpParams params)
+      throws Exception {
+    RequestPostProcessor securityRequestProcessor =
+        tlsRequestProcessor(
+            registryClient, Collections.singletonList(UUID.randomUUID().toString()));
+
+    MockHttpServletRequestBuilder requestBuilder =
+        MockMvcRequestBuilders.post(EwpApiConstants.API_BASE_URI + relativeUri)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .content(params.toString())
+            .with(securityRequestProcessor);
+
+    return this.mockMvc.perform(requestBuilder).andDo(MockMvcResultHandlers.print());
+  }
+
+  protected void assertBadRequest(RegistryClient registryClient,
+      MockHttpServletRequestBuilder requestBuilder, String errorMessage)
+      throws Exception {
+    assertErrorRequest(
+        requestBuilder,
+        tlsRequestProcessor(
+            registryClient, Collections.singletonList(UUID.randomUUID().toString())),
+        HttpStatus.BAD_REQUEST,
+        errorMessage);
+  }
+
   protected void assertErrorRequest(
       MockHttpServletRequestBuilder requestBuilder,
       RequestPostProcessor securityMethodProcessor,
@@ -74,7 +128,8 @@ public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
     requestBuilder
         .with(securityMethodProcessor)
         .header("Date", DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()))
-        .header("X-Request-ID", UUID.randomUUID().toString());
+        .header("X-Request-ID", UUID.randomUUID().toString())
+        .accept(MediaType.APPLICATION_XML);
 
     MvcResult mvcResult =
         this.mockMvc

@@ -13,9 +13,10 @@ import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.config.bootstrap.BootstrapProperties;
 
-public class EwpApiDiscoveryManifestControllerTest extends AbstractEwpControllerTest {
+public class EwpApiDiscoveryManifestControllerIntegrationTest extends AbstractEwpControllerTest {
 
-  @Autowired private BootstrapProperties bootstrapProperties;
+  @Autowired
+  private BootstrapProperties bootstrapProperties;
 
   @Test
   public void testManifest() throws Exception {
