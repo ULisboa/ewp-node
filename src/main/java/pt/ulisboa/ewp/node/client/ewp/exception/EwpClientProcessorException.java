@@ -2,7 +2,7 @@ package pt.ulisboa.ewp.node.client.ewp.exception;
 
 public class EwpClientProcessorException extends AbstractEwpClientErrorException {
 
-  private Exception exception;
+  private final Exception exception;
 
   public EwpClientProcessorException(Exception exception) {
     this.exception = exception;

@@ -390,12 +390,8 @@ public class HttpSignatureService {
       return false;
     }
 
-    if (headers.containsKey(HttpConstants.HEADER_ORIGINAL_DATE)
-        && !isDateWithinTimeThreshold(headers.getFirst(HttpConstants.HEADER_ORIGINAL_DATE))) {
-      return false;
-    }
-
-    return true;
+    return !headers.containsKey(HttpConstants.HEADER_ORIGINAL_DATE)
+        || isDateWithinTimeThreshold(headers.getFirst(HttpConstants.HEADER_ORIGINAL_DATE));
   }
 
   private Optional<EwpApiAuthenticateMethodResponse> verifyDigest(

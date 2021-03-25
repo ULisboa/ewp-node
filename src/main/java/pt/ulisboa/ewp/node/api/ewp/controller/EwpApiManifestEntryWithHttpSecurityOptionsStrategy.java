@@ -6,10 +6,10 @@ import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.v1.Srvauth
 import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.v1.SrvauthTlscertV1;
 import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
 
-public abstract class EwpApiManifestEntryWithHttpSecurityOptionsStrategy
+public interface EwpApiManifestEntryWithHttpSecurityOptionsStrategy
     extends EwpApiManifestEntryStrategy {
 
-  protected HttpSecurityOptions getHttpSecurityOptions() {
+  default HttpSecurityOptions getHttpSecurityOptions() {
     HttpSecurityOptions httpSecurityOptions = new HttpSecurityOptions();
 
     HttpSecurityOptions.ClientAuthMethods clientAuthMethods =

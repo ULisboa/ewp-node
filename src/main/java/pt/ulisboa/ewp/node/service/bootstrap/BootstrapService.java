@@ -87,11 +87,10 @@ public class BootstrapService {
     coveredHeiProperties
         .getNames()
         .forEach(
-            localizedNameProperties -> {
-              localizedName.put(
-                  Locale.forLanguageTag(localizedNameProperties.getLocale()),
-                  localizedNameProperties.getValue());
-            });
+            localizedNameProperties ->
+                localizedName.put(
+                    Locale.forLanguageTag(localizedNameProperties.getLocale()),
+                    localizedNameProperties.getValue()));
 
     Hei hei = Hei.create(host, coveredHeiProperties.getSchacCode(), localizedName);
 

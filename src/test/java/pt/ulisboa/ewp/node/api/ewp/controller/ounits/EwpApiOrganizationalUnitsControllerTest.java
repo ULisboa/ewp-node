@@ -34,18 +34,18 @@ public class EwpApiOrganizationalUnitsControllerTest extends AbstractEwpControll
   }
 
   @Test
-  public void testOunitGet_UnknownHeiId() throws Exception {
+  public void testOunitGet_UnknownHeiId() {
     String unknownHeiId = "test";
     assertThatThrownBy(
-            () -> {
-              controller.ounitsGet(unknownHeiId, Collections.emptyList(), Collections.emptyList());
-            })
+        () -> {
+          controller.ounitsGet(unknownHeiId, Collections.emptyList(), Collections.emptyList());
+        })
         .isInstanceOf(EwpBadRequestException.class)
         .hasMessageContaining("Unknown HEI ID: " + unknownHeiId);
   }
 
   @Test
-  public void testOunitGet_ValidHeiIdAndValidOunitIds() throws Exception {
+  public void testOunitGet_ValidHeiIdAndValidOunitIds() {
     String validHeiId = "test";
     List<String> validOunitIds = Arrays.asList("a1", "b2");
     OrganizationalUnitsHostProvider provider =
@@ -92,7 +92,7 @@ public class EwpApiOrganizationalUnitsControllerTest extends AbstractEwpControll
   }
 
   @Test
-  public void testOunitGet_ValidHeiIdAndValidOunitCodes() throws Exception {
+  public void testOunitGet_ValidHeiIdAndValidOunitCodes() {
     String validHeiId = "test";
     List<String> validOunitCodes = Arrays.asList("a1", "b2");
     OrganizationalUnitsHostProvider provider =

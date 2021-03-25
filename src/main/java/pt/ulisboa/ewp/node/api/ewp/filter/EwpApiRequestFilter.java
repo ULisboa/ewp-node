@@ -47,7 +47,7 @@ public class EwpApiRequestFilter extends OncePerRequestFilter {
     filterChain.doFilter(ewpRequest, contentCachingResponseWrapper);
 
     ZonedDateTime endProcessingDateTime = ZonedDateTime.now();
-    logCommunication(
+    ewpCommunicationLogService.logCommunicationFromEwpNode(
         ewpRequest,
         contentCachingResponseWrapper,
         startProcessingDateTime,
@@ -55,15 +55,5 @@ public class EwpApiRequestFilter extends OncePerRequestFilter {
         "");
 
     contentCachingResponseWrapper.copyBodyToResponse();
-  }
-
-  private void logCommunication(
-      EwpApiHttpRequestWrapper request,
-      ContentCachingResponseWrapper response,
-      ZonedDateTime startProcessingDateTime,
-      ZonedDateTime endProcessingDateTime,
-      String observations) {
-    ewpCommunicationLogService.logCommunicationFromEwpNode(
-        request, response, startProcessingDateTime, endProcessingDateTime, observations);
   }
 }

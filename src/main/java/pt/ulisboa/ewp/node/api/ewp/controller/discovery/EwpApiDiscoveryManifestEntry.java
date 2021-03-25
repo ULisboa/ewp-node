@@ -8,7 +8,7 @@ import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiManifestEntryStrategy;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 
 @Component
-public class EwpApiDiscoveryManifestEntry extends EwpApiManifestEntryStrategy {
+public class EwpApiDiscoveryManifestEntry implements EwpApiManifestEntryStrategy {
 
   @Override
   public Optional<ManifestApiEntryBaseV1> getManifestEntry(String heiId, String baseUrl) {

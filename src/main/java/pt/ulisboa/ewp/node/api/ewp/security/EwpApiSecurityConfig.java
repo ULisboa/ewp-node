@@ -54,7 +54,7 @@ public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .exceptionHandling()
-        .authenticationEntryPoint(new CustomAuthenticationEntryPoint(jaxb2Marshaller));
+        .authenticationEntryPoint(new UnauthorizedAuthenticationEntryPoint());
 
     http.addFilterBefore(
         new EwpApiResponseSignerFilter(httpSignatureService), HeaderWriterFilter.class);
@@ -71,9 +71,10 @@ public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
     http.addFilterAfter(new MDCAuthenticationFilter(), SessionManagementFilter.class);
   }
 
-  private static class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+  private static class UnauthorizedAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private CustomAuthenticationEntryPoint(Jaxb2Marshaller jaxb2Marshaller) {}
+    private UnauthorizedAuthenticationEntryPoint() {
+    }
 
     @Override
     public void commence(

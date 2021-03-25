@@ -8,7 +8,8 @@ import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiManifestEntryWithHttpSecurit
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 
 @Component
-public class EwpApiEchoManifestEntry extends EwpApiManifestEntryWithHttpSecurityOptionsStrategy {
+public class EwpApiEchoManifestEntry implements EwpApiManifestEntryWithHttpSecurityOptionsStrategy {
+
   @Override
   public Optional<ManifestApiEntryBaseV1> getManifestEntry(String heiId, String baseUrl) {
     EchoV2 echo = new EchoV2();

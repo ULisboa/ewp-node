@@ -1,18 +1,15 @@
 package pt.ulisboa.ewp.node.api.ewp.security.filter;
 
 import java.io.IOException;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.security.web.util.OnCommittedResponseWrapper;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
-
 import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
 
@@ -86,7 +83,6 @@ public class EwpApiResponseSignerFilter extends OncePerRequestFilter {
             "Failed to copy body from ContentCachingResponseWrapper to original response: "
                 + e.getMessage(),
             EwpApiResponseSignerFilter.class.getCanonicalName());
-        return;
       }
     }
 

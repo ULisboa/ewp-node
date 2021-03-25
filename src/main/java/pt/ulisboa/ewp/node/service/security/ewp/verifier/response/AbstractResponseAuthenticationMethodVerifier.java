@@ -7,9 +7,9 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
 
 @Service
-public abstract class AbstractResponseAuthenticationMethodVerifier {
+public interface AbstractResponseAuthenticationMethodVerifier {
 
-  public abstract boolean verifiesAgainstMethod(EwpAuthenticationMethod method);
+  boolean verifiesAgainstMethod(EwpAuthenticationMethod method);
 
-  public abstract EwpAuthenticationResult verify(EwpRequest request, EwpResponse response);
+  EwpAuthenticationResult verify(EwpRequest request, EwpResponse response);
 }

@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.utils.http;
 
+import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HttpParams {
+public class HttpParams implements Serializable {
 
   private final Map<String, List<String>> params = new HashMap<>();
 

@@ -163,8 +163,7 @@ public class KeyStoreService {
         | NoSuchAlgorithmException
         | IOException
         | UnrecoverableKeyException e) {
-      log.error("Failed to get and decode stored keystore: {}", e.getMessage());
-      throw new RuntimeException(e);
+      throw new IllegalStateException("Failed to get and decode stored keystore", e);
     }
   }
 

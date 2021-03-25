@@ -12,7 +12,7 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @Component
 public class EwpApiOrganizationalUnitsManifestEntry
-    extends EwpApiManifestEntryWithHttpSecurityOptionsStrategy {
+    implements EwpApiManifestEntryWithHttpSecurityOptionsStrategy {
 
   private final HostPluginManager hostPluginManager;
 

@@ -69,7 +69,6 @@ public class EwpApiHttpRequestWrapper extends ContentCachingRequestWrapper {
       Request internalRequest = (Request) field.get(request);
       internalRequest.getCoyoteRequest().queryString().setString("");
     } catch (IllegalAccessException | NoSuchFieldException e) {
-      log.error("Failed to obtain internal request instance", e);
       throw new IllegalStateException("Failed to obtain internal request instance", e);
     }
   }

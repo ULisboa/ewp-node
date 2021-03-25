@@ -11,7 +11,7 @@ import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
 @Service
 public class TlsResponseAuthenticationMethodVerifier
-    extends AbstractResponseAuthenticationMethodVerifier {
+    implements AbstractResponseAuthenticationMethodVerifier {
 
   @Override
   public boolean verifiesAgainstMethod(EwpAuthenticationMethod method) {

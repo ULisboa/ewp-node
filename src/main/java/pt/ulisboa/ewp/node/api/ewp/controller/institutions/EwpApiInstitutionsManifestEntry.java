@@ -12,7 +12,7 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @Component
 public class EwpApiInstitutionsManifestEntry
-    extends EwpApiManifestEntryWithHttpSecurityOptionsStrategy {
+    implements EwpApiManifestEntryWithHttpSecurityOptionsStrategy {
 
   private final HostPluginManager hostPluginManager;
 
@@ -27,7 +27,6 @@ public class EwpApiInstitutionsManifestEntry
     if (providerOptional.isEmpty()) {
       return Optional.empty();
     }
-    InstitutionsHostProvider provider = providerOptional.get();
 
     InstitutionsV2 institutions = new InstitutionsV2();
     institutions.setVersion(EwpApiConstants.INSTITUTIONS_VERSION);

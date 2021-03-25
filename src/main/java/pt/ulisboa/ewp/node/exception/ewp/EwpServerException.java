@@ -5,8 +5,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 
 public class EwpServerException extends Exception {
 
-  private EwpRequest request;
-  private EwpResponse response;
+  private final EwpRequest request;
+  private final EwpResponse response;
 
   public EwpServerException(EwpRequest request, EwpResponse response) {
     this.request = request;

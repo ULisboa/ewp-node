@@ -8,7 +8,7 @@ import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult
 
 @Service
 public class AnonymousResponseAuthenticationMethodVerifier
-    extends AbstractResponseAuthenticationMethodVerifier {
+    implements AbstractResponseAuthenticationMethodVerifier {
 
   @Override
   public boolean verifiesAgainstMethod(EwpAuthenticationMethod method) {

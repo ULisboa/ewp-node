@@ -5,9 +5,9 @@ import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 
 public class EwpClientAuthenticationFailedException extends Exception {
 
-  private EwpRequest request;
-  private EwpResponse response;
-  private String errorMessage;
+  private final EwpRequest request;
+  private final EwpResponse response;
+  private final String errorMessage;
 
   public EwpClientAuthenticationFailedException(
       EwpRequest request, EwpResponse response, String errorMessage) {

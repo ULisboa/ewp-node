@@ -9,7 +9,7 @@ import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult
 
 @Service
 public class HttpSignatureResponseAuthenticationMethodVerifier
-    extends AbstractResponseAuthenticationMethodVerifier {
+    implements AbstractResponseAuthenticationMethodVerifier {
 
   private HttpSignatureService httpSignatureService;
 

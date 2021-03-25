@@ -61,26 +61,21 @@ public class HttpCommunicationLogService {
     Collection<HttpHeader> headers = new ArrayList<>();
     Collection<String> headerNames = response.getHeaderNames();
     headerNames.forEach(
-        headerName -> {
-          response
-              .getHeaders(headerName)
-              .forEach(
-                  headerValue -> {
-                    headers.add(HttpHeader.create(headerName, headerValue));
-                  });
-        });
+        headerName ->
+            response
+                .getHeaders(headerName)
+                .forEach(headerValue -> headers.add(HttpHeader.create(headerName, headerValue))));
     return headers;
   }
 
   protected Collection<HttpHeader> toHttpHeaderCollection(HttpHeaders headers) {
     Collection<HttpHeader> result = new ArrayList<>();
     headers.forEach(
-        (headerName, headerValues) -> {
-          result.add(
-              HttpHeader.create(
-                  headerName,
-                  String.join(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN, headerValues)));
-        });
+        (headerName, headerValues) ->
+            result.add(
+                HttpHeader.create(
+                    headerName,
+                    String.join(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN, headerValues))));
     return result;
   }
 }

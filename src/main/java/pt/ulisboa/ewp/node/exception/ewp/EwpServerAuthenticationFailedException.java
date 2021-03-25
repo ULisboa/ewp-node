@@ -6,9 +6,9 @@ import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult
 
 public class EwpServerAuthenticationFailedException extends Exception {
 
-  private EwpRequest request;
-  private EwpResponse response;
-  private EwpAuthenticationResult authenticationResult;
+  private final EwpRequest request;
+  private final EwpResponse response;
+  private final EwpAuthenticationResult authenticationResult;
 
   public EwpServerAuthenticationFailedException(
       EwpRequest request, EwpResponse response, EwpAuthenticationResult authenticationResult) {

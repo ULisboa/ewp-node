@@ -10,12 +10,13 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 
   private static ApplicationContext applicationContext;
 
-  public static ApplicationContext getApplicationContext() {
+  public static synchronized ApplicationContext getApplicationContext() {
     return applicationContext;
   }
 
   @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+  public synchronized void setApplicationContext(ApplicationContext applicationContext)
+      throws BeansException {
     ApplicationContextProvider.applicationContext = applicationContext;
   }
 }

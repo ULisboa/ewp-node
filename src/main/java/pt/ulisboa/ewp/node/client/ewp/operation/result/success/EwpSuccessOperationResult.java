@@ -41,7 +41,7 @@ public class EwpSuccessOperationResult<T extends Serializable> extends AbstractE
     }
 
     public EwpSuccessOperationResult<T> build() {
-      return new EwpSuccessOperationResult<T>(this);
+      return new EwpSuccessOperationResult<>(this);
     }
   }
 }
