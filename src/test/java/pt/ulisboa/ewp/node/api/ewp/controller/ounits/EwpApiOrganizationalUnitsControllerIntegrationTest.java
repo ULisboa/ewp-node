@@ -78,6 +78,87 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends Abstract
 
   @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  public void testOunitRetrieval_ValidHeiIdAndNeitherOunitIdsNorCodes(HttpMethod method)
+      throws Exception {
+    String heiId = "test";
+
+    MockOrganizationalUnitsHostProvider mockProvider =
+        new MockOrganizationalUnitsHostProvider(1, 1);
+
+    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class))
+        .thenReturn(Optional.of(mockProvider));
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    assertBadRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams,
+        "At least some organizational unit ID or code must be provided");
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  public void testOunitRetrieval_ValidHeiIdAndBothOunitIdsAndCodesProvidedSimultaneously(
+      HttpMethod method)
+      throws Exception {
+    String heiId = "test";
+
+    MockOrganizationalUnitsHostProvider mockProvider =
+        new MockOrganizationalUnitsHostProvider(1, 1);
+
+    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class))
+        .thenReturn(Optional.of(mockProvider));
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.OUNIT_ID, "a");
+    queryParams.param(EwpApiParamConstants.OUNIT_CODE, "b");
+    assertBadRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams,
+        "Only organizational unit IDs or codes are accepted, not both simultaneously");
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  public void testOunitRetrieval_ValidHeiIdAndExceedingNumberOunitIds(HttpMethod method)
+      throws Exception {
+    String heiId = "test";
+
+    MockOrganizationalUnitsHostProvider mockProvider =
+        new MockOrganizationalUnitsHostProvider(1, 0);
+
+    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class))
+        .thenReturn(Optional.of(mockProvider));
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.OUNIT_ID, "a");
+    queryParams.param(EwpApiParamConstants.OUNIT_ID, "b");
+    assertBadRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams,
+        "Maximum number of valid organizational unit IDs per request is "
+            + mockProvider.maxOunitIdsPerRequest);
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  public void testOunitRetrieval_ValidHeiIdAndExceedingNumberOunitCodes(HttpMethod method)
+      throws Exception {
+    String heiId = "test";
+
+    MockOrganizationalUnitsHostProvider mockProvider =
+        new MockOrganizationalUnitsHostProvider(0, 1);
+
+    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class))
+        .thenReturn(Optional.of(mockProvider));
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.OUNIT_CODE, "a");
+    queryParams.param(EwpApiParamConstants.OUNIT_CODE, "b");
+    assertBadRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams,
+        "Maximum number of valid organizational unit codes per request is "
+            + mockProvider.maxOunitCodesPerRequest);
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
   public void testOunitRetrieval_ValidHeiIdAndTwoValidOunitIds(HttpMethod method) throws Exception {
     String validHeiId = "test";
     List<String> validOunitIds = Arrays.asList("a1", "b2");
