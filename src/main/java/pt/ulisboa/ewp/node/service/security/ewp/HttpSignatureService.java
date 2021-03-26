@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -115,7 +116,8 @@ public class HttpSignatureService {
                   headerName,
                   String.join(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN, headerValues)));
 
-      List<String> headerNames = new ArrayList<>(response.getHeaderNames());
+      List<String> headerNames = new ArrayList<>(new HashSet<>(response.getHeaderNames()));
+      headerNames.remove(HttpHeaders.VARY);
 
       DecodedCertificateAndKey decodedCertificateAndKey =
           keyStoreService.getDecodedCertificateAndKeyFromStorage();

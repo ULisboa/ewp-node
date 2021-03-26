@@ -16,11 +16,9 @@ import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2.Hei;
 import java.io.Serializable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import pt.ulisboa.ewp.node.api.AbstractResourceIntegrationTest;
@@ -50,9 +48,6 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
 
   private static final String API_FIND_ALL_URI =
       ForwardEwpApiConstants.API_BASE_URI + "courses/replication/v1";
-
-  @Autowired
-  private MockMvc mockMvc;
 
   @SpyBean
   private EwpSimpleCourseReplicationV1Client client;

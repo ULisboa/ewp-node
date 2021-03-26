@@ -1,7 +1,7 @@
 package pt.ulisboa.ewp.node.api;
 
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -9,7 +9,9 @@ import javax.xml.xpath.XPathExpressionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -25,6 +27,7 @@ import pt.ulisboa.ewp.node.utils.XmlValidator;
 @SpringBootTest(classes = EwpNodeApplication.class)
 @ActiveProfiles(profiles = {"dev", "test"})
 @ContextConfiguration(classes = EwpNodeApplication.class)
+@Import(ValidationAutoConfiguration.class)
 public abstract class AbstractResourceIntegrationTest extends AbstractTest {
 
   @Autowired
@@ -37,7 +40,7 @@ public abstract class AbstractResourceIntegrationTest extends AbstractTest {
 
   @BeforeEach
   public void setup() {
-    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
   }
 
   protected void validateXml(String xml, String schemaFilePath) {
