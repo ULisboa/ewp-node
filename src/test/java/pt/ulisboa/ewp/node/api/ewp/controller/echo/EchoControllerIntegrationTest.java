@@ -55,7 +55,7 @@ import org.tomitribe.auth.signatures.Signer;
 import org.tomitribe.auth.signatures.Verifier;
 import org.w3c.dom.Node;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
-import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerTest;
+import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
@@ -66,7 +66,7 @@ import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
 @SpringBootTest(classes = {EwpNodeApplication.class,
     EchoControllerIntegrationTest.Config.class})
-public class EchoControllerIntegrationTest extends AbstractEwpControllerTest {
+public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrationTest {
 
   private static final String[] EXPECTED_SIGNATURE_HEADERS_WITH_DATE = {
       HttpSignatureService.HEADER_REQUEST_TARGET,

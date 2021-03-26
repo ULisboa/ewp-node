@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.OrganizationalUnitsHostProvider;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
-import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerTest;
+import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
@@ -38,7 +38,8 @@ import pt.ulisboa.ewp.node.utils.http.HttpParams;
         EwpNodeApplication.class,
         EwpApiOrganizationalUnitsControllerIntegrationTest.Config.class
     })
-public class EwpApiOrganizationalUnitsControllerIntegrationTest extends AbstractEwpControllerTest {
+public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
+    AbstractEwpControllerIntegrationTest {
 
   @Autowired
   private HostPluginManager hostPluginManager;

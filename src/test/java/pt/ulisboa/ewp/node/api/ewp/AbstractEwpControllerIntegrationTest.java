@@ -44,7 +44,7 @@ import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
 import pt.ulisboa.ewp.node.EwpNodeApplication;
-import pt.ulisboa.ewp.node.api.AbstractResourceTest;
+import pt.ulisboa.ewp.node.api.AbstractResourceIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestFilter;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
@@ -57,7 +57,7 @@ import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 @SpringBootTest(
     classes = {EwpNodeApplication.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public abstract class AbstractEwpControllerTest extends AbstractResourceTest {
+public abstract class AbstractEwpControllerIntegrationTest extends AbstractResourceIntegrationTest {
 
   @Autowired
   private WebApplicationContext wac;

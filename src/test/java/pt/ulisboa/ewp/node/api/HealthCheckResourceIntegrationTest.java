@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 
-public class HealthCheckResourceTest extends AbstractResourceTest {
+public class HealthCheckResourceIntegrationTest extends AbstractResourceIntegrationTest {
 
   @Test
   public void testSuccessHealthCheck() throws Exception {

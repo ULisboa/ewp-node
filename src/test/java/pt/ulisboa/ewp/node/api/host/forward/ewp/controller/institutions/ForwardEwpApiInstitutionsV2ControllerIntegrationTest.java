@@ -23,7 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import pt.ulisboa.ewp.node.AbstractTest;
+import pt.ulisboa.ewp.node.api.AbstractResourceIntegrationTest;
 import pt.ulisboa.ewp.node.api.common.security.SecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
@@ -42,7 +42,8 @@ import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
 @AutoConfigureMockMvc
-public class ForwardEwpApiInstitutionsV2ControllerIntegrationTest extends AbstractTest {
+public class ForwardEwpApiInstitutionsV2ControllerIntegrationTest extends
+    AbstractResourceIntegrationTest {
 
   private static final String TOKEN_SECRET = "sample-host-forward-ewp-api-secret";
   private static final String HOST_CODE = "sample-host";
@@ -50,7 +51,8 @@ public class ForwardEwpApiInstitutionsV2ControllerIntegrationTest extends Abstra
   private static final String API_FIND_URI =
       ForwardEwpApiConstants.API_BASE_URI + "institutions/v2";
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
   @SpyBean
   private EwpInstitutionsV2Client client;

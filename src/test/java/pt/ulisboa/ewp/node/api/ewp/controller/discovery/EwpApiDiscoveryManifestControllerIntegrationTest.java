@@ -9,11 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerTest;
+import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.config.bootstrap.BootstrapProperties;
 
-public class EwpApiDiscoveryManifestControllerIntegrationTest extends AbstractEwpControllerTest {
+public class EwpApiDiscoveryManifestControllerIntegrationTest extends
+    AbstractEwpControllerIntegrationTest {
 
   @Autowired
   private BootstrapProperties bootstrapProperties;
