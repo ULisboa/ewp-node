@@ -48,7 +48,7 @@ public class TlsRequestAuthenticationMethodVerifier
     } catch (Exception e) {
       LOGGER.error("Failed to parse client certificate from request", e);
       return EwpApiAuthenticateMethodResponse.failureBuilder(
-          EwpAuthenticationMethod.TLS, "Failed to parse client certificate: " + e.getMessage())
+          EwpAuthenticationMethod.TLS, "Failed to parse client certificate")
           .withResponseCode(HttpStatus.BAD_REQUEST)
           .build();
     }
@@ -93,11 +93,7 @@ public class TlsRequestAuthenticationMethodVerifier
         X509Certificate certificate =
             CertificateUtils.decodeCertificate(
                 certificateString, securityProperties.getClientTls().getEncoding());
-        if (certificate != null) {
-          certificates = new X509Certificate[]{certificate};
-        } else {
-          LOGGER.error("Failed to decode certificate from header: {}", encodedCertificateString);
-        }
+        certificates = new X509Certificate[]{certificate};
       }
     }
 
