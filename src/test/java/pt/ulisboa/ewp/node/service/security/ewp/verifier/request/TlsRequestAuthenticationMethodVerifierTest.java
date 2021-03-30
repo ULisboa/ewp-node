@@ -150,7 +150,7 @@ class TlsRequestAuthenticationMethodVerifierTest extends AbstractTest {
   }
 
   @Test
-  void testVerify_ValidCertificateProvidedByAttribute_ReturnFailure()
+  void testVerify_ValidCertificateProvidedByAttribute_ReturnSuccess()
       throws IOException, CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, OperatorCreationException, NoSuchProviderException {
     SecurityProperties securityProperties = new SecurityProperties();
     securityProperties.setAllowMissingClientCertificate(false);
@@ -190,7 +190,7 @@ class TlsRequestAuthenticationMethodVerifierTest extends AbstractTest {
   }
 
   @Test
-  void testVerify_ValidCertificateProvidedByHeaderEncodedInHex_ReturnFailure()
+  void testVerify_ValidCertificateProvidedByHeaderEncodedInHex_ReturnSuccess()
       throws IOException, CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, OperatorCreationException, NoSuchProviderException {
     SecurityProperties securityProperties = new SecurityProperties();
     securityProperties.setAllowMissingClientCertificate(false);
@@ -233,7 +233,7 @@ class TlsRequestAuthenticationMethodVerifierTest extends AbstractTest {
   }
 
   @Test
-  void testVerify_ValidCertificateProvidedByHeaderEncodedInBase64_ReturnFailure()
+  void testVerify_ValidCertificateProvidedByHeaderEncodedInBase64_ReturnSuccess()
       throws IOException, CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, OperatorCreationException, NoSuchProviderException {
     SecurityProperties securityProperties = new SecurityProperties();
     securityProperties.setAllowMissingClientCertificate(false);
