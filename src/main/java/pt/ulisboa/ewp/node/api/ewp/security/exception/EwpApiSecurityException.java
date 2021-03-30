@@ -2,22 +2,19 @@ package pt.ulisboa.ewp.node.api.ewp.security.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 
 public class EwpApiSecurityException extends AuthenticationException {
 
-  public enum AuthMethod {
-    TLSCERT,
-    HTTPSIG
-  }
-
   private final HttpStatus status;
-  private final AuthMethod authMethod;
+  private final EwpAuthenticationMethod authMethod;
 
   public EwpApiSecurityException(String message, HttpStatus status) {
-    this(message, status, AuthMethod.TLSCERT);
+    this(message, status, EwpAuthenticationMethod.TLS);
   }
 
-  public EwpApiSecurityException(String message, HttpStatus status, AuthMethod authMethod) {
+  public EwpApiSecurityException(String message, HttpStatus status,
+      EwpAuthenticationMethod authMethod) {
     super(message);
     this.status = status;
     this.authMethod = authMethod;
@@ -27,7 +24,7 @@ public class EwpApiSecurityException extends AuthenticationException {
     return status;
   }
 
-  public AuthMethod getAuthMethod() {
+  public EwpAuthenticationMethod getAuthMethod() {
     return authMethod;
   }
 }

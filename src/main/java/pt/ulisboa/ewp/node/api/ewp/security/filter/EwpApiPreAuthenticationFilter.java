@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.exception.EwpApiSecurityException;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
@@ -73,7 +74,7 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
 
       response.setStatus(ewpApiSecurityException.getStatus().value());
 
-      if (ewpApiSecurityException.getAuthMethod() == EwpApiSecurityException.AuthMethod.HTTPSIG) {
+      if (ewpApiSecurityException.getAuthMethod() == EwpAuthenticationMethod.HTTP_SIGNATURE) {
         response.addHeader("X-EWP-Verification-Message", exception.getMessage());
       }
     }

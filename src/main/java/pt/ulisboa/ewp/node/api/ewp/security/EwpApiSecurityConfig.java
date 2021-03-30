@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.api.ewp.security;
 
+import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,26 +17,33 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.session.SessionManagementFilter;
 import pt.ulisboa.ewp.node.api.common.security.logging.MDCAuthenticationFilter;
-import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiHttpSignatureAuthenticationFilter;
+import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiPreAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiResponseSignerFilter;
-import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiTlsCertificateAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
+import pt.ulisboa.ewp.node.service.security.ewp.verifier.request.AbstractRequestAuthenticationMethodVerifier;
 
 @Configuration
 @Order(3)
 public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  @Autowired private HttpSignatureService httpSignatureService;
+  @Autowired
+  private Collection<AbstractRequestAuthenticationMethodVerifier> requestAuthenticationMethodVerifiers;
 
-  @Autowired private SecurityProperties securityProperties;
+  @Autowired
+  private HttpSignatureService httpSignatureService;
 
-  @Autowired private RegistryClient registryClient;
+  @Autowired
+  private SecurityProperties securityProperties;
 
-  @Autowired private Jaxb2Marshaller jaxb2Marshaller;
+  @Autowired
+  private RegistryClient registryClient;
+
+  @Autowired
+  private Jaxb2Marshaller jaxb2Marshaller;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -61,12 +69,8 @@ public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.addFilterBefore(
         new EwpApiPreAuthenticationFilter(jaxb2Marshaller), BasicAuthenticationFilter.class);
-    http.addFilterAfter(
-        new EwpApiHttpSignatureAuthenticationFilter(httpSignatureService),
+    http.addFilterAfter(new EwpApiAuthenticationFilter(requestAuthenticationMethodVerifiers),
         EwpApiPreAuthenticationFilter.class);
-    http.addFilterAfter(
-        new EwpApiTlsCertificateAuthenticationFilter(securityProperties, registryClient),
-        EwpApiHttpSignatureAuthenticationFilter.class);
 
     http.addFilterAfter(new MDCAuthenticationFilter(), SessionManagementFilter.class);
   }

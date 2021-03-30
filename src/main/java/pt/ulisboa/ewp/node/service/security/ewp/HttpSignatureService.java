@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -68,17 +68,22 @@ public class HttpSignatureService {
 
   public static final int DATE_THRESHOLD_IN_MILLISECONDS = 5 * 60 * 1000;
 
-  @Autowired private Logger log;
+  private static final Logger LOGGER = LoggerFactory.getLogger(HttpSignatureService.class);
 
-  @Autowired private RegistryClient registryClient;
+  private final RegistryClient registryClient;
 
-  @Autowired private KeyStoreService keyStoreService;
+  private final KeyStoreService keyStoreService;
+
+  public HttpSignatureService(RegistryClient registryClient, KeyStoreService keyStoreService) {
+    this.registryClient = registryClient;
+    this.keyStoreService = keyStoreService;
+  }
 
   public boolean clientWantsSignedResponse(HttpServletRequest request) {
     // Check if client wants signed response and that the header is correct
     return request.getHeader(HttpConstants.HEADER_ACCEPT_SIGNATURE) != null
         && Arrays.stream(request.getHeader(HttpConstants.HEADER_ACCEPT_SIGNATURE).split(",\\s?"))
-            .anyMatch(m -> Algorithm.RSA_SHA256.getPortableName().equalsIgnoreCase(m));
+        .anyMatch(m -> Algorithm.RSA_SHA256.getPortableName().equalsIgnoreCase(m));
   }
 
   public void signResponse(
@@ -136,7 +141,7 @@ public class HttpSignatureService {
           HttpConstants.HEADER_SIGNATURE, signed.toString().replace("Signature ", ""));
 
     } catch (IOException | NoSuchAlgorithmException e) {
-      log.error("Can't sign response", e);
+      LOGGER.error("Can't sign response", e);
     }
   }
 
@@ -177,7 +182,7 @@ public class HttpSignatureService {
           generateSignatureValue(requiredSignatureHeaderNames, method, uri, headers);
       headerSetter.accept(HttpHeaders.AUTHORIZATION, Collections.singletonList(signatureValue));
     } catch (IOException | NoSuchAlgorithmException e) {
-      log.error("Can't sign request", e);
+      LOGGER.error("Can't sign request", e);
     }
   }
 
@@ -205,11 +210,11 @@ public class HttpSignatureService {
   }
 
   public EwpApiAuthenticateMethodResponse verifyHttpSignatureRequest(
-      EwpApiHttpRequestWrapper request) throws IOException {
+      EwpApiHttpRequestWrapper request) {
     String authorization = request.getHeader(HEADER_AUTHORIZATION);
     if (authorization == null || !authorization.toLowerCase().startsWith("signature")) {
       return EwpApiAuthenticateMethodResponse.failureBuilder(
-              EwpAuthenticationMethod.HTTP_SIGNATURE, "Request is not using authentication method")
+          EwpAuthenticationMethod.HTTP_SIGNATURE, "Request is not using authentication method")
           .notUsingMethod()
           .withRequiredMethodInfoFulfilled(false)
           .withResponseCode(HttpStatus.UNAUTHORIZED)
@@ -371,19 +376,23 @@ public class HttpSignatureService {
     return HttpSignatureAuthenticationResult.createValid();
   }
 
-  private boolean verifyHost(HttpServletRequest request, HttpHeaders headers)
-      throws MalformedURLException {
-    URL requestUrl = new URL(request.getRequestURL().toString());
-    String expectedHost =
-        requestUrl.getHost() + (requestUrl.getPort() == -1 ? "" : ":" + requestUrl.getPort());
-    return headers.containsKey(HttpHeaders.HOST)
-        && expectedHost.equals(headers.getFirst(HttpHeaders.HOST));
+  private boolean verifyHost(HttpServletRequest request, HttpHeaders headers) {
+    try {
+      URL requestUrl = new URL(request.getRequestURL().toString());
+      String expectedHost =
+          requestUrl.getHost() + (requestUrl.getPort() == -1 ? "" : ":" + requestUrl.getPort());
+      return headers.containsKey(HttpHeaders.HOST)
+          && expectedHost.equals(headers.getFirst(HttpHeaders.HOST));
+    } catch (MalformedURLException e) {
+      LOGGER.warn("Invalid URL", e);
+      return false;
+    }
   }
 
   private boolean verifyXRequestId(HttpHeaders headers) {
     return headers.containsKey(HttpConstants.HEADER_X_REQUEST_ID)
         && Objects.requireNonNull(headers.getFirst(HttpConstants.HEADER_X_REQUEST_ID))
-            .matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
+        .matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
   }
 
   private boolean verifyDate(HttpHeaders headers) {
@@ -416,7 +425,7 @@ public class HttpSignatureService {
     try {
       digest = MessageDigest.getInstance(algorithm).digest(bodyBytes);
     } catch (NoSuchAlgorithmException e) {
-      log.error(MESSAGE_NO_SUCH_ALGORITHM, e);
+      LOGGER.error(MESSAGE_NO_SUCH_ALGORITHM, e);
       return Optional.of(
           EwpApiAuthenticateMethodResponse.failureBuilder(
                   EwpAuthenticationMethod.HTTP_SIGNATURE, MESSAGE_NO_SUCH_ALGORITHM)
@@ -464,14 +473,14 @@ public class HttpSignatureService {
                 .build());
       }
     } catch (NoSuchAlgorithmException e) {
-      log.warn(String.format("%s: %s", MESSAGE_NO_SUCH_ALGORITHM, e.getMessage()));
+      LOGGER.warn(String.format("%s: %s", MESSAGE_NO_SUCH_ALGORITHM, e.getMessage()));
       return Optional.of(
           EwpApiAuthenticateMethodResponse.failureBuilder(
                   EwpAuthenticationMethod.HTTP_SIGNATURE, MESSAGE_NO_SUCH_ALGORITHM)
               .withResponseCode(HttpStatus.BAD_REQUEST)
               .build());
     } catch (MissingRequiredHeaderException e) {
-      log.warn(String.format("%s: %s", MESSAGE_MISSING_REQUIRED_HEADER, e.getMessage()));
+      LOGGER.warn(String.format("%s: %s", MESSAGE_MISSING_REQUIRED_HEADER, e.getMessage()));
       return Optional.of(
           EwpApiAuthenticateMethodResponse.failureBuilder(
                   EwpAuthenticationMethod.HTTP_SIGNATURE,
@@ -479,14 +488,14 @@ public class HttpSignatureService {
               .withResponseCode(HttpStatus.BAD_REQUEST)
               .build());
     } catch (IOException e) {
-      log.warn(String.format("Error reading: %s", e.getMessage()));
+      LOGGER.warn(String.format("Error reading: %s", e.getMessage()));
       return Optional.of(
           EwpApiAuthenticateMethodResponse.failureBuilder(
                   EwpAuthenticationMethod.HTTP_SIGNATURE, e.getMessage())
               .withResponseCode(HttpStatus.BAD_REQUEST)
               .build());
     } catch (SignatureException e) {
-      log.warn(String.format("Signature error: %s", e.getMessage()));
+      LOGGER.warn(String.format("Signature error: %s", e.getMessage()));
       return Optional.of(
           EwpApiAuthenticateMethodResponse.failureBuilder(
                   EwpAuthenticationMethod.HTTP_SIGNATURE, e.getMessage())
@@ -531,7 +540,7 @@ public class HttpSignatureService {
       // Check that time diff is less than five minutes
       return Math.abs(today.getTime() - requestDate.getTime()) <= DATE_THRESHOLD_IN_MILLISECONDS;
     } catch (ParseException e) {
-      log.warn("Can't parse date: " + dateString, e);
+      LOGGER.warn("Can't parse date: " + dateString, e);
     }
     return false;
   }

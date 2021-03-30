@@ -1,11 +1,13 @@
 package pt.ulisboa.ewp.node.api.ewp.security;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 
-public class EwpApiAuthenticateMethodResponse {
+public class EwpApiAuthenticateMethodResponse implements Serializable {
 
   private final EwpAuthenticationMethod method;
   private final boolean isUsingMethod;
@@ -59,6 +61,40 @@ public class EwpApiAuthenticateMethodResponse {
 
   public Collection<String> getHeiIdsCoveredByClient() {
     return heiIdsCoveredByClient;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    EwpApiAuthenticateMethodResponse that = (EwpApiAuthenticateMethodResponse) o;
+    return isUsingMethod == that.isUsingMethod
+        && isRequiredMethodInfoFulfilled == that.isRequiredMethodInfoFulfilled
+        && method == that.method && Objects.equals(errorMessage, that.errorMessage)
+        && status == that.status && Objects
+        .equals(heiIdsCoveredByClient, that.heiIdsCoveredByClient);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(method, isUsingMethod, isRequiredMethodInfoFulfilled, errorMessage, status,
+        heiIdsCoveredByClient);
+  }
+
+  @Override
+  public String toString() {
+    return "EwpApiAuthenticateMethodResponse{" +
+        "method=" + method +
+        ", isUsingMethod=" + isUsingMethod +
+        ", isRequiredMethodInfoFulfilled=" + isRequiredMethodInfoFulfilled +
+        ", errorMessage='" + errorMessage + '\'' +
+        ", status=" + status +
+        ", heiIdsCoveredByClient=" + heiIdsCoveredByClient +
+        '}';
   }
 
   public static AuthenticateMethodResponseBuilder failureBuilder(
