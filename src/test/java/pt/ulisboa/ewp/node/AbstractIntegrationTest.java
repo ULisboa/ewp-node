@@ -10,7 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(
-    classes = EwpNodeApplication.class,
+    classes = {EwpNodeApplication.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(profiles = {"dev", "test"})
 @ContextConfiguration(classes = EwpNodeApplication.class)

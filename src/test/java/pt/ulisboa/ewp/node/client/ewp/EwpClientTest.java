@@ -14,7 +14,10 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Collections;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpMethod;
@@ -123,6 +126,8 @@ public class EwpClientTest extends AbstractIntegrationTest {
     doReturn(decodedCertificateAndKey.getRsaPublicKey())
         .when(registryClient)
         .findRsaPublicKey(decodedCertificateAndKey.getPublicKeyFingerprint());
+    doReturn(Collections.singletonList(UUID.randomUUID().toString())).when(registryClient)
+        .getHeisCoveredByClientKey(ArgumentMatchers.any());
 
     String testEchoValue = "abc";
     HttpParams params = new HttpParams();

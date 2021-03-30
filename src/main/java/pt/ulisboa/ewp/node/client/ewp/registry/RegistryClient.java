@@ -18,7 +18,11 @@ public class RegistryClient extends ClientImpl {
 
   @Autowired
   public RegistryClient(RegistryProperties properties) {
-    super(createClientOptions(properties));
+    this(createClientOptions(properties));
+  }
+
+  public RegistryClient(ClientImplOptions options) {
+    super(options);
   }
 
   private static ClientImplOptions createClientOptions(RegistryProperties properties) {

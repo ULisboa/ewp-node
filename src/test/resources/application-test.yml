@@ -13,8 +13,8 @@ db:
     timeZone: Europe/Lisbon
 
 registry:
-  url: dev-registry.erasmuswithoutpaper.eu
-  autoRefresh: true
+  url:
+  autoRefresh: false
   timeBetweenRetriesInMilliseconds: 180000
 
 security:
