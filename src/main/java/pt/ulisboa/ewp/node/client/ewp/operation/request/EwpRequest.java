@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpMethod;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
@@ -67,7 +69,9 @@ public class EwpRequest implements Serializable {
   }
 
   public EwpRequest queryParams(HttpParams queryParams) {
-    this.queryParams = queryParams;
+    if (queryParams != null) {
+      this.queryParams = queryParams;
+    }
     return this;
   }
 
@@ -76,7 +80,9 @@ public class EwpRequest implements Serializable {
   }
 
   public EwpRequest bodyParams(HttpParams bodyParams) {
-    this.bodyParams = bodyParams;
+    if (bodyParams != null) {
+      this.bodyParams = bodyParams;
+    }
     return this;
   }
 
@@ -96,5 +102,28 @@ public class EwpRequest implements Serializable {
       url.append('?').append(queryString);
     }
     return url.toString();
+  }
+
+  public static EwpRequest createGet(
+      EwpApiConfiguration api, @NotNull String urlWithoutQueryParams, HttpParams queryParams) {
+    return create(api, HttpMethod.GET, urlWithoutQueryParams, queryParams, null);
+  }
+
+  public static EwpRequest createPost(
+      EwpApiConfiguration api, @NotNull String urlWithoutQueryParams, HttpParams bodyParams) {
+    return create(api, HttpMethod.POST, urlWithoutQueryParams, null, bodyParams);
+  }
+
+  public static EwpRequest create(
+      EwpApiConfiguration api,
+      HttpMethod method,
+      @NotNull String urlWithoutQueryParams,
+      HttpParams queryParams,
+      HttpParams bodyParams) {
+    EwpRequest request = new EwpRequest(method, urlWithoutQueryParams);
+    request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
+    request.queryParams(queryParams);
+    request.bodyParams(bodyParams);
+    return request;
   }
 }

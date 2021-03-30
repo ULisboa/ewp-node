@@ -2,10 +2,8 @@ package pt.ulisboa.ewp.node.client.ewp.imobilities;
 
 import eu.erasmuswithoutpaper.api.imobilities.v1.endpoints.ImobilitiesGetResponseV1;
 import java.util.Collection;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.imobilities.ForwardEwpApiIncomingMobilitiesApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
@@ -36,18 +34,14 @@ public class EwpIncomingMobilitiesV1Client extends
   public EwpSuccessOperationResult<ImobilitiesGetResponseV1> findByReceivingHeiIdAndOmobilityIds(
       String receivingHeiId, Collection<String> omobilityIds)
       throws AbstractEwpClientErrorException {
-    EwpIncomingMobilitiesApiConfiguration apiConfiguration = getApiConfigurationForHeiId(
+    EwpIncomingMobilitiesApiConfiguration api = getApiConfigurationForHeiId(
         receivingHeiId);
-
-    EwpRequest request = new EwpRequest(HttpMethod.POST, apiConfiguration.getGetUrl());
-    request.authenticationMethod(
-        EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
 
     HttpParams bodyParams = new HttpParams();
     bodyParams.param(EwpApiParamConstants.RECEIVING_HEI_ID, receivingHeiId);
     bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, omobilityIds);
-    request.bodyParams(bodyParams);
 
+    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
     return ewpClient.executeWithLoggingExpectingSuccess(request, ImobilitiesGetResponseV1.class);
   }
 

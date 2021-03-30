@@ -2,10 +2,8 @@ package pt.ulisboa.ewp.node.client.ewp.courses.replication;
 
 import eu.erasmuswithoutpaper.api.courses.replication.v1.CourseReplicationResponseV1;
 import java.time.ZonedDateTime;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
@@ -29,14 +27,11 @@ public class EwpSimpleCourseReplicationV1Client
       String heiId, ZonedDateTime modifiedSince) throws AbstractEwpClientErrorException {
     EwpSimpleCourseReplicationApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
-    EwpRequest request = new EwpRequest(HttpMethod.GET, api.getUrl());
-    request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
-
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
-    request.queryParams(queryParams);
 
+    EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
     return ewpClient.executeWithLoggingExpectingSuccess(request, CourseReplicationResponseV1.class);
   }
 

@@ -2,10 +2,8 @@ package pt.ulisboa.ewp.node.client.ewp.institutions;
 
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2;
 import java.util.Collections;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
@@ -28,18 +26,16 @@ public class EwpInstitutionsV2Client extends EwpApiClient<EwpInstitutionApiConfi
       throws AbstractEwpClientErrorException {
     EwpInstitutionApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
-    EwpRequest request = new EwpRequest(HttpMethod.GET, api.getUrl());
-    request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
-
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
-    request.queryParams(queryParams);
 
+    EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
     return ewpClient.executeWithLoggingExpectingSuccess(request, InstitutionsResponseV2.class);
   }
 
   @Override
-  public EwpApiGeneralSpecification<?, EwpInstitutionApiConfiguration> getApiGeneralSpecification() {
+  public EwpApiGeneralSpecification<?, EwpInstitutionApiConfiguration>
+  getApiGeneralSpecification() {
     return EwpApiGeneralSpecifications.INSTITUTIONS_V2;
   }
 }

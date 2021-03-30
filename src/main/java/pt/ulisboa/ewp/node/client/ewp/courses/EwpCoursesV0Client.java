@@ -3,10 +3,8 @@ package pt.ulisboa.ewp.node.client.ewp.courses;
 import eu.erasmuswithoutpaper.api.courses.v0.CoursesResponseV0;
 import java.time.LocalDate;
 import java.util.Collection;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiCoursesApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
@@ -41,17 +39,14 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
       throws AbstractEwpClientErrorException {
     EwpCourseApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
-    EwpRequest request = new EwpRequest(HttpMethod.GET, api.getUrl());
-    request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
-
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.LOS_ID, losIds);
     queryParams.param(EwpApiParamConstants.LOIS_BEFORE, loisBeforeDate);
     queryParams.param(EwpApiParamConstants.LOIS_AFTER, loisAfterDate);
     queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
-    request.queryParams(queryParams);
 
+    EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
     return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponseV0.class);
   }
 
@@ -64,17 +59,14 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
       throws AbstractEwpClientErrorException {
     EwpCourseApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
-    EwpRequest request = new EwpRequest(HttpMethod.GET, api.getUrl());
-    request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
-
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.LOS_CODE, losCodes);
     queryParams.param(EwpApiParamConstants.LOIS_BEFORE, loisBeforeDate);
     queryParams.param(EwpApiParamConstants.LOIS_AFTER, loisAfterDate);
     queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
-    request.queryParams(queryParams);
 
+    EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
     return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponseV0.class);
   }
 

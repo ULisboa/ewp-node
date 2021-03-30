@@ -5,10 +5,8 @@ import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.OmobilitiesIndexRespo
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
@@ -22,8 +20,8 @@ import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecif
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpOutgoingMobilitiesV1Client extends
-    EwpApiClient<EwpOutgoingMobilitiesApiConfiguration> {
+public class EwpOutgoingMobilitiesV1Client
+    extends EwpApiClient<EwpOutgoingMobilitiesApiConfiguration> {
 
   public EwpOutgoingMobilitiesV1Client(RegistryClient registryClient, EwpClient ewpClient) {
     super(registryClient, ewpClient);
@@ -42,42 +40,33 @@ public class EwpOutgoingMobilitiesV1Client extends
       String receivingAcademicYearId,
       ZonedDateTime modifiedSince)
       throws AbstractEwpClientErrorException {
-    EwpOutgoingMobilitiesApiConfiguration apiConfiguration = getApiConfigurationForHeiId(
-        sendingHeiId);
-
-    EwpRequest request = new EwpRequest(HttpMethod.POST, apiConfiguration.getIndexUrl());
-    request.authenticationMethod(
-        EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
+    EwpOutgoingMobilitiesApiConfiguration api = getApiConfigurationForHeiId(sendingHeiId);
 
     HttpParams bodyParams = new HttpParams();
     bodyParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
     bodyParams.param(EwpApiParamConstants.RECEIVING_HEI_ID, receivingHeiIds);
     bodyParams.param(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearId);
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
-    request.bodyParams(bodyParams);
 
+    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
     return ewpClient.executeWithLoggingExpectingSuccess(request, OmobilitiesIndexResponseV1.class);
   }
 
   public EwpSuccessOperationResult<OmobilitiesGetResponseV1> findBySendingHeiIdAndOmobilityIds(
       String sendingHeiId, Collection<String> omobilityIds) throws AbstractEwpClientErrorException {
-    EwpOutgoingMobilitiesApiConfiguration apiConfiguration = getApiConfigurationForHeiId(
-        sendingHeiId);
-
-    EwpRequest request = new EwpRequest(HttpMethod.POST, apiConfiguration.getGetUrl());
-    request.authenticationMethod(
-        EwpApiUtils.getBestSupportedApiAuthenticationMethod(apiConfiguration));
+    EwpOutgoingMobilitiesApiConfiguration api = getApiConfigurationForHeiId(sendingHeiId);
 
     HttpParams bodyParams = new HttpParams();
     bodyParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
     bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, omobilityIds);
-    request.bodyParams(bodyParams);
 
+    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
     return ewpClient.executeWithLoggingExpectingSuccess(request, OmobilitiesGetResponseV1.class);
   }
 
   @Override
-  public EwpApiGeneralSpecification<?, EwpOutgoingMobilitiesApiConfiguration> getApiGeneralSpecification() {
+  public EwpApiGeneralSpecification<?, EwpOutgoingMobilitiesApiConfiguration>
+  getApiGeneralSpecification() {
     return EwpApiGeneralSpecifications.OUTGOING_MOBILITIES_V1;
   }
 }
