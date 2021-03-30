@@ -2,7 +2,6 @@ package pt.ulisboa.ewp.node.api.ewp.controller.echo;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.spy;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,10 +35,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -54,7 +49,6 @@ import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
 import org.tomitribe.auth.signatures.Verifier;
 import org.w3c.dom.Node;
-import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
@@ -64,8 +58,6 @@ import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
-@SpringBootTest(classes = {EwpNodeApplication.class,
-    EchoControllerIntegrationTest.Config.class})
 public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrationTest {
 
   private static final String[] EXPECTED_SIGNATURE_HEADERS_WITH_DATE = {
@@ -84,16 +76,6 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
   @Autowired private RegistryClient registryClient;
 
   @Autowired private KeyStoreService keyStoreService;
-
-  @Configuration
-  static class Config {
-
-    @Bean
-    @Primary
-    public RegistryClient getRegistryClient() {
-      return spy(RegistryClient.class);
-    }
-  }
 
   @Test
   public void testEchoPutAnonymous() throws Exception {

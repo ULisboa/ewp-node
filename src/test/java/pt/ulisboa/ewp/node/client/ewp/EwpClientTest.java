@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import eu.erasmuswithoutpaper.api.discovery.v5.ManifestV5;
 import eu.erasmuswithoutpaper.api.echo.v2.ResponseV2;
@@ -17,15 +16,10 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import pt.ulisboa.ewp.node.AbstractTest;
-import pt.ulisboa.ewp.node.EwpNodeApplication;
+import pt.ulisboa.ewp.node.AbstractIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
@@ -37,28 +31,19 @@ import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
-@SpringBootTest(
-    classes = {EwpNodeApplication.class, EwpClientTest.Config.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class EwpClientTest extends AbstractTest {
+public class EwpClientTest extends AbstractIntegrationTest {
 
-  @LocalServerPort private int serverPort;
+  @LocalServerPort
+  private int serverPort;
 
-  @Autowired private EwpClient ewpClient;
+  @Autowired
+  private EwpClient ewpClient;
 
-  @Autowired private RegistryClient registryClient;
+  @Autowired
+  private RegistryClient registryClient;
 
-  @Autowired private KeyStoreService keyStoreService;
-
-  @Configuration
-  static class Config {
-
-    @Bean
-    @Primary
-    public RegistryClient getRegistryClient() {
-      return spy(RegistryClient.class);
-    }
-  }
+  @Autowired
+  private KeyStoreService keyStoreService;
 
   @Test
   public void testGetDevRegistryCatalogue() throws AbstractEwpClientErrorException {
@@ -88,13 +73,15 @@ public class EwpClientTest extends AbstractTest {
   public void testGetOwnEchoResourceWithoutAuthentication() throws AbstractEwpClientErrorException {
     HttpParams params = new HttpParams();
     params.param(EwpApiParamConstants.ECHO, "abc");
-    assertThrows(EwpClientProcessorException.class, () -> {
-      ewpClient.executeWithLoggingExpectingSuccess(
-          new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
-              .queryParams(params)
-              .authenticationMethod(EwpAuthenticationMethod.ANONYMOUS),
-          ResponseV2.class);
-    });
+    assertThrows(
+        EwpClientProcessorException.class,
+        () -> {
+          ewpClient.executeWithLoggingExpectingSuccess(
+              new EwpRequest(HttpMethod.GET, "http://localhost:" + serverPort + "/api/ewp/echo")
+                  .queryParams(params)
+                  .authenticationMethod(EwpAuthenticationMethod.ANONYMOUS),
+              ResponseV2.class);
+        });
   }
 
   @Test

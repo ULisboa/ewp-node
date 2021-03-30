@@ -1,7 +1,6 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.ounits;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2;
@@ -18,13 +17,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.OrganizationalUnitsHostProvider;
-import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -33,11 +27,6 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
-@SpringBootTest(
-    classes = {
-        EwpNodeApplication.class,
-        EwpApiOrganizationalUnitsControllerIntegrationTest.Config.class
-    })
 public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
     AbstractEwpControllerIntegrationTest {
 
@@ -46,22 +35,6 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
 
   @Autowired
   private RegistryClient registryClient;
-
-  @Configuration
-  static class Config {
-
-    @Bean
-    @Primary
-    public HostPluginManager getHostPluginManager() {
-      return mock(HostPluginManager.class);
-    }
-
-    @Bean
-    @Primary
-    public RegistryClient getRegistryClient() {
-      return mock(RegistryClient.class);
-    }
-  }
 
   @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})

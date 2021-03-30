@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -43,7 +42,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
-import pt.ulisboa.ewp.node.EwpNodeApplication;
 import pt.ulisboa.ewp.node.api.AbstractResourceIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestFilter;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
@@ -54,9 +52,6 @@ import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
-@SpringBootTest(
-    classes = {EwpNodeApplication.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractEwpControllerIntegrationTest extends AbstractResourceIntegrationTest {
 
   @Autowired
@@ -81,23 +76,27 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
 
   protected void assertBadRequest(
       RegistryClient registryClient,
-      HttpMethod method, String uri, HttpParams params,
+      HttpMethod method,
+      String uri,
+      HttpParams params,
       String errorMessage)
       throws Exception {
-    assertErrorRequest(registryClient, method, uri, params, HttpStatus.BAD_REQUEST,
-        errorMessage);
+    assertErrorRequest(registryClient, method, uri, params, HttpStatus.BAD_REQUEST, errorMessage);
   }
 
   protected void assertErrorRequest(
       RegistryClient registryClient,
-      HttpMethod method, String uri, HttpParams params,
+      HttpMethod method,
+      String uri,
+      HttpParams params,
       HttpStatus expectedHttpStatus,
       String errorMessage)
       throws Exception {
-    MvcResult mvcResult = executeRequest(registryClient, method, uri, params)
-        .andExpect(status().is(expectedHttpStatus.value()))
-        .andExpect(xpath("/error-response/developer-message").string(errorMessage))
-        .andReturn();
+    MvcResult mvcResult =
+        executeRequest(registryClient, method, uri, params)
+            .andExpect(status().is(expectedHttpStatus.value()))
+            .andExpect(xpath("/error-response/developer-message").string(errorMessage))
+            .andReturn();
 
     validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/common-types.xsd");
   }
@@ -106,8 +105,7 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
       RegistryClient registryClient, HttpMethod method, String uri, HttpParams params)
       throws Exception {
     MockHttpServletRequestBuilder requestBuilder =
-        MockMvcRequestBuilders.request(method, uri)
-            .with(httpParamsProcessor(params));
+        MockMvcRequestBuilders.request(method, uri).with(httpParamsProcessor(params));
 
     return executeRequest(registryClient, requestBuilder);
   }
@@ -155,7 +153,8 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
           request.setContentType(MediaType.APPLICATION_FORM_URLENCODED.toString());
           break;
       }
-      params.asMap()
+      params
+          .asMap()
           .forEach((key, value) -> request.addParameter(key, value.toArray(new String[0])));
       return request;
     };
