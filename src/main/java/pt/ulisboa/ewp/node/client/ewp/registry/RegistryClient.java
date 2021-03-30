@@ -48,13 +48,13 @@ public class RegistryClient extends ClientImpl {
 
   public Collection<String> getHeisCoveredByCertificate(X509Certificate certificate) {
     if (certificate != null && isCertificateKnown(certificate)) {
-      return getHeisCoveredByCertificate(certificate);
+      return super.getHeisCoveredByCertificate(certificate);
     }
     return new ArrayList<>();
   }
 
   public RSAPublicKey findClientRsaPublicKey(String fingerprint) {
-    RSAPublicKey rsaPublicKey = findRsaPublicKey(fingerprint);
+    RSAPublicKey rsaPublicKey = super.findRsaPublicKey(fingerprint);
     return rsaPublicKey != null && isClientKeyKnown(rsaPublicKey) ? rsaPublicKey : null;
   }
 
