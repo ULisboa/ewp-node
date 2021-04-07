@@ -9,8 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.web.util.OnCommittedResponseWrapper;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-import org.springframework.web.util.WebUtils;
-import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
+import pt.ulisboa.ewp.node.service.security.ewp.signer.response.ResponseAuthenticationSigner;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
 
 /**
@@ -19,10 +18,11 @@ import pt.ulisboa.ewp.node.utils.LoggerUtils;
  */
 public class EwpApiResponseSignerFilter extends OncePerRequestFilter {
 
-  private HttpSignatureService httpSignatureService;
+  private final ResponseAuthenticationSigner signer;
 
-  public EwpApiResponseSignerFilter(HttpSignatureService httpSignatureService) {
-    this.httpSignatureService = httpSignatureService;
+  public EwpApiResponseSignerFilter(
+      ResponseAuthenticationSigner signer) {
+    this.signer = signer;
   }
 
   @Override
@@ -31,7 +31,7 @@ public class EwpApiResponseSignerFilter extends OncePerRequestFilter {
       throws IOException, ServletException {
 
     EwpOnCommitedResponseWrapper ewpOnCommitedResponseWrapper =
-        new EwpOnCommitedResponseWrapper(httpSignatureService, request, response);
+        new EwpOnCommitedResponseWrapper(signer, request, response);
 
     try {
       chain.doFilter(request, ewpOnCommitedResponseWrapper);
@@ -42,16 +42,18 @@ public class EwpApiResponseSignerFilter extends OncePerRequestFilter {
 
   private static class EwpOnCommitedResponseWrapper extends OnCommittedResponseWrapper {
 
-    private HttpSignatureService httpSignatureService;
-    private HttpServletRequest request;
+    private final ResponseAuthenticationSigner signer;
+    private final HttpServletRequest request;
 
-    /** @param response the response to be wrapped */
+    /**
+     * @param response the response to be wrapped
+     */
     public EwpOnCommitedResponseWrapper(
-        HttpSignatureService httpSignatureService,
+        ResponseAuthenticationSigner signer,
         HttpServletRequest request,
         HttpServletResponse response) {
       super(new ContentCachingResponseWrapper(response));
-      this.httpSignatureService = httpSignatureService;
+      this.signer = signer;
       this.request = request;
     }
 
@@ -70,11 +72,7 @@ public class EwpApiResponseSignerFilter extends OncePerRequestFilter {
         return;
       }
 
-      byte[] bodyBytes = getResponseData(response);
-
-      if (httpSignatureService.clientWantsSignedResponse(request)) {
-        httpSignatureService.signResponse(request, response, bodyBytes);
-      }
+      signer.sign(request, response);
 
       try {
         ((ContentCachingResponseWrapper) getResponse()).copyBodyToResponse();
@@ -84,18 +82,6 @@ public class EwpApiResponseSignerFilter extends OncePerRequestFilter {
                 + e.getMessage(),
             EwpApiResponseSignerFilter.class.getCanonicalName());
       }
-    }
-
-    private static byte[] getResponseData(HttpServletResponse response) {
-      ContentCachingResponseWrapper wrapper =
-          WebUtils.getNativeResponse(response, ContentCachingResponseWrapper.class);
-      if (wrapper != null) {
-        byte[] bodyBytes = wrapper.getContentAsByteArray();
-        if (bodyBytes.length > 0) {
-          return bodyBytes;
-        }
-      }
-      return new byte[0];
     }
   }
 }

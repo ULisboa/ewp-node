@@ -23,7 +23,7 @@ import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiResponseSignerFilter;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
-import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
+import pt.ulisboa.ewp.node.service.security.ewp.signer.response.ResponseAuthenticationSigner;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.request.AbstractRequestAuthenticationMethodVerifier;
 
 @Configuration
@@ -34,7 +34,7 @@ public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
   private Collection<AbstractRequestAuthenticationMethodVerifier> requestAuthenticationMethodVerifiers;
 
   @Autowired
-  private HttpSignatureService httpSignatureService;
+  private ResponseAuthenticationSigner responseSigner;
 
   @Autowired
   private SecurityProperties securityProperties;
@@ -65,7 +65,7 @@ public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
         .authenticationEntryPoint(new UnauthorizedAuthenticationEntryPoint());
 
     http.addFilterBefore(
-        new EwpApiResponseSignerFilter(httpSignatureService), HeaderWriterFilter.class);
+        new EwpApiResponseSignerFilter(responseSigner), HeaderWriterFilter.class);
 
     http.addFilterBefore(
         new EwpApiPreAuthenticationFilter(jaxb2Marshaller), BasicAuthenticationFilter.class);

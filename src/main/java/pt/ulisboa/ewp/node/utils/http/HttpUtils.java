@@ -16,7 +16,8 @@ import org.springframework.web.util.UriUtils;
 
 public class HttpUtils {
 
-  private HttpUtils() {}
+  private HttpUtils() {
+  }
 
   public static ExtendedHttpHeaders toExtendedHttpHeaders(MultivaluedMap<String, Object> headers) {
     ExtendedHttpHeaders result = new ExtendedHttpHeaders();
@@ -94,5 +95,13 @@ public class HttpUtils {
     }
 
     return UriUtils.encodeQuery(sb.toString(), "UTF-8");
+  }
+
+  public static void setHeaders(HttpServletResponse response, HttpHeaders headers) {
+    headers.forEach(
+        (headerName, headerValues) ->
+            response.addHeader(
+                headerName,
+                String.join(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN, headerValues)));
   }
 }
