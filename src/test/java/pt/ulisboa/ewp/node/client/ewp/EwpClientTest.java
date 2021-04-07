@@ -99,6 +99,9 @@ public class EwpClientTest extends AbstractIntegrationTest {
     doReturn(decodedCertificateAndKey.getRsaPublicKey())
         .when(registryClient)
         .findRsaPublicKey(decodedCertificateAndKey.getPublicKeyFingerprint());
+    doReturn(Collections.emptyList())
+        .when(registryClient)
+        .getHeisCoveredByClientKey(ArgumentMatchers.any());
 
     String testEchoValue = "abc";
     HttpParams params = new HttpParams();

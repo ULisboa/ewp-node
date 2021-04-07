@@ -1,18 +1,14 @@
 package pt.ulisboa.ewp.node.service.security.ewp;
 
 import java.io.IOException;
-import java.net.URI;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -116,70 +112,6 @@ public class HttpSignatureService {
     } catch (IOException | NoSuchAlgorithmException e) {
       LOGGER.error("Can't sign response", e);
     }
-  }
-
-  public void signRequest(
-      String method,
-      URI uri,
-      String formData,
-      String requestId,
-      BiConsumer<String, List<String>> headerSetter) {
-    try {
-      final HttpHeaders headers = new HttpHeaders();
-
-      headers.set(HttpConstants.HEADER_WANT_DIGEST, SHA_256);
-
-      headers.set(HttpConstants.HEADER_ACCEPT_SIGNATURE, Algorithm.RSA_SHA256.getPortableName());
-
-      headers.set(HttpConstants.HEADER_X_REQUEST_ID, requestId);
-
-      headers.set(
-          HttpConstants.HEADER_ORIGINAL_DATE,
-          DateUtils.toStringAsGMT(new Date(), DATETIME_WITH_TIMEZONE_FORMAT));
-
-      byte[] bodyBytes = formData.getBytes();
-      byte[] digest = MessageDigest.getInstance(SHA_256).digest(bodyBytes);
-      String digestHeader = SHA_256 + "=" + new String(Base64.encodeBase64(digest));
-      headers.set(HttpConstants.HEADER_DIGEST, digestHeader);
-
-      List<String> requiredSignatureHeaderNames = new ArrayList<>();
-      requiredSignatureHeaderNames.add(HEADER_REQUEST_TARGET);
-      requiredSignatureHeaderNames.add(HttpHeaders.HOST);
-      headers.forEach(
-          (key, value) -> {
-            requiredSignatureHeaderNames.add(key);
-            headerSetter.accept(key, value);
-          });
-
-      String signatureValue =
-          generateSignatureValue(requiredSignatureHeaderNames, method, uri, headers);
-      headerSetter.accept(HttpHeaders.AUTHORIZATION, Collections.singletonList(signatureValue));
-    } catch (IOException | NoSuchAlgorithmException e) {
-      LOGGER.error("Can't sign request", e);
-    }
-  }
-
-  private String generateSignatureValue(
-      List<String> requiredSignatureHeaderNames, String method, URI requestUri, HttpHeaders headers)
-      throws IOException {
-    DecodedCertificateAndKey decodedCertificateAndKey =
-        keyStoreService.getDecodedCertificateAndKeyFromStorage();
-    Signature signature =
-        new Signature(
-            decodedCertificateAndKey.getPublicKeyFingerprint(),
-            Algorithm.RSA_SHA256,
-            null,
-            requiredSignatureHeaderNames);
-    Key key = decodedCertificateAndKey.getPrivateKey();
-
-    Signer signer = new Signer(key, signature);
-    String queryParams = requestUri.getRawQuery() == null ? "" : "?" + requestUri.getRawQuery();
-    Map<String, String> headersMapWithHostHeader = HttpUtils.toHeadersMap(headers);
-    headersMapWithHostHeader.put(HttpHeaders.HOST, HttpUtils.getHostHeaderValue(requestUri));
-    Signature signed =
-        signer.sign(method, requestUri.getPath() + queryParams, headersMapWithHostHeader);
-
-    return signed.toString();
   }
 
 }

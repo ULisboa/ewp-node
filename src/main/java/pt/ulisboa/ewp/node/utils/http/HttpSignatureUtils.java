@@ -4,7 +4,9 @@ import static pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService.DATE
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
@@ -13,7 +15,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -21,26 +25,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Base64;
 import org.tomitribe.auth.signatures.MissingRequiredHeaderException;
 import org.tomitribe.auth.signatures.Signature;
+import org.tomitribe.auth.signatures.Signer;
 import org.tomitribe.auth.signatures.Verifier;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiAuthenticateMethodResponse;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
+import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
+import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
 public class HttpSignatureUtils {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(HttpSignatureUtils.class);
 
-  private static final String DATETIME_WITH_TIMEZONE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
-
   private static final String MESSAGE_NO_SUCH_ALGORITHM = "No such algorithm";
   private static final String MESSAGE_MISSING_REQUIRED_HEADER = "Missing required header";
 
-  private static final String SHA_256 = "SHA-256";
-
+  public static final String DATETIME_WITH_TIMEZONE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
   public static final String HEADER_REQUEST_TARGET = "(request-target)";
+  public static final String SHA_256 = "SHA-256";
 
   private HttpSignatureUtils() {
   }
@@ -217,6 +223,30 @@ public class HttpSignatureUtils {
     }
 
     return Optional.empty();
+  }
+
+  public static String generateSignatureValue(
+      KeyStoreService keyStoreService, List<String> requiredSignatureHeaderNames, String method,
+      URI requestUri, HttpHeaders headers)
+      throws IOException {
+    DecodedCertificateAndKey decodedCertificateAndKey =
+        keyStoreService.getDecodedCertificateAndKeyFromStorage();
+    Signature signature =
+        new Signature(
+            decodedCertificateAndKey.getPublicKeyFingerprint(),
+            Algorithm.RSA_SHA256,
+            null,
+            requiredSignatureHeaderNames);
+    Key key = decodedCertificateAndKey.getPrivateKey();
+
+    Signer signer = new Signer(key, signature);
+    String queryParams = requestUri.getRawQuery() == null ? "" : "?" + requestUri.getRawQuery();
+    Map<String, String> headersMapWithHostHeader = HttpUtils.toHeadersMap(headers);
+    headersMapWithHostHeader.put(HttpHeaders.HOST, HttpUtils.getHostHeaderValue(requestUri));
+    Signature signed =
+        signer.sign(method, requestUri.getPath() + queryParams, headersMapWithHostHeader);
+
+    return signed.toString();
   }
 
 }

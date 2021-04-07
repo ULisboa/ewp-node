@@ -22,7 +22,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
@@ -39,14 +39,13 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpErrorResponseOpe
 import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpInternalErrorOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.error.EwpInvalidResponseOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.exception.XmlCannotUnmarshallToTypeException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpClientAuthenticationFailedException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpServerAuthenticationFailedException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpServerException;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
-import pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService;
+import pt.ulisboa.ewp.node.service.security.ewp.signer.request.RequestAuthenticationSigner;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.response.ResponseAuthenticationVerifier;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
@@ -58,15 +57,22 @@ import pt.ulisboa.ewp.node.utils.keystore.KeyStoreUtil;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class EwpClient {
 
-  @Autowired private Logger log;
+  private static final Logger LOGGER = LoggerFactory.getLogger(EwpClient.class);
 
-  @Autowired private KeyStoreService keystoreService;
+  private final KeyStoreService keystoreService;
+  private final RequestAuthenticationSigner requestSigner;
+  private final ResponseAuthenticationVerifier responseVerifier;
+  private final EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
-  @Autowired private HttpSignatureService httpSignatureService;
-
-  @Autowired private ResponseAuthenticationVerifier responseAuthenticationVerifier;
-
-  @Autowired private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
+  public EwpClient(KeyStoreService keystoreService,
+      RequestAuthenticationSigner requestSigner,
+      ResponseAuthenticationVerifier responseVerifier,
+      EwpHttpCommunicationLogService ewpHttpCommunicationLogService) {
+    this.keystoreService = keystoreService;
+    this.requestSigner = requestSigner;
+    this.responseVerifier = responseVerifier;
+    this.ewpHttpCommunicationLogService = ewpHttpCommunicationLogService;
+  }
 
   /**
    * Sends a request to the target API, resolving its response, returning it only upon success. If a
@@ -121,19 +127,20 @@ public class EwpClient {
     try {
       Client client = getClient();
 
+      requestSigner.sign(request);
+
       WebTarget target = client.target(request.getUrl());
       target.property("http.autoredirect", true);
 
-      signRequest(request, target);
       Invocation invocation = buildRequest(request, target);
 
-      log.info("Sending EWP request to: {}", request.getUrl());
+      LOGGER.info("Sending EWP request to: {}", request.getUrl());
 
       Response response = invocation.invoke();
       ewpResponse = toEwpResponse(response);
 
       responseAuthenticationResult =
-          responseAuthenticationVerifier.verifyAgainstMethod(request, ewpResponse);
+          responseVerifier.verifyAgainstMethod(request, ewpResponse);
       if (!responseAuthenticationResult.isValid()) {
         throw new EwpServerAuthenticationFailedException(
             request, ewpResponse, responseAuthenticationResult);
@@ -147,11 +154,11 @@ public class EwpClient {
         | UnrecoverableKeyException
         | KeyStoreException
         | NoSuchProviderException e) {
-      log.error("Failed to initialize EWP client", e);
+      LOGGER.error("Failed to initialize EWP client", e);
       return new EwpInternalErrorOperationResult.Builder().request(request).exception(e).build();
 
     } catch (EwpServerAuthenticationFailedException | XmlCannotUnmarshallToTypeException e) {
-      log.error("Invalid server's response", e);
+      LOGGER.error("Invalid server's response", e);
       return new EwpInvalidResponseOperationResult.Builder(e)
           .request(request)
           .response(ewpResponse)
@@ -159,7 +166,7 @@ public class EwpClient {
           .build();
 
     } catch (Exception e) {
-      log.error("Failed to execute request", e);
+      LOGGER.error("Failed to execute request", e);
       return new EwpInternalErrorOperationResult.Builder()
           .request(request)
           .response(ewpResponse)
@@ -304,17 +311,6 @@ public class EwpClient {
     String formData = HttpUtils.serializeFormData(request.getBodyParams().asMap());
     Entity<String> entity = Entity.entity(formData, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
     return requestBuilder.buildPost(entity);
-  }
-
-  private void signRequest(EwpRequest request, WebTarget target) {
-    if (request.getAuthenticationMethod().equals(EwpAuthenticationMethod.HTTP_SIGNATURE)) {
-      httpSignatureService.signRequest(
-          request.getMethod().name(),
-          target.getUri(),
-          HttpUtils.serializeFormData(request.getBodyParams().asMap()),
-          request.getId(),
-          request::header);
-    }
   }
 
   private static SSLContext createSecurityContext(
