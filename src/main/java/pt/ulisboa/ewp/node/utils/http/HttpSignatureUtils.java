@@ -69,7 +69,11 @@ public class HttpSignatureUtils {
 
   public static VerificationResult verifyDigest(
       ExtendedHttpHeaders headers, byte[] bodyBytes) {
-    return verifyDigestAgainstAlgorithm(headers, SHA_256, bodyBytes);
+    if (headers.containsKey(HttpConstants.HEADER_DIGEST)) {
+      return verifyDigestValues(headers.getDigestValues(), bodyBytes);
+    } else {
+      return VerificationResult.createFailure("Digest header missing");
+    }
   }
 
   public static boolean verifyHost(HttpServletRequest request, HttpHeaders headers) {
@@ -135,24 +139,39 @@ public class HttpSignatureUtils {
     return false;
   }
 
-  private static VerificationResult verifyDigestAgainstAlgorithm(
-      ExtendedHttpHeaders headers, String algorithm, byte[] bodyBytes) {
+  private static VerificationResult verifyDigestValues(
+      Map<String, String> digestValues, byte[] bodyBytes) {
 
-    if (!headers.containsKey(HttpConstants.HEADER_DIGEST)) {
-      return VerificationResult.createFailure("Digest header missing");
+    if (digestValues.containsKey(SHA_256)) {
+      return verifyDigestAgainstAlgorithm(SHA_256, digestValues.get(SHA_256), bodyBytes);
     }
+
+    for (Map.Entry<String, String> entry : digestValues.entrySet()) {
+      String algorithm = entry.getKey();
+      String requestDigestValue = entry.getValue();
+      VerificationResult digestVerificationResult = verifyDigestAgainstAlgorithm(algorithm,
+          requestDigestValue, bodyBytes);
+      if (digestVerificationResult.isSuccess()) {
+        return digestVerificationResult;
+      }
+    }
+
+    return VerificationResult.createFailure("No valid digest value found");
+  }
+
+  private static VerificationResult verifyDigestAgainstAlgorithm(
+      String algorithm, String digestValue, byte[] bodyBytes) {
 
     byte[] digest;
     try {
       digest = MessageDigest.getInstance(algorithm).digest(bodyBytes);
     } catch (NoSuchAlgorithmException e) {
       LOGGER.error("No such algorithm", e);
-      return VerificationResult.createFailure("No such algorithm");
+      return VerificationResult.createFailure("No such algorithm: " + algorithm);
     }
     String digestValueCalculated = new String(Base64.encodeBase64(digest));
 
-    String requestDigestValue = headers.getDigestValue(algorithm);
-    if (!digestValueCalculated.equals(requestDigestValue)) {
+    if (!digestValueCalculated.equals(digestValue)) {
       return VerificationResult.createFailure(
           "Digest mismatch! calculated for algorithm "
               + algorithm
@@ -161,14 +180,15 @@ public class HttpSignatureUtils {
               + "): "
               + digestValueCalculated
               + ", provided: "
-              + requestDigestValue);
+              + digestValue);
     }
 
     return VerificationResult.createSuccess();
   }
 
   public static String generateSignatureValue(
-      KeyStoreService keyStoreService, List<String> requiredSignatureHeaderNames, String method,
+      KeyStoreService keyStoreService, List<String> requiredSignatureHeaderNames, String
+      method,
       URI requestUri, HttpHeaders headers)
       throws IOException {
     DecodedCertificateAndKey decodedCertificateAndKey =
