@@ -4,56 +4,43 @@ import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import org.springframework.web.util.UriUtils;
 
 public class HttpParams implements Serializable {
 
   private final Map<String, List<String>> params = new HashMap<>();
 
+  public List<String> getValue(String key) {
+    return params.getOrDefault(key, Collections.emptyList());
+  }
+
   public HttpParams param(String key, String value) {
-    this.addParamValue(key, value);
+    this.addParamValue(key, value, Function.identity());
     return this;
   }
 
   public HttpParams param(String key, TemporalAccessor value) {
-    if (value != null) {
-      this.addParamValue(key, DateTimeFormatter.ISO_DATE_TIME.format(value));
-    }
+    this.addParamValue(key, value, v -> DateTimeFormatter.ISO_DATE_TIME.format(value));
+    return this;
+  }
+
+  public HttpParams param(String key, Iterable<String> values) {
+    this.addParamValues(key, values, Function.identity());
     return this;
   }
 
   public HttpParams param(String key, Object value) {
-    if (value != null) {
-      this.addParamValue(key, value.toString());
-    }
-    return this;
-  }
-
-  public HttpParams param(String key, Collection<String> values) {
-    this.addParamValues(key, values);
+    this.addParamValue(key, value, Object::toString);
     return this;
   }
 
   public Map<String, List<String>> asMap() {
     return this.params;
-  }
-
-  private void addParamValue(String key, String value) {
-    this.params.computeIfAbsent(key, k -> new ArrayList<>());
-    if (value != null) {
-      this.params.get(key).add(value);
-    }
-  }
-
-  private void addParamValues(String key, Collection<String> values) {
-    this.params.computeIfAbsent(key, k -> new ArrayList<>());
-    if (values != null) {
-      this.params.get(key).addAll(values);
-    }
   }
 
   @Override
@@ -74,5 +61,19 @@ public class HttpParams implements Serializable {
     }
 
     return UriUtils.encodeQuery(sb.toString(), "UTF-8");
+  }
+
+  private <T> void addParamValues(String key, Iterable<T> values,
+      Function<T, String> valueToStringConverter) {
+    if (values != null) {
+      values.forEach(value -> this.addParamValue(key, value, valueToStringConverter));
+    }
+  }
+
+  private <T> void addParamValue(String key, T value, Function<T, String> valueToStringConverter) {
+    if (value != null) {
+      this.params.computeIfAbsent(key, k -> new ArrayList<>());
+      this.params.get(key).add(valueToStringConverter.apply(value));
+    }
   }
 }
