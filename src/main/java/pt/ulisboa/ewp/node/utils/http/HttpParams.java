@@ -45,22 +45,15 @@ public class HttpParams implements Serializable {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder();
+    List<String> fragments = new ArrayList<>();
 
     for (Map.Entry<String, List<String>> entry : params.entrySet()) {
       for (String value : entry.getValue()) {
-        if (sb.length() > 0) {
-          sb.append('&');
-        }
-        sb.append(entry.getKey());
-        if (value != null) {
-          sb.append('=');
-          sb.append(value);
-        }
+        fragments.add(entry.getKey() + "=" + value);
       }
     }
 
-    return UriUtils.encodeQuery(sb.toString(), "UTF-8");
+    return UriUtils.encodeQuery(String.join("&", fragments), "UTF-8");
   }
 
   private <T> void addParamValues(String key, Iterable<T> values,
