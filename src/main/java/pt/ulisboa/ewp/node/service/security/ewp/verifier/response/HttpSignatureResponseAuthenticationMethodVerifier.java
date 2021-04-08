@@ -1,12 +1,10 @@
 package pt.ulisboa.ewp.node.service.security.ewp.verifier.response;
 
 import java.security.interfaces.RSAPublicKey;
-import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Signature;
-import pt.ulisboa.ewp.node.api.ewp.security.EwpApiAuthenticateMethodResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
@@ -15,6 +13,7 @@ import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.HttpSignatureAuthenticationResult;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpSignatureUtils;
+import pt.ulisboa.ewp.node.utils.http.HttpSignatureUtils.VerificationResult;
 
 @Service
 public class HttpSignatureResponseAuthenticationMethodVerifier
@@ -56,12 +55,12 @@ public class HttpSignatureResponseAuthenticationMethodVerifier
           "Only signature algorithm rsa-sha256 is supported.");
     }
 
-    Optional<EwpApiAuthenticateMethodResponse> authenticateMethodResponse =
+    VerificationResult requiredSignedHeadersVerificationResult =
         HttpSignatureUtils.checkRequiredSignedHeaders(
             signature, "date|original-date", "digest", "x-request-id", "x-request-signature");
-    if (authenticateMethodResponse.isPresent()) {
+    if (requiredSignedHeadersVerificationResult.isFailure()) {
       return HttpSignatureAuthenticationResult.createInvalid(
-          authenticateMethodResponse.get().getErrorMessage());
+          requiredSignedHeadersVerificationResult.getMessage());
     }
 
     if (!HttpSignatureUtils.verifyDate(response.getHeaders())) {
@@ -76,20 +75,20 @@ public class HttpSignatureResponseAuthenticationMethodVerifier
           "Key not found for fingerprint: " + fingerprint);
     }
 
-    Optional<EwpApiAuthenticateMethodResponse> signatureMethodResponse =
+    VerificationResult signatureVerificationResult =
         HttpSignatureUtils
             .verifySignature(request.getMethod().name(), request.getUrlWithoutQueryParams(),
                 response.getHeaders(), signature, publicKey);
-    if (signatureMethodResponse.isPresent()) {
+    if (signatureVerificationResult.isFailure()) {
       return HttpSignatureAuthenticationResult.createInvalid(
-          signatureMethodResponse.get().getErrorMessage());
+          signatureVerificationResult.getMessage());
     }
 
-    Optional<EwpApiAuthenticateMethodResponse> digestMethodResponse =
+    VerificationResult digestVerificationResult =
         HttpSignatureUtils.verifyDigest(response.getHeaders(), response.getRawBody().getBytes());
-    if (digestMethodResponse.isPresent()) {
+    if (digestVerificationResult.isFailure()) {
       return HttpSignatureAuthenticationResult.createInvalid(
-          digestMethodResponse.get().getErrorMessage());
+          digestVerificationResult.getMessage());
     }
 
     return HttpSignatureAuthenticationResult.createValid();

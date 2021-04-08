@@ -19,30 +19,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Base64;
 import org.tomitribe.auth.signatures.MissingRequiredHeaderException;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
 import org.tomitribe.auth.signatures.Verifier;
-import pt.ulisboa.ewp.node.api.ewp.security.EwpApiAuthenticateMethodResponse;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
 public class HttpSignatureUtils {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(HttpSignatureUtils.class);
-
-  private static final String MESSAGE_NO_SUCH_ALGORITHM = "No such algorithm";
-  private static final String MESSAGE_MISSING_REQUIRED_HEADER = "Missing required header";
 
   public static final String DATETIME_WITH_TIMEZONE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
   public static final String HEADER_REQUEST_TARGET = "(request-target)";
@@ -51,25 +44,17 @@ public class HttpSignatureUtils {
   private HttpSignatureUtils() {
   }
 
-  public static Optional<EwpApiAuthenticateMethodResponse> checkRequiredSignedHeaders(
-      Signature signature, String... headers) {
-    return Arrays.stream(headers)
-        .map(
-            header -> {
-              if (Arrays.stream(header.split("\\|"))
-                  .noneMatch((String h) -> signature.getHeaders().contains(h))) {
-                return EwpApiAuthenticateMethodResponse.failureBuilder(
-                    EwpAuthenticationMethod.HTTP_SIGNATURE,
-                    "Missing required signed header '" + header + "'")
-                    .withRequiredMethodInfoFulfilled(false)
-                    .withResponseCode(HttpStatus.BAD_REQUEST)
-                    .build();
-              } else {
-                return null;
-              }
-            })
-        .filter(Objects::nonNull)
-        .findFirst();
+  public static VerificationResult checkRequiredSignedHeaders(
+      Signature signature, String... requiredHeaderNames) {
+    for (String requiredHeaderName : requiredHeaderNames) {
+      if (Arrays.stream(requiredHeaderName.split("\\|"))
+          .noneMatch((String h) -> signature.getHeaders().contains(h))) {
+        return VerificationResult
+            .createFailure("Missing required signed header '" + requiredHeaderName + "'");
+      }
+    }
+
+    return VerificationResult.createSuccess();
   }
 
   public static boolean verifyDate(HttpHeaders headers) {
@@ -82,18 +67,9 @@ public class HttpSignatureUtils {
         || isDateWithinTimeThreshold(headers.getFirst(HttpConstants.HEADER_ORIGINAL_DATE));
   }
 
-  public static Optional<EwpApiAuthenticateMethodResponse> verifyDigest(
+  public static VerificationResult verifyDigest(
       ExtendedHttpHeaders headers, byte[] bodyBytes) {
-    if (headers.containsKey(HttpConstants.HEADER_DIGEST)) {
-      return verifyDigestAgainstAlgorithm(headers, SHA_256, bodyBytes);
-    } else {
-      // DOUBT: Digest header is required or not?
-      return Optional.of(
-          EwpApiAuthenticateMethodResponse.failureBuilder(
-              EwpAuthenticationMethod.HTTP_SIGNATURE, "Digest header is missing")
-              .withResponseCode(HttpStatus.BAD_REQUEST)
-              .build());
-    }
+    return verifyDigestAgainstAlgorithm(headers, SHA_256, bodyBytes);
   }
 
   public static boolean verifyHost(HttpServletRequest request, HttpHeaders headers) {
@@ -109,7 +85,7 @@ public class HttpSignatureUtils {
     }
   }
 
-  public static Optional<EwpApiAuthenticateMethodResponse> verifySignature(
+  public static VerificationResult verifySignature(
       String method,
       String requestUri,
       HttpHeaders headers,
@@ -121,44 +97,13 @@ public class HttpSignatureUtils {
       boolean valid =
           verifier.verify(method.toLowerCase(), requestUri, HttpUtils.toHeadersMap(headers));
       if (!valid) {
-        return Optional.of(
-            EwpApiAuthenticateMethodResponse.failureBuilder(
-                EwpAuthenticationMethod.HTTP_SIGNATURE, "Signature verification failed")
-                .withResponseCode(HttpStatus.BAD_REQUEST)
-                .build());
+        return VerificationResult.createFailure("Signature verification failed");
       }
-    } catch (NoSuchAlgorithmException e) {
-      LOGGER.warn(String.format("%s: %s", MESSAGE_NO_SUCH_ALGORITHM, e.getMessage()));
-      return Optional.of(
-          EwpApiAuthenticateMethodResponse.failureBuilder(
-              EwpAuthenticationMethod.HTTP_SIGNATURE, MESSAGE_NO_SUCH_ALGORITHM)
-              .withResponseCode(HttpStatus.BAD_REQUEST)
-              .build());
-    } catch (MissingRequiredHeaderException e) {
-      LOGGER.warn(String.format("%s: %s", MESSAGE_MISSING_REQUIRED_HEADER, e.getMessage()));
-      return Optional.of(
-          EwpApiAuthenticateMethodResponse.failureBuilder(
-              EwpAuthenticationMethod.HTTP_SIGNATURE,
-              MESSAGE_MISSING_REQUIRED_HEADER + ": " + e.getMessage())
-              .withResponseCode(HttpStatus.BAD_REQUEST)
-              .build());
-    } catch (IOException e) {
-      LOGGER.warn(String.format("Error reading: %s", e.getMessage()));
-      return Optional.of(
-          EwpApiAuthenticateMethodResponse.failureBuilder(
-              EwpAuthenticationMethod.HTTP_SIGNATURE, e.getMessage())
-              .withResponseCode(HttpStatus.BAD_REQUEST)
-              .build());
-    } catch (SignatureException e) {
-      LOGGER.warn(String.format("Signature error: %s", e.getMessage()));
-      return Optional.of(
-          EwpApiAuthenticateMethodResponse.failureBuilder(
-              EwpAuthenticationMethod.HTTP_SIGNATURE, e.getMessage())
-              .withResponseCode(HttpStatus.BAD_REQUEST)
-              .build());
+    } catch (MissingRequiredHeaderException | IOException | NoSuchAlgorithmException | SignatureException e) {
+      return VerificationResult.createFailure("Signature verification error: " + e.getMessage());
     }
 
-    return Optional.empty();
+    return VerificationResult.createSuccess();
   }
 
   public static boolean verifyXRequestId(HttpHeaders headers) {
@@ -190,39 +135,36 @@ public class HttpSignatureUtils {
     return false;
   }
 
-  private static Optional<EwpApiAuthenticateMethodResponse> verifyDigestAgainstAlgorithm(
+  private static VerificationResult verifyDigestAgainstAlgorithm(
       ExtendedHttpHeaders headers, String algorithm, byte[] bodyBytes) {
+
+    if (!headers.containsKey(HttpConstants.HEADER_DIGEST)) {
+      return VerificationResult.createFailure("Digest header missing");
+    }
+
     byte[] digest;
     try {
       digest = MessageDigest.getInstance(algorithm).digest(bodyBytes);
     } catch (NoSuchAlgorithmException e) {
-      LOGGER.error(MESSAGE_NO_SUCH_ALGORITHM, e);
-      return Optional.of(
-          EwpApiAuthenticateMethodResponse.failureBuilder(
-              EwpAuthenticationMethod.HTTP_SIGNATURE, MESSAGE_NO_SUCH_ALGORITHM)
-              .withResponseCode(HttpStatus.BAD_REQUEST)
-              .build());
+      LOGGER.error("No such algorithm", e);
+      return VerificationResult.createFailure("No such algorithm");
     }
     String digestValueCalculated = new String(Base64.encodeBase64(digest));
 
     String requestDigestValue = headers.getDigestValue(algorithm);
     if (!digestValueCalculated.equals(requestDigestValue)) {
-      return Optional.of(
-          EwpApiAuthenticateMethodResponse.failureBuilder(
-              EwpAuthenticationMethod.HTTP_SIGNATURE,
-              "Digest mismatch! calculated for algorithm "
-                  + algorithm
-                  + " (body length: "
-                  + bodyBytes.length
-                  + "): "
-                  + digestValueCalculated
-                  + ", provided: "
-                  + requestDigestValue)
-              .withResponseCode(HttpStatus.BAD_REQUEST)
-              .build());
+      return VerificationResult.createFailure(
+          "Digest mismatch! calculated for algorithm "
+              + algorithm
+              + " (body length: "
+              + bodyBytes.length
+              + "): "
+              + digestValueCalculated
+              + ", provided: "
+              + requestDigestValue);
     }
 
-    return Optional.empty();
+    return VerificationResult.createSuccess();
   }
 
   public static String generateSignatureValue(
@@ -247,6 +189,37 @@ public class HttpSignatureUtils {
         signer.sign(method, requestUri.getPath() + queryParams, headersMapWithHostHeader);
 
     return signed.toString();
+  }
+
+  public static class VerificationResult {
+
+    private final boolean success;
+    private final String message;
+
+    protected VerificationResult(boolean success, String message) {
+      this.success = success;
+      this.message = message;
+    }
+
+    public boolean isSuccess() {
+      return success;
+    }
+
+    public boolean isFailure() {
+      return !success;
+    }
+
+    public String getMessage() {
+      return message;
+    }
+
+    public static VerificationResult createSuccess() {
+      return new VerificationResult(true, null);
+    }
+
+    public static VerificationResult createFailure(String message) {
+      return new VerificationResult(false, message);
+    }
   }
 
 }

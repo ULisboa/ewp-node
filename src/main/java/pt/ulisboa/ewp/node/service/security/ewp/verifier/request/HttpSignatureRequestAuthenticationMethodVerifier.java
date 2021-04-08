@@ -1,7 +1,6 @@
 package pt.ulisboa.ewp.node.service.security.ewp.verifier.request;
 
 import java.security.interfaces.RSAPublicKey;
-import java.util.Optional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,6 +12,7 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
 import pt.ulisboa.ewp.node.utils.http.HttpSignatureUtils;
+import pt.ulisboa.ewp.node.utils.http.HttpSignatureUtils.VerificationResult;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
 @Service
@@ -53,7 +53,7 @@ public class HttpSignatureRequestAuthenticationMethodVerifier
           .build();
     }
 
-    Optional<EwpApiAuthenticateMethodResponse> authenticateMethodResponse =
+    VerificationResult requiredSignedHeadersVerificationResult =
         HttpSignatureUtils.checkRequiredSignedHeaders(
             signature,
             HttpSignatureUtils.HEADER_REQUEST_TARGET,
@@ -61,8 +61,13 @@ public class HttpSignatureRequestAuthenticationMethodVerifier
             "date|original-date",
             "digest",
             "x-request-id");
-    if (authenticateMethodResponse.isPresent()) {
-      return authenticateMethodResponse.get();
+    if (requiredSignedHeadersVerificationResult.isFailure()) {
+      return EwpApiAuthenticateMethodResponse.failureBuilder(
+          EwpAuthenticationMethod.HTTP_SIGNATURE,
+          requiredSignedHeadersVerificationResult.getMessage())
+          .withRequiredMethodInfoFulfilled(false)
+          .withResponseCode(HttpStatus.BAD_REQUEST)
+          .build();
     }
 
     ExtendedHttpHeaders headers = HttpUtils.toExtendedHttpHeaders(request);
@@ -101,21 +106,27 @@ public class HttpSignatureRequestAuthenticationMethodVerifier
           .build();
     }
 
-    Optional<EwpApiAuthenticateMethodResponse> signatureMethodResponse =
+    VerificationResult signatureVerificationResult =
         HttpSignatureUtils.verifySignature(
             request.getMethod(),
             HttpSignatureUtils.getRequestUriWithQueryString(request),
             headers,
             signature,
             publicKey);
-    if (signatureMethodResponse.isPresent()) {
-      return signatureMethodResponse.get();
+    if (signatureVerificationResult.isFailure()) {
+      return EwpApiAuthenticateMethodResponse.failureBuilder(
+          EwpAuthenticationMethod.HTTP_SIGNATURE, signatureVerificationResult.getMessage())
+          .withResponseCode(HttpStatus.BAD_REQUEST)
+          .build();
     }
 
-    Optional<EwpApiAuthenticateMethodResponse> digestMethodResponse =
+    VerificationResult digestVerificationResult =
         HttpSignatureUtils.verifyDigest(headers, HttpSignatureUtils.getByteArray(request));
-    if (digestMethodResponse.isPresent()) {
-      return digestMethodResponse.get();
+    if (digestVerificationResult.isFailure()) {
+      return EwpApiAuthenticateMethodResponse.failureBuilder(
+          EwpAuthenticationMethod.HTTP_SIGNATURE, digestVerificationResult.getMessage())
+          .withResponseCode(HttpStatus.BAD_REQUEST)
+          .build();
     }
 
     request.setHeadersToIncludeFilter(
