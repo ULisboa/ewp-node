@@ -2,8 +2,11 @@ package pt.ulisboa.ewp.node.client.ewp.operation.response;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.ws.rs.core.Response;
 import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
+import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
 public class EwpResponse implements Serializable {
 
@@ -36,15 +39,39 @@ public class EwpResponse implements Serializable {
   }
 
   public boolean isSuccess() {
-    return status.is2xxSuccessful();
+    return status != null && status.is2xxSuccessful();
   }
 
   public boolean isClientError() {
-    return status.is4xxClientError();
+    return status != null && status.is4xxClientError();
   }
 
   public boolean isServerError() {
-    return status.is5xxServerError();
+    return status != null && status.is5xxServerError();
+  }
+
+  public static EwpResponse create(Response response) {
+    HttpUtils.sanitizeResponse(response);
+
+    EwpResponse.Builder responseBuilder =
+        new EwpResponse.Builder(HttpStatus.resolve(response.getStatus()));
+    responseBuilder.mediaType(response.getMediaType().toString());
+
+    response
+        .getHeaders()
+        .forEach(
+            (headerName, headerValues) ->
+                responseBuilder.header(
+                    headerName,
+                    headerValues.stream().map(String::valueOf).collect(Collectors.toList())));
+
+    if (response.hasEntity()) {
+      response.bufferEntity();
+
+      responseBuilder.rawBody(response.readEntity(String.class));
+    }
+
+    return responseBuilder.build();
   }
 
   public static class Builder {

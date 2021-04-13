@@ -19,9 +19,9 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.institutions.InstitutionsReq
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.institutions.EwpInstitutionsV2Client;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
@@ -44,7 +44,7 @@ public class ForwardEwpApiInstitutionsV2Controller extends AbstractForwardEwpApi
       tags = {"Institutions"})
   public ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> institutionsGet(
       @Valid @ParameterObject @RequestParam InstitutionsRequestDto requestDto)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     return getInstitution(requestDto);
   }
 
@@ -55,13 +55,13 @@ public class ForwardEwpApiInstitutionsV2Controller extends AbstractForwardEwpApi
       summary = "EWP Institutions Forward API.",
       tags = {"Institutions"})
   public ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> institutionsPost(
-      @Valid InstitutionsRequestDto requestDto) throws AbstractEwpClientErrorException {
+      @Valid InstitutionsRequestDto requestDto) throws EwpClientErrorException {
     return getInstitution(requestDto);
   }
 
   // NOTE: currently only allows one HEI ID each time
   private ResponseEntity<ForwardEwpApiResponseWithData<InstitutionsResponseV2>> getInstitution(
-      InstitutionsRequestDto requestDto) throws AbstractEwpClientErrorException {
+      InstitutionsRequestDto requestDto) throws EwpClientErrorException {
     EwpSuccessOperationResult<InstitutionsResponseV2> institutionsResponse =
         client.find(requestDto.getHeiId());
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(institutionsResponse);

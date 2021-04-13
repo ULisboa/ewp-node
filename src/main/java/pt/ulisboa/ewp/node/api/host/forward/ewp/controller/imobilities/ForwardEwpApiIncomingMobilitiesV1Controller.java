@@ -19,9 +19,9 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.imobilities.ForwardEwpApiInc
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.imobilities.EwpIncomingMobilitiesV1Client;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
@@ -52,9 +52,9 @@ public class ForwardEwpApiIncomingMobilitiesV1Controller extends AbstractForward
       produces = MediaType.APPLICATION_XML_VALUE,
       value = "/get")
   public ResponseEntity<ForwardEwpApiResponseWithData<ImobilitiesGetResponseV1>>
-      findByReceivingHeiIdAndOmobilityIds(
-          @Valid ForwardEwpApiIncomingMobilitiesGetRequestDto requestDto)
-          throws AbstractEwpClientErrorException {
+  findByReceivingHeiIdAndOmobilityIds(
+      @Valid ForwardEwpApiIncomingMobilitiesGetRequestDto requestDto)
+      throws EwpClientErrorException {
     EwpSuccessOperationResult<ImobilitiesGetResponseV1> response =
         client.findByReceivingHeiIdAndOmobilityIds(
             requestDto.getReceivingHeiId(), requestDto.getOmobilityIds());

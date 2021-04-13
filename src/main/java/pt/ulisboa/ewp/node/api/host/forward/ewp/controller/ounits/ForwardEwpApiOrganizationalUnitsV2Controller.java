@@ -21,8 +21,8 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ounits.OrganizationalUnitsRe
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.ounits.EwpOrganizationalUnitsV2Client;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
@@ -61,7 +61,7 @@ public class ForwardEwpApiOrganizationalUnitsV2Controller extends AbstractForwar
       tags = {"Organizational Units"})
   public ResponseEntity<ForwardEwpApiResponseWithData<OunitsResponseV2>> organizationalUnitsGet(
       @Valid @ParameterObject @RequestParam OrganizationalUnitsRequestDto requestDto)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     return getOrganizationalUnits(requestDto);
   }
 
@@ -72,13 +72,13 @@ public class ForwardEwpApiOrganizationalUnitsV2Controller extends AbstractForwar
       summary = "EWP Organizational Units Forward API.",
       tags = {"Organizational Units"})
   public ResponseEntity<ForwardEwpApiResponseWithData<OunitsResponseV2>> organizationalUnitsPost(
-      @Valid OrganizationalUnitsRequestDto requestDto) throws AbstractEwpClientErrorException {
+      @Valid OrganizationalUnitsRequestDto requestDto) throws EwpClientErrorException {
     return getOrganizationalUnits(requestDto);
   }
 
   // NOTE: currently only allows to obtain by ounit IDs or ounit codes (not both simultaneously)
   private ResponseEntity<ForwardEwpApiResponseWithData<OunitsResponseV2>> getOrganizationalUnits(
-      OrganizationalUnitsRequestDto requestDto) throws AbstractEwpClientErrorException {
+      OrganizationalUnitsRequestDto requestDto) throws EwpClientErrorException {
     EwpSuccessOperationResult<OunitsResponseV2> ounitsResponse;
     if (!requestDto.getOrganizationalUnitIds().isEmpty()) {
       ounitsResponse =

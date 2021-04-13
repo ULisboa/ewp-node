@@ -10,9 +10,9 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApiConfiguration;
 import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
@@ -42,7 +42,7 @@ public class EwpInterInstitutionalAgreementsV3Client
       String partnerHeiId,
       List<String> receivingAcademicYearIds,
       ZonedDateTime modifiedSince)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpInterinstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams bodyParams = new HttpParams();
@@ -52,12 +52,12 @@ public class EwpInterInstitutionalAgreementsV3Client
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
     EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(), bodyParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, IiasIndexResponseV3.class);
+    return ewpClient.executeAndLog(request, IiasIndexResponseV3.class);
   }
 
   public EwpSuccessOperationResult<IiasGetResponseV3> findByHeiIdAndIiaIds(
       String heiId, Collection<String> iiaIds, Boolean sendPdf)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpInterinstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams bodyParams = new HttpParams();
@@ -66,12 +66,12 @@ public class EwpInterInstitutionalAgreementsV3Client
     bodyParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, IiasGetResponseV3.class);
+    return ewpClient.executeAndLog(request, IiasGetResponseV3.class);
   }
 
   public EwpSuccessOperationResult<IiasGetResponseV3> findByHeiIdAndIiaCodes(
       String heiId, Collection<String> iiaCodes, Boolean sendPdf)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpInterinstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams bodyParams = new HttpParams();
@@ -80,7 +80,7 @@ public class EwpInterInstitutionalAgreementsV3Client
     bodyParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, IiasGetResponseV3.class);
+    return ewpClient.executeAndLog(request, IiasGetResponseV3.class);
   }
 
   @Override

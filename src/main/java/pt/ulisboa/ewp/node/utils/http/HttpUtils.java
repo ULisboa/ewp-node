@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.UriUtils;
 
@@ -103,5 +104,16 @@ public class HttpUtils {
             response.addHeader(
                 headerName,
                 String.join(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN, headerValues)));
+  }
+
+  public static void sanitizeResponse(Response response) {
+    // NOTE: sanitize possibly wrong XML content type header
+    // namely, some servers respond with a Content-Type like "xml;charset=ISO-8859-1" which is not
+    // considered correct for Jersey since it contains only the subtype and not the type
+    String contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
+    if (contentType.matches("[ \t]*xml[ \t]*;[ \t]*charset=.*")) {
+      String correctContentType = contentType.replace("xml", "application/xml");
+      response.getMetadata().putSingle(HttpHeaders.CONTENT_TYPE, correctContentType);
+    }
   }
 }

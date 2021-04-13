@@ -8,9 +8,9 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiCoursesApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
 import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
@@ -36,7 +36,7 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
       LocalDate loisBeforeDate,
       LocalDate loisAfterDate,
       LocalDate losAtDate)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpCourseApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams queryParams = new HttpParams();
@@ -47,7 +47,7 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
     queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponseV0.class);
+    return ewpClient.executeAndLog(request, CoursesResponseV0.class);
   }
 
   public EwpSuccessOperationResult<CoursesResponseV0> findByLosCodes(
@@ -56,7 +56,7 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
       LocalDate loisBeforeDate,
       LocalDate loisAfterDate,
       LocalDate losAtDate)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpCourseApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams queryParams = new HttpParams();
@@ -67,7 +67,7 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
     queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, CoursesResponseV0.class);
+    return ewpClient.executeAndLog(request, CoursesResponseV0.class);
   }
 
   @Override

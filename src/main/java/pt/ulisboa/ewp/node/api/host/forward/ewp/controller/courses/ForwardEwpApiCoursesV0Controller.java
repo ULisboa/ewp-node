@@ -22,8 +22,8 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCo
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.courses.EwpCoursesV0Client;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
@@ -60,7 +60,7 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
       tags = {"Courses"})
   public ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponseV0>> coursesGet(
       @Valid @ParameterObject @RequestParam CoursesRequestDto requestDto)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     return getCourses(requestDto);
   }
 
@@ -71,13 +71,13 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
       summary = "EWP Courses Forward API.",
       tags = {"Courses"})
   public ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponseV0>> coursesPost(
-      @Valid CoursesRequestDto requestDto) throws AbstractEwpClientErrorException {
+      @Valid CoursesRequestDto requestDto) throws EwpClientErrorException {
     return getCourses(requestDto);
   }
 
   // NOTE: currently only allows to obtain by LOS IDs or LOS codes (not both simultaneously)
   private ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponseV0>> getCourses(
-      CoursesRequestDto requestDto) throws AbstractEwpClientErrorException {
+      CoursesRequestDto requestDto) throws EwpClientErrorException {
     EwpSuccessOperationResult<CoursesResponseV0> coursesResponse;
     if (!requestDto.getLosIds().isEmpty()) {
       coursesResponse =

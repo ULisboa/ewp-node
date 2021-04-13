@@ -1,14 +1,13 @@
-package pt.ulisboa.ewp.node.client.ewp.operation.result.success;
+package pt.ulisboa.ewp.node.client.ewp.operation.result;
 
 import java.io.Serializable;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.AbstractEwpOperationResult;
 
-public class EwpSuccessOperationResult<T extends Serializable> extends AbstractEwpOperationResult {
+public class EwpSuccessOperationResult<T extends Serializable> extends EwpOperationResult {
 
   private final T responseBody;
 
   protected EwpSuccessOperationResult(Builder<T> builder) {
-    super(EwpOperationResultType.SUCCESS, builder);
+    super(builder);
     this.responseBody = builder.responseBody;
   }
 
@@ -16,13 +15,8 @@ public class EwpSuccessOperationResult<T extends Serializable> extends AbstractE
     return responseBody;
   }
 
-  @Override
-  public String getSummary() {
-    return "Success";
-  }
-
   public static class Builder<T extends Serializable>
-      extends AbstractEwpOperationResult.Builder<Builder<T>> {
+      extends EwpOperationResult.Builder<Builder<T>> {
 
     private T responseBody;
 

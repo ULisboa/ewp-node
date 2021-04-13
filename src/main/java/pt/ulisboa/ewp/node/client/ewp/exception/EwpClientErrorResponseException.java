@@ -1,34 +1,27 @@
 package pt.ulisboa.ewp.node.client.ewp.exception;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
+import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringV1;
+import java.util.stream.Collectors;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
 
-public class EwpClientErrorResponseException extends AbstractEwpClientErrorException {
+/**
+ * Target API returned an error response (see {@see eu.erasmuswithoutpaper.api.architecture.ErrorResponse}).
+ */
+public class EwpClientErrorResponseException extends EwpClientErrorException {
 
-  private final EwpRequest request;
-  private final EwpResponse response;
   private final EwpAuthenticationResult responseAuthenticationResult;
   private final ErrorResponseV1 errorResponse;
 
   public EwpClientErrorResponseException(
-      EwpRequest request,
-      EwpResponse response,
+      EwpRequest request, EwpResponse response,
       EwpAuthenticationResult responseAuthenticationResult,
       ErrorResponseV1 errorResponse) {
-    this.request = request;
-    this.response = response;
+    super(request, response);
     this.responseAuthenticationResult = responseAuthenticationResult;
     this.errorResponse = errorResponse;
-  }
-
-  public EwpRequest getRequest() {
-    return request;
-  }
-
-  public EwpResponse getResponse() {
-    return response;
   }
 
   public EwpAuthenticationResult getResponseAuthenticationResult() {
@@ -41,6 +34,23 @@ public class EwpClientErrorResponseException extends AbstractEwpClientErrorExcep
 
   @Override
   public String getMessage() {
-    return "Error response obtained: " + response.getRawBody();
+    StringBuilder result = new StringBuilder();
+    result.append("Error response obtained: ");
+    if (getErrorResponse() != null) {
+      if (!getErrorResponse().getUserMessage().isEmpty()) {
+        result.append(
+            getErrorResponse().getUserMessage().stream().map(MultilineStringV1::getValue).collect(
+                Collectors.joining(" | ")));
+      } else {
+        result.append("N/A");
+      }
+
+      if (getErrorResponse().getDeveloperMessage() != null) {
+        result.append(" [developer message: ");
+        result.append(getErrorResponse().getDeveloperMessage().getValue());
+        result.append("]");
+      }
+    }
+    return result.toString();
   }
 }

@@ -4,10 +4,11 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
 
-public class EwpClientInvalidResponseException extends AbstractEwpClientErrorException {
+/**
+ * Target API returned an invalid response.
+ */
+public class EwpClientInvalidResponseException extends EwpClientErrorException {
 
-  private final EwpRequest request;
-  private final EwpResponse response;
   private final EwpAuthenticationResult responseAuthenticationResult;
   private final Exception exception;
 
@@ -16,18 +17,9 @@ public class EwpClientInvalidResponseException extends AbstractEwpClientErrorExc
       EwpResponse response,
       EwpAuthenticationResult responseAuthenticationResult,
       Exception exception) {
-    this.request = request;
-    this.response = response;
+    super(request, response);
     this.responseAuthenticationResult = responseAuthenticationResult;
     this.exception = exception;
-  }
-
-  public EwpRequest getRequest() {
-    return request;
-  }
-
-  public EwpResponse getResponse() {
-    return response;
   }
 
   public EwpAuthenticationResult getResponseAuthenticationResult() {
@@ -40,6 +32,6 @@ public class EwpClientInvalidResponseException extends AbstractEwpClientErrorExc
 
   @Override
   public String getMessage() {
-    return "Invalid server response: " + exception.getMessage();
+    return "Server returned an invalid response: " + exception.getMessage();
   }
 }

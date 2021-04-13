@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
 import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
@@ -23,14 +23,14 @@ public class EwpInstitutionsV2Client extends EwpApiClient<EwpInstitutionApiConfi
   }
 
   public EwpSuccessOperationResult<InstitutionsResponseV2> find(String heiId)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpInstitutionApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, InstitutionsResponseV2.class);
+    return ewpClient.executeAndLog(request, InstitutionsResponseV2.class);
   }
 
   @Override

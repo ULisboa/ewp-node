@@ -3,9 +3,9 @@ package pt.ulisboa.ewp.node.plugin.proxy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-import pt.ulisboa.ewp.node.AbstractTest;
+import pt.ulisboa.ewp.node.AbstractIntegrationTest;
 
-public class DefaultPluginPropertiesProxyTest extends AbstractTest {
+public class DefaultPluginPropertiesProxyTest extends AbstractIntegrationTest {
 
   @Test
   public void testGetValidPropertyAsString() {

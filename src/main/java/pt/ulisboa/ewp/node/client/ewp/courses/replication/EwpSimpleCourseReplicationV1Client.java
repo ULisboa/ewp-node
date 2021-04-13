@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
 import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
@@ -24,7 +24,7 @@ public class EwpSimpleCourseReplicationV1Client
   }
 
   public EwpSuccessOperationResult<CourseReplicationResponseV1> findAllCourses(
-      String heiId, ZonedDateTime modifiedSince) throws AbstractEwpClientErrorException {
+      String heiId, ZonedDateTime modifiedSince) throws EwpClientErrorException {
     EwpSimpleCourseReplicationApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams queryParams = new HttpParams();
@@ -32,7 +32,7 @@ public class EwpSimpleCourseReplicationV1Client
     queryParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, CourseReplicationResponseV1.class);
+    return ewpClient.executeAndLog(request, CourseReplicationResponseV1.class);
   }
 
   @Override

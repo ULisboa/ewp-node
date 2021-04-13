@@ -10,9 +10,9 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilitiesApiConfiguration;
 import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
@@ -39,7 +39,7 @@ public class EwpOutgoingMobilitiesV1Client
       List<String> receivingHeiIds,
       String receivingAcademicYearId,
       ZonedDateTime modifiedSince)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpOutgoingMobilitiesApiConfiguration api = getApiConfigurationForHeiId(sendingHeiId);
 
     HttpParams bodyParams = new HttpParams();
@@ -49,11 +49,11 @@ public class EwpOutgoingMobilitiesV1Client
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, OmobilitiesIndexResponseV1.class);
+    return ewpClient.executeAndLog(request, OmobilitiesIndexResponseV1.class);
   }
 
   public EwpSuccessOperationResult<OmobilitiesGetResponseV1> findBySendingHeiIdAndOmobilityIds(
-      String sendingHeiId, Collection<String> omobilityIds) throws AbstractEwpClientErrorException {
+      String sendingHeiId, Collection<String> omobilityIds) throws EwpClientErrorException {
     EwpOutgoingMobilitiesApiConfiguration api = getApiConfigurationForHeiId(sendingHeiId);
 
     HttpParams bodyParams = new HttpParams();
@@ -61,7 +61,7 @@ public class EwpOutgoingMobilitiesV1Client
     bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, omobilityIds);
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, OmobilitiesGetResponseV1.class);
+    return ewpClient.executeAndLog(request, OmobilitiesGetResponseV1.class);
   }
 
   @Override

@@ -7,9 +7,9 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
 import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
@@ -34,7 +34,7 @@ public class EwpOrganizationalUnitsV2Client
 
   public EwpSuccessOperationResult<OunitsResponseV2> findByOunitIds(
       String heiId, Collection<String> organizationalUnitIds)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpOrganizationalUnitApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams queryParams = new HttpParams();
@@ -42,12 +42,12 @@ public class EwpOrganizationalUnitsV2Client
     queryParams.param(EwpApiParamConstants.OUNIT_ID, organizationalUnitIds);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, OunitsResponseV2.class);
+    return ewpClient.executeAndLog(request, OunitsResponseV2.class);
   }
 
   public EwpSuccessOperationResult<OunitsResponseV2> findByOunitCodes(
       String heiId, Collection<String> organizationalUnitCodes)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpOrganizationalUnitApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams queryParams = new HttpParams();
@@ -55,7 +55,7 @@ public class EwpOrganizationalUnitsV2Client
     queryParams.param(EwpApiParamConstants.OUNIT_CODE, organizationalUnitCodes);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, OunitsResponseV2.class);
+    return ewpClient.executeAndLog(request, OunitsResponseV2.class);
   }
 
   @Override

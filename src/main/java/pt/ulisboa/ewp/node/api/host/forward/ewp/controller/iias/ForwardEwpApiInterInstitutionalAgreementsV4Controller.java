@@ -22,9 +22,9 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.InterInstitutionalAgree
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.iias.EwpInterInstitutionalAgreementsV4Client;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
@@ -58,7 +58,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV4Controller
       value = "/index")
   public ResponseEntity<ForwardEwpApiResponseWithData<IiasIndexResponseV4>> findAllByHeiId(
       @Valid InterInstitutionalAgreementsIndexRequestDto requestDto)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpSuccessOperationResult<IiasIndexResponseV4> response =
         client.findAllByHeiIds(
             requestDto.getHeiId(),
@@ -74,7 +74,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV4Controller
       value = "/get")
   public ResponseEntity<ForwardEwpApiResponseWithData<IiasGetResponseV4>> findByHeiIdAndIiaIds(
       @Valid InterInstitutionalAgreementsGetRequestDto requestDto)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpSuccessOperationResult<IiasGetResponseV4> response;
     List<String> iiaIds = requestDto.getIiaIds();
     List<String> iiaCodes = requestDto.getIiaCodes();

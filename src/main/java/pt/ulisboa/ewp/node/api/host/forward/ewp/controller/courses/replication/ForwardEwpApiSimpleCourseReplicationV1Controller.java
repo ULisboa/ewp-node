@@ -20,8 +20,8 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCo
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.courses.replication.EwpSimpleCourseReplicationV1Client;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
@@ -44,9 +44,9 @@ public class ForwardEwpApiSimpleCourseReplicationV1Controller
       summary = "EWP Simple Course Replication Forward API.",
       tags = {"Simple Course Replication"})
   public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponseV1>>
-      simpleCourseReplicationGet(
-          @Valid @ParameterObject @RequestParam SimpleCourseReplicationRequestDto requestDto)
-          throws AbstractEwpClientErrorException {
+  simpleCourseReplicationGet(
+      @Valid @ParameterObject @RequestParam SimpleCourseReplicationRequestDto requestDto)
+      throws EwpClientErrorException {
     return getCourses(requestDto);
   }
 
@@ -57,13 +57,13 @@ public class ForwardEwpApiSimpleCourseReplicationV1Controller
       summary = "EWP Simple Course Replication Forward API.",
       tags = {"Simple Course Replication"})
   public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponseV1>>
-      simpleCourseReplicationPost(@Valid SimpleCourseReplicationRequestDto requestDto)
-          throws AbstractEwpClientErrorException {
+  simpleCourseReplicationPost(@Valid SimpleCourseReplicationRequestDto requestDto)
+      throws EwpClientErrorException {
     return getCourses(requestDto);
   }
 
   private ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponseV1>> getCourses(
-      SimpleCourseReplicationRequestDto requestDto) throws AbstractEwpClientErrorException {
+      SimpleCourseReplicationRequestDto requestDto) throws EwpClientErrorException {
     EwpSuccessOperationResult<CourseReplicationResponseV1> courseReplicationResponse =
         client.findAllCourses(requestDto.getHeiId(), requestDto.getModifiedSince());
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(courseReplicationResponse);

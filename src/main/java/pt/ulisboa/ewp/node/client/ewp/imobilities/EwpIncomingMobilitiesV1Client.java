@@ -7,9 +7,9 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.imobilities.ForwardEwpApiIncomingMobilitiesApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
-import pt.ulisboa.ewp.node.client.ewp.exception.AbstractEwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilitiesApiConfiguration;
 import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
@@ -33,7 +33,7 @@ public class EwpIncomingMobilitiesV1Client extends
 
   public EwpSuccessOperationResult<ImobilitiesGetResponseV1> findByReceivingHeiIdAndOmobilityIds(
       String receivingHeiId, Collection<String> omobilityIds)
-      throws AbstractEwpClientErrorException {
+      throws EwpClientErrorException {
     EwpIncomingMobilitiesApiConfiguration api = getApiConfigurationForHeiId(
         receivingHeiId);
 
@@ -42,7 +42,7 @@ public class EwpIncomingMobilitiesV1Client extends
     bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, omobilityIds);
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
-    return ewpClient.executeWithLoggingExpectingSuccess(request, ImobilitiesGetResponseV1.class);
+    return ewpClient.executeAndLog(request, ImobilitiesGetResponseV1.class);
   }
 
   @Override

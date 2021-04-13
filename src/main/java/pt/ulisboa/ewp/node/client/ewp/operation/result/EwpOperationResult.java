@@ -3,26 +3,18 @@ package pt.ulisboa.ewp.node.client.ewp.operation.result;
 import java.io.Serializable;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.error.AbstractErrorEwpOperationResult;
-import pt.ulisboa.ewp.node.client.ewp.operation.result.success.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
 
-public abstract class AbstractEwpOperationResult implements Serializable {
+public abstract class EwpOperationResult implements Serializable {
 
-  private final EwpOperationResultType resultType;
   private final EwpRequest request;
   private final EwpResponse response;
   private final EwpAuthenticationResult responseAuthenticationResult;
 
-  protected AbstractEwpOperationResult(EwpOperationResultType resultType, Builder<?> builder) {
-    this.resultType = resultType;
+  protected EwpOperationResult(Builder<?> builder) {
     this.request = builder.request;
     this.response = builder.response;
     this.responseAuthenticationResult = builder.responseAuthenticationResult;
-  }
-
-  public EwpOperationResultType getResultType() {
-    return resultType;
   }
 
   public EwpRequest getRequest() {
@@ -35,33 +27,6 @@ public abstract class AbstractEwpOperationResult implements Serializable {
 
   public EwpAuthenticationResult getResponseAuthenticationResult() {
     return responseAuthenticationResult;
-  }
-
-  public boolean isSuccess() {
-    return EwpOperationResultType.SUCCESS.equals(resultType);
-  }
-
-  /**
-   * Returns a summary of the operation result. This should be succinct, as it may be used for
-   * logging purposes.
-   *
-   * @return A succinct summary of the operation result.
-   */
-  public abstract String getSummary();
-
-  @SuppressWarnings("unchecked")
-  public <T extends Serializable> EwpSuccessOperationResult<T> asSuccess() {
-    assert resultType == EwpOperationResultType.SUCCESS;
-    return (EwpSuccessOperationResult<T>) this;
-  }
-
-  public boolean isError() {
-    return EwpOperationResultType.ERROR.equals(resultType);
-  }
-
-  public AbstractErrorEwpOperationResult asError() {
-    assert resultType == EwpOperationResultType.ERROR;
-    return (AbstractErrorEwpOperationResult) this;
   }
 
   public abstract static class Builder<T extends Builder<T>> {
@@ -98,10 +63,5 @@ public abstract class AbstractEwpOperationResult implements Serializable {
     }
 
     public abstract T getThis();
-  }
-
-  public enum EwpOperationResultType {
-    SUCCESS,
-    ERROR
   }
 }
