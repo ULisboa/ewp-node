@@ -55,10 +55,24 @@ class EwpClientTest extends AbstractTest {
 
   private ClientAndServer mockServer;
 
+  private KeyStoreService keyStoreService;
+  private RequestAuthenticationSigner requestSigner;
+  private ResponseAuthenticationVerifier responseVerifier;
+
+  private EwpClient client;
+
   @BeforeEach
   public void beforeEach(ClientAndServer mockServer) {
     this.mockServer = mockServer;
     this.mockServer.reset();
+
+    this.keyStoreService = mock(KeyStoreService.class);
+    this.requestSigner = mock(RequestAuthenticationSigner.class);
+    this.responseVerifier = mock(ResponseAuthenticationVerifier.class);
+    EwpHttpCommunicationLogService ewpHttpCommunicationLogService = mock(
+        EwpHttpCommunicationLogService.class);
+    this.client = new EwpClient(keyStoreService, requestSigner, responseVerifier,
+        ewpHttpCommunicationLogService, createJaxb2Marshaller());
   }
 
   @Test
@@ -66,23 +80,13 @@ class EwpClientTest extends AbstractTest {
       throws EwpClientErrorException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, OperatorCreationException, NoSuchProviderException {
 
     // Mock dependencies
-    KeyStoreService keyStoreService = mock(KeyStoreService.class);
     doReturn(KeyStoreGenerator.generate("", "1")).when(keyStoreService)
         .getDecodedKeyStoreFromStorage();
 
-    RequestAuthenticationSigner requestSigner = mock(RequestAuthenticationSigner.class);
-
-    ResponseAuthenticationVerifier responseVerifier = mock(ResponseAuthenticationVerifier.class);
     EwpAuthenticationResult authenticationResult = EwpAuthenticationResult
         .createValid(EwpAuthenticationMethod.HTTP_SIGNATURE);
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
-
-    EwpHttpCommunicationLogService ewpHttpCommunicationLogService = mock(
-        EwpHttpCommunicationLogService.class);
-
-    EwpClient client = new EwpClient(keyStoreService, requestSigner, responseVerifier,
-        ewpHttpCommunicationLogService, createJaxb2Marshaller());
 
     HttpParams requestParams = new HttpParams();
     requestParams.param("echo", "test_echo");
@@ -113,23 +117,13 @@ class EwpClientTest extends AbstractTest {
       throws EwpClientErrorException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, OperatorCreationException, NoSuchProviderException {
 
     // Mock dependencies
-    KeyStoreService keyStoreService = mock(KeyStoreService.class);
     doReturn(KeyStoreGenerator.generate("", "1")).when(keyStoreService)
         .getDecodedKeyStoreFromStorage();
 
-    RequestAuthenticationSigner requestSigner = mock(RequestAuthenticationSigner.class);
-
-    ResponseAuthenticationVerifier responseVerifier = mock(ResponseAuthenticationVerifier.class);
     EwpAuthenticationResult authenticationResult = EwpAuthenticationResult
         .createValid(EwpAuthenticationMethod.HTTP_SIGNATURE);
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
-
-    EwpHttpCommunicationLogService ewpHttpCommunicationLogService = mock(
-        EwpHttpCommunicationLogService.class);
-
-    EwpClient client = new EwpClient(keyStoreService, requestSigner, responseVerifier,
-        ewpHttpCommunicationLogService, createJaxb2Marshaller());
 
     HttpParams requestParams = new HttpParams();
     requestParams.param("echo", "test_echo");
@@ -160,23 +154,14 @@ class EwpClientTest extends AbstractTest {
       throws EwpClientErrorException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, OperatorCreationException, NoSuchProviderException {
 
     // Mock dependencies
-    KeyStoreService keyStoreService = mock(KeyStoreService.class);
     doReturn(KeyStoreGenerator.generate("", "1")).when(keyStoreService)
         .getDecodedKeyStoreFromStorage();
 
-    RequestAuthenticationSigner requestSigner = mock(RequestAuthenticationSigner.class);
-
-    ResponseAuthenticationVerifier responseVerifier = mock(ResponseAuthenticationVerifier.class);
     EwpAuthenticationResult authenticationResult = EwpAuthenticationResult
         .createInvalid(EwpAuthenticationMethod.HTTP_SIGNATURE, "test");
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    EwpHttpCommunicationLogService ewpHttpCommunicationLogService = mock(
-        EwpHttpCommunicationLogService.class);
-
-    EwpClient client = new EwpClient(keyStoreService, requestSigner, responseVerifier,
-        ewpHttpCommunicationLogService, createJaxb2Marshaller());
     EwpRequest request = new EwpRequest(HttpMethod.GET,
         "http://localhost:" + mockServer.getLocalPort() + "/test")
         .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
@@ -201,23 +186,14 @@ class EwpClientTest extends AbstractTest {
       throws EwpClientErrorException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, OperatorCreationException, NoSuchProviderException {
 
     // Mock dependencies
-    KeyStoreService keyStoreService = mock(KeyStoreService.class);
     doReturn(KeyStoreGenerator.generate("", "1")).when(keyStoreService)
         .getDecodedKeyStoreFromStorage();
 
-    RequestAuthenticationSigner requestSigner = mock(RequestAuthenticationSigner.class);
-
-    ResponseAuthenticationVerifier responseVerifier = mock(ResponseAuthenticationVerifier.class);
     EwpAuthenticationResult authenticationResult = EwpAuthenticationResult
         .createValid(EwpAuthenticationMethod.HTTP_SIGNATURE);
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    EwpHttpCommunicationLogService ewpHttpCommunicationLogService = mock(
-        EwpHttpCommunicationLogService.class);
-
-    EwpClient client = new EwpClient(keyStoreService, requestSigner, responseVerifier,
-        ewpHttpCommunicationLogService, createJaxb2Marshaller());
     EwpRequest request = new EwpRequest(HttpMethod.GET,
         "http://localhost:" + mockServer.getLocalPort() + "/test")
         .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
@@ -245,23 +221,14 @@ class EwpClientTest extends AbstractTest {
       throws EwpClientErrorException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, OperatorCreationException, NoSuchProviderException {
 
     // Mock dependencies
-    KeyStoreService keyStoreService = mock(KeyStoreService.class);
     doReturn(KeyStoreGenerator.generate("", "1")).when(keyStoreService)
         .getDecodedKeyStoreFromStorage();
 
-    RequestAuthenticationSigner requestSigner = mock(RequestAuthenticationSigner.class);
-
-    ResponseAuthenticationVerifier responseVerifier = mock(ResponseAuthenticationVerifier.class);
     EwpAuthenticationResult authenticationResult = EwpAuthenticationResult
         .createValid(EwpAuthenticationMethod.HTTP_SIGNATURE);
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    EwpHttpCommunicationLogService ewpHttpCommunicationLogService = mock(
-        EwpHttpCommunicationLogService.class);
-
-    EwpClient client = new EwpClient(keyStoreService, requestSigner, responseVerifier,
-        ewpHttpCommunicationLogService, createJaxb2Marshaller());
     EwpRequest request = new EwpRequest(HttpMethod.GET,
         "http://localhost:" + mockServer.getLocalPort() + "/test")
         .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
@@ -289,23 +256,14 @@ class EwpClientTest extends AbstractTest {
       throws EwpClientErrorException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, OperatorCreationException, NoSuchProviderException {
 
     // Mock dependencies
-    KeyStoreService keyStoreService = mock(KeyStoreService.class);
     doReturn(KeyStoreGenerator.generate("", "1")).when(keyStoreService)
         .getDecodedKeyStoreFromStorage();
 
-    RequestAuthenticationSigner requestSigner = mock(RequestAuthenticationSigner.class);
-
-    ResponseAuthenticationVerifier responseVerifier = mock(ResponseAuthenticationVerifier.class);
     EwpAuthenticationResult authenticationResult = EwpAuthenticationResult
         .createValid(EwpAuthenticationMethod.HTTP_SIGNATURE);
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    EwpHttpCommunicationLogService ewpHttpCommunicationLogService = mock(
-        EwpHttpCommunicationLogService.class);
-
-    EwpClient client = new EwpClient(keyStoreService, requestSigner, responseVerifier,
-        ewpHttpCommunicationLogService, createJaxb2Marshaller());
     EwpRequest request = new EwpRequest(HttpMethod.GET,
         "http://localhost:" + mockServer.getLocalPort() + "/test")
         .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
@@ -324,23 +282,14 @@ class EwpClientTest extends AbstractTest {
       throws EwpClientErrorException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, OperatorCreationException, NoSuchProviderException {
 
     // Mock dependencies
-    KeyStoreService keyStoreService = mock(KeyStoreService.class);
     doReturn(KeyStoreGenerator.generate("", "1")).when(keyStoreService)
         .getDecodedKeyStoreFromStorage();
 
-    RequestAuthenticationSigner requestSigner = mock(RequestAuthenticationSigner.class);
-
-    ResponseAuthenticationVerifier responseVerifier = mock(ResponseAuthenticationVerifier.class);
     EwpAuthenticationResult authenticationResult = EwpAuthenticationResult
         .createValid(EwpAuthenticationMethod.HTTP_SIGNATURE);
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    EwpHttpCommunicationLogService ewpHttpCommunicationLogService = mock(
-        EwpHttpCommunicationLogService.class);
-
-    EwpClient client = new EwpClient(keyStoreService, requestSigner, responseVerifier,
-        ewpHttpCommunicationLogService, createJaxb2Marshaller());
     EwpRequest request = new EwpRequest(HttpMethod.GET,
         "http://localhost:" + mockServer.getLocalPort() + "/test")
         .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
