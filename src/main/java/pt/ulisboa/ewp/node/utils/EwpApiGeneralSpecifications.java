@@ -3,6 +3,7 @@ package pt.ulisboa.ewp.node.utils;
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.courses.replication.v1.SimpleCourseReplicationV1;
 import eu.erasmuswithoutpaper.api.courses.v0.CoursesV0;
+import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalV1;
 import eu.erasmuswithoutpaper.api.iias.v3.IiasV3;
 import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
 import eu.erasmuswithoutpaper.api.imobilities.v1.ImobilitiesV1;
@@ -18,6 +19,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilitiesApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApiConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApprovalApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilitiesApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
@@ -71,6 +73,15 @@ public class EwpApiGeneralSpecifications {
           4,
           IiasV4.class,
           EwpInterinstitutionalAgreementApiConfiguration::create);
+
+  public static final EwpApiGeneralSpecification<
+      IiasApprovalV1, EwpInterinstitutionalAgreementApprovalApiConfiguration>
+      INTERINSTITUTIONAL_AGREEMENT_APPROVAL_V1 =
+      new EwpApiGeneralSpecification<>(
+          EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENTS_APPROVAL_NAME,
+          1,
+          IiasApprovalV1.class,
+          EwpInterinstitutionalAgreementApprovalApiConfiguration::create);
 
   public static final EwpApiGeneralSpecification<
       ImobilitiesV1, EwpIncomingMobilitiesApiConfiguration>
