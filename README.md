@@ -9,15 +9,63 @@
 
 <h4 align="center">A generic and flexible EWP node implementation.</h4>
 
-
 ## Work in Progress warning
 
-This project is still early in development. Therefore, until the first major version is released, 
+This project is still early in development. Therefore, until the first major version is released,
 non-backward changes may be introduced.
+
+## APIs Coverage
+
+### As Provider
+
+| API | Supported? | Major Versions Supported |
+| :----: | :---: | :---: |
+| Discovery Manifest | X | 5 |
+| Echo | X | 2 |
+| Institutions | X | 2 |
+| Organizational Units | X | 2 |
+| Courses |  |  |
+| Simple Course Replication |  |  |
+| Interinstitutional Agreements |  |  |
+| Interinstitutional Agreements CNR |  |  |
+| Interinstitutional Approval |  |  |
+| Interinstitutional Approval CNR |  |  |
+| Mobility Factsheet |  |  |
+| Outgoing Mobilities |  |  |
+| Outgoing Mobility Learning Agreements |  |  |
+| Outgoing Mobility CNR |  |  |
+| Outgoing Mobility Learning Agreement CNR |  |  |
+| Incoming Mobilities |  |  |
+| Incoming Mobility CNR |  |  |
+| Incoming Mobility ToR |  |  |
+| Incoming Mobility ToR CNR |  |  |
+
+### As Consumer
+
+| API | Supported? | Major Versions Supported |
+| :----: | :---: | :---: |
+| Institutions | X | 2 |
+| Organizational Units | X | 2 |
+| Courses | X | 0 |
+| Simple Course Replication | X | 1 |
+| Interinstitutional Agreements | X | 3 & 4 |
+| Interinstitutional Agreements CNR |  |  |
+| Interinstitutional Approval | X | 1 |
+| Interinstitutional Approval CNR |  |  |
+| Mobility Factsheet |  |  |
+| Outgoing Mobilities | X | 1 |
+| Outgoing Mobility Learning Agreements |  |  |
+| Outgoing Mobility CNR |  |  |
+| Outgoing Mobility Learning Agreement CNR |  |  |
+| Incoming Mobilities | X | 1 |
+| Incoming Mobility CNR |  |  |
+| Incoming Mobility ToR |  |  |
+| Incoming Mobility ToR CNR |  |  |
 
 ## Requirements
 
-To clone and run this project, you'll need [Git](https://git-scm.com) and, depending on your preference,
+To clone and run this project, you'll need [Git](https://git-scm.com) and, depending on your
+preference,
 [Maven](https://maven.apache.org/) or [Docker](https://www.docker.com/).
 
 ## Cloning the Project
