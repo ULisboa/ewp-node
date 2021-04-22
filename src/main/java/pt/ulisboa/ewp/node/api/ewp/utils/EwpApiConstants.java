@@ -13,6 +13,7 @@ public class EwpApiConstants {
   public static final String ECHO_VERSION = "2.0.1";
   public static final String INSTITUTIONS_VERSION = "2.1.0";
   public static final String ORGANIZATIONAL_UNITS_VERSION = "2.1.1";
+  public static final String COURSES_VERSION = "2.1.0";
 
   public static final int MAX_HEI_IDS = 1;
 

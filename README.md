@@ -24,7 +24,7 @@ non-backward changes may be introduced.
 | Echo | X | 2 |
 | Institutions | X | 2 |
 | Organizational Units | X | 2 |
-| Courses |  |  |
+| Courses | X | 0 |
 | Simple Course Replication |  |  |
 | Interinstitutional Agreements |  |  |
 | Interinstitutional Agreements CNR |  |  |
