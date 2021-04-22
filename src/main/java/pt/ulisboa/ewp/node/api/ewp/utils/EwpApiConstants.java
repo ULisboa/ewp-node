@@ -14,7 +14,7 @@ public class EwpApiConstants {
   public static final String INSTITUTIONS_VERSION = "2.1.0";
   public static final String ORGANIZATIONAL_UNITS_VERSION = "2.1.1";
   public static final String COURSES_VERSION = "0.7.1";
-  public static final String SIMPLE_COURSE_REPLICATION_VERSION = "1.0.0-rc9";
+  public static final String SIMPLE_COURSE_REPLICATION_VERSION = "1.0.0";
 
   public static final int MAX_HEI_IDS = 1;
 
