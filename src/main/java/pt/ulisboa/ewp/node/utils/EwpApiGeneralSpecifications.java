@@ -87,9 +87,9 @@ public class EwpApiGeneralSpecifications {
 
   public static final EwpApiGeneralSpecification<
       FactsheetV1, EwpFactsheetApiConfiguration>
-      FACTSHEET_V1 =
+      FACTSHEETS_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_FACTSHEET_NAME,
+          EwpApiConstants.API_FACTSHEETS_NAME,
           1,
           FactsheetV1.class,
           EwpFactsheetApiConfiguration::create);

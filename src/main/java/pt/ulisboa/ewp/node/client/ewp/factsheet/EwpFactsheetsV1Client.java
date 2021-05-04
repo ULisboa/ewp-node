@@ -15,10 +15,10 @@ import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecif
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpFactsheetV1Client extends
+public class EwpFactsheetsV1Client extends
     EwpApiClient<EwpFactsheetApiConfiguration> {
 
-  public EwpFactsheetV1Client(RegistryClient registryClient, EwpClient ewpClient) {
+  public EwpFactsheetsV1Client(RegistryClient registryClient, EwpClient ewpClient) {
     super(registryClient, ewpClient);
   }
 
@@ -35,6 +35,6 @@ public class EwpFactsheetV1Client extends
 
   @Override
   public EwpApiGeneralSpecification<?, EwpFactsheetApiConfiguration> getApiGeneralSpecification() {
-    return EwpApiGeneralSpecifications.FACTSHEET_V1;
+    return EwpApiGeneralSpecifications.FACTSHEETS_V1;
   }
 }

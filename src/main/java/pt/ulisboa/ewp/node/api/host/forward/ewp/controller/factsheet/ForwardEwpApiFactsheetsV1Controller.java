@@ -20,20 +20,20 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCo
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.factsheet.EwpFactsheetV1Client;
+import pt.ulisboa.ewp.node.client.ewp.factsheet.EwpFactsheetsV1Client;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
-@ForwardEwpApi(apiLocalName = EwpApiConstants.API_INSTITUTIONS_LOCAL_NAME)
-@RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "factsheet/v1")
+@ForwardEwpApi(apiLocalName = EwpApiConstants.API_FACTSHEETS_NAME)
+@RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "factsheets/v1")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
-public class ForwardEwpApiFactsheetV1Controller extends AbstractForwardEwpApiController {
+public class ForwardEwpApiFactsheetsV1Controller extends AbstractForwardEwpApiController {
 
-  private final EwpFactsheetV1Client client;
+  private final EwpFactsheetsV1Client client;
 
-  public ForwardEwpApiFactsheetV1Controller(
-      RegistryClient registryClient, EwpFactsheetV1Client client) {
+  public ForwardEwpApiFactsheetsV1Controller(
+      RegistryClient registryClient, EwpFactsheetsV1Client client) {
     super(registryClient);
     this.client = client;
   }
