@@ -26,7 +26,7 @@ non-backward changes may be introduced.
 | Organizational Units | X | 2 |
 | Courses | X | 0 |
 | Simple Course Replication | X | 1 |
-| Interinstitutional Agreements |  |  |
+| Interinstitutional Agreements | X | 4 |
 | Interinstitutional Agreements CNR |  |  |
 | Interinstitutional Approval |  |  |
 | Interinstitutional Approval CNR |  |  |
