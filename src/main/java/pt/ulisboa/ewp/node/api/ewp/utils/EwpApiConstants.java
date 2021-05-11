@@ -2,11 +2,14 @@ package pt.ulisboa.ewp.node.api.ewp.utils;
 
 public class EwpApiConstants {
 
-  private EwpApiConstants() {}
+  private EwpApiConstants() {
+  }
 
   public static final String API_BASE_URI = "/api/ewp/";
 
-  /** Should be used only for excecional backwards compatibility. */
+  /**
+   * Should be used only for exceptional backwards compatibility.
+   */
   public static final String REST_BASE_URI = "/rest/ewp/";
 
   public static final String DISCOVERY_VERSION = "5.0.0";
@@ -16,6 +19,7 @@ public class EwpApiConstants {
   public static final String COURSES_VERSION = "0.7.1";
   public static final String SIMPLE_COURSE_REPLICATION_VERSION = "1.0.0";
   public static final String INTER_INSTITUTIONAL_AGREEMENTS_VERSION = "4.0.0";
+  public static final String INTER_INSTITUTIONAL_AGREEMENTS_APPROVAL_VERSION = "1.0.0";
 
   public static final int MAX_HEI_IDS = 1;
 
