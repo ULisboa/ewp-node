@@ -28,7 +28,7 @@ non-backward changes may be introduced.
 | Simple Course Replication | X | 1 |
 | Interinstitutional Agreements | X | 4 |
 | Interinstitutional Agreements CNR |  |  |
-| Interinstitutional Approval |  |  |
+| Interinstitutional Approval | X | 1 |
 | Interinstitutional Approval CNR |  |  |
 | Mobility Factsheet |  |  |
 | Outgoing Mobilities |  |  |
