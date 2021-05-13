@@ -20,6 +20,7 @@ public class EwpApiConstants {
   public static final String SIMPLE_COURSE_REPLICATION_VERSION = "1.0.0";
   public static final String INTER_INSTITUTIONAL_AGREEMENTS_VERSION = "4.0.0";
   public static final String INTER_INSTITUTIONAL_AGREEMENTS_APPROVAL_VERSION = "1.0.0";
+  public static final String FACT_SHEETS_VERSION = "1.0.0";
 
   public static final int MAX_HEI_IDS = 1;
 

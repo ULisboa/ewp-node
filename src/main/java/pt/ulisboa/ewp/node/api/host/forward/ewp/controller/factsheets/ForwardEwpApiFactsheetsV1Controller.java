@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.factsheet;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.factsheets;
 
 import eu.erasmuswithoutpaper.api.factsheet.v1.FactsheetResponseV1;
 import io.swagger.v3.oas.annotations.Operation;
