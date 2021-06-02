@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.SimpleCourseReplicationHostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.replication.SimpleCourseReplicationV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -19,12 +19,14 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
 @EwpApi
-@RequestMapping(EwpApiConstants.API_BASE_URI + "courses/replication")
-public class EwpApiSimpleCourseReplicationController {
+@RequestMapping(EwpApiConstants.API_BASE_URI + EwpApiSimpleCourseReplicationV1Controller.BASE_PATH)
+public class EwpApiSimpleCourseReplicationV1Controller {
+
+  public static final String BASE_PATH = "courses/replication/v1";
 
   private final HostPluginManager hostPluginManager;
 
-  public EwpApiSimpleCourseReplicationController(HostPluginManager hostPluginManager) {
+  public EwpApiSimpleCourseReplicationV1Controller(HostPluginManager hostPluginManager) {
     this.hostPluginManager = hostPluginManager;
   }
 
@@ -47,12 +49,12 @@ public class EwpApiSimpleCourseReplicationController {
   }
 
   private ResponseEntity<CourseReplicationResponseV1> simpleCourseReplication(String heiId) {
-    Optional<SimpleCourseReplicationHostProvider> providerOptional =
-        hostPluginManager.getProvider(heiId, SimpleCourseReplicationHostProvider.class);
+    Optional<SimpleCourseReplicationV1HostProvider> providerOptional =
+        hostPluginManager.getProvider(heiId, SimpleCourseReplicationV1HostProvider.class);
     if (providerOptional.isEmpty()) {
       throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
     }
-    SimpleCourseReplicationHostProvider provider = providerOptional.get();
+    SimpleCourseReplicationV1HostProvider provider = providerOptional.get();
 
     CourseReplicationResponseV1 response = new CourseReplicationResponseV1();
     response.getLosId().addAll(provider.findAllByHeiId(heiId));

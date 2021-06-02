@@ -15,7 +15,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Collection;
-import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
-import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiManifestEntryStrategy;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.domain.entity.Hei;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
@@ -42,13 +41,17 @@ public class EwpApiDiscoveryManifestController {
   @Value("${baseContextPath}")
   private String baseContextPath;
 
-  @Autowired private Logger log;
+  @Autowired
+  private Logger log;
 
-  @Autowired private KeyStoreService keyStoreService;
+  @Autowired
+  private KeyStoreService keyStoreService;
 
-  @Autowired private HostRepository hostRepository;
+  @Autowired
+  private HostRepository hostRepository;
 
-  @Autowired Collection<EwpApiManifestEntryStrategy> manifestEntries;
+  @Autowired
+  Collection<EwpManifestEntryProvider> manifestEntryProviders;
 
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
@@ -56,7 +59,7 @@ public class EwpApiDiscoveryManifestController {
       tags = {"ewp"})
   public ResponseEntity<ManifestV5> manifest(HttpServletRequest request)
       throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
-          KeyStoreException, IOException {
+      KeyStoreException, IOException {
     ManifestV5 manifest = new ManifestV5();
 
     setHosts(request, manifest);
@@ -66,7 +69,7 @@ public class EwpApiDiscoveryManifestController {
 
   private void setHosts(HttpServletRequest request, ManifestV5 manifest)
       throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
-          KeyStoreException, IOException {
+      KeyStoreException, IOException {
     DecodedCertificateAndKey decodedCertificateAndKeyFromStorage =
         keyStoreService.getDecodedCertificateAndKeyFromStorage();
 
@@ -103,13 +106,11 @@ public class EwpApiDiscoveryManifestController {
 
   private ApisImplementedV1 getApisImplemented(HttpServletRequest originalRequest, String heiId) {
     ApisImplementedV1 apisImplemented = new ApisImplementedV1();
-    manifestEntries.stream()
-        .map(
-            me ->
-                me.getManifestEntry(
-                    heiId, getBaseUrl(originalRequest, me instanceof EwpApiDiscoveryManifestEntry)))
-        .filter(Optional::isPresent)
-        .forEach(me -> apisImplemented.getAny().add(me.get()));
+    for (EwpManifestEntryProvider manifestEntryProvider : manifestEntryProviders) {
+      String baseUrl = getBaseUrl(originalRequest,
+          manifestEntryProvider instanceof EwpApiDiscoveryManifestEntryProvider);
+      apisImplemented.getAny().addAll(manifestEntryProvider.getManifestEntries(heiId, baseUrl));
+    }
     return apisImplemented;
   }
 
@@ -175,10 +176,10 @@ public class EwpApiDiscoveryManifestController {
       URL requestUrl = new URL(request.getRequestURL().toString());
       String completeBaseUri = baseContextPath + getBaseApiUri(request, supportRestBaseUri);
       return new URL(
-              "https://"
-                  + requestUrl.getHost()
-                  + (requestUrl.getPort() == -1 ? "" : ":" + requestUrl.getPort())
-                  + completeBaseUri)
+          "https://"
+              + requestUrl.getHost()
+              + (requestUrl.getPort() == -1 ? "" : ":" + requestUrl.getPort())
+              + completeBaseUri)
           .toString();
     } catch (MalformedURLException e) {
       log.error("Failed to get base URL", e);

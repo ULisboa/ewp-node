@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.InterInstitutionalAgreementsHostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV4HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -27,12 +27,15 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
 @EwpApi
-@RequestMapping(EwpApiConstants.API_BASE_URI + "iias")
-public class EwpApiInterInstitutionalAgreementsController {
+@RequestMapping(
+    EwpApiConstants.API_BASE_URI + EwpApiInterInstitutionalAgreementsV4Controller.BASE_PATH)
+public class EwpApiInterInstitutionalAgreementsV4Controller {
+
+  public static final String BASE_PATH = "iias/v4";
 
   private final HostPluginManager hostPluginManager;
 
-  public EwpApiInterInstitutionalAgreementsController(HostPluginManager hostPluginManager) {
+  public EwpApiInterInstitutionalAgreementsV4Controller(HostPluginManager hostPluginManager) {
     this.hostPluginManager = hostPluginManager;
   }
 
@@ -107,12 +110,7 @@ public class EwpApiInterInstitutionalAgreementsController {
     iiaIds = iiaIds != null ? iiaIds : Collections.emptyList();
     iiaCodes = iiaCodes != null ? iiaCodes : Collections.emptyList();
 
-    Optional<InterInstitutionalAgreementsHostProvider> providerOptional =
-        hostPluginManager.getProvider(heiId, InterInstitutionalAgreementsHostProvider.class);
-    if (providerOptional.isEmpty()) {
-      throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
-    }
-    InterInstitutionalAgreementsHostProvider provider = providerOptional.get();
+    InterInstitutionalAgreementsV4HostProvider provider = getHostProvider(heiId);
 
     if (!iiaIds.isEmpty() && !iiaCodes.isEmpty()) {
       throw new EwpBadRequestException(
@@ -132,7 +130,7 @@ public class EwpApiInterInstitutionalAgreementsController {
   }
 
   private ResponseEntity<IiasGetResponseV4> iiasByIds(
-      InterInstitutionalAgreementsHostProvider provider, String heiId, List<String> iiaIds,
+      InterInstitutionalAgreementsV4HostProvider provider, String heiId, List<String> iiaIds,
       Boolean sendPdf) {
     if (iiaIds.size() > provider.getMaxIiaIdsPerRequest()) {
       throw new EwpBadRequestException(
@@ -147,7 +145,7 @@ public class EwpApiInterInstitutionalAgreementsController {
   }
 
   private ResponseEntity<IiasGetResponseV4> iiasByCodes(
-      InterInstitutionalAgreementsHostProvider provider, String heiId, List<String> iiaCodes,
+      InterInstitutionalAgreementsV4HostProvider provider, String heiId, List<String> iiaCodes,
       Boolean sendPdf) {
     if (iiaCodes.size() > provider.getMaxIiaCodesPerRequest()) {
       throw new EwpBadRequestException(
@@ -161,9 +159,9 @@ public class EwpApiInterInstitutionalAgreementsController {
     return ResponseEntity.ok(response);
   }
 
-  private InterInstitutionalAgreementsHostProvider getHostProvider(String heiId) {
-    Optional<InterInstitutionalAgreementsHostProvider> providerOptional =
-        hostPluginManager.getProvider(heiId, InterInstitutionalAgreementsHostProvider.class);
+  private InterInstitutionalAgreementsV4HostProvider getHostProvider(String heiId) {
+    Optional<InterInstitutionalAgreementsV4HostProvider> providerOptional =
+        hostPluginManager.getProvider(heiId, InterInstitutionalAgreementsV4HostProvider.class);
     if (providerOptional.isEmpty()) {
       throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
     }

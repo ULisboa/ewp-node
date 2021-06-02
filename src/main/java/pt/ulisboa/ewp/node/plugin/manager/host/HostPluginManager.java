@@ -78,6 +78,14 @@ public class HostPluginManager extends DefaultPluginManager {
     return extensions.stream().findFirst();
   }
 
+  public Collection<HostProvider> getProviders(String heiId) {
+    if (!heiIdToPluginMap.containsKey(heiId)) {
+      return Collections.emptyList();
+    }
+    HostPlugin plugin = heiIdToPluginMap.get(heiId);
+    return getExtensions(plugin, HostProvider.class);
+  }
+
   public <T> Collection<T> getProviders(String heiId, Class<T> providerClassType) {
     if (!heiIdToPluginMap.containsKey(heiId)) {
       return Collections.emptyList();

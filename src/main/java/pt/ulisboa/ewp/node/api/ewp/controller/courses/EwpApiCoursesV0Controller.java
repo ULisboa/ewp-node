@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.CoursesHostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.CoursesV0HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -25,12 +25,15 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
 @EwpApi
-@RequestMapping(EwpApiConstants.API_BASE_URI + "courses")
-public class EwpApiCoursesController {
+@RequestMapping(
+    EwpApiConstants.API_BASE_URI + EwpApiCoursesV0Controller.BASE_PATH)
+public class EwpApiCoursesV0Controller {
+
+  public static final String BASE_PATH = "courses/v0";
 
   private final HostPluginManager hostPluginManager;
 
-  public EwpApiCoursesController(HostPluginManager hostPluginManager) {
+  public EwpApiCoursesV0Controller(HostPluginManager hostPluginManager) {
     this.hostPluginManager = hostPluginManager;
   }
 
@@ -83,12 +86,12 @@ public class EwpApiCoursesController {
     losIds = losIds != null ? losIds : Collections.emptyList();
     losCodes = losCodes != null ? losCodes : Collections.emptyList();
 
-    Optional<CoursesHostProvider> providerOptional =
-        hostPluginManager.getProvider(heiId, CoursesHostProvider.class);
+    Optional<CoursesV0HostProvider> providerOptional =
+        hostPluginManager.getProvider(heiId, CoursesV0HostProvider.class);
     if (providerOptional.isEmpty()) {
       throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
     }
-    CoursesHostProvider provider = providerOptional.get();
+    CoursesV0HostProvider provider = providerOptional.get();
 
     if (!losIds.isEmpty() && !losCodes.isEmpty()) {
       throw new EwpBadRequestException(
@@ -108,7 +111,7 @@ public class EwpApiCoursesController {
   }
 
   private ResponseEntity<CoursesResponseV0> coursesByIds(
-      CoursesHostProvider provider, String heiId, List<String> losIds, LocalDate loisBefore,
+      CoursesV0HostProvider provider, String heiId, List<String> losIds, LocalDate loisBefore,
       LocalDate loisAfter, LocalDate losAtDate) {
     if (losIds.size() > provider.getMaxLosIdsPerRequest()) {
       throw new EwpBadRequestException(
@@ -123,7 +126,7 @@ public class EwpApiCoursesController {
   }
 
   private ResponseEntity<CoursesResponseV0> coursesByCodes(
-      CoursesHostProvider provider, String heiId, List<String> losCodes, LocalDate loisBefore,
+      CoursesV0HostProvider provider, String heiId, List<String> losCodes, LocalDate loisBefore,
       LocalDate loisAfter, LocalDate losAtDate) {
     if (losCodes.size() > provider.getMaxLosCodesPerRequest()) {
       throw new EwpBadRequestException(

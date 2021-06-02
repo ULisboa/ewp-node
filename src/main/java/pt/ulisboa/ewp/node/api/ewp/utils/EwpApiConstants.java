@@ -14,13 +14,6 @@ public class EwpApiConstants {
 
   public static final String DISCOVERY_VERSION = "5.0.0";
   public static final String ECHO_VERSION = "2.0.1";
-  public static final String INSTITUTIONS_VERSION = "2.1.0";
-  public static final String ORGANIZATIONAL_UNITS_VERSION = "2.1.1";
-  public static final String COURSES_VERSION = "0.7.1";
-  public static final String SIMPLE_COURSE_REPLICATION_VERSION = "1.0.0";
-  public static final String INTER_INSTITUTIONAL_AGREEMENTS_VERSION = "4.0.0";
-  public static final String INTER_INSTITUTIONAL_AGREEMENTS_APPROVAL_VERSION = "1.0.0";
-  public static final String FACT_SHEETS_VERSION = "1.0.0";
 
   public static final int MAX_HEI_IDS = 1;
 

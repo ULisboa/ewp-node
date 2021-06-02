@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.OrganizationalUnitsHostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.ounits.OrganizationalUnitsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -21,12 +21,14 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
 @EwpApi
-@RequestMapping(EwpApiConstants.API_BASE_URI + "ounits")
-public class EwpApiOrganizationalUnitsController {
+@RequestMapping(EwpApiConstants.API_BASE_URI + EwpApiOrganizationalUnitsV2Controller.BASE_PATH)
+public class EwpApiOrganizationalUnitsV2Controller {
+
+  public static final String BASE_PATH = "ounits/v2";
 
   private final HostPluginManager hostPluginManager;
 
-  public EwpApiOrganizationalUnitsController(HostPluginManager hostPluginManager) {
+  public EwpApiOrganizationalUnitsV2Controller(HostPluginManager hostPluginManager) {
     this.hostPluginManager = hostPluginManager;
   }
 
@@ -62,12 +64,7 @@ public class EwpApiOrganizationalUnitsController {
 
   private ResponseEntity<OunitsResponseV2> ounits(
       String heiId, List<String> ounitIds, List<String> ounitCodes) {
-    Optional<OrganizationalUnitsHostProvider> providerOptional =
-        hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class);
-    if (providerOptional.isEmpty()) {
-      throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
-    }
-    OrganizationalUnitsHostProvider provider = providerOptional.get();
+    OrganizationalUnitsV2HostProvider provider = getHostProvider(heiId);
 
     if (!ounitIds.isEmpty() && !ounitCodes.isEmpty()) {
       throw new EwpBadRequestException(
@@ -87,7 +84,7 @@ public class EwpApiOrganizationalUnitsController {
   }
 
   private ResponseEntity<OunitsResponseV2> ounitsByIds(
-      OrganizationalUnitsHostProvider provider, String heiId, List<String> ounitIds) {
+      OrganizationalUnitsV2HostProvider provider, String heiId, List<String> ounitIds) {
     if (ounitIds.size() > provider.getMaxOunitIdsPerRequest()) {
       throw new EwpBadRequestException(
           "Maximum number of valid organizational unit IDs per request is "
@@ -100,7 +97,7 @@ public class EwpApiOrganizationalUnitsController {
   }
 
   private ResponseEntity<OunitsResponseV2> ounitsByCodes(
-      OrganizationalUnitsHostProvider provider, String heiId, List<String> ounitCodes) {
+      OrganizationalUnitsV2HostProvider provider, String heiId, List<String> ounitCodes) {
     if (ounitCodes.size() > provider.getMaxOunitCodesPerRequest()) {
       throw new EwpBadRequestException(
           "Maximum number of valid organizational unit codes per request is "
@@ -110,5 +107,14 @@ public class EwpApiOrganizationalUnitsController {
     OunitsResponseV2 response = new OunitsResponseV2();
     response.getOunit().addAll(provider.findByHeiIdAndOunitCodes(heiId, ounitCodes));
     return ResponseEntity.ok(response);
+  }
+
+  private OrganizationalUnitsV2HostProvider getHostProvider(String heiId) {
+    Optional<OrganizationalUnitsV2HostProvider> providerOptional =
+        hostPluginManager.getProvider(heiId, OrganizationalUnitsV2HostProvider.class);
+    if (providerOptional.isEmpty()) {
+      throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
+    }
+    return providerOptional.get();
   }
 }

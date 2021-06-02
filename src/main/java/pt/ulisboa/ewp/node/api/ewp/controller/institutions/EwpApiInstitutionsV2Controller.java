@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.InstitutionsHostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.institutions.InstitutionsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -22,12 +22,14 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
 @EwpApi
-@RequestMapping(EwpApiConstants.API_BASE_URI + "institutions")
-public class EwpApiInstitutionsController {
+@RequestMapping(EwpApiConstants.API_BASE_URI + EwpApiInstitutionsV2Controller.BASE_PATH)
+public class EwpApiInstitutionsV2Controller {
+
+  public static final String BASE_PATH = "institutions/v2";
 
   private final HostPluginManager hostPluginManager;
 
-  public EwpApiInstitutionsController(HostPluginManager hostPluginManager) {
+  public EwpApiInstitutionsV2Controller(HostPluginManager hostPluginManager) {
     this.hostPluginManager = hostPluginManager;
   }
 
@@ -64,8 +66,8 @@ public class EwpApiInstitutionsController {
           "Maximum number of valid HEI IDs per request is " + EwpApiConstants.MAX_HEI_IDS);
     }
 
-    Map<String, InstitutionsHostProvider> heiIdToProviderMap =
-        hostPluginManager.getProviderPerHeiId(heiIds, InstitutionsHostProvider.class);
+    Map<String, InstitutionsV2HostProvider> heiIdToProviderMap =
+        hostPluginManager.getProviderPerHeiId(heiIds, InstitutionsV2HostProvider.class);
 
     InstitutionsResponseV2 response = new InstitutionsResponseV2();
     heiIdToProviderMap.entrySet().stream()

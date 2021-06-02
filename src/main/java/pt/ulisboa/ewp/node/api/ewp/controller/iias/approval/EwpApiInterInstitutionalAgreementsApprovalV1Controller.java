@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.InterInstitutionalAgreementsApprovalHostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.approval.InterInstitutionalAgreementsApprovalV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -20,12 +20,16 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
 @EwpApi
-@RequestMapping(EwpApiConstants.API_BASE_URI + "iias/approval")
-public class EwpApiInterInstitutionalAgreementsApprovalController {
+@RequestMapping(
+    EwpApiConstants.API_BASE_URI + EwpApiInterInstitutionalAgreementsApprovalV1Controller.BASE_PATH)
+public class EwpApiInterInstitutionalAgreementsApprovalV1Controller {
+
+  public static final String BASE_PATH = "iias/approval/v1";
 
   private final HostPluginManager hostPluginManager;
 
-  public EwpApiInterInstitutionalAgreementsApprovalController(HostPluginManager hostPluginManager) {
+  public EwpApiInterInstitutionalAgreementsApprovalV1Controller(
+      HostPluginManager hostPluginManager) {
     this.hostPluginManager = hostPluginManager;
   }
 
@@ -67,10 +71,10 @@ public class EwpApiInterInstitutionalAgreementsApprovalController {
     return response;
   }
 
-  private InterInstitutionalAgreementsApprovalHostProvider getHostProvider(String heiId) {
-    Optional<InterInstitutionalAgreementsApprovalHostProvider> providerOptional =
+  private InterInstitutionalAgreementsApprovalV1HostProvider getHostProvider(String heiId) {
+    Optional<InterInstitutionalAgreementsApprovalV1HostProvider> providerOptional =
         hostPluginManager
-            .getProvider(heiId, InterInstitutionalAgreementsApprovalHostProvider.class);
+            .getProvider(heiId, InterInstitutionalAgreementsApprovalV1HostProvider.class);
     if (providerOptional.isEmpty()) {
       throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
     }

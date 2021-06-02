@@ -18,7 +18,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.OrganizationalUnitsHostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.ounits.OrganizationalUnitsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -27,7 +27,7 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
-public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
+public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
     AbstractEwpControllerIntegrationTest {
 
   @Autowired
@@ -41,12 +41,14 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
   public void testOunitRetrieval_UnknownHeiId(HttpMethod method) throws Exception {
     String unknownHeiId = "test";
 
-    Mockito.when(hostPluginManager.getProvider(unknownHeiId, OrganizationalUnitsHostProvider.class))
+    Mockito
+        .when(hostPluginManager.getProvider(unknownHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.empty());
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, unknownHeiId);
-    assertBadRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams,
+    assertBadRequest(registryClient, method,
+        EwpApiConstants.API_BASE_URI + EwpApiOrganizationalUnitsV2Controller.BASE_PATH, queryParams,
         "Unknown HEI ID: " + unknownHeiId);
   }
 
@@ -59,12 +61,13 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
     MockOrganizationalUnitsHostProvider mockProvider =
         new MockOrganizationalUnitsHostProvider(1, 1);
 
-    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class))
+    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
-    assertBadRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams,
+    assertBadRequest(registryClient, method,
+        EwpApiConstants.API_BASE_URI + EwpApiOrganizationalUnitsV2Controller.BASE_PATH, queryParams,
         "At least some organizational unit ID or code must be provided");
   }
 
@@ -78,14 +81,15 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
     MockOrganizationalUnitsHostProvider mockProvider =
         new MockOrganizationalUnitsHostProvider(1, 1);
 
-    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class))
+    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.OUNIT_ID, "a");
     queryParams.param(EwpApiParamConstants.OUNIT_CODE, "b");
-    assertBadRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams,
+    assertBadRequest(registryClient, method,
+        EwpApiConstants.API_BASE_URI + EwpApiOrganizationalUnitsV2Controller.BASE_PATH, queryParams,
         "Only organizational unit IDs or codes are accepted, not both simultaneously");
   }
 
@@ -98,14 +102,15 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
     MockOrganizationalUnitsHostProvider mockProvider =
         new MockOrganizationalUnitsHostProvider(1, 0);
 
-    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class))
+    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.OUNIT_ID, "a");
     queryParams.param(EwpApiParamConstants.OUNIT_ID, "b");
-    assertBadRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams,
+    assertBadRequest(registryClient, method,
+        EwpApiConstants.API_BASE_URI + EwpApiOrganizationalUnitsV2Controller.BASE_PATH, queryParams,
         "Maximum number of valid organizational unit IDs per request is "
             + mockProvider.maxOunitIdsPerRequest);
   }
@@ -119,14 +124,15 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
     MockOrganizationalUnitsHostProvider mockProvider =
         new MockOrganizationalUnitsHostProvider(0, 1);
 
-    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsHostProvider.class))
+    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.OUNIT_CODE, "a");
     queryParams.param(EwpApiParamConstants.OUNIT_CODE, "b");
-    assertBadRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams,
+    assertBadRequest(registryClient, method,
+        EwpApiConstants.API_BASE_URI + EwpApiOrganizationalUnitsV2Controller.BASE_PATH, queryParams,
         "Maximum number of valid organizational unit codes per request is "
             + mockProvider.maxOunitCodesPerRequest);
   }
@@ -148,7 +154,7 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
     ounit2.setOunitId(validOunitIds.get(1));
     mockProvider.register(validHeiId, ounit2);
 
-    Mockito.when(hostPluginManager.getProvider(validHeiId, OrganizationalUnitsHostProvider.class))
+    Mockito.when(hostPluginManager.getProvider(validHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     HttpParams queryParams = new HttpParams();
@@ -156,7 +162,9 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
     validOunitIds.forEach(ounitId -> queryParams.param(EwpApiParamConstants.OUNIT_ID, ounitId));
 
     String responseXml =
-        executeRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams)
+        executeRequest(registryClient, method,
+            EwpApiConstants.API_BASE_URI + EwpApiOrganizationalUnitsV2Controller.BASE_PATH,
+            queryParams)
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -189,7 +197,7 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
 
     Mockito.when(
         hostPluginManager.getProvider(
-            validHeiId, OrganizationalUnitsHostProvider.class))
+            validHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     HttpParams queryParams = new HttpParams();
@@ -198,7 +206,9 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
         ounitCode -> queryParams.param(EwpApiParamConstants.OUNIT_CODE, ounitCode));
 
     String responseXml =
-        executeRequest(registryClient, method, EwpApiConstants.API_BASE_URI + "ounits", queryParams)
+        executeRequest(registryClient, method,
+            EwpApiConstants.API_BASE_URI + EwpApiOrganizationalUnitsV2Controller.BASE_PATH,
+            queryParams)
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -211,7 +221,8 @@ public class EwpApiOrganizationalUnitsControllerIntegrationTest extends
     assertThat(response.getOunit().get(1).getOunitCode()).isEqualTo(validOunitCodes.get(1));
   }
 
-  private static class MockOrganizationalUnitsHostProvider extends OrganizationalUnitsHostProvider {
+  private static class MockOrganizationalUnitsHostProvider extends
+      OrganizationalUnitsV2HostProvider {
 
     private final int maxOunitIdsPerRequest;
     private final int maxOunitCodesPerRequest;

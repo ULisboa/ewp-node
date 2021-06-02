@@ -14,8 +14,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.InstitutionsHostProvider;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.OrganizationalUnitsHostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.institutions.InstitutionsV2HostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.ounits.OrganizationalUnitsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -24,7 +24,7 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
-public class EwpApiInstitutionsControllerIntegrationTest
+public class EwpApiInstitutionsV2ControllerIntegrationTest
     extends AbstractEwpControllerIntegrationTest {
 
   @Autowired
@@ -40,7 +40,8 @@ public class EwpApiInstitutionsControllerIntegrationTest
   public void testInstitutionRetrieval_OneUnknownHeiId(HttpMethod method) throws Exception {
     String unknownHeiId = UUID.randomUUID().toString();
 
-    Mockito.when(hostPluginManager.getProvider(unknownHeiId, OrganizationalUnitsHostProvider.class))
+    Mockito
+        .when(hostPluginManager.getProvider(unknownHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.empty());
 
     HttpParams queryParams = new HttpParams();
@@ -48,7 +49,8 @@ public class EwpApiInstitutionsControllerIntegrationTest
 
     String responseXml =
         executeRequest(
-            registryClient, method, EwpApiConstants.API_BASE_URI + "institutions", queryParams)
+            registryClient, method,
+            EwpApiConstants.API_BASE_URI + EwpApiInstitutionsV2Controller.BASE_PATH, queryParams)
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -67,14 +69,14 @@ public class EwpApiInstitutionsControllerIntegrationTest
   public void testInstitutionRetrieval_OneValidHeiId(HttpMethod method) throws Exception {
     String validHeiId = UUID.randomUUID().toString();
 
-    MockInstitutionsHostProvider mockProvider = new MockInstitutionsHostProvider();
+    MockInstitutionsV2HostProvider mockProvider = new MockInstitutionsV2HostProvider();
 
     Hei hei = new Hei();
     hei.setHeiId(validHeiId);
     hei.setAbbreviation("TEST");
     mockProvider.register(hei);
 
-    Mockito.when(hostPluginManager.getProvider(validHeiId, InstitutionsHostProvider.class))
+    Mockito.when(hostPluginManager.getProvider(validHeiId, InstitutionsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     HttpParams queryParams = new HttpParams();
@@ -82,7 +84,8 @@ public class EwpApiInstitutionsControllerIntegrationTest
 
     String responseXml =
         executeRequest(
-            registryClient, method, EwpApiConstants.API_BASE_URI + "institutions", queryParams)
+            registryClient, method,
+            EwpApiConstants.API_BASE_URI + EwpApiInstitutionsV2Controller.BASE_PATH, queryParams)
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -107,12 +110,12 @@ public class EwpApiInstitutionsControllerIntegrationTest
     assertBadRequest(
         registryClient,
         method,
-        EwpApiConstants.API_BASE_URI + "institutions",
+        EwpApiConstants.API_BASE_URI + EwpApiInstitutionsV2Controller.BASE_PATH,
         queryParams,
         "Maximum number of valid HEI IDs per request is 1");
   }
 
-  private static class MockInstitutionsHostProvider extends InstitutionsHostProvider {
+  private static class MockInstitutionsV2HostProvider extends InstitutionsV2HostProvider {
 
     private final Map<String, Hei> heiIdToHeiMap = new HashMap<>();
 
