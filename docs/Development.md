@@ -1,0 +1,37 @@
+# Add support for new EWP API
+
+## As Provider
+
+1. Update the project https://github.com/ULisboa/ewp-host-plugin-skeleton:
+    1. In package pt.ulisboa.ewp.host.plugin.skeleton.provider create a new class that extends
+       HostVersionedProvider and contains abstract methods in order for EWP Node to obtain data from
+       some source, in order to return to the requester.
+        - As example, InstitutionsV2HostProvider may be used as reference.
+
+2. In package pt.ulisboa.ewp.node.api.ewp.controller create a new controller that implement the
+   endpoints that other EWP nodes will communicate to.
+    - This controller must obtain the applicable host providers by looking up on the host plugin
+      manager (HostPluginManager)
+      and calling the interface methods defined on the previous point;
+    - As example, EwpApiInstitutionsV2Controller may be used as reference.
+
+## As Consumer
+
+1. In package pt.ulisboa.ewp.node.client.ewp create a new client for the new EWP API that extends
+   EwpApiClient<*T*> where *T* is a class that extends EwpApiConfiguration that provides details for
+   that API (i.e. manifest entry details, such as URL(s), maximum number of parameters allowed,
+   etc.);
+    - As example, EwpInstitutionsV2Client may be used as reference.
+
+2. In package pt.ulisboa.ewp.node.api.host.forward.ewp.controller create a new controller that
+   extends AbstractForwardEwpApiController.
+    - This controller must use the client created on the previous step as communication to other EWP
+      nodes;
+    - As example, ForwardEwpApiInstitutionsV2Controller may be used as reference.
+
+3. Update the project https://github.com/ULisboa/forward-ewp-api-client:
+    1. In package pt.ulisboa.forward.ewp.api.client.contract create a new class that extends BaseApi
+       and provides interface methods to communicate with the new endpoints of the EWP Node for that
+       new EWP API.
+        - As example, InstitutionsV2Api may be used as reference.
+    
