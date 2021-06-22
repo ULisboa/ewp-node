@@ -80,10 +80,17 @@ public abstract class EwpManifestEntryProvider {
   // Providers are type safely registered by registerHostProviderToManifestEntryConverter()
   public <T extends HostProvider> Optional<HostProviderToManifestEntryConverter<T>> getHostProviderToManifestEntryConverter(
       Class<T> hostProviderClass) {
-    return Optional
-        .ofNullable(
-            (HostProviderToManifestEntryConverter<T>) this.hostProviderToManifestEntryConverters
-                .get(hostProviderClass));
+    Class<?> currentClass = hostProviderClass;
+    while (currentClass != null) {
+      if (this.hostProviderToManifestEntryConverters.containsKey(currentClass)) {
+        HostProviderToManifestEntryConverter<T> hostProviderToManifestEntryConverter = (HostProviderToManifestEntryConverter<T>) this.hostProviderToManifestEntryConverters
+            .get(currentClass);
+        return Optional
+            .ofNullable(hostProviderToManifestEntryConverter);
+      }
+      currentClass = currentClass.getSuperclass();
+    }
+    return Optional.empty();
   }
 
   public HttpSecurityOptions getDefaultHttpSecurityOptions() {
