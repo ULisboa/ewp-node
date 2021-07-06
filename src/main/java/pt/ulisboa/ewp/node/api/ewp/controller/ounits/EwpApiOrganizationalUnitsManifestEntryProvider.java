@@ -14,6 +14,9 @@ public class EwpApiOrganizationalUnitsManifestEntryProvider
 
   public EwpApiOrganizationalUnitsManifestEntryProvider(HostPluginManager hostPluginManager) {
     super(hostPluginManager);
+
+    super.registerHostProviderToManifestEntryConverter(OrganizationalUnitsV2HostProvider.class,
+        this::getManifestEntryForV2);
   }
 
   public ManifestApiEntryBaseV1 getManifestEntryForV2(String heiId, String baseUrl,
