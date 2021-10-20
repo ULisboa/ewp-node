@@ -39,6 +39,7 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
@@ -130,7 +131,7 @@ class EwpClientTest extends AbstractTest {
     EwpRequest request = new EwpRequest(HttpMethod.POST,
         "http://localhost:" + mockServer.getPort() + "/test")
         .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE)
-        .bodyParams(requestParams);
+        .body(new EwpRequestFormDataBody(requestParams));
 
     ResponseV2 expectedResponse = new ResponseV2();
     expectedResponse.getHeiId().add("test_heiid");

@@ -21,7 +21,6 @@ import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.utils.DateUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpSignatureUtils;
-import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
 @Service
 public class HttpSignatureRequestAuthenticationMethodSigner
@@ -57,7 +56,7 @@ public class HttpSignatureRequestAuthenticationMethodSigner
           HttpConstants.HEADER_ORIGINAL_DATE,
           DateUtils.toStringAsGMT(new Date(), HttpSignatureUtils.DATETIME_WITH_TIMEZONE_FORMAT));
 
-      String formData = HttpUtils.serializeFormData(request.getBodyParams().asMap());
+      String formData = request.getBody().serialize();
       byte[] bodyBytes = formData.getBytes();
       byte[] digest = MessageDigest.getInstance(HttpSignatureUtils.SHA_256).digest(bodyBytes);
       String digestHeader =

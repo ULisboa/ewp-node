@@ -9,6 +9,7 @@ import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApprovalApiConfiguration;
@@ -48,7 +49,8 @@ public class EwpInterInstitutionalAgreementsApprovalsV1Client
     bodyParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
     bodyParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getUrl(), bodyParams);
+    EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
+        new EwpRequestFormDataBody(bodyParams));
     return ewpClient.executeAndLog(request, IiasApprovalResponseV1.class);
   }
 

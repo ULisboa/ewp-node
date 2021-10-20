@@ -7,6 +7,8 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestBody;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
@@ -20,7 +22,7 @@ public class EwpRequest implements Serializable {
   private String urlWithoutQueryParams;
   private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
   private HttpParams queryParams = new HttpParams();
-  private HttpParams bodyParams = new HttpParams();
+  private EwpRequestBody body = new EwpRequestFormDataBody(new HttpParams());
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.TLS;
 
   public EwpRequest(HttpMethod method, @NotNull String urlWithoutQueryParams) {
@@ -75,13 +77,13 @@ public class EwpRequest implements Serializable {
     return this;
   }
 
-  public HttpParams getBodyParams() {
-    return bodyParams;
+  public EwpRequestBody getBody() {
+    return body;
   }
 
-  public EwpRequest bodyParams(HttpParams bodyParams) {
-    if (bodyParams != null) {
-      this.bodyParams = bodyParams;
+  public EwpRequest body(EwpRequestBody body) {
+    if (body != null) {
+      this.body = body;
     }
     return this;
   }
@@ -110,8 +112,8 @@ public class EwpRequest implements Serializable {
   }
 
   public static EwpRequest createPost(
-      EwpApiConfiguration api, @NotNull String urlWithoutQueryParams, HttpParams bodyParams) {
-    return create(api, HttpMethod.POST, urlWithoutQueryParams, null, bodyParams);
+      EwpApiConfiguration api, @NotNull String urlWithoutQueryParams, EwpRequestBody body) {
+    return create(api, HttpMethod.POST, urlWithoutQueryParams, null, body);
   }
 
   public static EwpRequest create(
@@ -119,11 +121,11 @@ public class EwpRequest implements Serializable {
       HttpMethod method,
       @NotNull String urlWithoutQueryParams,
       HttpParams queryParams,
-      HttpParams bodyParams) {
+      EwpRequestBody body) {
     EwpRequest request = new EwpRequest(method, urlWithoutQueryParams);
     request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
     request.queryParams(queryParams);
-    request.bodyParams(bodyParams);
+    request.body(body);
     return request;
   }
 }

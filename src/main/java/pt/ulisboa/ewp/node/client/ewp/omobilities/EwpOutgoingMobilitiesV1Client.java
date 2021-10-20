@@ -12,6 +12,7 @@ import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilitiesApiConfiguration;
@@ -48,7 +49,8 @@ public class EwpOutgoingMobilitiesV1Client
     bodyParams.param(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearId);
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
+    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
+        new EwpRequestFormDataBody(bodyParams));
     return ewpClient.executeAndLog(request, OmobilitiesIndexResponseV1.class);
   }
 
@@ -60,7 +62,8 @@ public class EwpOutgoingMobilitiesV1Client
     bodyParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
     bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, omobilityIds);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
+    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
+        new EwpRequestFormDataBody(bodyParams));
     return ewpClient.executeAndLog(request, OmobilitiesGetResponseV1.class);
   }
 

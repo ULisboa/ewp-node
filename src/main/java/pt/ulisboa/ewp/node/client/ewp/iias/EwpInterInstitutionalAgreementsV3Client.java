@@ -12,6 +12,7 @@ import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApiConfiguration;
@@ -51,7 +52,8 @@ public class EwpInterInstitutionalAgreementsV3Client
     bodyParams.param(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearIds);
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(), bodyParams);
+    EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
+        new EwpRequestFormDataBody(bodyParams));
     return ewpClient.executeAndLog(request, IiasIndexResponseV3.class);
   }
 
@@ -65,7 +67,8 @@ public class EwpInterInstitutionalAgreementsV3Client
     bodyParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
     bodyParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
+    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
+        new EwpRequestFormDataBody(bodyParams));
     return ewpClient.executeAndLog(request, IiasGetResponseV3.class);
   }
 
@@ -79,7 +82,8 @@ public class EwpInterInstitutionalAgreementsV3Client
     bodyParams.param(EwpApiParamConstants.IIA_CODE, iiaCodes);
     bodyParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(), bodyParams);
+    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
+        new EwpRequestFormDataBody(bodyParams));
     return ewpClient.executeAndLog(request, IiasGetResponseV3.class);
   }
 

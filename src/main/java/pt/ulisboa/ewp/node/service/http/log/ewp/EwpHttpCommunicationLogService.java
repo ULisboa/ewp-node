@@ -20,7 +20,6 @@ import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.repository.http.log.ewp.HttpCommunicationFromEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.domain.repository.http.log.ewp.HttpCommunicationToEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.service.http.log.HttpCommunicationLogService;
-import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
 @Service
 @Transactional
@@ -114,7 +113,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
             HttpMethod.fromString(request.getMethod().name()),
             request.getUrl(),
             toHttpHeaderCollection(request.getHeaders()),
-            HttpUtils.serializeFormData(request.getBodyParams().asMap()));
+            request.getBody().serialize());
     requestLog.getHeaders().forEach(header -> header.setRequestLog(requestLog));
     return requestLog;
   }

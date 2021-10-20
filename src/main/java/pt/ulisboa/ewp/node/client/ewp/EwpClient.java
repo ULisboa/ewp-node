@@ -27,6 +27,9 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestBody;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestSerializableBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.exception.XmlCannotUnmarshallToTypeException;
@@ -40,7 +43,6 @@ import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult
 import pt.ulisboa.ewp.node.service.security.ewp.verifier.response.ResponseAuthenticationVerifier;
 import pt.ulisboa.ewp.node.utils.SecurityUtils;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
-import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedKeystore;
 
@@ -211,7 +213,7 @@ public class EwpClient {
       case POST:
       case PUT:
         return requestBuilder
-            .build(request.getMethod().name(), createFormDataEntity(request.getBodyParams()));
+            .build(request.getMethod().name(), createBodyEntity(request.getBody()));
 
       default:
         throw new IllegalArgumentException("Unsupported method: " + request.getMethod().name());
@@ -222,8 +224,23 @@ public class EwpClient {
     HttpUtils.toHeadersMap(request.getHeaders()).forEach(requestBuilder::header);
   }
 
-  private Entity<String> createFormDataEntity(HttpParams formData) {
-    String formDataAsString = HttpUtils.serializeFormData(formData.asMap());
+  private Entity<?> createBodyEntity(EwpRequestBody body) {
+    if (body instanceof EwpRequestFormDataBody) {
+      return createFormDataEntity(((EwpRequestFormDataBody) body));
+    } else if (body instanceof EwpRequestSerializableBody) {
+      return createSerializableEntity((EwpRequestSerializableBody) body);
+    } else {
+      throw new IllegalArgumentException(
+          "Unknown request body type: " + body.getClass().getSimpleName());
+    }
+  }
+
+  private Entity<String> createFormDataEntity(EwpRequestFormDataBody body) {
+    String formDataAsString = HttpUtils.serializeFormData(body.getFormData().asMap());
     return Entity.entity(formDataAsString, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+  }
+
+  private Entity<Serializable> createSerializableEntity(EwpRequestSerializableBody body) {
+    return Entity.entity(body.serialize(), MediaType.TEXT_XML_VALUE);
   }
 }
