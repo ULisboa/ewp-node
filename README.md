@@ -54,7 +54,7 @@ non-backward changes may be introduced.
 | Interinstitutional Approval CNR |  |  |
 | Mobility Factsheet | X | 1 |
 | Outgoing Mobilities | X | 1 |
-| Outgoing Mobility Learning Agreements |  |  |
+| Outgoing Mobility Learning Agreements | X | 1 |
 | Outgoing Mobility CNR |  |  |
 | Outgoing Mobility Learning Agreement CNR |  |  |
 | Incoming Mobilities | X | 1 |
