@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.ounits.OrganizationalUnitsV2HostProvider;
@@ -32,38 +31,21 @@ public class EwpApiOrganizationalUnitsV2Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
-  @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
+  @RequestMapping(method = {RequestMethod.GET,
+      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Organizational Units API.",
       tags = {"ewp"})
-  public ResponseEntity<OunitsResponseV2> ounitsGet(
+  public ResponseEntity<OunitsResponseV2> ounits(
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
       @RequestParam(value = EwpApiParamConstants.OUNIT_ID, required = false)
           List<String> ounitIds,
       @RequestParam(value = EwpApiParamConstants.OUNIT_CODE, required = false)
           List<String> ounitCodes) {
+    
     ounitIds = ounitIds != null ? ounitIds : Collections.emptyList();
     ounitCodes = ounitCodes != null ? ounitCodes : Collections.emptyList();
-    return ounits(heiId, ounitIds, ounitCodes);
-  }
 
-  @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(
-      summary = "Organizational Units API.",
-      tags = {"ewp"})
-  public ResponseEntity<OunitsResponseV2> ounitsPost(
-      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.OUNIT_ID, required = false)
-          List<String> ounitIds,
-      @RequestParam(value = EwpApiParamConstants.OUNIT_CODE, required = false)
-          List<String> ounitCodes) {
-    ounitIds = ounitIds != null ? ounitIds : Collections.emptyList();
-    ounitCodes = ounitCodes != null ? ounitCodes : Collections.emptyList();
-    return ounits(heiId, ounitIds, ounitCodes);
-  }
-
-  private ResponseEntity<OunitsResponseV2> ounits(
-      String heiId, List<String> ounitIds, List<String> ounitCodes) {
     OrganizationalUnitsV2HostProvider provider = getHostProvider(heiId);
 
     if (!ounitIds.isEmpty() && !ounitCodes.isEmpty()) {

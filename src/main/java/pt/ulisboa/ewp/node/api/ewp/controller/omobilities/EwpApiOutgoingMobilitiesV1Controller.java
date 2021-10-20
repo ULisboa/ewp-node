@@ -13,9 +13,8 @@ import java.util.Optional;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV1HostProvider;
@@ -39,11 +38,12 @@ public class EwpApiOutgoingMobilitiesV1Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
-  @GetMapping(value = "/index", produces = MediaType.APPLICATION_XML_VALUE)
+  @RequestMapping(path = "/index", method = {RequestMethod.GET,
+      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Outgoing Mobilities Index API.",
       tags = {"ewp"})
-  public ResponseEntity<OmobilitiesIndexResponseV1> outgoingMobilityIdsGet(
+  public ResponseEntity<OmobilitiesIndexResponseV1> outgoingMobilityIds(
       @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID) String sendingHeiId,
       @RequestParam(value = EwpApiParamConstants.RECEIVING_HEI_ID, required = false) Collection<String> receivingHeiIds,
       @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, defaultValue = "") String receivingAcademicYearId,
@@ -58,49 +58,16 @@ public class EwpApiOutgoingMobilitiesV1Controller {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping(value = "/index", produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(
-      summary = "Outgoing Mobilities Index API.",
-      tags = {"ewp"})
-  public ResponseEntity<OmobilitiesIndexResponseV1> outgoingMobilityIdsPost(
-      @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID, defaultValue = "") String sendingHeiId,
-      @RequestParam(value = EwpApiParamConstants.RECEIVING_HEI_ID, required = false) Collection<String> receivingHeiIds,
-      @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, defaultValue = "") String receivingAcademicYearId,
-      @RequestParam(value = EwpApiParamConstants.MODIFIED_SINCE, required = false)
-      @DateTimeFormat(iso = DATE_TIME) LocalDateTime modifiedSince) {
-
-    Collection<String> outgoingMobilityIds = getHostProvider(sendingHeiId)
-        .findOutgoingMobilityIds(sendingHeiId, receivingHeiIds, receivingAcademicYearId,
-            modifiedSince);
-    OmobilitiesIndexResponseV1 response = new OmobilitiesIndexResponseV1();
-    response.getOmobilityId().addAll(outgoingMobilityIds);
-    return ResponseEntity.ok(response);
-  }
-
-  @GetMapping(value = "/get", produces = MediaType.APPLICATION_XML_VALUE)
+  @RequestMapping(path = "/get", method = {RequestMethod.GET,
+      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Outgoing Mobilities Get API.",
       tags = {"ewp"})
-  public ResponseEntity<OmobilitiesGetResponseV1> outgoingMobilitiesGet(
+  public ResponseEntity<OmobilitiesGetResponseV1> outgoingMobilities(
       @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID, defaultValue = "") String sendingHeiId,
       @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID)
           List<String> outgoingMobilityIds) {
-    return outgoingMobilities(sendingHeiId, outgoingMobilityIds);
-  }
 
-  @PostMapping(value = "/get", produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(
-      summary = "Outgoing Mobilities Get API.",
-      tags = {"ewp"})
-  public ResponseEntity<OmobilitiesGetResponseV1> outgoingMobilitiesPost(
-      @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID, defaultValue = "") String sendingHeiId,
-      @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID)
-          List<String> outgoingMobilityIds) {
-    return outgoingMobilities(sendingHeiId, outgoingMobilityIds);
-  }
-
-  private ResponseEntity<OmobilitiesGetResponseV1> outgoingMobilities(String sendingHeiId,
-      List<String> outgoingMobilityIds) {
     outgoingMobilityIds =
         outgoingMobilityIds != null ? outgoingMobilityIds : Collections.emptyList();
 

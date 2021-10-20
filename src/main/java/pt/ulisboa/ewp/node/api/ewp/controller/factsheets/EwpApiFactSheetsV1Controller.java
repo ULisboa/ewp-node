@@ -5,9 +5,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.factsheets.FactSheetsV1HostProvider;
@@ -30,32 +29,19 @@ public class EwpApiFactSheetsV1Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
-  @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
+  @RequestMapping(method = {RequestMethod.GET,
+      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Fact Sheets API.",
       tags = {"ewp"})
-  public ResponseEntity<FactsheetResponseV1> factSheetsGet(
+  public ResponseEntity<FactsheetResponseV1> factSheets(
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId) {
 
-    return ResponseEntity.ok(getFactSheet(heiId));
-  }
-
-  @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(
-      summary = "Fact Sheets API.",
-      tags = {"ewp"})
-  public ResponseEntity<FactsheetResponseV1> factSheetsPost(
-      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId) {
-
-    return ResponseEntity.ok(getFactSheet(heiId));
-  }
-
-  private FactsheetResponseV1 getFactSheet(String heiId) {
     Optional<FactsheetResponseV1.Factsheet> factSheetOptional = getHostProvider(
         heiId).findByHeiId(heiId);
     FactsheetResponseV1 response = new FactsheetResponseV1();
     factSheetOptional.ifPresent(factSheet -> response.getFactsheet().add(factSheet));
-    return response;
+    return ResponseEntity.ok(response);
   }
 
   private FactSheetsV1HostProvider getHostProvider(String heiId) {

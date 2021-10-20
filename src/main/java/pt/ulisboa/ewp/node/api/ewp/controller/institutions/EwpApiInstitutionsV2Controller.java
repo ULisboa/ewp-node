@@ -2,15 +2,14 @@ package pt.ulisboa.ewp.node.api.ewp.controller.institutions;
 
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.institutions.InstitutionsV2HostProvider;
@@ -33,30 +32,16 @@ public class EwpApiInstitutionsV2Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
-  @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
+  @RequestMapping(method = {RequestMethod.GET,
+      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Institutions API.",
       tags = {"ewp"})
-  public ResponseEntity<InstitutionsResponseV2> institutionsGet(
+  public ResponseEntity<InstitutionsResponseV2> institutions(
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "")
           List<String> heiIds) {
-    return institutions(heiIds);
-  }
+    heiIds = heiIds != null ? heiIds : Collections.emptyList();
 
-  @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(
-      summary = "Institutions API.",
-      tags = {"ewp"})
-  public ResponseEntity<InstitutionsResponseV2> institutionsPost(
-      @RequestParam(value = EwpApiParamConstants.HEI_ID, required = false)
-          List<String> heiIds) {
-    if (heiIds == null) {
-      heiIds = new ArrayList<>();
-    }
-    return institutions(heiIds);
-  }
-
-  private ResponseEntity<InstitutionsResponseV2> institutions(List<String> heiIds) {
     if (heiIds.isEmpty()) {
       throw new EwpBadRequestException("At least one valid HEI ID must be provided");
     }

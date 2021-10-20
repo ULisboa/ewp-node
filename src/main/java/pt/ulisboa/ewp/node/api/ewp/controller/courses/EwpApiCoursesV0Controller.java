@@ -11,9 +11,8 @@ import java.util.Optional;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.CoursesV0HostProvider;
@@ -37,11 +36,12 @@ public class EwpApiCoursesV0Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
-  @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
+  @RequestMapping(method = {RequestMethod.GET,
+      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Courses API.",
       tags = {"ewp"})
-  public ResponseEntity<CoursesResponseV0> coursesGet(
+  public ResponseEntity<CoursesResponseV0> courses(
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
       @RequestParam(value = EwpApiParamConstants.LOS_ID, required = false)
           List<String> losIds,
@@ -56,33 +56,7 @@ public class EwpApiCoursesV0Controller {
       @RequestParam(value = EwpApiParamConstants.LOS_AT_DATE, required = false)
       @DateTimeFormat(iso = DATE)
           LocalDate losAtDate) {
-    return courses(heiId, losIds, losCodes, loisBefore, loisAfter, losAtDate);
-  }
 
-  @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(
-      summary = "Courses API.",
-      tags = {"ewp"})
-  public ResponseEntity<CoursesResponseV0> coursesPost(
-      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.LOS_ID, required = false)
-          List<String> losIds,
-      @RequestParam(value = EwpApiParamConstants.LOS_CODE, required = false)
-          List<String> losCodes,
-      @RequestParam(value = EwpApiParamConstants.LOIS_BEFORE, required = false)
-      @DateTimeFormat(iso = DATE)
-          LocalDate loisBefore,
-      @RequestParam(value = EwpApiParamConstants.LOIS_AFTER, required = false)
-      @DateTimeFormat(iso = DATE)
-          LocalDate loisAfter,
-      @RequestParam(value = EwpApiParamConstants.LOS_AT_DATE, required = false)
-      @DateTimeFormat(iso = DATE)
-          LocalDate losAtDate) {
-    return courses(heiId, losIds, losCodes, loisBefore, loisAfter, losAtDate);
-  }
-
-  private ResponseEntity<CoursesResponseV0> courses(String heiId, List<String> losIds,
-      List<String> losCodes, LocalDate loisBefore, LocalDate loisAfter, LocalDate losAtDate) {
     losIds = losIds != null ? losIds : Collections.emptyList();
     losCodes = losCodes != null ? losCodes : Collections.emptyList();
 

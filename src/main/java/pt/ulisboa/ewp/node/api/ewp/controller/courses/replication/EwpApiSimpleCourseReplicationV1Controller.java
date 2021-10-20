@@ -5,9 +5,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.replication.SimpleCourseReplicationV1HostProvider;
@@ -30,25 +29,14 @@ public class EwpApiSimpleCourseReplicationV1Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
-  @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
+  @RequestMapping(method = {RequestMethod.GET,
+      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Simple Course Replication API.",
       tags = {"ewp"})
-  public ResponseEntity<CourseReplicationResponseV1> simpleCourseReplicationGet(
+  public ResponseEntity<CourseReplicationResponseV1> simpleCourseReplication(
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId) {
-    return simpleCourseReplication(heiId);
-  }
 
-  @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(
-      summary = "Simple Course Replication API.",
-      tags = {"ewp"})
-  public ResponseEntity<CourseReplicationResponseV1> simpleCourseReplicationPost(
-      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId) {
-    return simpleCourseReplication(heiId);
-  }
-
-  private ResponseEntity<CourseReplicationResponseV1> simpleCourseReplication(String heiId) {
     Optional<SimpleCourseReplicationV1HostProvider> providerOptional =
         hostPluginManager.getProvider(heiId, SimpleCourseReplicationV1HostProvider.class);
     if (providerOptional.isEmpty()) {

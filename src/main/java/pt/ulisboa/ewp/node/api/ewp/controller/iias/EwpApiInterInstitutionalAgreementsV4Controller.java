@@ -13,9 +13,8 @@ import java.util.Optional;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV4HostProvider;
@@ -39,11 +38,12 @@ public class EwpApiInterInstitutionalAgreementsV4Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
-  @GetMapping(value = "/index", produces = MediaType.APPLICATION_XML_VALUE)
+  @RequestMapping(path = "/index", method = {RequestMethod.GET,
+      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "IIAs Index API.",
       tags = {"ewp"})
-  public ResponseEntity<IiasIndexResponseV4> iiaIdsGet(
+  public ResponseEntity<IiasIndexResponseV4> iiaIds(
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
       @RequestParam(value = EwpApiParamConstants.PARTNER_HEI_ID, defaultValue = "") String partnerHeiId,
       @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, required = false) Collection<String> receivingAcademicYearIds,
@@ -57,25 +57,8 @@ public class EwpApiInterInstitutionalAgreementsV4Controller {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping(value = "/index", produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(
-      summary = "IIAs Index API.",
-      tags = {"ewp"})
-  public ResponseEntity<IiasIndexResponseV4> iiaIdsPost(
-      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.PARTNER_HEI_ID, defaultValue = "") String partnerHeiId,
-      @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, required = false) Collection<String> receivingAcademicYearIds,
-      @RequestParam(value = EwpApiParamConstants.MODIFIED_SINCE, required = false)
-      @DateTimeFormat(iso = DATE_TIME) LocalDateTime modifiedSince) {
-
-    Collection<String> iiaIds = getHostProvider(heiId)
-        .findAllIiaIdsByHeiId(heiId, partnerHeiId, receivingAcademicYearIds, modifiedSince);
-    IiasIndexResponseV4 response = new IiasIndexResponseV4();
-    response.getIiaId().addAll(iiaIds);
-    return ResponseEntity.ok(response);
-  }
-
-  @GetMapping(value = "/get", produces = MediaType.APPLICATION_XML_VALUE)
+  @RequestMapping(path = "/get", method = {RequestMethod.GET,
+      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "IIAs Get API.",
       tags = {"ewp"})
@@ -87,26 +70,7 @@ public class EwpApiInterInstitutionalAgreementsV4Controller {
           List<String> iiaCodes,
       @RequestParam(value = EwpApiParamConstants.SEND_PDF, required = false)
           Boolean sendPdf) {
-    return iias(heiId, iiaIds, iiaCodes, sendPdf);
-  }
 
-  @PostMapping(value = "/get", produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(
-      summary = "IIAs Get API.",
-      tags = {"ewp"})
-  public ResponseEntity<IiasGetResponseV4> iiasPost(
-      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.IIA_ID, required = false)
-          List<String> iiaIds,
-      @RequestParam(value = EwpApiParamConstants.IIA_CODE, required = false)
-          List<String> iiaCodes,
-      @RequestParam(value = EwpApiParamConstants.SEND_PDF, required = false)
-          Boolean sendPdf) {
-    return iias(heiId, iiaIds, iiaCodes, sendPdf);
-  }
-
-  private ResponseEntity<IiasGetResponseV4> iias(String heiId, List<String> iiaIds,
-      List<String> iiaCodes, Boolean sendPdf) {
     iiaIds = iiaIds != null ? iiaIds : Collections.emptyList();
     iiaCodes = iiaCodes != null ? iiaCodes : Collections.emptyList();
 
