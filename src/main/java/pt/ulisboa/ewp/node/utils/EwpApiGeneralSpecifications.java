@@ -9,6 +9,7 @@ import eu.erasmuswithoutpaper.api.iias.v3.IiasV3;
 import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
 import eu.erasmuswithoutpaper.api.imobilities.v1.ImobilitiesV1;
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
+import eu.erasmuswithoutpaper.api.omobilities.las.v1.OmobilityLasV1;
 import eu.erasmuswithoutpaper.api.omobilities.v1.OmobilitiesV1;
 import eu.erasmuswithoutpaper.api.ounits.v2.OrganizationalUnitsV2;
 import java.util.function.Function;
@@ -24,6 +25,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementA
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApprovalApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilitiesApiConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilityLearningAgreementsApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiConfiguration;
 
 public class EwpApiGeneralSpecifications {
@@ -107,10 +109,19 @@ public class EwpApiGeneralSpecifications {
       OmobilitiesV1, EwpOutgoingMobilitiesApiConfiguration>
       OUTGOING_MOBILITIES_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INCOMING_MOBILITIES_NAME,
+          EwpApiConstants.API_OUTGOING_MOBILITIES_NAME,
           1,
           OmobilitiesV1.class,
           EwpOutgoingMobilitiesApiConfiguration::create);
+
+  public static final EwpApiGeneralSpecification<
+      OmobilityLasV1, EwpOutgoingMobilityLearningAgreementsApiConfiguration>
+      OUTGOING_MOBILITY_LEARNING_AGREEMENTS_V1 =
+      new EwpApiGeneralSpecification<>(
+          EwpApiConstants.API_OUTGOING_MOBILITY_LEARNING_AGREEMENTS_NAME,
+          1,
+          OmobilityLasV1.class,
+          EwpOutgoingMobilityLearningAgreementsApiConfiguration::create);
 
   private EwpApiGeneralSpecifications() {
   }
