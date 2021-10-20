@@ -19,6 +19,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientConflictException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
@@ -98,7 +99,14 @@ public class ForwardEwpApiClientExceptionHandler {
   @ExceptionHandler({EwpClientErrorResponseException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ForwardEwpApiResponseWithData<ErrorResponseV1>>
-      handleEwpClientErrorResponseException(EwpClientErrorResponseException exception) {
+  handleEwpClientErrorResponseException(EwpClientErrorResponseException exception) {
+    return ForwardEwpApiResponseUtils.toErrorResponseEntity(exception.getErrorResponse());
+  }
+
+  @ExceptionHandler({EwpClientConflictException.class})
+  @ResponseStatus(HttpStatus.CONFLICT)
+  public ResponseEntity<ForwardEwpApiResponseWithData<ErrorResponseV1>>
+  handleEwpClientConflictException(EwpClientConflictException exception) {
     return ForwardEwpApiResponseUtils.toErrorResponseEntity(exception.getErrorResponse());
   }
 

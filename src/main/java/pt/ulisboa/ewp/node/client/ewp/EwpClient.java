@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientConflictException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
@@ -171,6 +172,10 @@ public class EwpClient {
           XmlUtils.unmarshall(jaxb2Marshaller, response.getRawBody(), ErrorResponseV1.class);
       if (HttpStatus.BAD_REQUEST.equals(response.getStatus())) {
         return new EwpClientErrorResponseException(request, response, responseAuthenticationResult,
+            errorResponse);
+
+      } else if (HttpStatus.CONFLICT.equals(response.getStatus())) {
+        return new EwpClientConflictException(request, response, responseAuthenticationResult,
             errorResponse);
 
       } else {
