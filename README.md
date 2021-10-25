@@ -55,8 +55,8 @@ non-backward changes may be introduced.
 | Mobility Factsheet | X | 1 |
 | Outgoing Mobilities | X | 1 |
 | Outgoing Mobility Learning Agreements | X | 1 |
-| Outgoing Mobility CNR |  |  |
-| Outgoing Mobility Learning Agreement CNR |  |  |
+| Outgoing Mobility CNR | X | 1 |
+| Outgoing Mobility Learning Agreement CNR | X | 1 |
 | Incoming Mobilities | X | 1 |
 | Incoming Mobility CNR |  |  |
 | Incoming Mobility ToR |  |  |
