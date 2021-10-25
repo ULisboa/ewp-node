@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.utils;
 
+import eu.erasmuswithoutpaper.api.architecture.v1.EmptyV1;
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import java.io.Serializable;
 import java.util.List;
@@ -22,10 +23,12 @@ public class ForwardEwpApiResponseUtils {
   }
 
   public static <T extends Serializable>
-  ResponseEntity<ForwardEwpApiResponseWithData<T>> toAcceptedResponseEntity() {
+  ResponseEntity<ForwardEwpApiResponseWithData<EmptyV1>> toAcceptedResponseEntity() {
+    ForwardEwpApiResponseWithData<EmptyV1> response = createResponseWithMessagesAndData(
+        new EmptyV1());
     return ResponseEntity.status(HttpStatus.ACCEPTED)
         .contentType(MediaType.APPLICATION_XML)
-        .body(null);
+        .body(response);
   }
 
   public static <T extends Serializable>
