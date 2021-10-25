@@ -5,7 +5,7 @@ import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringV1;
 import java.util.stream.Collectors;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
-import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
+import pt.ulisboa.ewp.node.service.ewp.security.verifier.EwpAuthenticationResult;
 
 /**
  * Target API returned an error response (see {@see eu.erasmuswithoutpaper.api.architecture.ErrorResponse}).

@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.utils.http;
 
-import static pt.ulisboa.ewp.node.service.security.ewp.HttpSignatureService.DATE_THRESHOLD_IN_MILLISECONDS;
+import static pt.ulisboa.ewp.node.service.ewp.security.HttpSignatureService.DATE_THRESHOLD_IN_MILLISECONDS;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

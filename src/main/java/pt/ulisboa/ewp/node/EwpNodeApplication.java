@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -25,6 +26,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
@@ -36,16 +39,17 @@ import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.domain.utils.DatabaseProperties;
 import pt.ulisboa.ewp.node.service.bootstrap.BootstrapService;
 import pt.ulisboa.ewp.node.service.bootstrap.KeystoreBootstrapService;
+import pt.ulisboa.ewp.node.service.ewp.notification.EwpNotificationSenderDaemon;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.utils.bean.ParamNameProcessor;
 
 @SpringBootApplication(scanBasePackages = {"pt.ulisboa.ewp.node"})
 @EnableConfigurationProperties(
     value = {
-      DatabaseProperties.class,
-      BootstrapProperties.class,
-      RegistryProperties.class,
-      SecurityProperties.class
+        DatabaseProperties.class,
+        BootstrapProperties.class,
+        RegistryProperties.class,
+        SecurityProperties.class
     })
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
@@ -53,10 +57,17 @@ import pt.ulisboa.ewp.node.utils.bean.ParamNameProcessor;
 @Import(ValidationAutoConfiguration.class)
 public class EwpNodeApplication {
 
-  @Autowired private BootstrapService bootstrapService;
-  @Autowired private KeystoreBootstrapService keystoreBootstrapService;
+  @Autowired
+  private BootstrapService bootstrapService;
+  @Autowired
+  private KeystoreBootstrapService keystoreBootstrapService;
+  @Autowired
+  private ThreadPoolTaskScheduler taskScheduler;
+  @Autowired
+  private EwpNotificationSenderDaemon ewpNotificationSenderDaemon;
 
-  @Autowired private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
+  @Autowired
+  private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
   public static void main(String[] args) {
     SpringApplication.run(EwpNodeApplication.class);
@@ -66,6 +77,9 @@ public class EwpNodeApplication {
   private void init() {
     bootstrapService.bootstrap();
     keystoreBootstrapService.bootstrap();
+    taskScheduler.schedule(ewpNotificationSenderDaemon,
+        new PeriodicTrigger(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS,
+            TimeUnit.MILLISECONDS));
   }
 
   /** Injects a logger configured for the class requiring an injected logger. */
@@ -159,5 +173,15 @@ public class EwpNodeApplication {
     loggingFilter.setIncludeHeaders(false);
     loggingFilter.setIncludePayload(false);
     return loggingFilter;
+  }
+
+  @Bean
+  public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+    ThreadPoolTaskScheduler threadPoolTaskScheduler
+        = new ThreadPoolTaskScheduler();
+    threadPoolTaskScheduler.setPoolSize(5);
+    threadPoolTaskScheduler.setThreadNamePrefix(
+        "ThreadPoolTaskScheduler");
+    return threadPoolTaskScheduler;
   }
 }

@@ -23,8 +23,8 @@ import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiResponseSignerFilter;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
-import pt.ulisboa.ewp.node.service.security.ewp.signer.response.ResponseAuthenticationSigner;
-import pt.ulisboa.ewp.node.service.security.ewp.verifier.request.AbstractRequestAuthenticationMethodVerifier;
+import pt.ulisboa.ewp.node.service.ewp.security.signer.response.ResponseAuthenticationSigner;
+import pt.ulisboa.ewp.node.service.ewp.security.verifier.request.AbstractRequestAuthenticationMethodVerifier;
 
 @Configuration
 @Order(3)

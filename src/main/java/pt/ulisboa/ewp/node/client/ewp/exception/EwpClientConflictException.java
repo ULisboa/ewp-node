@@ -3,7 +3,7 @@ package pt.ulisboa.ewp.node.client.ewp.exception;
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
-import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
+import pt.ulisboa.ewp.node.service.ewp.security.verifier.EwpAuthenticationResult;
 
 /**
  * Request failed due to a conflict.

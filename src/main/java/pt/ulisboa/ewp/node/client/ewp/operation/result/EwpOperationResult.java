@@ -3,7 +3,7 @@ package pt.ulisboa.ewp.node.client.ewp.operation.result;
 import java.io.Serializable;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
-import pt.ulisboa.ewp.node.service.security.ewp.verifier.EwpAuthenticationResult;
+import pt.ulisboa.ewp.node.service.ewp.security.verifier.EwpAuthenticationResult;
 
 public abstract class EwpOperationResult implements Serializable {
 

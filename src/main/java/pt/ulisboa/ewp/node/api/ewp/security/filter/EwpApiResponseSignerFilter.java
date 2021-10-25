@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.web.util.OnCommittedResponseWrapper;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-import pt.ulisboa.ewp.node.service.security.ewp.signer.response.ResponseAuthenticationSigner;
+import pt.ulisboa.ewp.node.service.ewp.security.signer.response.ResponseAuthenticationSigner;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
 
 /**

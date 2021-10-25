@@ -15,7 +15,7 @@ import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostPrincipal;
 import pt.ulisboa.ewp.node.api.ewp.security.exception.EwpApiSecurityException;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
-import pt.ulisboa.ewp.node.service.security.ewp.verifier.request.AbstractRequestAuthenticationMethodVerifier;
+import pt.ulisboa.ewp.node.service.ewp.security.verifier.request.AbstractRequestAuthenticationMethodVerifier;
 
 /**
  * Filter that authenticates a request against some supported EWP authentication method.
