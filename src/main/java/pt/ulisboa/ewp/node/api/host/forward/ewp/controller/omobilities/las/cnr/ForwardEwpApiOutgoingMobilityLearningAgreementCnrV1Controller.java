@@ -22,7 +22,7 @@ import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearnin
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
 
 @RestController
-@ForwardEwpApi(apiLocalName = EwpApiConstants.API_OUTGOING_MOBILITY_CNR_NAME)
+@ForwardEwpApi(apiLocalName = EwpApiConstants.API_OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR_NAME)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "omobilities/las/cnr/v1")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
 public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrV1Controller extends
