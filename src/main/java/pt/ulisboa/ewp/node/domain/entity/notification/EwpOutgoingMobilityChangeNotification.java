@@ -15,10 +15,18 @@ public class EwpOutgoingMobilityChangeNotification extends EwpChangeNotification
   public EwpOutgoingMobilityChangeNotification() {
   }
 
-  public EwpOutgoingMobilityChangeNotification(
-      int attemptNumber, ZonedDateTime scheduleDateTime, Status status, String sendingHeiId,
+  public EwpOutgoingMobilityChangeNotification(String sendingHeiId,
       String outgoingMobilityId) {
-    super(attemptNumber, scheduleDateTime, status);
+    super();
+    this.sendingHeiId = sendingHeiId;
+    this.outgoingMobilityId = outgoingMobilityId;
+  }
+
+  public EwpOutgoingMobilityChangeNotification(int attemptNumber,
+      ZonedDateTime scheduledDateTime,
+      Status status, String sendingHeiId,
+      String outgoingMobilityId) {
+    super(attemptNumber, scheduledDateTime, status);
     this.sendingHeiId = sendingHeiId;
     this.outgoingMobilityId = outgoingMobilityId;
   }

@@ -27,7 +27,7 @@ public abstract class EwpChangeNotification {
   private Status status;
 
   protected EwpChangeNotification() {
-
+    this(1, ZonedDateTime.now(), Status.PENDING);
   }
 
   protected EwpChangeNotification(int attemptNumber,

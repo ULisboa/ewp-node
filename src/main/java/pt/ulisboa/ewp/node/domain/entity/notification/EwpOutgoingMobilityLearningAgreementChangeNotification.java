@@ -15,10 +15,18 @@ public class EwpOutgoingMobilityLearningAgreementChangeNotification extends EwpC
   public EwpOutgoingMobilityLearningAgreementChangeNotification() {
   }
 
-  public EwpOutgoingMobilityLearningAgreementChangeNotification(
-      int attemptNumber, ZonedDateTime scheduleDateTime, Status status, String sendingHeiId,
+  public EwpOutgoingMobilityLearningAgreementChangeNotification(String sendingHeiId,
       String outgoingMobilityId) {
-    super(attemptNumber, scheduleDateTime, status);
+    super(1, ZonedDateTime.now(), Status.PENDING);
+    this.sendingHeiId = sendingHeiId;
+    this.outgoingMobilityId = outgoingMobilityId;
+  }
+
+  public EwpOutgoingMobilityLearningAgreementChangeNotification(int attemptNumber,
+      ZonedDateTime scheduledDateTime,
+      Status status, String sendingHeiId,
+      String outgoingMobilityId) {
+    super(attemptNumber, scheduledDateTime, status);
     this.sendingHeiId = sendingHeiId;
     this.outgoingMobilityId = outgoingMobilityId;
   }

@@ -22,6 +22,13 @@ public class ForwardEwpApiResponseUtils {
   }
 
   public static <T extends Serializable>
+  ResponseEntity<ForwardEwpApiResponseWithData<T>> toAcceptedResponseEntity() {
+    return ResponseEntity.status(HttpStatus.ACCEPTED)
+        .contentType(MediaType.APPLICATION_XML)
+        .body(null);
+  }
+
+  public static <T extends Serializable>
   ResponseEntity<ForwardEwpApiResponseWithData<T>> toSuccessResponseEntity(
       EwpSuccessOperationResult<T> successOperationResult) {
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(
