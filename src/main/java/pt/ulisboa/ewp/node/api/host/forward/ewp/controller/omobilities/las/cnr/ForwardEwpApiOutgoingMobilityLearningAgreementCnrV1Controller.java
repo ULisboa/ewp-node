@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.omobilities;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.omobilities.las.cnr;
 
 import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.OmobilitiesIndexResponseV1;
 import javax.validation.Valid;
@@ -12,24 +12,25 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.cnr.ForwardEwpApiOutgoingMobilityCnrRequestDto;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.las.cnr.ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityChangeNotification;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
 
 @RestController
 @ForwardEwpApi(apiLocalName = EwpApiConstants.API_OUTGOING_MOBILITY_CNR_NAME)
-@RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "omobilities/cnr/v1")
+@RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "omobilities/las/cnr/v1")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
-public class ForwardEwpApiOutgoingMobilityCnrV1Controller extends AbstractForwardEwpApiController {
+public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrV1Controller extends
+    AbstractForwardEwpApiController {
 
   private final EwpChangeNotificationRepository changeNotificationRepository;
 
-  public ForwardEwpApiOutgoingMobilityCnrV1Controller(
+  public ForwardEwpApiOutgoingMobilityLearningAgreementCnrV1Controller(
       RegistryClient registryClient,
       EwpChangeNotificationRepository changeNotificationRepository) {
     super(registryClient);
@@ -40,10 +41,11 @@ public class ForwardEwpApiOutgoingMobilityCnrV1Controller extends AbstractForwar
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<ForwardEwpApiResponseWithData<OmobilitiesIndexResponseV1>>
-  sendChangeNotification(@Valid ForwardEwpApiOutgoingMobilityCnrRequestDto requestDto)
+  sendChangeNotification(
+      @Valid ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto requestDto)
       throws EwpClientErrorException {
     for (String outgoingMobilityId : requestDto.getOutgoingMobilityIds()) {
-      EwpOutgoingMobilityChangeNotification changeNotification = new EwpOutgoingMobilityChangeNotification(
+      EwpOutgoingMobilityLearningAgreementChangeNotification changeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
           requestDto.getSendingHeiId(),
           outgoingMobilityId);
       changeNotificationRepository.persist(changeNotification);
