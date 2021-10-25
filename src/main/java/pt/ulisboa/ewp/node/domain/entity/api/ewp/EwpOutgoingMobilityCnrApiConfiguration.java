@@ -1,20 +1,20 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
-import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.OmobilityLaCnrV1;
+import eu.erasmuswithoutpaper.api.omobilities.cnr.v1.OmobilityCnrV1;
 import java.math.BigInteger;
 import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 
-public class EwpOutgoingMobilityLearningAgreementCnrApiConfiguration extends EwpApiConfiguration {
+public class EwpOutgoingMobilityCnrApiConfiguration extends EwpApiConfiguration {
 
-  public static final String API_NAME = "Outgoing Mobility Learning Agreements CNR API";
+  public static final String API_NAME = "Outgoing Mobility CNR API";
 
   private final String url;
   private final BigInteger maxOmobilityIds;
 
-  public EwpOutgoingMobilityLearningAgreementCnrApiConfiguration(
+  public EwpOutgoingMobilityCnrApiConfiguration(
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
@@ -32,9 +32,9 @@ public class EwpOutgoingMobilityLearningAgreementCnrApiConfiguration extends Ewp
     return maxOmobilityIds;
   }
 
-  public static EwpOutgoingMobilityLearningAgreementCnrApiConfiguration create(
-      OmobilityLaCnrV1 apiElement) {
-    return new EwpOutgoingMobilityLearningAgreementCnrApiConfiguration(
+  public static EwpOutgoingMobilityCnrApiConfiguration create(
+      OmobilityCnrV1 apiElement) {
+    return new EwpOutgoingMobilityCnrApiConfiguration(
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -43,7 +43,7 @@ public class EwpOutgoingMobilityLearningAgreementCnrApiConfiguration extends Ewp
 
   @Override
   public String toString() {
-    return "EwpOutgoingMobilityLearningAgreementCnrApiConfiguration{" +
+    return "EwpOutgoingMobilityCnrApiConfiguration{" +
         "url='" + url + '\'' +
         ", maxOmobilityIds=" + maxOmobilityIds +
         '}';

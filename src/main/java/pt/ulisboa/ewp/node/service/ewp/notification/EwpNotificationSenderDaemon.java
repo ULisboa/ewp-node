@@ -7,9 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.omobilities.EwpOutgoingMobilityCnrV1Client;
 import pt.ulisboa.ewp.node.client.ewp.omobilities.las.cnr.EwpOutgoingMobilityLearningAgreementCnrV1Client;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityChangeNotification;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
 
 @Service
@@ -25,12 +27,15 @@ public class EwpNotificationSenderDaemon implements Runnable {
 
   private final EwpChangeNotificationRepository changeNotificationRepository;
 
+  private final EwpOutgoingMobilityCnrV1Client outgoingMobilityCnrV1Client;
   private final EwpOutgoingMobilityLearningAgreementCnrV1Client outgoingMobilityLearningAgreementCnrV1Client;
 
   public EwpNotificationSenderDaemon(
       EwpChangeNotificationRepository changeNotificationRepository,
+      EwpOutgoingMobilityCnrV1Client outgoingMobilityCnrV1Client,
       EwpOutgoingMobilityLearningAgreementCnrV1Client outgoingMobilityLearningAgreementCnrV1Client) {
     this.changeNotificationRepository = changeNotificationRepository;
+    this.outgoingMobilityCnrV1Client = outgoingMobilityCnrV1Client;
     this.outgoingMobilityLearningAgreementCnrV1Client = outgoingMobilityLearningAgreementCnrV1Client;
   }
 
@@ -45,25 +50,37 @@ public class EwpNotificationSenderDaemon implements Runnable {
   }
 
   private void processChangeNotification(EwpChangeNotification changeNotification) {
-    if (changeNotification instanceof EwpOutgoingMobilityChangeNotification) {
-      processOutgoingMobilityChangeNotification(
-          (EwpOutgoingMobilityChangeNotification) changeNotification);
-    }
-  }
-
-  private void processOutgoingMobilityChangeNotification(
-      EwpOutgoingMobilityChangeNotification changeNotification) {
     try {
-      outgoingMobilityLearningAgreementCnrV1Client.sendChangeNotification(
-          changeNotification.getSendingHeiId(),
-          Collections.singletonList(changeNotification.getOutgoingMobilityId()));
+      sendChangeNotification(changeNotification);
 
       changeNotification.markAsSuccess();
       changeNotificationRepository.persist(changeNotification);
 
-    } catch (EwpClientErrorException e) {
+    } catch (Exception e) {
       LOG.error(String.format("Failed to send change notification: %s", changeNotification), e);
       scheduleNewAttempt(changeNotification);
+    }
+  }
+
+  private void sendChangeNotification(
+      EwpChangeNotification changeNotification) throws EwpClientErrorException {
+
+    if (changeNotification instanceof EwpOutgoingMobilityChangeNotification) {
+      EwpOutgoingMobilityChangeNotification outgoingMobilityChangeNotification = (EwpOutgoingMobilityChangeNotification) changeNotification;
+      outgoingMobilityCnrV1Client.sendChangeNotification(
+          outgoingMobilityChangeNotification.getSendingHeiId(),
+          Collections.singletonList(outgoingMobilityChangeNotification.getOutgoingMobilityId()));
+
+    } else if (changeNotification instanceof EwpOutgoingMobilityLearningAgreementChangeNotification) {
+      EwpOutgoingMobilityLearningAgreementChangeNotification outgoingMobilityLearningAgreementChangeNotification = (EwpOutgoingMobilityLearningAgreementChangeNotification) changeNotification;
+      outgoingMobilityLearningAgreementCnrV1Client.sendChangeNotification(
+          outgoingMobilityLearningAgreementChangeNotification.getSendingHeiId(),
+          Collections.singletonList(
+              outgoingMobilityLearningAgreementChangeNotification.getOutgoingMobilityId()));
+
+    } else {
+      throw new IllegalStateException(
+          "Unsupported change notification type: " + changeNotification);
     }
   }
 

@@ -6,16 +6,16 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("OMOBILITY")
-public class EwpOutgoingMobilityChangeNotification extends EwpChangeNotification {
+@DiscriminatorValue("OMOBILITY_LA")
+public class EwpOutgoingMobilityLearningAgreementChangeNotification extends EwpChangeNotification {
 
   private String sendingHeiId;
   private String outgoingMobilityId;
 
-  public EwpOutgoingMobilityChangeNotification() {
+  public EwpOutgoingMobilityLearningAgreementChangeNotification() {
   }
 
-  public EwpOutgoingMobilityChangeNotification(
+  public EwpOutgoingMobilityLearningAgreementChangeNotification(
       int attemptNumber, ZonedDateTime scheduleDateTime, Status status, String sendingHeiId,
       String outgoingMobilityId) {
     super(attemptNumber, scheduleDateTime, status);
@@ -43,18 +43,18 @@ public class EwpOutgoingMobilityChangeNotification extends EwpChangeNotification
 
   @Override
   public boolean canBeMergedInto(EwpChangeNotification o) {
-    if (!(o instanceof EwpOutgoingMobilityChangeNotification)) {
+    if (!(o instanceof EwpOutgoingMobilityLearningAgreementChangeNotification)) {
       return false;
     }
 
-    EwpOutgoingMobilityChangeNotification otherChangeNotification = (EwpOutgoingMobilityChangeNotification) o;
+    EwpOutgoingMobilityLearningAgreementChangeNotification otherChangeNotification = (EwpOutgoingMobilityLearningAgreementChangeNotification) o;
     return sendingHeiId.equals(otherChangeNotification.sendingHeiId) && outgoingMobilityId.equals(
         otherChangeNotification.outgoingMobilityId);
   }
 
   @Override
   public String toString() {
-    return "EwpOutgoingMobilityChangeNotification{" +
+    return "EwpOutgoingMobilityLearningAgreementChangeNotification{" +
         "super='" + super.toString() + '\'' +
         ", sendingHeiId='" + sendingHeiId + '\'' +
         ", outgoingMobilityId='" + outgoingMobilityId + '\'' +

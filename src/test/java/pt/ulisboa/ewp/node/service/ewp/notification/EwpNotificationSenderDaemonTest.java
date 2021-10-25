@@ -17,7 +17,7 @@ import pt.ulisboa.ewp.node.client.ewp.omobilities.las.cnr.EwpOutgoingMobilityLea
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification.Status;
-import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityChangeNotification;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
 
 class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
@@ -32,7 +32,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
   void testRun_ScheduledChangeNotificationSuccess_NotificationMarkedAsSuccess()
       throws EwpClientErrorException {
 
-    EwpOutgoingMobilityChangeNotification originalChangeNotification = new EwpOutgoingMobilityChangeNotification(
+    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
         1, ZonedDateTime.now(), Status.PENDING, "abc", "def");
 
     EwpSuccessOperationResult<EmptyV1> mockedSuccessResult = new EwpSuccessOperationResult.Builder<EmptyV1>()
@@ -56,7 +56,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
   void testRun_ScheduledChangeNotificationLastAttemptFailure_NotificationMarkedAsFailure()
       throws EwpClientErrorException {
 
-    EwpOutgoingMobilityChangeNotification originalChangeNotification = new EwpOutgoingMobilityChangeNotification(
+    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
         EwpNotificationSenderDaemon.MAX_NUMBER_ATTEMPTS,
         ZonedDateTime.now(), Status.PENDING, "abc", "def");
 
@@ -77,7 +77,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
   void testRun_ScheduledChangeNotificationNotLastAttemptFailure_NewAttemptScheduled()
       throws EwpClientErrorException {
 
-    EwpOutgoingMobilityChangeNotification originalChangeNotification = new EwpOutgoingMobilityChangeNotification(
+    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
         1, ZonedDateTime.now(), Status.PENDING, "abc", "def");
 
     when(outgoingMobilityLearningAgreementCnrV1Client.sendChangeNotification(
