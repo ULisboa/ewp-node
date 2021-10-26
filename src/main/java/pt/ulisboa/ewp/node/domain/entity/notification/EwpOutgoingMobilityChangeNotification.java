@@ -10,24 +10,27 @@ import javax.persistence.Entity;
 public class EwpOutgoingMobilityChangeNotification extends EwpChangeNotification {
 
   private String sendingHeiId;
+  private String receivingHeiId;
   private String outgoingMobilityId;
 
   public EwpOutgoingMobilityChangeNotification() {
   }
 
   public EwpOutgoingMobilityChangeNotification(String sendingHeiId,
-      String outgoingMobilityId) {
+      String receivingHeiId, String outgoingMobilityId) {
     super();
     this.sendingHeiId = sendingHeiId;
+    this.receivingHeiId = receivingHeiId;
     this.outgoingMobilityId = outgoingMobilityId;
   }
 
   public EwpOutgoingMobilityChangeNotification(int attemptNumber,
       ZonedDateTime scheduledDateTime,
       Status status, String sendingHeiId,
-      String outgoingMobilityId) {
+      String receivingHeiId, String outgoingMobilityId) {
     super(attemptNumber, scheduledDateTime, status);
     this.sendingHeiId = sendingHeiId;
+    this.receivingHeiId = receivingHeiId;
     this.outgoingMobilityId = outgoingMobilityId;
   }
 
@@ -38,6 +41,15 @@ public class EwpOutgoingMobilityChangeNotification extends EwpChangeNotification
 
   public void setSendingHeiId(String sendingHeiId) {
     this.sendingHeiId = sendingHeiId;
+  }
+
+  @Column(name = "receiving_hei_id", nullable = false)
+  public String getReceivingHeiId() {
+    return receivingHeiId;
+  }
+
+  public void setReceivingHeiId(String receivingHeiId) {
+    this.receivingHeiId = receivingHeiId;
   }
 
   @Column(name = "outgoing_mobility_id", nullable = false)
@@ -56,7 +68,8 @@ public class EwpOutgoingMobilityChangeNotification extends EwpChangeNotification
     }
 
     EwpOutgoingMobilityChangeNotification otherChangeNotification = (EwpOutgoingMobilityChangeNotification) o;
-    return sendingHeiId.equals(otherChangeNotification.sendingHeiId) && outgoingMobilityId.equals(
+    return sendingHeiId.equals(otherChangeNotification.sendingHeiId) &&
+        receivingHeiId.equals(otherChangeNotification.receivingHeiId) && outgoingMobilityId.equals(
         otherChangeNotification.outgoingMobilityId);
   }
 
@@ -65,6 +78,7 @@ public class EwpOutgoingMobilityChangeNotification extends EwpChangeNotification
     return "EwpOutgoingMobilityChangeNotification{" +
         "super='" + super.toString() + '\'' +
         ", sendingHeiId='" + sendingHeiId + '\'' +
+        ", receivingHeiId='" + receivingHeiId + '\'' +
         ", outgoingMobilityId='" + outgoingMobilityId + '\'' +
         '}';
   }

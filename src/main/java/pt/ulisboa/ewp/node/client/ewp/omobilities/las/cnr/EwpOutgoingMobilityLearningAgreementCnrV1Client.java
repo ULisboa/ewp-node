@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp.omobilities.las.cnr;
 
-import eu.erasmuswithoutpaper.api.architecture.v1.EmptyV1;
+import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.OmobilityLaCnrResponseV1;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -34,12 +34,11 @@ public class EwpOutgoingMobilityLearningAgreementCnrV1Client
         apiConfiguration.getMaxOmobilityIds().intValueExact());
   }
 
-  public EwpSuccessOperationResult<EmptyV1> sendChangeNotification(
-      String sendingHeiId,
-      List<String> outgoingMobilityIds)
+  public EwpSuccessOperationResult<OmobilityLaCnrResponseV1> sendChangeNotification(
+      String sendingHeiId, String receivingHeiId, List<String> outgoingMobilityIds)
       throws EwpClientErrorException {
     EwpOutgoingMobilityLearningAgreementCnrApiConfiguration api = getApiConfigurationForHeiId(
-        sendingHeiId);
+        receivingHeiId);
 
     HttpParams bodyParams = new HttpParams();
     bodyParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
@@ -47,7 +46,7 @@ public class EwpOutgoingMobilityLearningAgreementCnrV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataBody(bodyParams));
-    return ewpClient.executeAndLog(request, EmptyV1.class);
+    return ewpClient.executeAndLog(request, OmobilityLaCnrResponseV1.class);
   }
 
   @Override

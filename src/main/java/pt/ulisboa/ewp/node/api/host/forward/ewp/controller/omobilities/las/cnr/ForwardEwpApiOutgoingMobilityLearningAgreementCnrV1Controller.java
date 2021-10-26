@@ -1,6 +1,5 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.omobilities.las.cnr;
 
-import eu.erasmuswithoutpaper.api.architecture.v1.EmptyV1;
 import javax.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.las.cnr.ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
@@ -39,13 +38,13 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrV1Controller exten
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)
-  public ResponseEntity<ForwardEwpApiResponseWithData<EmptyV1>>
+  public ResponseEntity<ForwardEwpApiResponse>
   sendChangeNotification(
       @Valid ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto requestDto) {
     for (String outgoingMobilityId : requestDto.getOutgoingMobilityIds()) {
       EwpOutgoingMobilityLearningAgreementChangeNotification changeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
           requestDto.getSendingHeiId(),
-          outgoingMobilityId);
+          requestDto.getReceivingHeiId(), outgoingMobilityId);
       changeNotificationRepository.persist(changeNotification);
     }
     return ForwardEwpApiResponseUtils.toAcceptedResponseEntity();

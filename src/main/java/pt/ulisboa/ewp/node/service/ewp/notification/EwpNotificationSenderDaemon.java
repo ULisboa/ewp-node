@@ -69,12 +69,14 @@ public class EwpNotificationSenderDaemon implements Runnable {
       EwpOutgoingMobilityChangeNotification outgoingMobilityChangeNotification = (EwpOutgoingMobilityChangeNotification) changeNotification;
       outgoingMobilityCnrV1Client.sendChangeNotification(
           outgoingMobilityChangeNotification.getSendingHeiId(),
+          outgoingMobilityChangeNotification.getReceivingHeiId(),
           Collections.singletonList(outgoingMobilityChangeNotification.getOutgoingMobilityId()));
 
     } else if (changeNotification instanceof EwpOutgoingMobilityLearningAgreementChangeNotification) {
       EwpOutgoingMobilityLearningAgreementChangeNotification outgoingMobilityLearningAgreementChangeNotification = (EwpOutgoingMobilityLearningAgreementChangeNotification) changeNotification;
       outgoingMobilityLearningAgreementCnrV1Client.sendChangeNotification(
           outgoingMobilityLearningAgreementChangeNotification.getSendingHeiId(),
+          outgoingMobilityLearningAgreementChangeNotification.getReceivingHeiId(),
           Collections.singletonList(
               outgoingMobilityLearningAgreementChangeNotification.getOutgoingMobilityId()));
 

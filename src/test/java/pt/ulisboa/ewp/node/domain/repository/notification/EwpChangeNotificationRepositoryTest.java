@@ -21,12 +21,12 @@ class EwpChangeNotificationRepositoryTest extends AbstractIntegrationTest {
   public void testPersist_OldNotificationIsNotMergeableIntoNewNotification_BothNotificationsMaintainStatus() {
     EwpOutgoingMobilityChangeNotification oldChangeNotification = new EwpOutgoingMobilityChangeNotification(
         1, ZonedDateTime.now(), Status.PENDING, UUID.randomUUID().toString(),
-        UUID.randomUUID().toString());
+        UUID.randomUUID().toString(), UUID.randomUUID().toString());
     changeNotificationRepository.persist(oldChangeNotification);
 
     EwpOutgoingMobilityChangeNotification newChangeNotification = new EwpOutgoingMobilityChangeNotification(
         1, ZonedDateTime.now(), Status.PENDING, UUID.randomUUID().toString(),
-        UUID.randomUUID().toString());
+        UUID.randomUUID().toString(), UUID.randomUUID().toString());
     changeNotificationRepository.persist(newChangeNotification);
 
     Optional<EwpChangeNotification> updatedOldChangeNotificationOptional = changeNotificationRepository.findById(
@@ -44,12 +44,12 @@ class EwpChangeNotificationRepositoryTest extends AbstractIntegrationTest {
   public void testPersist_OldNotificationIsMergeableIntoNewNotification_OldNotificationIsMerged() {
     EwpOutgoingMobilityChangeNotification oldChangeNotification = new EwpOutgoingMobilityChangeNotification(
         1, ZonedDateTime.now(), Status.PENDING, UUID.randomUUID().toString(),
-        UUID.randomUUID().toString());
+        UUID.randomUUID().toString(), UUID.randomUUID().toString());
     changeNotificationRepository.persist(oldChangeNotification);
 
     EwpOutgoingMobilityChangeNotification newChangeNotification = new EwpOutgoingMobilityChangeNotification(
         1, ZonedDateTime.now(), Status.PENDING, oldChangeNotification.getSendingHeiId(),
-        oldChangeNotification.getOutgoingMobilityId());
+        oldChangeNotification.getReceivingHeiId(), oldChangeNotification.getOutgoingMobilityId());
     changeNotificationRepository.persist(newChangeNotification);
 
     Optional<EwpChangeNotification> updatedOldChangeNotificationOptional = changeNotificationRepository.findById(
