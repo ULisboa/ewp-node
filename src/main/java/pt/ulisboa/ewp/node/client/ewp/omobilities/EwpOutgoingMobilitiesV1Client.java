@@ -49,7 +49,7 @@ public class EwpOutgoingMobilitiesV1Client
     bodyParams.param(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearId);
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
+    EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
         new EwpRequestFormDataBody(bodyParams));
     return ewpClient.executeAndLog(request, OmobilitiesIndexResponseV1.class);
   }
