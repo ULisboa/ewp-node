@@ -49,7 +49,7 @@ non-backward changes may be introduced.
 | Courses | X | 0 |
 | Simple Course Replication | X | 1 |
 | Interinstitutional Agreements | X | 3 & 4 |
-| Interinstitutional Agreements CNR |  |  |
+| Interinstitutional Agreements CNR | X | 2 |
 | Interinstitutional Approval | X | 1 |
 | Interinstitutional Approval CNR |  |  |
 | Mobility Factsheet | X | 1 |
