@@ -7,10 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.iias.approval.cnr.EwpInterInstitutionalAgreementApprovalCnrV1Client;
 import pt.ulisboa.ewp.node.client.ewp.iias.cnr.EwpInterInstitutionalAgreementCnrV2Client;
 import pt.ulisboa.ewp.node.client.ewp.omobilities.EwpOutgoingMobilityCnrV1Client;
 import pt.ulisboa.ewp.node.client.ewp.omobilities.las.cnr.EwpOutgoingMobilityLearningAgreementCnrV1Client;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementApprovalChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
@@ -30,16 +32,19 @@ public class EwpNotificationSenderDaemon implements Runnable {
   private final EwpChangeNotificationRepository changeNotificationRepository;
 
   private final EwpInterInstitutionalAgreementCnrV2Client interInstitutionalAgreementCnrV2Client;
+  private final EwpInterInstitutionalAgreementApprovalCnrV1Client interInstitutionalAgreementApprovalCnrV1Client;
   private final EwpOutgoingMobilityCnrV1Client outgoingMobilityCnrV1Client;
   private final EwpOutgoingMobilityLearningAgreementCnrV1Client outgoingMobilityLearningAgreementCnrV1Client;
 
   public EwpNotificationSenderDaemon(
       EwpChangeNotificationRepository changeNotificationRepository,
       EwpInterInstitutionalAgreementCnrV2Client interInstitutionalAgreementCnrV2Client,
+      EwpInterInstitutionalAgreementApprovalCnrV1Client interInstitutionalAgreementApprovalCnrV1Client,
       EwpOutgoingMobilityCnrV1Client outgoingMobilityCnrV1Client,
       EwpOutgoingMobilityLearningAgreementCnrV1Client outgoingMobilityLearningAgreementCnrV1Client) {
     this.changeNotificationRepository = changeNotificationRepository;
     this.interInstitutionalAgreementCnrV2Client = interInstitutionalAgreementCnrV2Client;
+    this.interInstitutionalAgreementApprovalCnrV1Client = interInstitutionalAgreementApprovalCnrV1Client;
     this.outgoingMobilityCnrV1Client = outgoingMobilityCnrV1Client;
     this.outgoingMobilityLearningAgreementCnrV1Client = outgoingMobilityLearningAgreementCnrV1Client;
   }
@@ -76,6 +81,14 @@ public class EwpNotificationSenderDaemon implements Runnable {
           interInstitutionalAgreementChangeNotification.getNotifierHeiId(),
           interInstitutionalAgreementChangeNotification.getPartnerHeiId(),
           Collections.singletonList(interInstitutionalAgreementChangeNotification.getIiaId()));
+
+    } else if (changeNotification instanceof EwpInterInstitutionalAgreementApprovalChangeNotification) {
+      EwpInterInstitutionalAgreementApprovalChangeNotification interInstitutionalAgreementApprovalChangeNotification = (EwpInterInstitutionalAgreementApprovalChangeNotification) changeNotification;
+      interInstitutionalAgreementApprovalCnrV1Client.sendChangeNotification(
+          interInstitutionalAgreementApprovalChangeNotification.getApprovingHeiId(),
+          interInstitutionalAgreementApprovalChangeNotification.getPartnerHeiId(),
+          interInstitutionalAgreementApprovalChangeNotification.getOwnerHeiId(),
+          interInstitutionalAgreementApprovalChangeNotification.getIiaId());
 
     } else if (changeNotification instanceof EwpOutgoingMobilityChangeNotification) {
       EwpOutgoingMobilityChangeNotification outgoingMobilityChangeNotification = (EwpOutgoingMobilityChangeNotification) changeNotification;

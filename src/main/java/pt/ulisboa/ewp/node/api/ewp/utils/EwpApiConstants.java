@@ -30,4 +30,5 @@ public class EwpApiConstants {
   public static final String API_INTERINSTITUTIONAL_AGREEMENTS_NAME = "iias";
   public static final String API_INTERINSTITUTIONAL_AGREEMENT_CNR_NAME = "iia-cnr";
   public static final String API_INTERINSTITUTIONAL_AGREEMENTS_APPROVAL_NAME = "iias-approval";
+  public static final String API_INTERINSTITUTIONAL_AGREEMENT_APPROVAL_CNR_NAME = "iia-approval-cnr";
 }

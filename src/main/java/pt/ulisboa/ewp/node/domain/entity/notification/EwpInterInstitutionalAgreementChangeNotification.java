@@ -17,21 +17,21 @@ public class EwpInterInstitutionalAgreementChangeNotification extends EwpChangeN
   }
 
   public EwpInterInstitutionalAgreementChangeNotification(String sendingHeiId,
-      String receivingHeiId, String outgoingMobilityId) {
+      String partnerHeiId, String iiaId) {
     super();
     this.notifierHeiId = sendingHeiId;
-    this.partnerHeiId = receivingHeiId;
-    this.iiaId = outgoingMobilityId;
+    this.partnerHeiId = partnerHeiId;
+    this.iiaId = iiaId;
   }
 
   public EwpInterInstitutionalAgreementChangeNotification(int attemptNumber,
       ZonedDateTime scheduledDateTime,
       Status status, String sendingHeiId,
-      String receivingHeiId, String outgoingMobilityId) {
+      String partnerHeiId, String iiaId) {
     super(attemptNumber, scheduledDateTime, status);
     this.notifierHeiId = sendingHeiId;
-    this.partnerHeiId = receivingHeiId;
-    this.iiaId = outgoingMobilityId;
+    this.partnerHeiId = partnerHeiId;
+    this.iiaId = iiaId;
   }
 
   @Column(name = "notifier_hei_id")
