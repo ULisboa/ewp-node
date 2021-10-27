@@ -21,14 +21,14 @@ import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationR
 
 @RestController
 @ForwardEwpApi(apiLocalName = EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENT_APPROVAL_CNR_NAME)
-@RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "iias/approval/cnr/v1")
+@RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "iias/approval/cnr")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
-public class ForwardEwpApiInterInstitutionalAgreementApprovalCnrV1Controller extends
+public class ForwardEwpApiInterInstitutionalAgreementApprovalCnrController extends
     AbstractForwardEwpApiController {
 
   private final EwpChangeNotificationRepository changeNotificationRepository;
 
-  public ForwardEwpApiInterInstitutionalAgreementApprovalCnrV1Controller(
+  public ForwardEwpApiInterInstitutionalAgreementApprovalCnrController(
       RegistryClient registryClient,
       EwpChangeNotificationRepository changeNotificationRepository) {
     super(registryClient);

@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.iias.cnr;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.omobilities.las.cnr;
 
 import javax.validation.Valid;
 import org.springframework.http.MediaType;
@@ -11,24 +11,24 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.cnr.ForwardEwpApiInterInstitutionalAgreementCnrRequestDto;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.las.cnr.ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementChangeNotification;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
 
 @RestController
-@ForwardEwpApi(apiLocalName = EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENT_CNR_NAME)
-@RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "iias/cnr/v2")
+@ForwardEwpApi(apiLocalName = EwpApiConstants.API_OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR_NAME)
+@RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "omobilities/las/cnr")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
-public class ForwardEwpApiInterInstitutionalAgreementsCnrV2Controller extends
+public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrController extends
     AbstractForwardEwpApiController {
 
   private final EwpChangeNotificationRepository changeNotificationRepository;
 
-  public ForwardEwpApiInterInstitutionalAgreementsCnrV2Controller(
+  public ForwardEwpApiOutgoingMobilityLearningAgreementCnrController(
       RegistryClient registryClient,
       EwpChangeNotificationRepository changeNotificationRepository) {
     super(registryClient);
@@ -39,11 +39,12 @@ public class ForwardEwpApiInterInstitutionalAgreementsCnrV2Controller extends
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<ForwardEwpApiResponse>
-  sendChangeNotification(@Valid ForwardEwpApiInterInstitutionalAgreementCnrRequestDto requestDto) {
-    for (String iiaId : requestDto.getIiaIds()) {
-      EwpInterInstitutionalAgreementChangeNotification changeNotification = new EwpInterInstitutionalAgreementChangeNotification(
-          requestDto.getNotifierHeiId(),
-          requestDto.getPartnerHeiId(), iiaId);
+  sendChangeNotification(
+      @Valid ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto requestDto) {
+    for (String outgoingMobilityId : requestDto.getOutgoingMobilityIds()) {
+      EwpOutgoingMobilityLearningAgreementChangeNotification changeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
+          requestDto.getSendingHeiId(),
+          requestDto.getReceivingHeiId(), outgoingMobilityId);
       changeNotificationRepository.persist(changeNotification);
     }
     return ForwardEwpApiResponseUtils.toAcceptedResponseEntity();
