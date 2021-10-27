@@ -34,7 +34,7 @@ public class EwpOutgoingMobilityChangeNotification extends EwpChangeNotification
     this.outgoingMobilityId = outgoingMobilityId;
   }
 
-  @Column(name = "sending_hei_id", nullable = false)
+  @Column(name = "sending_hei_id")
   public String getSendingHeiId() {
     return sendingHeiId;
   }
@@ -43,7 +43,7 @@ public class EwpOutgoingMobilityChangeNotification extends EwpChangeNotification
     this.sendingHeiId = sendingHeiId;
   }
 
-  @Column(name = "receiving_hei_id", nullable = false)
+  @Column(name = "receiving_hei_id")
   public String getReceivingHeiId() {
     return receivingHeiId;
   }
@@ -52,7 +52,7 @@ public class EwpOutgoingMobilityChangeNotification extends EwpChangeNotification
     this.receivingHeiId = receivingHeiId;
   }
 
-  @Column(name = "outgoing_mobility_id", nullable = false)
+  @Column(name = "outgoing_mobility_id")
   public String getOutgoingMobilityId() {
     return outgoingMobilityId;
   }

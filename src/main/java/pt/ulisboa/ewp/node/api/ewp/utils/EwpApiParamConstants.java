@@ -17,6 +17,7 @@ public class EwpApiParamConstants {
   public static final String LOIS_AFTER = "lois_after";
   public static final String MOBILITY_TYPE = "mobility_type";
   public static final String MODIFIED_SINCE = "modified_since";
+  public static final String NOTIFIER_HEI_ID = "notifier_hei_id";
   public static final String OMOBILITY_ID = "omobility_id";
   public static final String OUNIT_CODE = "ounit_code";
   public static final String OUNIT_ID = "ounit_id";

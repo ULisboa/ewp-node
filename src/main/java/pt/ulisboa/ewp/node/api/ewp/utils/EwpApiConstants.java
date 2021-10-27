@@ -28,5 +28,6 @@ public class EwpApiConstants {
   public static final String API_OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR_NAME = "omobility-la-cnr";
   public static final String API_SIMPLE_COURSE_REPLICATION_NAME = "simple-course-replication";
   public static final String API_INTERINSTITUTIONAL_AGREEMENTS_NAME = "iias";
+  public static final String API_INTERINSTITUTIONAL_AGREEMENT_CNR_NAME = "iia-cnr";
   public static final String API_INTERINSTITUTIONAL_AGREEMENTS_APPROVAL_NAME = "iias-approval";
 }
