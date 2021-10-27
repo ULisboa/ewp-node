@@ -2,21 +2,25 @@ package pt.ulisboa.ewp.node.service.ewp.notification;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.iias.approval.cnr.EwpInterInstitutionalAgreementApprovalCnrV1Client;
-import pt.ulisboa.ewp.node.client.ewp.iias.cnr.EwpInterInstitutionalAgreementCnrV2Client;
-import pt.ulisboa.ewp.node.client.ewp.omobilities.EwpOutgoingMobilityCnrV1Client;
-import pt.ulisboa.ewp.node.client.ewp.omobilities.las.cnr.EwpOutgoingMobilityLearningAgreementCnrV1Client;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementApprovalChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
+import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificationHandler;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpInterInstitutionalAgreementApprovalChangeNotificationHandler;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpInterInstitutionalAgreementChangeNotificationHandler;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpOutgoingMobilityChangeNotificationHandler;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpOutgoingMobilityLearningAgreementChangeNotificationHandler;
 
 @Service
 public class EwpNotificationSenderDaemon implements Runnable {
@@ -31,22 +35,24 @@ public class EwpNotificationSenderDaemon implements Runnable {
 
   private final EwpChangeNotificationRepository changeNotificationRepository;
 
-  private final EwpInterInstitutionalAgreementCnrV2Client interInstitutionalAgreementCnrV2Client;
-  private final EwpInterInstitutionalAgreementApprovalCnrV1Client interInstitutionalAgreementApprovalCnrV1Client;
-  private final EwpOutgoingMobilityCnrV1Client outgoingMobilityCnrV1Client;
-  private final EwpOutgoingMobilityLearningAgreementCnrV1Client outgoingMobilityLearningAgreementCnrV1Client;
+  private final Map<Class<?>, EwpChangeNotificationHandler> classTypeToSenderHandlerMap = new HashMap<>();
 
   public EwpNotificationSenderDaemon(
       EwpChangeNotificationRepository changeNotificationRepository,
-      EwpInterInstitutionalAgreementCnrV2Client interInstitutionalAgreementCnrV2Client,
-      EwpInterInstitutionalAgreementApprovalCnrV1Client interInstitutionalAgreementApprovalCnrV1Client,
-      EwpOutgoingMobilityCnrV1Client outgoingMobilityCnrV1Client,
-      EwpOutgoingMobilityLearningAgreementCnrV1Client outgoingMobilityLearningAgreementCnrV1Client) {
+      EwpInterInstitutionalAgreementChangeNotificationHandler interInstitutionalAgreementChangeNotificationHandler,
+      EwpInterInstitutionalAgreementApprovalChangeNotificationHandler interInstitutionalAgreementApprovalChangeNotificationHandler,
+      EwpOutgoingMobilityChangeNotificationHandler outgoingMobilityChangeNotificationHandler,
+      EwpOutgoingMobilityLearningAgreementChangeNotificationHandler outgoingMobilityLearningAgreementChangeNotificationHandler) {
     this.changeNotificationRepository = changeNotificationRepository;
-    this.interInstitutionalAgreementCnrV2Client = interInstitutionalAgreementCnrV2Client;
-    this.interInstitutionalAgreementApprovalCnrV1Client = interInstitutionalAgreementApprovalCnrV1Client;
-    this.outgoingMobilityCnrV1Client = outgoingMobilityCnrV1Client;
-    this.outgoingMobilityLearningAgreementCnrV1Client = outgoingMobilityLearningAgreementCnrV1Client;
+
+    this.registerSenderHandler(EwpInterInstitutionalAgreementChangeNotification.class,
+        interInstitutionalAgreementChangeNotificationHandler);
+    this.registerSenderHandler(EwpInterInstitutionalAgreementApprovalChangeNotification.class,
+        interInstitutionalAgreementApprovalChangeNotificationHandler);
+    this.registerSenderHandler(EwpOutgoingMobilityChangeNotification.class,
+        outgoingMobilityChangeNotificationHandler);
+    this.registerSenderHandler(EwpOutgoingMobilityLearningAgreementChangeNotification.class,
+        outgoingMobilityLearningAgreementChangeNotificationHandler);
   }
 
   @Override
@@ -73,38 +79,13 @@ public class EwpNotificationSenderDaemon implements Runnable {
   }
 
   private void sendChangeNotification(
-      EwpChangeNotification changeNotification) throws EwpClientErrorException {
+      EwpChangeNotification changeNotification)
+      throws EwpClientErrorException, NoEwpCnrAPIException {
 
-    if (changeNotification instanceof EwpInterInstitutionalAgreementChangeNotification) {
-      EwpInterInstitutionalAgreementChangeNotification interInstitutionalAgreementChangeNotification = (EwpInterInstitutionalAgreementChangeNotification) changeNotification;
-      interInstitutionalAgreementCnrV2Client.sendChangeNotification(
-          interInstitutionalAgreementChangeNotification.getNotifierHeiId(),
-          interInstitutionalAgreementChangeNotification.getPartnerHeiId(),
-          Collections.singletonList(interInstitutionalAgreementChangeNotification.getIiaId()));
-
-    } else if (changeNotification instanceof EwpInterInstitutionalAgreementApprovalChangeNotification) {
-      EwpInterInstitutionalAgreementApprovalChangeNotification interInstitutionalAgreementApprovalChangeNotification = (EwpInterInstitutionalAgreementApprovalChangeNotification) changeNotification;
-      interInstitutionalAgreementApprovalCnrV1Client.sendChangeNotification(
-          interInstitutionalAgreementApprovalChangeNotification.getApprovingHeiId(),
-          interInstitutionalAgreementApprovalChangeNotification.getPartnerHeiId(),
-          interInstitutionalAgreementApprovalChangeNotification.getOwnerHeiId(),
-          interInstitutionalAgreementApprovalChangeNotification.getIiaId());
-
-    } else if (changeNotification instanceof EwpOutgoingMobilityChangeNotification) {
-      EwpOutgoingMobilityChangeNotification outgoingMobilityChangeNotification = (EwpOutgoingMobilityChangeNotification) changeNotification;
-      outgoingMobilityCnrV1Client.sendChangeNotification(
-          outgoingMobilityChangeNotification.getSendingHeiId(),
-          outgoingMobilityChangeNotification.getReceivingHeiId(),
-          Collections.singletonList(outgoingMobilityChangeNotification.getOutgoingMobilityId()));
-
-    } else if (changeNotification instanceof EwpOutgoingMobilityLearningAgreementChangeNotification) {
-      EwpOutgoingMobilityLearningAgreementChangeNotification outgoingMobilityLearningAgreementChangeNotification = (EwpOutgoingMobilityLearningAgreementChangeNotification) changeNotification;
-      outgoingMobilityLearningAgreementCnrV1Client.sendChangeNotification(
-          outgoingMobilityLearningAgreementChangeNotification.getSendingHeiId(),
-          outgoingMobilityLearningAgreementChangeNotification.getReceivingHeiId(),
-          Collections.singletonList(
-              outgoingMobilityLearningAgreementChangeNotification.getOutgoingMobilityId()));
-
+    Optional<EwpChangeNotificationHandler> senderHandlerOptional = this.getSenderHandlerForClassType(
+        changeNotification.getClass());
+    if (senderHandlerOptional.isPresent()) {
+      senderHandlerOptional.get().sendChangeNotification(changeNotification);
     } else {
       throw new IllegalStateException(
           "Unsupported change notification type: " + changeNotification);
@@ -120,5 +101,14 @@ public class EwpNotificationSenderDaemon implements Runnable {
     }
 
     changeNotificationRepository.persist(changeNotification);
+  }
+
+  private <T extends EwpChangeNotification> Optional<EwpChangeNotificationHandler> getSenderHandlerForClassType(
+      Class<T> classType) {
+    return Optional.ofNullable(this.classTypeToSenderHandlerMap.get(classType));
+  }
+
+  private void registerSenderHandler(Class<?> classType, EwpChangeNotificationHandler sendHandler) {
+    this.classTypeToSenderHandlerMap.put(classType, sendHandler);
   }
 }
