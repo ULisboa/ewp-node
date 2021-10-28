@@ -26,6 +26,11 @@ public class EwpIncomingMobilityChangeNotificationHandler extends
   }
 
   @Override
+  public Class<?> getSupportedChangeNotificationClassType() {
+    return EwpIncomingMobilityChangeNotification.class;
+  }
+
+  @Override
   public void sendChangeNotification(
       EwpChangeNotification changeNotification)
       throws EwpClientErrorException, NoEwpCnrAPIException {

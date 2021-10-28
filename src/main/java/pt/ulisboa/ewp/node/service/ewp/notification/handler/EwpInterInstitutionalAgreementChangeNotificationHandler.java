@@ -26,6 +26,11 @@ public class EwpInterInstitutionalAgreementChangeNotificationHandler extends
   }
 
   @Override
+  public Class<?> getSupportedChangeNotificationClassType() {
+    return EwpInterInstitutionalAgreementChangeNotification.class;
+  }
+
+  @Override
   public void sendChangeNotification(
       EwpChangeNotification changeNotification)
       throws EwpClientErrorException, NoEwpCnrAPIException {

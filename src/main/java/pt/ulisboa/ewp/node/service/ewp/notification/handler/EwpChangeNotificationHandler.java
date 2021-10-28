@@ -15,6 +15,8 @@ public abstract class EwpChangeNotificationHandler {
     this.registryClient = registryClient;
   }
 
+  public abstract Class<?> getSupportedChangeNotificationClassType();
+
   public abstract void sendChangeNotification(EwpChangeNotification changeNotification)
       throws EwpClientErrorException, NoEwpCnrAPIException;
 
