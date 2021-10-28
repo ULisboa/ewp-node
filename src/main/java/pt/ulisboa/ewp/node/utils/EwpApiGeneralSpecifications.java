@@ -10,6 +10,7 @@ import eu.erasmuswithoutpaper.api.iias.cnr.v2.IiaCnrV2;
 import eu.erasmuswithoutpaper.api.iias.v3.IiasV3;
 import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
 import eu.erasmuswithoutpaper.api.imobilities.cnr.v1.ImobilityCnrV1;
+import eu.erasmuswithoutpaper.api.imobilities.tors.cnr.v1.ImobilityTorCnrV1;
 import eu.erasmuswithoutpaper.api.imobilities.v1.ImobilitiesV1;
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
 import eu.erasmuswithoutpaper.api.omobilities.cnr.v1.OmobilityCnrV1;
@@ -26,6 +27,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpFactsheetApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilitiesApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilityCnrApiConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilityToRCnrApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementApprovalCnrApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementCnrApiConfiguration;
@@ -125,15 +127,6 @@ public class EwpApiGeneralSpecifications {
           EwpFactsheetApiConfiguration::create);
 
   public static final EwpApiGeneralSpecification<
-      ImobilitiesV1, EwpIncomingMobilitiesApiConfiguration>
-      INCOMING_MOBILITIES_V1 =
-      new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INCOMING_MOBILITIES_NAME,
-          1,
-          ImobilitiesV1.class,
-          EwpIncomingMobilitiesApiConfiguration::create);
-
-  public static final EwpApiGeneralSpecification<
       OmobilitiesV1, EwpOutgoingMobilitiesApiConfiguration>
       OUTGOING_MOBILITIES_V1 =
       new EwpApiGeneralSpecification<>(
@@ -170,6 +163,15 @@ public class EwpApiGeneralSpecifications {
           EwpOutgoingMobilityLearningAgreementCnrApiConfiguration::create);
 
   public static final EwpApiGeneralSpecification<
+      ImobilitiesV1, EwpIncomingMobilitiesApiConfiguration>
+      INCOMING_MOBILITIES_V1 =
+      new EwpApiGeneralSpecification<>(
+          EwpApiConstants.API_INCOMING_MOBILITIES_NAME,
+          1,
+          ImobilitiesV1.class,
+          EwpIncomingMobilitiesApiConfiguration::create);
+
+  public static final EwpApiGeneralSpecification<
       ImobilityCnrV1, EwpIncomingMobilityCnrApiConfiguration>
       INCOMING_MOBILITY_CNR_V1 =
       new EwpApiGeneralSpecification<>(
@@ -177,6 +179,15 @@ public class EwpApiGeneralSpecifications {
           1,
           ImobilityCnrV1.class,
           EwpIncomingMobilityCnrApiConfiguration::create);
+
+  public static final EwpApiGeneralSpecification<
+      ImobilityTorCnrV1, EwpIncomingMobilityToRCnrApiConfiguration>
+      INCOMING_MOBILITY_TOR_CNR_V1 =
+      new EwpApiGeneralSpecification<>(
+          EwpApiConstants.API_INCOMING_MOBILITY_TOR_CNR_NAME,
+          1,
+          ImobilityTorCnrV1.class,
+          EwpIncomingMobilityToRCnrApiConfiguration::create);
 
   private EwpApiGeneralSpecifications() {
   }

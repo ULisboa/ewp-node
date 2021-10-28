@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpIncomingMobilityChangeNotification;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpIncomingMobilityToRChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementApprovalChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityChangeNotification;
@@ -19,6 +20,7 @@ import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationR
 import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificationHandler;
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpIncomingMobilityChangeNotificationHandler;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpIncomingMobilityToRChangeNotificationHandler;
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpInterInstitutionalAgreementApprovalChangeNotificationHandler;
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpInterInstitutionalAgreementChangeNotificationHandler;
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpOutgoingMobilityChangeNotificationHandler;
@@ -45,7 +47,8 @@ public class EwpNotificationSenderDaemon implements Runnable {
       EwpInterInstitutionalAgreementApprovalChangeNotificationHandler interInstitutionalAgreementApprovalChangeNotificationHandler,
       EwpOutgoingMobilityChangeNotificationHandler outgoingMobilityChangeNotificationHandler,
       EwpOutgoingMobilityLearningAgreementChangeNotificationHandler outgoingMobilityLearningAgreementChangeNotificationHandler,
-      EwpIncomingMobilityChangeNotificationHandler incomingMobilityChangeNotificationHandler) {
+      EwpIncomingMobilityChangeNotificationHandler incomingMobilityChangeNotificationHandler,
+      EwpIncomingMobilityToRChangeNotificationHandler incomingMobilityToRChangeNotificationHandler) {
     this.changeNotificationRepository = changeNotificationRepository;
 
     this.registerSenderHandler(EwpInterInstitutionalAgreementChangeNotification.class,
@@ -58,6 +61,8 @@ public class EwpNotificationSenderDaemon implements Runnable {
         outgoingMobilityLearningAgreementChangeNotificationHandler);
     this.registerSenderHandler(EwpIncomingMobilityChangeNotification.class,
         incomingMobilityChangeNotificationHandler);
+    this.registerSenderHandler(EwpIncomingMobilityToRChangeNotification.class,
+        incomingMobilityToRChangeNotificationHandler);
   }
 
   @Override
