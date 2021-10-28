@@ -57,7 +57,7 @@
     <dependency>
       <groupId>pt.ulisboa</groupId>
       <artifactId>ewp-connector-api</artifactId>
-      <version>3.4.0</version>
+      <version>3.5.0</version>
     </dependency>
     <dependency>
       <groupId>pt.ulisboa</groupId>

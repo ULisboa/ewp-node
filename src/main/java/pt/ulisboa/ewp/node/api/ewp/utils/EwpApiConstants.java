@@ -22,6 +22,7 @@ public class EwpApiConstants {
   public static final String API_COURSES_NAME = "courses";
   public static final String API_FACTSHEETS_NAME = "factsheet";
   public static final String API_INCOMING_MOBILITIES_NAME = "imobilities";
+  public static final String API_INCOMING_MOBILITY_CNR_NAME = "imobility-cnr";
   public static final String API_OUTGOING_MOBILITIES_NAME = "omobilities";
   public static final String API_OUTGOING_MOBILITY_CNR_NAME = "omobility-cnr";
   public static final String API_OUTGOING_MOBILITY_LEARNING_AGREEMENTS_NAME = "omobility-las";
