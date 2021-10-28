@@ -32,5 +32,6 @@ public class EwpApiConstants {
   public static final String API_INTERINSTITUTIONAL_AGREEMENT_APPROVAL_CNR_NAME = "iia-approval-cnr";
   public static final String API_INCOMING_MOBILITIES_NAME = "imobilities";
   public static final String API_INCOMING_MOBILITY_CNR_NAME = "imobility-cnr";
+  public static final String API_INCOMING_MOBILITY_TORS_CNR_NAME = "imobility-tors";
   public static final String API_INCOMING_MOBILITY_TOR_CNR_NAME = "imobility-tor-cnr";
 }
