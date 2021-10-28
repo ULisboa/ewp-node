@@ -93,8 +93,13 @@ public abstract class EwpChangeNotification {
   }
 
   @Transient
-  public boolean hasFailed() {
-    return getStatus() == Status.FAILED;
+  public boolean hasFailedDueToMaxAttempts() {
+    return getStatus() == Status.FAILED_MAX_ATTEMPTS;
+  }
+
+  @Transient
+  public boolean hasFailedDueToNoCnrApiAvailable() {
+    return getStatus() == Status.FAILED_NO_CNR_API_AVAILABLE;
   }
 
   @Column(name = "status", nullable = false)
@@ -120,8 +125,13 @@ public abstract class EwpChangeNotification {
   }
 
   @Transient
-  public void markAsFailed() {
-    this.status = Status.FAILED;
+  public void markAsFailedDueToMaxAttempts() {
+    this.status = Status.FAILED_MAX_ATTEMPTS;
+  }
+
+  @Transient
+  public void markAsFailedDueToNoCnrApiAvailable() {
+    this.status = Status.FAILED_NO_CNR_API_AVAILABLE;
   }
 
   @Transient
@@ -149,7 +159,8 @@ public abstract class EwpChangeNotification {
   public enum Status {
     PENDING,
     SUCCESS,
-    FAILED,
+    FAILED_MAX_ATTEMPTS,
+    FAILED_NO_CNR_API_AVAILABLE,
     MERGED;
   }
 }

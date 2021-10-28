@@ -1,24 +1,26 @@
 package pt.ulisboa.ewp.node.service.ewp.notification;
 
 import static org.awaitility.Awaitility.await;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.OmobilityLaCnrResponseV1;
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import pt.ulisboa.ewp.node.AbstractIntegrationTest;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
-import pt.ulisboa.ewp.node.client.ewp.omobilities.las.cnr.EwpOutgoingMobilityLearningAgreementCnrV1Client;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification.Status;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
+import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpOutgoingMobilityLearningAgreementChangeNotificationHandler;
 
 class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
@@ -26,11 +28,11 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
   private EwpChangeNotificationRepository changeNotificationRepository;
 
   @MockBean
-  private EwpOutgoingMobilityLearningAgreementCnrV1Client outgoingMobilityLearningAgreementCnrV1Client;
+  private EwpOutgoingMobilityLearningAgreementChangeNotificationHandler outgoingMobilityLearningAgreementChangeNotificationHandler;
 
   @Test
   void testRun_ScheduledChangeNotificationSuccess_NotificationMarkedAsSuccess()
-      throws EwpClientErrorException {
+      throws EwpClientErrorException, NoEwpCnrAPIException {
 
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
         1, ZonedDateTime.now(), Status.PENDING, "abc", "qwe", "def");
@@ -39,11 +41,9 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
         .responseBody(new OmobilityLaCnrResponseV1())
         .build();
 
-    when(outgoingMobilityLearningAgreementCnrV1Client.sendChangeNotification(
-        originalChangeNotification.getSendingHeiId(),
-        originalChangeNotification.getReceivingHeiId(),
-        Collections.singletonList(originalChangeNotification.getOutgoingMobilityId())))
-        .thenReturn(mockedSuccessResult);
+    doNothing().when(
+        outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
+        Mockito.any());
 
     changeNotificationRepository.persist(originalChangeNotification);
     await()
@@ -54,39 +54,55 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
   }
 
   @Test
-  void testRun_ScheduledChangeNotificationLastAttemptFailure_NotificationMarkedAsFailure()
-      throws EwpClientErrorException {
+  void testRun_ScheduledChangeNotificationNoCnrApiAvailable_NotificationMarkedAsFailure()
+      throws EwpClientErrorException, NoEwpCnrAPIException {
 
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
         EwpNotificationSenderDaemon.MAX_NUMBER_ATTEMPTS,
         ZonedDateTime.now(), Status.PENDING, "abc", "qwe", "def");
 
-    when(outgoingMobilityLearningAgreementCnrV1Client.sendChangeNotification(
-        originalChangeNotification.getSendingHeiId(),
-        originalChangeNotification.getReceivingHeiId(),
-        Collections.singletonList(originalChangeNotification.getOutgoingMobilityId()))).thenThrow(
-        new EwpClientProcessorException(null, null, new IllegalStateException("TEST")));
+    doThrow(new NoEwpCnrAPIException(originalChangeNotification)).when(
+        outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
+        Mockito.any());
 
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
             Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 2000))
         .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
-            .hasFailed());
+            .hasFailedDueToNoCnrApiAvailable());
+  }
+
+  @Test
+  void testRun_ScheduledChangeNotificationLastAttemptFailure_NotificationMarkedAsFailure()
+      throws EwpClientErrorException, NoEwpCnrAPIException {
+
+    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
+        EwpNotificationSenderDaemon.MAX_NUMBER_ATTEMPTS,
+        ZonedDateTime.now(), Status.PENDING, "abc", "qwe", "def");
+
+    doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
+        outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
+        Mockito.any());
+
+    changeNotificationRepository.persist(originalChangeNotification);
+    await()
+        .atMost(
+            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 2000))
+        .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
+            .hasFailedDueToMaxAttempts());
   }
 
   @Test
   void testRun_ScheduledChangeNotificationNotLastAttemptFailure_NewAttemptScheduled()
-      throws EwpClientErrorException {
+      throws EwpClientErrorException, NoEwpCnrAPIException {
 
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
         1, ZonedDateTime.now(), Status.PENDING, "abc", "qwe", "def");
 
-    when(outgoingMobilityLearningAgreementCnrV1Client.sendChangeNotification(
-        originalChangeNotification.getSendingHeiId(),
-        originalChangeNotification.getReceivingHeiId(),
-        Collections.singletonList(originalChangeNotification.getOutgoingMobilityId()))).thenThrow(
-        new EwpClientProcessorException(null, null, new IllegalStateException("TEST")));
+    doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
+        outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
+        Mockito.any());
 
     changeNotificationRepository.persist(originalChangeNotification);
     await()

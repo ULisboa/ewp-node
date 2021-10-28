@@ -72,6 +72,12 @@ public class EwpNotificationSenderDaemon implements Runnable {
       changeNotification.markAsSuccess();
       changeNotificationRepository.persist(changeNotification);
 
+    } catch (NoEwpCnrAPIException e) {
+      LOG.error(String.format("Discarding change notification due to no CNR API available: %s",
+          changeNotification), e);
+      changeNotification.markAsFailedDueToNoCnrApiAvailable();
+      changeNotificationRepository.persist(changeNotification);
+
     } catch (Exception e) {
       LOG.error(String.format("Failed to send change notification: %s", changeNotification), e);
       scheduleNewAttempt(changeNotification);
@@ -94,7 +100,7 @@ public class EwpNotificationSenderDaemon implements Runnable {
 
   private void scheduleNewAttempt(EwpChangeNotification changeNotification) {
     if (changeNotification.getAttemptNumber() >= MAX_NUMBER_ATTEMPTS) {
-      changeNotification.markAsFailed();
+      changeNotification.markAsFailedDueToMaxAttempts();
 
     } else {
       changeNotification.scheduleNewAttempt();
