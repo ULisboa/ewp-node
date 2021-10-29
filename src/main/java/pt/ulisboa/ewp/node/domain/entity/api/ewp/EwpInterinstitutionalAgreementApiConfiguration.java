@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
 import eu.erasmuswithoutpaper.api.iias.v3.IiasV3;
 import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
+import eu.erasmuswithoutpaper.api.iias.v6.IiasV6;
 import java.math.BigInteger;
 import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
@@ -94,6 +95,17 @@ public class EwpInterinstitutionalAgreementApiConfiguration extends EwpApiConfig
         apiElement.getMaxIiaIds(),
         apiElement.getMaxIiaCodes(),
         apiElement.getSendsNotifications() != null);
+  }
+
+  public static EwpInterinstitutionalAgreementApiConfiguration create(IiasV6 apiElement) {
+    return new EwpInterinstitutionalAgreementApiConfiguration(
+        apiElement.getIndexUrl(),
+        apiElement.getGetUrl(),
+        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
+        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
+        apiElement.getMaxIiaIds(),
+        apiElement.getMaxIiaCodes(),
+        true);
   }
 
   @Override

@@ -48,7 +48,7 @@ non-backward changes may be introduced.
 | Organizational Units | X | 2 |
 | Courses | X | 0 |
 | Simple Course Replication | X | 1 |
-| Interinstitutional Agreements | X | 3 & 4 |
+| Interinstitutional Agreements | X | 3 & 4 & 6 |
 | Interinstitutional Agreements CNR | X | 2 |
 | Interinstitutional Approval | X | 1 |
 | Interinstitutional Approval CNR | X | 1 |
@@ -58,9 +58,9 @@ non-backward changes may be introduced.
 | Outgoing Mobility CNR | X | 1 |
 | Outgoing Mobility Learning Agreement CNR | X | 1 |
 | Incoming Mobilities | X | 1 |
-| Incoming Mobility CNR |  |  |
-| Incoming Mobility ToR |  |  |
-| Incoming Mobility ToR CNR |  |  |
+| Incoming Mobility CNR | X | 1 |
+| Incoming Mobility ToR | X | 1 |
+| Incoming Mobility ToR CNR | X | 1 |
 
 ## Requirements
 

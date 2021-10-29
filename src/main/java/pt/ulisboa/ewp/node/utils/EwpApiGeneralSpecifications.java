@@ -9,6 +9,7 @@ import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalV1;
 import eu.erasmuswithoutpaper.api.iias.cnr.v2.IiaCnrV2;
 import eu.erasmuswithoutpaper.api.iias.v3.IiasV3;
 import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
+import eu.erasmuswithoutpaper.api.iias.v6.IiasV6;
 import eu.erasmuswithoutpaper.api.imobilities.cnr.v1.ImobilityCnrV1;
 import eu.erasmuswithoutpaper.api.imobilities.tors.cnr.v1.ImobilityTorCnrV1;
 import eu.erasmuswithoutpaper.api.imobilities.tors.v1.ImobilityTorsV1;
@@ -90,6 +91,15 @@ public class EwpApiGeneralSpecifications {
           EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENTS_NAME,
           4,
           IiasV4.class,
+          EwpInterinstitutionalAgreementApiConfiguration::create);
+
+  public static final EwpApiGeneralSpecification<
+      IiasV6, EwpInterinstitutionalAgreementApiConfiguration>
+      INTERINSTITUTIONAL_AGREEMENT_V6 =
+      new EwpApiGeneralSpecification<>(
+          EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENTS_NAME,
+          6,
+          IiasV6.class,
           EwpInterinstitutionalAgreementApiConfiguration::create);
 
   public static final EwpApiGeneralSpecification<
