@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import pt.ulisboa.ewp.node.AbstractIntegrationTest;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
@@ -27,7 +27,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
   @Autowired
   private EwpChangeNotificationRepository changeNotificationRepository;
 
-  @MockBean
+  @SpyBean
   private EwpOutgoingMobilityLearningAgreementChangeNotificationHandler outgoingMobilityLearningAgreementChangeNotificationHandler;
 
   @Test
