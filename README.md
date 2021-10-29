@@ -20,18 +20,18 @@ non-backward changes may be introduced.
 
 | API | Supported? | Major Versions Supported |
 | :----: | :---: | :---: |
-| Discovery Manifest | X | 5 |
-| Echo | X | 2 |
-| Institutions | X | 2 |
-| Organizational Units | X | 2 |
-| Courses | X | 0 |
-| Simple Course Replication | X | 1 |
-| Interinstitutional Agreements | X | 4 |
+| Discovery Manifest | :heavy_check_mark: | 5 |
+| Echo | :heavy_check_mark: | 2 |
+| Institutions | :heavy_check_mark: | 2 |
+| Organizational Units | :heavy_check_mark: | 2 |
+| Courses | :heavy_check_mark: | 0 |
+| Simple Course Replication | :heavy_check_mark: | 1 |
+| Interinstitutional Agreements | :heavy_check_mark: | 4 |
 | Interinstitutional Agreements CNR |  |  |
-| Interinstitutional Approval | X | 1 |
+| Interinstitutional Approval | :heavy_check_mark: | 1 |
 | Interinstitutional Approval CNR |  |  |
-| Mobility Factsheet | X | 1 |
-| Outgoing Mobilities | X | 1 |
+| Mobility Factsheet | :heavy_check_mark: | 1 |
+| Outgoing Mobilities | :heavy_check_mark: | 1 |
 | Outgoing Mobility Learning Agreements |  |  |
 | Outgoing Mobility CNR |  |  |
 | Outgoing Mobility Learning Agreement CNR |  |  |
@@ -44,23 +44,23 @@ non-backward changes may be introduced.
 
 | API | Supported? | Major Versions Supported |
 | :----: | :---: | :---: |
-| Institutions | X | 2 |
-| Organizational Units | X | 2 |
-| Courses | X | 0 |
-| Simple Course Replication | X | 1 |
-| Interinstitutional Agreements | X | 3 & 4 & 6 |
-| Interinstitutional Agreements CNR | X | 2 |
-| Interinstitutional Approval | X | 1 |
-| Interinstitutional Approval CNR | X | 1 |
-| Mobility Factsheet | X | 1 |
-| Outgoing Mobilities | X | 1 |
-| Outgoing Mobility Learning Agreements | X | 1 |
-| Outgoing Mobility CNR | X | 1 |
-| Outgoing Mobility Learning Agreement CNR | X | 1 |
-| Incoming Mobilities | X | 1 |
-| Incoming Mobility CNR | X | 1 |
-| Incoming Mobility ToR | X | 1 |
-| Incoming Mobility ToR CNR | X | 1 |
+| Institutions | :heavy_check_mark: | 2 |
+| Organizational Units | :heavy_check_mark: | 2 |
+| Courses | :heavy_check_mark: | 0 |
+| Simple Course Replication | :heavy_check_mark: | 1 |
+| Interinstitutional Agreements | :heavy_check_mark: | 3 & 4 & 6 |
+| Interinstitutional Agreements CNR | :heavy_check_mark: | 2 |
+| Interinstitutional Approval | :heavy_check_mark: | 1 |
+| Interinstitutional Approval CNR | :heavy_check_mark: | 1 |
+| Mobility Factsheet | :heavy_check_mark: | 1 |
+| Outgoing Mobilities | :heavy_check_mark: | 1 |
+| Outgoing Mobility Learning Agreements | :heavy_check_mark: | 1 |
+| Outgoing Mobility CNR | :heavy_check_mark: | 1 |
+| Outgoing Mobility Learning Agreement CNR | :heavy_check_mark: | 1 |
+| Incoming Mobilities | :heavy_check_mark: | 1 |
+| Incoming Mobility CNR | :heavy_check_mark: | 1 |
+| Incoming Mobility ToR | :heavy_check_mark: | 1 |
+| Incoming Mobility ToR CNR | :heavy_check_mark: | 1 |
 
 ## Requirements
 
