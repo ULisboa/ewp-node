@@ -1,10 +1,10 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.institutions;
 
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2;
+import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsResponseV2.Hei;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,15 +51,15 @@ public class EwpApiInstitutionsV2Controller {
           "Maximum number of valid HEI IDs per request is " + EwpApiConstants.MAX_HEI_IDS);
     }
 
-    Map<String, InstitutionsV2HostProvider> heiIdToProviderMap =
-        hostPluginManager.getProviderPerHeiId(heiIds, InstitutionsV2HostProvider.class);
+    String heiId = heiIds.get(0);
 
+    Optional<InstitutionsV2HostProvider> hostProviderOptional = hostPluginManager.getProvider(
+        heiId, InstitutionsV2HostProvider.class);
     InstitutionsResponseV2 response = new InstitutionsResponseV2();
-    heiIdToProviderMap.entrySet().stream()
-        .map(entry -> entry.getValue().findByHeiId(entry.getKey()))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .forEach(h -> response.getHei().add(h));
+    if (hostProviderOptional.isPresent()) {
+      Optional<Hei> heiOptional = hostProviderOptional.get().findByHeiId(heiId);
+      heiOptional.ifPresent(hei -> response.getHei().add(hei));
+    }
     return ResponseEntity.ok(response);
   }
 }

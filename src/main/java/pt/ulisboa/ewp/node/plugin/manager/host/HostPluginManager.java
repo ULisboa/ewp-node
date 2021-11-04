@@ -1,12 +1,14 @@
 package pt.ulisboa.ewp.node.plugin.manager.host;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.pf4j.DefaultPluginManager;
 import org.pf4j.Plugin;
 import org.pf4j.PluginFactory;
@@ -26,7 +28,8 @@ public class HostPluginManager extends DefaultPluginManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(HostPluginManager.class);
 
-  private final Map<String, HostPlugin> heiIdToPluginMap = new HashMap<>();
+  private final Map<String, Collection<HostPlugin>> heiIdToPluginsMap = new HashMap<>();
+  private final Map<String, HostPlugin> heiIdToPrimaryPluginMap = new HashMap<>();
 
   public HostPluginManager(@Value("${plugins.path}") String pluginsPath) {
     super(Path.of(pluginsPath));
@@ -38,17 +41,19 @@ public class HostPluginManager extends DefaultPluginManager {
     super.loadPlugins();
     super.startPlugins();
 
-    Collection<HostPlugin> plugins = getPlugins(HostPlugin.class);
+    Collection<HostPlugin> plugins = getAllPlugins();
     for (HostPlugin plugin : plugins) {
       for (String heiId : plugin.getCoveredHeiIds()) {
-        if (this.heiIdToPluginMap.containsKey(heiId)) {
-          throw new IllegalStateException(
-              "HEI ID "
-                  + heiId
-                  + " is already registered by another plugin: "
-                  + heiIdToPluginMap.get(heiId).getClass().getSimpleName());
+        this.heiIdToPluginsMap.computeIfAbsent(heiId, ignored -> new ArrayList<>());
+        this.heiIdToPluginsMap.get(heiId).add(plugin);
+
+        if (plugin.isPrimaryForHeiId(heiId)) {
+          if (this.heiIdToPrimaryPluginMap.containsKey(heiId)) {
+            throw new IllegalStateException(
+                "Multiple plugins are set as primary for HEI ID: " + heiId);
+          }
+          this.heiIdToPrimaryPluginMap.put(heiId, plugin);
         }
-        this.heiIdToPluginMap.put(heiId, plugin);
       }
     }
   }
@@ -58,50 +63,65 @@ public class HostPluginManager extends DefaultPluginManager {
     return new HostPluginFactory();
   }
 
-  public <T extends HostProvider> Map<String, T> getProviderPerHeiId(
-      Collection<String> heiIds, Class<T> providerClassType) {
-    Map<String, T> heiIdToProviderMap = new HashMap<>();
-    heiIds.forEach(
-        heiId -> {
-          Optional<T> providerOptional = getProvider(heiId, providerClassType);
-          providerOptional.ifPresent(t -> heiIdToProviderMap.put(heiId, t));
-        });
-    return heiIdToProviderMap;
+  public <T extends HostProvider> Optional<T> getProvider(
+      String heiId, Class<T> providerClassType) {
+    return getProvider(heiId, null, providerClassType);
   }
 
   public <T extends HostProvider> Optional<T> getProvider(
-      String heiId, Class<T> providerClassType) {
-    Collection<T> extensions = getProviders(heiId, providerClassType);
+      String heiId, String ounitId, Class<T> providerClassType) {
+    Collection<T> extensions = getProviders(heiId, ounitId, providerClassType);
     if (!extensions.isEmpty() && extensions.size() > 1) {
-      LOGGER.warn("Multiple providers detected for HEI ID {}, will use the first one", heiId);
+      LOGGER.warn(
+          "Multiple providers detected for HEI ID {} and OUNIT ID {}, will use the first one",
+          heiId, ounitId);
     }
     return extensions.stream().findFirst();
   }
 
-  public Collection<HostProvider> getProviders(String heiId) {
-    if (!heiIdToPluginMap.containsKey(heiId)) {
-      return Collections.emptyList();
-    }
-    HostPlugin plugin = heiIdToPluginMap.get(heiId);
-    return getExtensions(plugin, HostProvider.class);
+  public Collection<HostProvider> getAllProviders(String heiId) {
+    return getAllProvidersOfType(heiId, HostProvider.class);
   }
 
-  public <T> Collection<T> getProviders(String heiId, Class<T> providerClassType) {
-    if (!heiIdToPluginMap.containsKey(heiId)) {
-      return Collections.emptyList();
-    }
-    HostPlugin plugin = heiIdToPluginMap.get(heiId);
-    return getExtensions(plugin, providerClassType);
+  public <T> Collection<T> getAllProvidersOfType(String heiId, Class<T> providerClassType) {
+    this.heiIdToPluginsMap.computeIfAbsent(heiId, ignored -> new ArrayList<>());
+    Collection<HostPlugin> plugins = this.heiIdToPluginsMap.get(heiId);
+    return plugins.stream()
+        .flatMap(p -> getExtensions(p, providerClassType).stream())
+        .collect(Collectors.toList());
   }
 
-  public <T extends Plugin> Collection<T> getPlugins(Class<T> classType) {
+  public <T> Collection<T> getProviders(String heiId, String ounitId, Class<T> providerClassType) {
+    Optional<HostPlugin> pluginOptional = getAnyPluginFor(heiId, ounitId);
+    if (pluginOptional.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return getExtensions(pluginOptional.get(), providerClassType);
+  }
+
+  private Collection<HostPlugin> getAllPlugins() {
+    Class<HostPlugin> classType = HostPlugin.class;
     return getPlugins().stream()
         .filter(p -> classType.isAssignableFrom(p.getPlugin().getClass()))
         .map(p -> classType.cast(p.getPlugin()))
         .collect(Collectors.toList());
   }
 
-  public <T> Collection<T> getExtensions(Plugin plugin, Class<T> extensionType) {
+  private <T> Collection<T> getExtensions(Plugin plugin, Class<T> extensionType) {
     return super.getExtensions(extensionType, plugin.getWrapper().getPluginId());
+  }
+
+  private Optional<HostPlugin> getAnyPluginFor(String heiId, @Nullable String ounitId) {
+    if (ounitId == null) {
+      return Optional.ofNullable(this.heiIdToPrimaryPluginMap.get(heiId));
+
+    } else {
+      for (HostPlugin hostPlugin : this.heiIdToPluginsMap.getOrDefault(heiId, new ArrayList<>())) {
+        if (hostPlugin.getCoveredOunitIdsByHeiId(heiId).contains(ounitId)) {
+          return Optional.of(hostPlugin);
+        }
+      }
+      return Optional.empty();
+    }
   }
 }

@@ -45,7 +45,7 @@ public abstract class EwpManifestEntryProvider {
   protected Collection<ManifestApiEntryBaseV1> getManifestEntriesSupportedByHost(String heiId,
       String baseUrl) {
     Collection<ManifestApiEntryBaseV1> manifestEntries = new ArrayList<>();
-    hostPluginManager.getProviders(heiId).forEach(hostProvider -> {
+    hostPluginManager.getAllProviders(heiId).forEach(hostProvider -> {
       Optional<ManifestApiEntryBaseV1> manifestEntryOptional = this
           .toManifestEntry(heiId, baseUrl, hostProvider);
       if (manifestEntryOptional.isPresent()) {
