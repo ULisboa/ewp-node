@@ -3,6 +3,7 @@ package pt.ulisboa.ewp.node.api.ewp.controller.iias.approval;
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalV1;
 import java.math.BigInteger;
+import java.util.Collection;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.approval.InterInstitutionalAgreementsApprovalV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
@@ -22,13 +23,18 @@ public class EwpApiInterInstitutionalAgreementsApprovalManifestEntryProvider
   }
 
   public ManifestApiEntryBaseV1 getManifestEntryForV1(String heiId, String baseUrl,
-      InterInstitutionalAgreementsApprovalV1HostProvider hostProvider) {
+      Collection<InterInstitutionalAgreementsApprovalV1HostProvider> hostProviders) {
     IiasApprovalV1 manifestEntry = new IiasApprovalV1();
-    manifestEntry.setVersion(hostProvider.getVersion());
+    manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
     manifestEntry.setAdminNotes(null);
     manifestEntry
         .setUrl(baseUrl + EwpApiInterInstitutionalAgreementsApprovalV1Controller.BASE_PATH);
-    manifestEntry.setMaxIiaIds(BigInteger.valueOf(hostProvider.getMaxIiaIdsPerRequest()));
+
+    int maxIiaIdsPerRequest = hostProviders.stream().mapToInt(
+            InterInstitutionalAgreementsApprovalV1HostProvider::getMaxIiaIdsPerRequest)
+        .min().orElse(0);
+    manifestEntry.setMaxIiaIds(BigInteger.valueOf(maxIiaIdsPerRequest));
+
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
     return manifestEntry;
   }

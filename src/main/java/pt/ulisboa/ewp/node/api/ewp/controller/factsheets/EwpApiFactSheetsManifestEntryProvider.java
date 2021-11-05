@@ -3,6 +3,7 @@ package pt.ulisboa.ewp.node.api.ewp.controller.factsheets;
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.factsheet.v1.FactsheetV1;
 import java.math.BigInteger;
+import java.util.Collection;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.factsheets.FactSheetsV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
@@ -21,9 +22,9 @@ public class EwpApiFactSheetsManifestEntryProvider extends EwpManifestEntryProvi
   }
 
   public ManifestApiEntryBaseV1 getManifestEntry(String heiId, String baseUrl,
-      FactSheetsV1HostProvider hostProvider) {
+      Collection<FactSheetsV1HostProvider> hostProviders) {
     FactsheetV1 manifestEntry = new FactsheetV1();
-    manifestEntry.setVersion(hostProvider.getVersion());
+    manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
     manifestEntry.setAdminNotes(null);
     manifestEntry.setUrl(baseUrl + EwpApiFactSheetsV1Controller.BASE_PATH);
     manifestEntry.setMaxHeiIds(BigInteger.valueOf(EwpApiConstants.MAX_HEI_IDS));

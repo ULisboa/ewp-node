@@ -45,9 +45,9 @@ public abstract class EwpManifestEntryProvider {
   protected Collection<ManifestApiEntryBaseV1> getManifestEntriesSupportedByHost(String heiId,
       String baseUrl) {
     Collection<ManifestApiEntryBaseV1> manifestEntries = new ArrayList<>();
-    hostPluginManager.getAllProviders(heiId).forEach(hostProvider -> {
+    hostPluginManager.getAllProvidersPerClassType(heiId).forEach((classType, hostProviders) -> {
       Optional<ManifestApiEntryBaseV1> manifestEntryOptional = this
-          .toManifestEntry(heiId, baseUrl, hostProvider);
+          .toManifestEntry(heiId, baseUrl, hostProviders);
       if (manifestEntryOptional.isPresent()) {
         manifestEntries.add(manifestEntryOptional.get());
       }
@@ -120,21 +120,22 @@ public abstract class EwpManifestEntryProvider {
 
   private <T extends HostProvider> Optional<ManifestApiEntryBaseV1> toManifestEntry(String heiId,
       String baseUrl,
-      T hostProvider) {
+      Collection<T> hostProviders) {
     @SuppressWarnings("unchecked")
-    Class<T> hostProviderClass = (Class<T>) hostProvider.getClass();
+    Class<T> hostProviderClass = (Class<T>) hostProviders.iterator().next().getClass();
     Optional<HostProviderToManifestEntryConverter<T>> hostProviderToManifestEntryConverterOptional = getHostProviderToManifestEntryConverter(
         hostProviderClass);
     if (hostProviderToManifestEntryConverterOptional.isEmpty()) {
       return Optional.empty();
     }
     return Optional.of(hostProviderToManifestEntryConverterOptional.get()
-        .toManifestEntry(heiId, baseUrl, hostProvider));
+        .toManifestEntry(heiId, baseUrl, hostProviders));
   }
 
   public interface HostProviderToManifestEntryConverter<T extends HostProvider> {
 
-    ManifestApiEntryBaseV1 toManifestEntry(String heiId, String baseUrl, T hostProvider);
+    ManifestApiEntryBaseV1 toManifestEntry(String heiId, String baseUrl,
+        Collection<T> hostProviders);
 
   }
 

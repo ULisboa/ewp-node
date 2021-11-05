@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.api.ewp.controller.courses.replication;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.courses.replication.v1.SimpleCourseReplicationV1;
+import java.util.Collection;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.replication.SimpleCourseReplicationV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
@@ -19,9 +20,9 @@ public class EwpApiSimpleCourseReplicationManifestEntryProvider
   }
 
   public ManifestApiEntryBaseV1 getManifestEntryForV1(String heiId, String baseUrl,
-      SimpleCourseReplicationV1HostProvider hostProvider) {
+      Collection<SimpleCourseReplicationV1HostProvider> hostProviders) {
     SimpleCourseReplicationV1 manifestEntry = new SimpleCourseReplicationV1();
-    manifestEntry.setVersion(hostProvider.getVersion());
+    manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
     manifestEntry.setAdminNotes(null);
     manifestEntry.setUrl(baseUrl + EwpApiSimpleCourseReplicationV1Controller.BASE_PATH);
     manifestEntry.setAllowsAnonymousAccess(false);

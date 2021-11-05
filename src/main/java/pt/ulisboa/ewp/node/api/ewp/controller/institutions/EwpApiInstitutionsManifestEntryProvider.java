@@ -3,6 +3,7 @@ package pt.ulisboa.ewp.node.api.ewp.controller.institutions;
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
 import java.math.BigInteger;
+import java.util.Collection;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.institutions.InstitutionsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
@@ -21,9 +22,9 @@ public class EwpApiInstitutionsManifestEntryProvider
   }
 
   public ManifestApiEntryBaseV1 getManifestEntryForV2(String heiId, String baseUrl,
-      InstitutionsV2HostProvider hostProvider) {
+      Collection<InstitutionsV2HostProvider> hostProviders) {
     InstitutionsV2 institutions = new InstitutionsV2();
-    institutions.setVersion(hostProvider.getVersion());
+    institutions.setVersion(hostProviders.iterator().next().getVersion());
     institutions.setAdminNotes(null);
     institutions.setUrl(baseUrl + EwpApiInstitutionsV2Controller.BASE_PATH);
     institutions.setMaxHeiIds(BigInteger.valueOf(EwpApiConstants.MAX_HEI_IDS));
