@@ -2,7 +2,7 @@ package pt.ulisboa.ewp.node.api.ewp.controller.courses.replication;
 
 import eu.erasmuswithoutpaper.api.courses.replication.v1.CourseReplicationResponseV1;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.Optional;
+import java.util.Collection;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +13,7 @@ import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.replication.SimpleCo
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
+import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownHeiIdException;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
@@ -37,15 +37,15 @@ public class EwpApiSimpleCourseReplicationV1Controller {
   public ResponseEntity<CourseReplicationResponseV1> simpleCourseReplication(
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId) {
 
-    Optional<SimpleCourseReplicationV1HostProvider> providerOptional =
-        hostPluginManager.getProvider(heiId, SimpleCourseReplicationV1HostProvider.class);
-    if (providerOptional.isEmpty()) {
-      throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
+    if (!hostPluginManager.hasHostProvider(heiId, SimpleCourseReplicationV1HostProvider.class)) {
+      throw new EwpUnknownHeiIdException(heiId);
     }
-    SimpleCourseReplicationV1HostProvider provider = providerOptional.get();
+
+    Collection<SimpleCourseReplicationV1HostProvider> providers = hostPluginManager.getAllProvidersOfType(
+        heiId, SimpleCourseReplicationV1HostProvider.class);
 
     CourseReplicationResponseV1 response = new CourseReplicationResponseV1();
-    response.getLosId().addAll(provider.findAllByHeiId(heiId));
+    providers.forEach(provider -> response.getLosId().addAll(provider.findAllByHeiId(heiId)));
     return ResponseEntity.ok(response);
   }
 }
