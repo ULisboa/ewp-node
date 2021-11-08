@@ -1,10 +1,13 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.ounits;
 
 import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2;
+import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2.Ounit;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,7 @@ import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
+import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownHeiIdException;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
@@ -42,11 +46,13 @@ public class EwpApiOrganizationalUnitsV2Controller {
           List<String> ounitIds,
       @RequestParam(value = EwpApiParamConstants.OUNIT_CODE, required = false)
           List<String> ounitCodes) {
-    
+
     ounitIds = ounitIds != null ? ounitIds : Collections.emptyList();
     ounitCodes = ounitCodes != null ? ounitCodes : Collections.emptyList();
 
-    OrganizationalUnitsV2HostProvider provider = getHostProvider(heiId);
+    if (!hostPluginManager.hasHostProvider(heiId, OrganizationalUnitsV2HostProvider.class)) {
+      throw new EwpUnknownHeiIdException(heiId);
+    }
 
     if (!ounitIds.isEmpty() && !ounitCodes.isEmpty()) {
       throw new EwpBadRequestException(
@@ -59,44 +65,71 @@ public class EwpApiOrganizationalUnitsV2Controller {
     }
 
     if (!ounitIds.isEmpty()) {
-      return ounitsByIds(provider, heiId, ounitIds);
+      return ounitsByIds(heiId, ounitIds);
     } else {
-      return ounitsByCodes(provider, heiId, ounitCodes);
+      return ounitsByCodes(heiId, ounitCodes);
     }
   }
 
-  private ResponseEntity<OunitsResponseV2> ounitsByIds(
-      OrganizationalUnitsV2HostProvider provider, String heiId, List<String> ounitIds) {
-    if (ounitIds.size() > provider.getMaxOunitIdsPerRequest()) {
+  private ResponseEntity<OunitsResponseV2> ounitsByIds(String heiId, List<String> ounitIds) {
+    Map<OrganizationalUnitsV2HostProvider, Collection<String>> providerToOunitIdsMap = hostPluginManager.getOunitIdsCoveredPerProviderOfHeiId(
+        heiId, ounitIds, OrganizationalUnitsV2HostProvider.class);
+
+    int maxOunitIdsPerRequest = providerToOunitIdsMap.keySet().stream().mapToInt(
+            OrganizationalUnitsV2HostProvider::getMaxOunitIdsPerRequest)
+        .min().orElse(0);
+
+    if (ounitIds.size() > maxOunitIdsPerRequest) {
       throw new EwpBadRequestException(
           "Maximum number of valid organizational unit IDs per request is "
-              + provider.getMaxOunitIdsPerRequest());
+              + maxOunitIdsPerRequest);
+    }
+
+    Map<String, Ounit> ounitIdToOunitMap = new HashMap<>();
+    for (Map.Entry<OrganizationalUnitsV2HostProvider, Collection<String>> entry : providerToOunitIdsMap.entrySet()) {
+      OrganizationalUnitsV2HostProvider provider = entry.getKey();
+      Collection<String> coveredOunitIds = entry.getValue();
+      provider.findByHeiIdAndOunitIds(heiId, coveredOunitIds)
+          .forEach(ounit -> ounitIdToOunitMap.put(ounit.getOunitId(), ounit));
     }
 
     OunitsResponseV2 response = new OunitsResponseV2();
-    response.getOunit().addAll(provider.findByHeiIdAndOunitIds(heiId, ounitIds));
+    for (String ounitId : ounitIds) {
+      if (ounitIdToOunitMap.containsKey(ounitId)) {
+        response.getOunit().add(ounitIdToOunitMap.get(ounitId));
+      }
+    }
     return ResponseEntity.ok(response);
   }
 
-  private ResponseEntity<OunitsResponseV2> ounitsByCodes(
-      OrganizationalUnitsV2HostProvider provider, String heiId, List<String> ounitCodes) {
-    if (ounitCodes.size() > provider.getMaxOunitCodesPerRequest()) {
+  private ResponseEntity<OunitsResponseV2> ounitsByCodes(String heiId, List<String> ounitCodes) {
+    Map<OrganizationalUnitsV2HostProvider, Collection<String>> providerToOunitCodesMap = hostPluginManager.getOunitCodesCoveredPerProviderOfHeiId(
+        heiId, ounitCodes, OrganizationalUnitsV2HostProvider.class);
+
+    int maxOunitCodesPerRequest = providerToOunitCodesMap.keySet().stream().mapToInt(
+            OrganizationalUnitsV2HostProvider::getMaxOunitCodesPerRequest)
+        .min().orElse(0);
+
+    if (ounitCodes.size() > maxOunitCodesPerRequest) {
       throw new EwpBadRequestException(
           "Maximum number of valid organizational unit codes per request is "
-              + provider.getMaxOunitCodesPerRequest());
+              + maxOunitCodesPerRequest);
+    }
+
+    Map<String, Ounit> ounitCodeToOunitMap = new HashMap<>();
+    for (Map.Entry<OrganizationalUnitsV2HostProvider, Collection<String>> entry : providerToOunitCodesMap.entrySet()) {
+      OrganizationalUnitsV2HostProvider provider = entry.getKey();
+      Collection<String> coveredOunitCodes = entry.getValue();
+      provider.findByHeiIdAndOunitCodes(heiId, coveredOunitCodes)
+          .forEach(ounit -> ounitCodeToOunitMap.put(ounit.getOunitCode(), ounit));
     }
 
     OunitsResponseV2 response = new OunitsResponseV2();
-    response.getOunit().addAll(provider.findByHeiIdAndOunitCodes(heiId, ounitCodes));
-    return ResponseEntity.ok(response);
-  }
-
-  private OrganizationalUnitsV2HostProvider getHostProvider(String heiId) {
-    Optional<OrganizationalUnitsV2HostProvider> providerOptional =
-        hostPluginManager.getProvider(heiId, OrganizationalUnitsV2HostProvider.class);
-    if (providerOptional.isEmpty()) {
-      throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
+    for (String ounitCode : ounitCodes) {
+      if (ounitCodeToOunitMap.containsKey(ounitCode)) {
+        response.getOunit().add(ounitCodeToOunitMap.get(ounitCode));
+      }
     }
-    return providerOptional.get();
+    return ResponseEntity.ok(response);
   }
 }
