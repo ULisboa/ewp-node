@@ -14,6 +14,9 @@ public class ForwardEwpApiInterInstitutionalAgreementCnrRequestDto {
   @Size(min = 1)
   private String notifierHeiId;
 
+  @ParamName(EwpApiParamConstants.NOTIFIER_OUNIT_ID)
+  private String notifierOunitId;
+
   @ParamName(EwpApiParamConstants.PARTNER_HEI_ID)
   @NotNull
   @Size(min = 1)
@@ -22,12 +25,23 @@ public class ForwardEwpApiInterInstitutionalAgreementCnrRequestDto {
   @ParamName(value = EwpApiParamConstants.IIA_ID)
   private List<String> iiaIds = new ArrayList<>();
 
+  @ParamName(value = EwpApiParamConstants.IIA_CODE)
+  private List<String> iiaCodes = new ArrayList<>();
+
   public String getNotifierHeiId() {
     return notifierHeiId;
   }
 
   public void setNotifierHeiId(String notifierHeiId) {
     this.notifierHeiId = notifierHeiId;
+  }
+
+  public String getNotifierOunitId() {
+    return notifierOunitId;
+  }
+
+  public void setNotifierOunitId(String notifierOunitId) {
+    this.notifierOunitId = notifierOunitId;
   }
 
   public String getPartnerHeiId() {
@@ -44,5 +58,13 @@ public class ForwardEwpApiInterInstitutionalAgreementCnrRequestDto {
 
   public void setIiaIds(List<String> iiaIds) {
     this.iiaIds = iiaIds;
+  }
+
+  public List<String> getIiaCodes() {
+    return iiaCodes;
+  }
+
+  public void setIiaCodes(List<String> iiaCodes) {
+    this.iiaCodes = iiaCodes;
   }
 }

@@ -18,6 +18,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
+import pt.ulisboa.ewp.node.service.ewp.mapping.EwpInterInstitutionalAgreementMappingService;
 
 @RestController
 @ForwardEwpApi(apiLocalName = EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENT_CNR_NAME)
@@ -27,12 +28,15 @@ public class ForwardEwpApiInterInstitutionalAgreementsCnrController extends
     AbstractForwardEwpApiController {
 
   private final EwpChangeNotificationRepository changeNotificationRepository;
+  private final EwpInterInstitutionalAgreementMappingService interInstitutionalAgreementMappingService;
 
   public ForwardEwpApiInterInstitutionalAgreementsCnrController(
       RegistryClient registryClient,
-      EwpChangeNotificationRepository changeNotificationRepository) {
+      EwpChangeNotificationRepository changeNotificationRepository,
+      EwpInterInstitutionalAgreementMappingService interInstitutionalAgreementMappingService) {
     super(registryClient);
     this.changeNotificationRepository = changeNotificationRepository;
+    this.interInstitutionalAgreementMappingService = interInstitutionalAgreementMappingService;
   }
 
   @PostMapping(
@@ -40,11 +44,18 @@ public class ForwardEwpApiInterInstitutionalAgreementsCnrController extends
       produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<ForwardEwpApiResponse>
   sendChangeNotification(@Valid ForwardEwpApiInterInstitutionalAgreementCnrRequestDto requestDto) {
+    int index = 0;
     for (String iiaId : requestDto.getIiaIds()) {
       EwpInterInstitutionalAgreementChangeNotification changeNotification = new EwpInterInstitutionalAgreementChangeNotification(
           requestDto.getNotifierHeiId(),
           requestDto.getPartnerHeiId(), iiaId);
       changeNotificationRepository.persist(changeNotification);
+
+      interInstitutionalAgreementMappingService.registerMapping(requestDto.getNotifierHeiId(),
+          requestDto.getNotifierOunitId(), iiaId,
+          requestDto.getIiaCodes().get(index));
+
+      index++;
     }
     return ForwardEwpApiResponseUtils.toAcceptedResponseEntity();
   }
