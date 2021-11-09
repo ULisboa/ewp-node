@@ -55,7 +55,7 @@ public class EwpInterInstitutionalAgreementMappingRepository extends
         });
   }
 
-  public Optional<EwpInterInstitutionalAgreementMapping> findByHeiIdAndIiacode(String heiId,
+  public Optional<EwpInterInstitutionalAgreementMapping> findByHeiIdAndIiaCode(String heiId,
       String iiaCode) {
     return runInSession(
         session -> {

@@ -5,7 +5,7 @@ import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
 import java.math.BigInteger;
 import java.util.Collection;
 import org.springframework.stereotype.Component;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV4HostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
@@ -18,27 +18,27 @@ public class EwpApiInterInstitutionalAgreementsManifestEntryProvider
     super(hostPluginManager);
 
     super.registerHostProviderToManifestEntryConverter(
-        InterInstitutionalAgreementsV4HostProvider.class,
-        this::getManifestEntryForV4);
+        InterInstitutionalAgreementsV6HostProvider.class,
+        this::getManifestEntryForV6);
   }
 
-  public ManifestApiEntryBaseV1 getManifestEntryForV4(String heiId, String baseUrl,
-      Collection<InterInstitutionalAgreementsV4HostProvider> hostProviders) {
+  public ManifestApiEntryBaseV1 getManifestEntryForV6(String heiId, String baseUrl,
+      Collection<InterInstitutionalAgreementsV6HostProvider> hostProviders) {
     IiasV4 manifestEntry = new IiasV4();
     manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
     manifestEntry.setAdminNotes(null);
     manifestEntry
-        .setIndexUrl(baseUrl + EwpApiInterInstitutionalAgreementsV4Controller.BASE_PATH + "/index");
+        .setIndexUrl(baseUrl + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH + "/index");
     manifestEntry
-        .setGetUrl(baseUrl + EwpApiInterInstitutionalAgreementsV4Controller.BASE_PATH + "/get");
+        .setGetUrl(baseUrl + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH + "/get");
 
     int maxIiaIdsPerRequest = hostProviders.stream().mapToInt(
-            InterInstitutionalAgreementsV4HostProvider::getMaxIiaIdsPerRequest)
+            InterInstitutionalAgreementsV6HostProvider::getMaxIiaIdsPerRequest)
         .min().orElse(0);
     manifestEntry.setMaxIiaIds(BigInteger.valueOf(maxIiaIdsPerRequest));
 
     int maxIiaCodesPerRequest = hostProviders.stream().mapToInt(
-            InterInstitutionalAgreementsV4HostProvider::getMaxIiaCodesPerRequest)
+            InterInstitutionalAgreementsV6HostProvider::getMaxIiaCodesPerRequest)
         .min().orElse(0);
     manifestEntry.setMaxIiaCodes(BigInteger.valueOf(maxIiaCodesPerRequest));
 
