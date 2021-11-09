@@ -18,6 +18,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
+import pt.ulisboa.ewp.node.service.ewp.mapping.EwpOutgoingMobilityMappingService;
 
 @RestController
 @ForwardEwpApi(apiLocalName = EwpApiConstants.API_OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR_NAME)
@@ -27,12 +28,15 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrController extends
     AbstractForwardEwpApiController {
 
   private final EwpChangeNotificationRepository changeNotificationRepository;
+  private final EwpOutgoingMobilityMappingService outgoingMobilityMappingService;
 
   public ForwardEwpApiOutgoingMobilityLearningAgreementCnrController(
       RegistryClient registryClient,
-      EwpChangeNotificationRepository changeNotificationRepository) {
+      EwpChangeNotificationRepository changeNotificationRepository,
+      EwpOutgoingMobilityMappingService outgoingMobilityMappingService) {
     super(registryClient);
     this.changeNotificationRepository = changeNotificationRepository;
+    this.outgoingMobilityMappingService = outgoingMobilityMappingService;
   }
 
   @PostMapping(
@@ -41,11 +45,17 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrController extends
   public ResponseEntity<ForwardEwpApiResponse>
   sendChangeNotification(
       @Valid ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto requestDto) {
+    int index = 0;
     for (String outgoingMobilityId : requestDto.getOutgoingMobilityIds()) {
       EwpOutgoingMobilityLearningAgreementChangeNotification changeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
           requestDto.getSendingHeiId(),
           requestDto.getReceivingHeiId(), outgoingMobilityId);
       changeNotificationRepository.persist(changeNotification);
+
+      outgoingMobilityMappingService.registerMapping(requestDto.getSendingHeiId(),
+          requestDto.getSendingOunitId(), requestDto.getOutgoingMobilityIds().get(index));
+
+      index++;
     }
     return ForwardEwpApiResponseUtils.toAcceptedResponseEntity();
   }

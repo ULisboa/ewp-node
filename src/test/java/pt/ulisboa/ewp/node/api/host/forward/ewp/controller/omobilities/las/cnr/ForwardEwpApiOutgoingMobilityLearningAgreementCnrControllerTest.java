@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.omobilities.cnr;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.omobilities.las.cnr;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,7 +16,7 @@ import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping;
 import pt.ulisboa.ewp.node.domain.repository.mapping.EwpOutgoingMobilityMappingRepository;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
-class ForwardEwpApiOutgoingMobilityCnrControllerTest extends
+class ForwardEwpApiOutgoingMobilityLearningAgreementCnrControllerTest extends
     AbstractForwardEwpControllerIntegrationTest {
 
   @Autowired
@@ -40,7 +40,7 @@ class ForwardEwpApiOutgoingMobilityCnrControllerTest extends
     bodyParams.param(EwpApiParamConstants.RECEIVING_HEI_ID, receivingHeiId);
     bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, outgoingMobilityIds);
 
-    executeRequest(HttpMethod.POST, ForwardEwpApiConstants.API_BASE_URI + "omobilities/cnr",
+    executeRequest(HttpMethod.POST, ForwardEwpApiConstants.API_BASE_URI + "omobilities/las/cnr",
         bodyParams);
 
     for (String omobilityId : outgoingMobilityIds) {

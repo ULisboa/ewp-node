@@ -15,8 +15,6 @@ public class ForwardEwpApiOutgoingMobilityCnrRequestDto {
   private String sendingHeiId;
 
   @ParamName(EwpApiParamConstants.SENDING_OUNIT_ID)
-  @NotNull
-  @Size(min = 1)
   private String sendingOunitId;
 
   @ParamName(EwpApiParamConstants.RECEIVING_HEI_ID)

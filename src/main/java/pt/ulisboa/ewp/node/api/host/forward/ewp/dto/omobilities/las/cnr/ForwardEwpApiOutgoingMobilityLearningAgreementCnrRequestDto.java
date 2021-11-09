@@ -14,6 +14,9 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto {
   @Size(min = 1)
   private String sendingHeiId;
 
+  @ParamName(EwpApiParamConstants.SENDING_OUNIT_ID)
+  private String sendingOunitId;
+
   @ParamName(EwpApiParamConstants.RECEIVING_HEI_ID)
   @NotNull
   @Size(min = 1)
@@ -28,6 +31,14 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto {
 
   public void setSendingHeiId(String sendingHeiId) {
     this.sendingHeiId = sendingHeiId;
+  }
+
+  public String getSendingOunitId() {
+    return sendingOunitId;
+  }
+
+  public void setSendingOunitId(String sendingOunitId) {
+    this.sendingOunitId = sendingOunitId;
   }
 
   public String getReceivingHeiId() {
