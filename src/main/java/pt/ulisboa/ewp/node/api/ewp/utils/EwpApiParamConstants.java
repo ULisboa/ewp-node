@@ -28,4 +28,5 @@ public class EwpApiParamConstants {
   public static final String RECEIVING_HEI_ID = "receiving_hei_id";
   public static final String SEND_PDF = "send_pdf";
   public static final String SENDING_HEI_ID = "sending_hei_id";
+  public static final String SENDING_OUNIT_ID = "sending_ounit_id";
 }
