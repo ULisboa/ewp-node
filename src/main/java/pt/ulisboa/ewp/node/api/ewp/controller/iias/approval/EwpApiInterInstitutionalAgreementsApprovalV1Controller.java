@@ -2,7 +2,10 @@ package pt.ulisboa.ewp.node.api.ewp.controller.iias.approval;
 
 import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalResponseV1;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +17,9 @@ import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.approval.InterInstituti
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
+import pt.ulisboa.ewp.node.domain.entity.mapping.EwpInterInstitutionalAgreementMapping;
+import pt.ulisboa.ewp.node.domain.repository.mapping.EwpInterInstitutionalAgreementMappingRepository;
+import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownHeiIdException;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
@@ -27,12 +32,16 @@ public class EwpApiInterInstitutionalAgreementsApprovalV1Controller {
 
   private final HostPluginManager hostPluginManager;
 
+  private final EwpInterInstitutionalAgreementMappingRepository mappingRepository;
+
   public EwpApiInterInstitutionalAgreementsApprovalV1Controller(
-      HostPluginManager hostPluginManager) {
+      HostPluginManager hostPluginManager,
+      EwpInterInstitutionalAgreementMappingRepository mappingRepository) {
     this.hostPluginManager = hostPluginManager;
+    this.mappingRepository = mappingRepository;
   }
 
-  @RequestMapping(path = "/index", method = {RequestMethod.GET,
+  @RequestMapping(method = {RequestMethod.GET,
       RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "IIAs Approval API.",
@@ -44,21 +53,44 @@ public class EwpApiInterInstitutionalAgreementsApprovalV1Controller {
       @RequestParam(value = EwpApiParamConstants.SEND_PDF, required = false)
           Boolean sendPdf) {
 
-    Collection<IiasApprovalResponseV1.Approval> iiaApprovals = getHostProvider(
-        approvingHeiId)
-        .findByIiaIds(approvingHeiId, ownerHeiId, iiaIds, sendPdf);
+    Map<InterInstitutionalAgreementsApprovalV1HostProvider, Collection<String>> providerToIiaIdsMap = getIiaIdsCoveredPerProviderOfHeiId(
+        approvingHeiId, iiaIds);
+
     IiasApprovalResponseV1 response = new IiasApprovalResponseV1();
-    response.getApproval().addAll(iiaApprovals);
+    for (Map.Entry<InterInstitutionalAgreementsApprovalV1HostProvider, Collection<String>> entry : providerToIiaIdsMap.entrySet()) {
+      InterInstitutionalAgreementsApprovalV1HostProvider provider = entry.getKey();
+      Collection<String> coveredIiaIds = entry.getValue();
+      provider.findByIiaIds(approvingHeiId, ownerHeiId, coveredIiaIds, sendPdf)
+          .forEach(iia -> response.getApproval().add(iia));
+    }
     return ResponseEntity.ok(response);
   }
 
-  private InterInstitutionalAgreementsApprovalV1HostProvider getHostProvider(String heiId) {
-    Optional<InterInstitutionalAgreementsApprovalV1HostProvider> providerOptional =
-        hostPluginManager
-            .getProvider(heiId, InterInstitutionalAgreementsApprovalV1HostProvider.class);
-    if (providerOptional.isEmpty()) {
-      throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
+  private Map<InterInstitutionalAgreementsApprovalV1HostProvider, Collection<String>> getIiaIdsCoveredPerProviderOfHeiId(
+      String heiId, Collection<String> iiaIds) throws EwpUnknownHeiIdException {
+
+    if (!hostPluginManager.hasHostProvider(heiId,
+        InterInstitutionalAgreementsApprovalV1HostProvider.class)) {
+      throw new EwpUnknownHeiIdException(heiId);
     }
-    return providerOptional.get();
+
+    Map<InterInstitutionalAgreementsApprovalV1HostProvider, Collection<String>> result = new HashMap<>();
+    for (String iiaId : iiaIds) {
+      Optional<EwpInterInstitutionalAgreementMapping> mappingOptional = mappingRepository.findByHeiIdAndIiaId(
+          heiId, iiaId);
+      if (mappingOptional.isPresent()) {
+        EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
+
+        Collection<InterInstitutionalAgreementsApprovalV1HostProvider> providers = hostPluginManager.getProvidersByHeiIdAndOunitId(
+            heiId, mapping.getOunitId(),
+            InterInstitutionalAgreementsApprovalV1HostProvider.class);
+        if (!providers.isEmpty()) {
+          InterInstitutionalAgreementsApprovalV1HostProvider provider = providers.iterator().next();
+          result.computeIfAbsent(provider, ignored -> new ArrayList<>());
+          result.get(provider).add(iiaId);
+        }
+      }
+    }
+    return result;
   }
 }
