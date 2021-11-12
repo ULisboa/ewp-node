@@ -114,9 +114,6 @@ class EwpApiInterInstitutionalAgreementsApprovalV1ControllerTest extends
 
     assertThat(response).isNotNull();
     assertThat(response.getApproval()).hasSize(iiaIds.size());
-    assertThat(response.getApproval().get(0).getIiaId()).isEqualTo(iiaIds.get(0));
-    assertThat(response.getApproval().get(1).getIiaId()).isEqualTo(iiaIds.get(1));
-    assertThat(response.getApproval().get(2).getIiaId()).isEqualTo(iiaIds.get(2));
     for (Approval approval : approvals) {
       Optional<Approval> approvalOptional = response.getApproval().stream()
           .filter(a -> a.getIiaId().equals(approval.getIiaId())).findFirst();
