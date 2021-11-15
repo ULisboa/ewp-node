@@ -11,8 +11,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataB
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpFactsheetApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.FactSheets;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
@@ -36,7 +36,7 @@ public class EwpFactsheetsV1Client extends
   }
 
   @Override
-  public EwpApiGeneralSpecification<?, EwpFactsheetApiConfiguration> getApiGeneralSpecification() {
-    return EwpApiGeneralSpecifications.FACTSHEETS_V1;
+  public EwpApiVersionSpecification<?, EwpFactsheetApiConfiguration> getApiVersionSpecification() {
+    return FactSheets.V1;
   }
 }

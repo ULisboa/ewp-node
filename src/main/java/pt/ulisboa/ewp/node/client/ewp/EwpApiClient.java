@@ -2,7 +2,7 @@ package pt.ulisboa.ewp.node.client.ewp;
 
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 
 public abstract class EwpApiClient<C extends EwpApiConfiguration> {
 
@@ -15,8 +15,8 @@ public abstract class EwpApiClient<C extends EwpApiConfiguration> {
   }
 
   public C getApiConfigurationForHeiId(String heiId) {
-    return getApiGeneralSpecification().getConfigurationForHeiId(registryClient, heiId);
+    return getApiVersionSpecification().getConfigurationForHeiId(registryClient, heiId);
   }
 
-  public abstract EwpApiGeneralSpecification<?, C> getApiGeneralSpecification();
+  public abstract EwpApiVersionSpecification<?, C> getApiVersionSpecification();
 }

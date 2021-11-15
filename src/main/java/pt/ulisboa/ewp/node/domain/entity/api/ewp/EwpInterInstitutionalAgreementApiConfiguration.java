@@ -9,9 +9,9 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 
-public class EwpInterinstitutionalAgreementApiConfiguration extends EwpApiConfiguration {
+public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfiguration {
 
-  public static final String API_NAME = "Interinstitutional Agreements API";
+  public static final String API_NAME = "InterInstitutional Agreements API";
 
   private String indexUrl;
   private String getUrl;
@@ -19,7 +19,7 @@ public class EwpInterinstitutionalAgreementApiConfiguration extends EwpApiConfig
   private BigInteger maxIiaCodes;
   private boolean sendsNotifications;
 
-  public EwpInterinstitutionalAgreementApiConfiguration(
+  public EwpInterInstitutionalAgreementApiConfiguration(
       String indexUrl,
       String getUrl,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
@@ -75,8 +75,8 @@ public class EwpInterinstitutionalAgreementApiConfiguration extends EwpApiConfig
     this.sendsNotifications = sendsNotifications;
   }
 
-  public static EwpInterinstitutionalAgreementApiConfiguration create(IiasV3 apiElement) {
-    return new EwpInterinstitutionalAgreementApiConfiguration(
+  public static EwpInterInstitutionalAgreementApiConfiguration create(IiasV3 apiElement) {
+    return new EwpInterInstitutionalAgreementApiConfiguration(
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -86,8 +86,8 @@ public class EwpInterinstitutionalAgreementApiConfiguration extends EwpApiConfig
         apiElement.getSendsNotifications() != null);
   }
 
-  public static EwpInterinstitutionalAgreementApiConfiguration create(IiasV4 apiElement) {
-    return new EwpInterinstitutionalAgreementApiConfiguration(
+  public static EwpInterInstitutionalAgreementApiConfiguration create(IiasV4 apiElement) {
+    return new EwpInterInstitutionalAgreementApiConfiguration(
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -97,8 +97,8 @@ public class EwpInterinstitutionalAgreementApiConfiguration extends EwpApiConfig
         apiElement.getSendsNotifications() != null);
   }
 
-  public static EwpInterinstitutionalAgreementApiConfiguration create(IiasV6 apiElement) {
-    return new EwpInterinstitutionalAgreementApiConfiguration(
+  public static EwpInterInstitutionalAgreementApiConfiguration create(IiasV6 apiElement) {
+    return new EwpInterInstitutionalAgreementApiConfiguration(
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),

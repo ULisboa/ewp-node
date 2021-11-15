@@ -7,14 +7,14 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 
-public class EwpInterinstitutionalAgreementApprovalApiConfiguration extends EwpApiConfiguration {
+public class EwpInterInstitutionalAgreementApprovalApiConfiguration extends EwpApiConfiguration {
 
   public static final String API_NAME = "Interinstitutional Agreements API";
 
   private String url;
   private BigInteger maxIiaIds;
 
-  public EwpInterinstitutionalAgreementApprovalApiConfiguration(
+  public EwpInterInstitutionalAgreementApprovalApiConfiguration(
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
@@ -31,9 +31,9 @@ public class EwpInterinstitutionalAgreementApprovalApiConfiguration extends EwpA
     return maxIiaIds;
   }
 
-  public static EwpInterinstitutionalAgreementApprovalApiConfiguration create(
+  public static EwpInterInstitutionalAgreementApprovalApiConfiguration create(
       IiasApprovalV1 apiElement) {
-    return new EwpInterinstitutionalAgreementApprovalApiConfiguration(
+    return new EwpInterInstitutionalAgreementApprovalApiConfiguration(
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

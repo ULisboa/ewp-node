@@ -12,14 +12,14 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApprovalApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementApprovalApiConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.InterInstitutionalAgreementApprovals;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
 public class EwpInterInstitutionalAgreementsApprovalsV1Client
-    extends EwpApiClient<EwpInterinstitutionalAgreementApprovalApiConfiguration> {
+    extends EwpApiClient<EwpInterInstitutionalAgreementApprovalApiConfiguration> {
 
   public EwpInterInstitutionalAgreementsApprovalsV1Client(
       RegistryClient registryClient, EwpClient ewpClient) {
@@ -28,7 +28,7 @@ public class EwpInterInstitutionalAgreementsApprovalsV1Client
 
   public ForwardEwpApiInterInstitutionalAgreementsApprovalApiSpecificationResponseDTO getApiSpecification(
       String heiId) {
-    EwpInterinstitutionalAgreementApprovalApiConfiguration apiConfiguration =
+    EwpInterInstitutionalAgreementApprovalApiConfiguration apiConfiguration =
         getApiConfigurationForHeiId(heiId);
     return new ForwardEwpApiInterInstitutionalAgreementsApprovalApiSpecificationResponseDTO(
         apiConfiguration.getMaxIiaIds().intValueExact());
@@ -40,7 +40,7 @@ public class EwpInterInstitutionalAgreementsApprovalsV1Client
       List<String> iiaIds,
       Boolean sendPdf)
       throws EwpClientErrorException {
-    EwpInterinstitutionalAgreementApprovalApiConfiguration api = getApiConfigurationForHeiId(
+    EwpInterInstitutionalAgreementApprovalApiConfiguration api = getApiConfigurationForHeiId(
         approvingHeiId);
 
     HttpParams bodyParams = new HttpParams();
@@ -55,8 +55,8 @@ public class EwpInterInstitutionalAgreementsApprovalsV1Client
   }
 
   @Override
-  public EwpApiGeneralSpecification<?, EwpInterinstitutionalAgreementApprovalApiConfiguration>
-  getApiGeneralSpecification() {
-    return EwpApiGeneralSpecifications.INTERINSTITUTIONAL_AGREEMENT_APPROVAL_V1;
+  public EwpApiVersionSpecification<?, EwpInterInstitutionalAgreementApprovalApiConfiguration>
+  getApiVersionSpecification() {
+    return InterInstitutionalAgreementApprovals.V1;
   }
 }

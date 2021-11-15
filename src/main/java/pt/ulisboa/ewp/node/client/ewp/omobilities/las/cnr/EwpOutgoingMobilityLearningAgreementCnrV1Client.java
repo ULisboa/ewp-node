@@ -13,8 +13,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataB
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilityLearningAgreementCnrApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.OutgoingMobilityLearningAgreementCnr;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
@@ -50,8 +50,8 @@ public class EwpOutgoingMobilityLearningAgreementCnrV1Client
   }
 
   @Override
-  public EwpApiGeneralSpecification<?, EwpOutgoingMobilityLearningAgreementCnrApiConfiguration>
-  getApiGeneralSpecification() {
-    return EwpApiGeneralSpecifications.OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR_V1;
+  public EwpApiVersionSpecification<?, EwpOutgoingMobilityLearningAgreementCnrApiConfiguration>
+  getApiVersionSpecification() {
+    return OutgoingMobilityLearningAgreementCnr.V1;
   }
 }

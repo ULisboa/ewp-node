@@ -15,14 +15,14 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterinstitutionalAgreementApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementApiConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.InterInstitutionalAgreements;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
 public class EwpInterInstitutionalAgreementsV4Client
-    extends EwpApiClient<EwpInterinstitutionalAgreementApiConfiguration> {
+    extends EwpApiClient<EwpInterInstitutionalAgreementApiConfiguration> {
 
   public EwpInterInstitutionalAgreementsV4Client(
       RegistryClient registryClient, EwpClient ewpClient) {
@@ -31,7 +31,7 @@ public class EwpInterInstitutionalAgreementsV4Client
 
   public ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO getApiSpecification(
       String heiId) {
-    EwpInterinstitutionalAgreementApiConfiguration apiConfiguration =
+    EwpInterInstitutionalAgreementApiConfiguration apiConfiguration =
         getApiConfigurationForHeiId(heiId);
     return new ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO(
         apiConfiguration.getMaxIiaIds().intValueExact(),
@@ -44,7 +44,7 @@ public class EwpInterInstitutionalAgreementsV4Client
       List<String> receivingAcademicYearIds,
       ZonedDateTime modifiedSince)
       throws EwpClientErrorException {
-    EwpInterinstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
+    EwpInterInstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams bodyParams = new HttpParams();
     bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
@@ -60,7 +60,7 @@ public class EwpInterInstitutionalAgreementsV4Client
   public EwpSuccessOperationResult<IiasGetResponseV4> findByHeiIdAndIiaIds(
       String heiId, Collection<String> iiaIds, Boolean sendPdf)
       throws EwpClientErrorException {
-    EwpInterinstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
+    EwpInterInstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams bodyParams = new HttpParams();
     bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
@@ -75,7 +75,7 @@ public class EwpInterInstitutionalAgreementsV4Client
   public EwpSuccessOperationResult<IiasGetResponseV4> findByHeiIdAndIiaCodes(
       String heiId, Collection<String> iiaCodes, Boolean sendPdf)
       throws EwpClientErrorException {
-    EwpInterinstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
+    EwpInterInstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams bodyParams = new HttpParams();
     bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
@@ -88,8 +88,8 @@ public class EwpInterInstitutionalAgreementsV4Client
   }
 
   @Override
-  public EwpApiGeneralSpecification<?, EwpInterinstitutionalAgreementApiConfiguration>
-  getApiGeneralSpecification() {
-    return EwpApiGeneralSpecifications.INTERINSTITUTIONAL_AGREEMENT_V4;
+  public EwpApiVersionSpecification<?, EwpInterInstitutionalAgreementApiConfiguration>
+  getApiVersionSpecification() {
+    return InterInstitutionalAgreements.V4;
   }
 }

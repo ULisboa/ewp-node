@@ -12,8 +12,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataB
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementCnrApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.InterInstitutionalAgreementCnr;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
@@ -41,8 +41,8 @@ public class EwpInterInstitutionalAgreementCnrV2Client
   }
 
   @Override
-  public EwpApiGeneralSpecification<?, EwpInterInstitutionalAgreementCnrApiConfiguration>
-  getApiGeneralSpecification() {
-    return EwpApiGeneralSpecifications.INTERINSTITUTIONAL_AGREEMENT_CNR_V2;
+  public EwpApiVersionSpecification<?, EwpInterInstitutionalAgreementCnrApiConfiguration>
+  getApiVersionSpecification() {
+    return InterInstitutionalAgreementCnr.V2;
   }
 }

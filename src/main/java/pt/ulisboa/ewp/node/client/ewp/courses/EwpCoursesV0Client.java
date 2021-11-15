@@ -13,8 +13,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.Courses;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
@@ -71,7 +71,7 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
   }
 
   @Override
-  public EwpApiGeneralSpecification<?, EwpCourseApiConfiguration> getApiGeneralSpecification() {
-    return EwpApiGeneralSpecifications.COURSES_V0;
+  public EwpApiVersionSpecification<?, EwpCourseApiConfiguration> getApiVersionSpecification() {
+    return Courses.V0;
   }
 }

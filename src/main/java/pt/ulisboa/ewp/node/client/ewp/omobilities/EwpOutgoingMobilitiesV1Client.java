@@ -16,8 +16,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataB
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilitiesApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.OutgoingMobilities;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
@@ -68,8 +68,8 @@ public class EwpOutgoingMobilitiesV1Client
   }
 
   @Override
-  public EwpApiGeneralSpecification<?, EwpOutgoingMobilitiesApiConfiguration>
-  getApiGeneralSpecification() {
-    return EwpApiGeneralSpecifications.OUTGOING_MOBILITIES_V1;
+  public EwpApiVersionSpecification<?, EwpOutgoingMobilitiesApiConfiguration>
+  getApiVersionSpecification() {
+    return OutgoingMobilities.V1;
   }
 }

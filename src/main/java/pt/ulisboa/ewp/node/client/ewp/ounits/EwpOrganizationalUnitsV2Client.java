@@ -12,8 +12,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications;
-import pt.ulisboa.ewp.node.utils.EwpApiGeneralSpecifications.EwpApiGeneralSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.OrganizationalUnits;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
@@ -59,8 +59,8 @@ public class EwpOrganizationalUnitsV2Client
   }
 
   @Override
-  public EwpApiGeneralSpecification<?, EwpOrganizationalUnitApiConfiguration>
-  getApiGeneralSpecification() {
-    return EwpApiGeneralSpecifications.ORGANIZATIONAL_UNITS_V2;
+  public EwpApiVersionSpecification<?, EwpOrganizationalUnitApiConfiguration>
+  getApiVersionSpecification() {
+    return OrganizationalUnits.V2;
   }
 }
