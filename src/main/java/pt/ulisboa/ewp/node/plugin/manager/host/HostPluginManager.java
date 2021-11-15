@@ -144,6 +144,15 @@ public class HostPluginManager extends DefaultPluginManager {
     return getAllProvidersOfType(heiId, HostProvider.class);
   }
 
+  public <T> Map<String, Collection<T>> getAllProvidersOfTypePerHeiId(Class<T> providerClassType) {
+    Map<String, Collection<T>> result = new HashMap<>();
+    for (String heiId : this.heiIdToPluginsMap.keySet()) {
+      result.computeIfAbsent(heiId, ignored -> new ArrayList<>());
+      result.get(heiId).addAll(getAllProvidersOfType(heiId, providerClassType));
+    }
+    return result;
+  }
+
   public <T> Collection<T> getAllProvidersOfType(String heiId, Class<T> providerClassType) {
     this.heiIdToPluginsMap.computeIfAbsent(heiId, ignored -> new ArrayList<>());
     Collection<HostPlugin> plugins = this.heiIdToPluginsMap.get(heiId);

@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.domain.utils.DatabaseProperties;
 import pt.ulisboa.ewp.node.service.bootstrap.BootstrapService;
 import pt.ulisboa.ewp.node.service.bootstrap.KeystoreBootstrapService;
+import pt.ulisboa.ewp.node.service.ewp.mapping.sync.EwpMappingSyncService;
 import pt.ulisboa.ewp.node.service.ewp.notification.EwpNotificationSenderDaemon;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.utils.bean.ParamNameProcessor;
@@ -67,6 +69,9 @@ public class EwpNodeApplication {
   private EwpNotificationSenderDaemon ewpNotificationSenderDaemon;
 
   @Autowired
+  private Collection<EwpMappingSyncService> mappingSyncServices;
+
+  @Autowired
   private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
   public static void main(String[] args) {
@@ -77,12 +82,24 @@ public class EwpNodeApplication {
   private void init() {
     bootstrapService.bootstrap();
     keystoreBootstrapService.bootstrap();
+    this.initSchedules();
+  }
+
+  private void initSchedules() {
     taskScheduler.schedule(ewpNotificationSenderDaemon,
         new PeriodicTrigger(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS,
             TimeUnit.MILLISECONDS));
+
+    for (EwpMappingSyncService mappingSyncService : mappingSyncServices) {
+      taskScheduler.schedule(mappingSyncService,
+          new PeriodicTrigger(mappingSyncService.getTaskIntervalInMilliseconds(),
+              TimeUnit.MILLISECONDS));
+    }
   }
 
-  /** Injects a logger configured for the class requiring an injected logger. */
+  /**
+   * Injects a logger configured for the class requiring an injected logger.
+   */
   @Bean
   @Scope(BeanDefinition.SCOPE_PROTOTYPE)
   Logger logger(InjectionPoint injectionPoint) {
@@ -92,7 +109,9 @@ public class EwpNodeApplication {
     return LoggerFactory.getLogger(injectionPoint.getMethodParameter().getContainingClass());
   }
 
-  /** Returns a message source for internationalization (i18n). */
+  /**
+   * Returns a message source for internationalization (i18n).
+   */
   @Bean
   public MessageSource messageSource() {
     ReloadableResourceBundleMessageSource messageSource =

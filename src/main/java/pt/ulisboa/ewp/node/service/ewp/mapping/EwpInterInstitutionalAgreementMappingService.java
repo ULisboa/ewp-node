@@ -17,6 +17,10 @@ public class EwpInterInstitutionalAgreementMappingService {
     this.repository = repository;
   }
 
+  public Optional<EwpInterInstitutionalAgreementMapping> getMapping(String heiId, String iiaId) {
+    return repository.findByHeiIdAndIiaId(heiId, iiaId);
+  }
+
   @Transactional
   public void registerMapping(String heiId, String ounitId, String iiaId, String iiaCode) {
     Optional<EwpInterInstitutionalAgreementMapping> mappingOptional = repository.findByHeiIdAndIiaId(

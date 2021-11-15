@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.domain.entity.mapping;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -79,6 +80,25 @@ public class EwpInterInstitutionalAgreementMapping {
       String iiaId,
       String iiaCode) {
     return new EwpInterInstitutionalAgreementMapping(heiId, ounitId, iiaId, iiaCode);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    EwpInterInstitutionalAgreementMapping that = (EwpInterInstitutionalAgreementMapping) o;
+    return id == that.id && Objects.equals(heiId, that.heiId) && Objects.equals(
+        ounitId, that.ounitId) && Objects.equals(iiaId, that.iiaId)
+        && Objects.equals(iiaCode, that.iiaCode);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, heiId, ounitId, iiaId, iiaCode);
   }
 
   @Override
