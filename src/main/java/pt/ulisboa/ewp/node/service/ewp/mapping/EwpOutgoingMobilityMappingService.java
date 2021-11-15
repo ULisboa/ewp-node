@@ -17,19 +17,24 @@ public class EwpOutgoingMobilityMappingService {
     this.repository = repository;
   }
 
+  public Optional<EwpOutgoingMobilityMapping> getMapping(String heiId, String outgoingMobilityId) {
+    return repository.findByHeiIdAndOmobilityId(heiId, outgoingMobilityId);
+  }
+
   @Transactional
-  public void registerMapping(String heiId, String ounitId, String omobilityId) {
+  public void registerMapping(String heiId, String organizationalUnitId,
+      String outgoingMobilityId) {
     Optional<EwpOutgoingMobilityMapping> mappingOptional = repository.findByHeiIdAndOmobilityId(
-        heiId, omobilityId);
+        heiId, outgoingMobilityId);
 
     EwpOutgoingMobilityMapping mapping;
     if (mappingOptional.isEmpty()) {
       mapping = EwpOutgoingMobilityMapping.create(
-          heiId, ounitId, omobilityId);
+          heiId, organizationalUnitId, outgoingMobilityId);
 
     } else {
       mapping = mappingOptional.get();
-      mapping.setOunitId(ounitId);
+      mapping.setOunitId(organizationalUnitId);
     }
 
     if (!repository.persist(mapping)) {

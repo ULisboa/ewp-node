@@ -17,7 +17,7 @@ import pt.ulisboa.ewp.node.service.ewp.mapping.EwpInterInstitutionalAgreementMap
  * stored on those external systems.
  */
 @Service
-public class EwpInterInstitutionalAgreementsMappingSyncService implements EwpMappingSyncService {
+public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMappingSyncService {
 
   // TODO allow to set this by setting
   public static final int TASK_INTERVAL_IN_MILLISECONDS = 30 * 60 * 1000; // 30 minutes
@@ -25,7 +25,7 @@ public class EwpInterInstitutionalAgreementsMappingSyncService implements EwpMap
   private final HostPluginManager hostPluginManager;
   private final EwpInterInstitutionalAgreementMappingService mappingService;
 
-  public EwpInterInstitutionalAgreementsMappingSyncService(
+  public EwpInterInstitutionalAgreementMappingSyncService(
       HostPluginManager hostPluginManager,
       EwpInterInstitutionalAgreementMappingService mappingService) {
     this.hostPluginManager = hostPluginManager;

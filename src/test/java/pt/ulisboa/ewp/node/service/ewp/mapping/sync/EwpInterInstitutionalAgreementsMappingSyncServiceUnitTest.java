@@ -29,7 +29,7 @@ class EwpInterInstitutionalAgreementsMappingSyncServiceUnitTest {
     HostPluginManager hostPluginManager = Mockito.mock(HostPluginManager.class);
     EwpInterInstitutionalAgreementMappingService mappingService = Mockito.mock(
         EwpInterInstitutionalAgreementMappingService.class);
-    EwpInterInstitutionalAgreementsMappingSyncService syncService = new EwpInterInstitutionalAgreementsMappingSyncService(
+    EwpInterInstitutionalAgreementMappingSyncService syncService = new EwpInterInstitutionalAgreementMappingSyncService(
         hostPluginManager, mappingService);
 
     List<String> heiIds = Arrays.asList("h1", "h2");
@@ -82,7 +82,7 @@ class EwpInterInstitutionalAgreementsMappingSyncServiceUnitTest {
     HostPluginManager hostPluginManager = Mockito.mock(HostPluginManager.class);
     EwpInterInstitutionalAgreementMappingService mappingService = Mockito.mock(
         EwpInterInstitutionalAgreementMappingService.class);
-    EwpInterInstitutionalAgreementsMappingSyncService syncService = new EwpInterInstitutionalAgreementsMappingSyncService(
+    EwpInterInstitutionalAgreementMappingSyncService syncService = new EwpInterInstitutionalAgreementMappingSyncService(
         hostPluginManager, mappingService);
 
     List<String> heiIds = Arrays.asList("h1", "h2");
