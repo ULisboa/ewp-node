@@ -25,6 +25,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthentica
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfigurationFactory;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationTlsCertificateConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 import pt.ulisboa.ewp.node.utils.SemanticVersion;
 
 public class EwpApiUtils {
@@ -69,8 +70,9 @@ public class EwpApiUtils {
   }
 
   public static List<Integer> getSupportedMajorVersions(
-      RegistryClient registryClient, String heiId, String apiLocalName) {
-    Collection<Element> rawApiElements = getRawApiElements(registryClient, heiId, apiLocalName);
+      RegistryClient registryClient, String heiId, EwpApi api) {
+    Collection<Element> rawApiElements = getRawApiElements(registryClient, heiId,
+        api.getLocalName());
     List<Integer> result = new ArrayList<>();
     for (Element rawApiElement : rawApiElements) {
       SemanticVersion semanticVersion = getSemanticVersionFromRawApiElement(rawApiElement);

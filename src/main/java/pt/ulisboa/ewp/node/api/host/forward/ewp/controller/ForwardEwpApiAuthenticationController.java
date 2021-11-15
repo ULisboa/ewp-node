@@ -17,7 +17,6 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
-@ForwardEwpApi
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "authentication")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
 @Validated

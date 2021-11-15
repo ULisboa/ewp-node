@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -29,9 +28,10 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.omobilities.las.EwpOutgoingMobilityLearningAgreementsV1Client;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 
 @RestController
-@ForwardEwpApi(apiLocalName = EwpApiConstants.API_OUTGOING_MOBILITY_LEARNING_AGREEMENTS_NAME)
+@ForwardEwpApi(EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENTS)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "omobilities/las/v1")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
 public class ForwardEwpApiOutgoingMobilityLearningAgreementsV1Controller extends

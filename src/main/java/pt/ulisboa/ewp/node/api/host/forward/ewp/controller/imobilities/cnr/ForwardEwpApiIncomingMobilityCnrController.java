@@ -7,7 +7,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
@@ -18,9 +17,10 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpIncomingMobilityChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 
 @RestController
-@ForwardEwpApi(apiLocalName = EwpApiConstants.API_INCOMING_MOBILITY_CNR_NAME)
+@ForwardEwpApi(EwpApi.INCOMING_MOBILITY_CNR)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "imobilities/cnr")
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
 public class ForwardEwpApiIncomingMobilityCnrController extends AbstractForwardEwpApiController {

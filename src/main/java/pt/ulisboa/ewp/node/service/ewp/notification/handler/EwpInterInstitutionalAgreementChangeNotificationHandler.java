@@ -3,7 +3,6 @@ package pt.ulisboa.ewp.node.service.ewp.notification.handler;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.iias.cnr.EwpInterInstitutionalAgreementCnrV2Client;
@@ -11,6 +10,7 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementChangeNotification;
 import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 
 @Service
 public class EwpInterInstitutionalAgreementChangeNotificationHandler extends
@@ -43,8 +43,7 @@ public class EwpInterInstitutionalAgreementChangeNotificationHandler extends
 
     String targetHeiId = interInstitutionalAgreementChangeNotification.getPartnerHeiId();
     List<Integer> supportedMajorVersions = EwpApiUtils.getSupportedMajorVersions(
-        getRegistryClient(), targetHeiId,
-        EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENT_CNR_NAME);
+        getRegistryClient(), targetHeiId, EwpApi.INTERINSTITUTIONAL_AGREEMENT_CNR);
 
     if (supportedMajorVersions.contains(2)) {
       sendChangeNotificationVersion2(interInstitutionalAgreementChangeNotification);

@@ -21,7 +21,6 @@ import eu.erasmuswithoutpaper.api.omobilities.las.v1.OmobilityLasV1;
 import eu.erasmuswithoutpaper.api.omobilities.v1.OmobilitiesV1;
 import eu.erasmuswithoutpaper.api.ounits.v2.OrganizationalUnitsV2;
 import java.util.function.Function;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
@@ -48,7 +47,7 @@ public class EwpApiGeneralSpecifications {
   public static final EwpApiGeneralSpecification<InstitutionsV2, EwpInstitutionApiConfiguration>
       INSTITUTIONS_V2 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INSTITUTIONS_LOCAL_NAME,
+          EwpApi.INSTITUTIONS,
           2,
           InstitutionsV2.class,
           EwpInstitutionApiConfiguration::create);
@@ -57,20 +56,20 @@ public class EwpApiGeneralSpecifications {
       OrganizationalUnitsV2, EwpOrganizationalUnitApiConfiguration>
       ORGANIZATIONAL_UNITS_V2 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_ORGANIZATIONAL_UNITS_NAME,
+          EwpApi.ORGANIZATIONAL_UNITS,
           2,
           OrganizationalUnitsV2.class,
           EwpOrganizationalUnitApiConfiguration::create);
 
   public static final EwpApiGeneralSpecification<CoursesV0, EwpCourseApiConfiguration> COURSES_V0 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_COURSES_NAME, 0, CoursesV0.class, EwpCourseApiConfiguration::create);
+          EwpApi.COURSES, 0, CoursesV0.class, EwpCourseApiConfiguration::create);
 
   public static final EwpApiGeneralSpecification<
       SimpleCourseReplicationV1, EwpSimpleCourseReplicationApiConfiguration>
       SIMPLE_COURSE_REPLICATION_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_SIMPLE_COURSE_REPLICATION_NAME,
+          EwpApi.SIMPLE_COURSE_REPLICATION,
           1,
           SimpleCourseReplicationV1.class,
           EwpSimpleCourseReplicationApiConfiguration::create);
@@ -79,7 +78,7 @@ public class EwpApiGeneralSpecifications {
       IiasV3, EwpInterinstitutionalAgreementApiConfiguration>
       INTERINSTITUTIONAL_AGREEMENT_V3 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENTS_NAME,
+          EwpApi.INTERINSTITUTIONAL_AGREEMENTS,
           3,
           IiasV3.class,
           EwpInterinstitutionalAgreementApiConfiguration::create);
@@ -88,7 +87,7 @@ public class EwpApiGeneralSpecifications {
       IiasV4, EwpInterinstitutionalAgreementApiConfiguration>
       INTERINSTITUTIONAL_AGREEMENT_V4 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENTS_NAME,
+          EwpApi.INTERINSTITUTIONAL_AGREEMENTS,
           4,
           IiasV4.class,
           EwpInterinstitutionalAgreementApiConfiguration::create);
@@ -97,7 +96,7 @@ public class EwpApiGeneralSpecifications {
       IiasV6, EwpInterinstitutionalAgreementApiConfiguration>
       INTERINSTITUTIONAL_AGREEMENT_V6 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENTS_NAME,
+          EwpApi.INTERINSTITUTIONAL_AGREEMENTS,
           6,
           IiasV6.class,
           EwpInterinstitutionalAgreementApiConfiguration::create);
@@ -106,7 +105,7 @@ public class EwpApiGeneralSpecifications {
       IiaCnrV2, EwpInterInstitutionalAgreementCnrApiConfiguration>
       INTERINSTITUTIONAL_AGREEMENT_CNR_V2 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENT_CNR_NAME,
+          EwpApi.INTERINSTITUTIONAL_AGREEMENT_CNR,
           2,
           IiaCnrV2.class,
           EwpInterInstitutionalAgreementCnrApiConfiguration::create);
@@ -115,7 +114,7 @@ public class EwpApiGeneralSpecifications {
       IiasApprovalV1, EwpInterinstitutionalAgreementApprovalApiConfiguration>
       INTERINSTITUTIONAL_AGREEMENT_APPROVAL_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENTS_APPROVAL_NAME,
+          EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL,
           1,
           IiasApprovalV1.class,
           EwpInterinstitutionalAgreementApprovalApiConfiguration::create);
@@ -124,7 +123,7 @@ public class EwpApiGeneralSpecifications {
       IiaApprovalCnrV1, EwpInterInstitutionalAgreementApprovalCnrApiConfiguration>
       INTERINSTITUTIONAL_AGREEMENT_APPROVAL_CNR_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INTERINSTITUTIONAL_AGREEMENT_APPROVAL_CNR_NAME,
+          EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL_CNR,
           1,
           IiaApprovalCnrV1.class,
           EwpInterInstitutionalAgreementApprovalCnrApiConfiguration::create);
@@ -133,7 +132,7 @@ public class EwpApiGeneralSpecifications {
       FactsheetV1, EwpFactsheetApiConfiguration>
       FACTSHEETS_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_FACTSHEETS_NAME,
+          EwpApi.FACTSHEETS,
           1,
           FactsheetV1.class,
           EwpFactsheetApiConfiguration::create);
@@ -142,7 +141,7 @@ public class EwpApiGeneralSpecifications {
       OmobilitiesV1, EwpOutgoingMobilitiesApiConfiguration>
       OUTGOING_MOBILITIES_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_OUTGOING_MOBILITIES_NAME,
+          EwpApi.OUTGOING_MOBILITIES,
           1,
           OmobilitiesV1.class,
           EwpOutgoingMobilitiesApiConfiguration::create);
@@ -151,7 +150,7 @@ public class EwpApiGeneralSpecifications {
       OmobilityCnrV1, EwpOutgoingMobilityCnrApiConfiguration>
       OUTGOING_MOBILITY_CNR_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_OUTGOING_MOBILITY_CNR_NAME,
+          EwpApi.OUTGOING_MOBILITY_CNR,
           1,
           OmobilityCnrV1.class,
           EwpOutgoingMobilityCnrApiConfiguration::create);
@@ -160,7 +159,7 @@ public class EwpApiGeneralSpecifications {
       OmobilityLasV1, EwpOutgoingMobilityLearningAgreementsApiConfiguration>
       OUTGOING_MOBILITY_LEARNING_AGREEMENTS_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_OUTGOING_MOBILITY_LEARNING_AGREEMENTS_NAME,
+          EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENTS,
           1,
           OmobilityLasV1.class,
           EwpOutgoingMobilityLearningAgreementsApiConfiguration::create);
@@ -169,7 +168,7 @@ public class EwpApiGeneralSpecifications {
       OmobilityLaCnrV1, EwpOutgoingMobilityLearningAgreementCnrApiConfiguration>
       OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR_NAME,
+          EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR,
           1,
           OmobilityLaCnrV1.class,
           EwpOutgoingMobilityLearningAgreementCnrApiConfiguration::create);
@@ -178,7 +177,7 @@ public class EwpApiGeneralSpecifications {
       ImobilitiesV1, EwpIncomingMobilitiesApiConfiguration>
       INCOMING_MOBILITIES_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INCOMING_MOBILITIES_NAME,
+          EwpApi.INCOMING_MOBILITIES,
           1,
           ImobilitiesV1.class,
           EwpIncomingMobilitiesApiConfiguration::create);
@@ -187,7 +186,7 @@ public class EwpApiGeneralSpecifications {
       ImobilityCnrV1, EwpIncomingMobilityCnrApiConfiguration>
       INCOMING_MOBILITY_CNR_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INCOMING_MOBILITY_CNR_NAME,
+          EwpApi.INCOMING_MOBILITY_CNR,
           1,
           ImobilityCnrV1.class,
           EwpIncomingMobilityCnrApiConfiguration::create);
@@ -196,7 +195,7 @@ public class EwpApiGeneralSpecifications {
       ImobilityTorsV1, EwpIncomingMobilityToRApiConfiguration>
       INCOMING_MOBILITIES_TORS_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INCOMING_MOBILITY_TORS_CNR_NAME,
+          EwpApi.INCOMING_MOBILITY_TORS,
           1,
           ImobilityTorsV1.class,
           EwpIncomingMobilityToRApiConfiguration::create);
@@ -205,7 +204,7 @@ public class EwpApiGeneralSpecifications {
       ImobilityTorCnrV1, EwpIncomingMobilityToRCnrApiConfiguration>
       INCOMING_MOBILITY_TOR_CNR_V1 =
       new EwpApiGeneralSpecification<>(
-          EwpApiConstants.API_INCOMING_MOBILITY_TOR_CNR_NAME,
+          EwpApi.INCOMING_MOBILITY_TOR_CNR,
           1,
           ImobilityTorCnrV1.class,
           EwpIncomingMobilityToRCnrApiConfiguration::create);
@@ -216,17 +215,17 @@ public class EwpApiGeneralSpecifications {
   public static class EwpApiGeneralSpecification<
       E extends ManifestApiEntryBaseV1, C extends EwpApiConfiguration> {
 
-    private final String localName;
+    private final EwpApi api;
     private final int majorVersion;
     private final Class<E> specificationElementClassType;
     private final Function<E, C> specificationElementToConfigurationTransformer;
 
     private EwpApiGeneralSpecification(
-        String localName,
+        EwpApi api,
         int majorVersion,
         Class<E> specificationElementClassType,
         Function<E, C> specificationElementToConfigurationTransformer) {
-      this.localName = localName;
+      this.api = api;
       this.majorVersion = majorVersion;
       this.specificationElementClassType = specificationElementClassType;
       this.specificationElementToConfigurationTransformer =
@@ -237,7 +236,7 @@ public class EwpApiGeneralSpecifications {
       return EwpApiUtils.getApiConfiguration(
           registryClient,
           heiId,
-          localName,
+          api.getLocalName(),
           majorVersion,
           specificationElementClassType,
           specificationElementToConfigurationTransformer);

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;
-import pt.ulisboa.ewp.node.utils.EwpApiLocalName;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 import pt.ulisboa.ewp.node.validation.annotation.ValidEwpApiLocalName;
 
 @Component
@@ -21,7 +21,7 @@ public class ValidEwpApiLocalNameValidator implements
 
     constraintValidatorContext.disableDefaultConstraintViolation();
 
-    if (value == null || EwpApiLocalName.findByLocalName(value).isEmpty()) {
+    if (value == null || EwpApi.findByLocalName(value).isEmpty()) {
       addConstraintViolation(constraintValidatorContext);
       return false;
     }
@@ -31,6 +31,6 @@ public class ValidEwpApiLocalNameValidator implements
 
   private void addConstraintViolation(ConstraintValidatorContext constraintValidatorContext) {
     constraintValidatorContext.buildConstraintViolationWithTemplate("must be one of: " + Arrays
-        .toString(EwpApiLocalName.getApiLocalNames())).addConstraintViolation();
+        .toString(EwpApi.getApiLocalNames())).addConstraintViolation();
   }
 }

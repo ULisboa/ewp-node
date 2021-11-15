@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -17,10 +18,10 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCo
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 import pt.ulisboa.ewp.node.validation.annotation.ValidEwpApiLocalName;
 
 @RestController
-@ForwardEwpApi
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI)
 @Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
 @Validated
@@ -37,8 +38,10 @@ public class ForwardEwpApiGeneralController {
       ForwardEwpApiResponseWithData<ForwardEwpApiSupportedMajorVersionsResponseDTO>>
   getSupportedVersionsByHeiId(@PathVariable("heiId") String heiId,
       @Valid @ValidEwpApiLocalName @RequestParam("api") String apiLocalName) {
+    Optional<EwpApi> apiOptional = EwpApi.findByLocalName(apiLocalName);
+    assert apiOptional.isPresent();
     List<Integer> supportedMajorVersions =
-        EwpApiUtils.getSupportedMajorVersions(registryClient, heiId, apiLocalName);
+        EwpApiUtils.getSupportedMajorVersions(registryClient, heiId, apiOptional.get());
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(
         new ForwardEwpApiSupportedMajorVersionsResponseDTO(supportedMajorVersions));
   }
