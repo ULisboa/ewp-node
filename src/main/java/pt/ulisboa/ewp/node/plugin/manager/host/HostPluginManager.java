@@ -42,19 +42,20 @@ public class HostPluginManager extends DefaultPluginManager {
     super.loadPlugins();
     super.startPlugins();
 
-    Collection<HostPlugin> plugins = getAllPlugins();
-    for (HostPlugin plugin : plugins) {
-      for (String heiId : plugin.getCoveredHeiIds()) {
-        this.heiIdToPluginsMap.computeIfAbsent(heiId, ignored -> new ArrayList<>());
-        this.heiIdToPluginsMap.get(heiId).add(plugin);
+    getAllPlugins().forEach(this::registerPlugin);
+  }
 
-        if (plugin.isPrimaryForHeiId(heiId)) {
-          if (this.heiIdToPrimaryPluginMap.containsKey(heiId)) {
-            throw new IllegalStateException(
-                "Multiple plugins are set as primary for HEI ID: " + heiId);
-          }
-          this.heiIdToPrimaryPluginMap.put(heiId, plugin);
+  public void registerPlugin(HostPlugin plugin) {
+    for (String heiId : plugin.getCoveredHeiIds()) {
+      this.heiIdToPluginsMap.computeIfAbsent(heiId, ignored -> new ArrayList<>());
+      this.heiIdToPluginsMap.get(heiId).add(plugin);
+
+      if (plugin.isPrimaryForHeiId(heiId)) {
+        if (this.heiIdToPrimaryPluginMap.containsKey(heiId)) {
+          throw new IllegalStateException(
+              "Multiple plugins are set as primary for HEI ID: " + heiId);
         }
+        this.heiIdToPrimaryPluginMap.put(heiId, plugin);
       }
     }
   }
