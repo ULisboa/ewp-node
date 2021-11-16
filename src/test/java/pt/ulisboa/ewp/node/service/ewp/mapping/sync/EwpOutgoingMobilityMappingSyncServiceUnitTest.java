@@ -69,7 +69,7 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
         omobilityIds.get(0));
 
     verify(provider2, times(1)).findBySendingHeiIdAndOutgoingMobilityIds(
-        Collections.singletonList(heiIds.get(0)), heiIds.get(1),
+        Collections.singletonList(heiIds.get(1)), heiIds.get(1),
         Collections.singletonList(omobilityIds.get(1)));
     verify(mappingService, times(1)).registerMapping(heiIds.get(1), ounitIds.get(1),
         omobilityIds.get(1));
