@@ -46,7 +46,8 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
 
   private void syncInterInstitutionalAgreementsOfHeiId(String heiId,
       InterInstitutionalAgreementsV6HostProvider provider) {
-    Collection<String> iiaIds = provider.findAllIiaIdsByHeiId(heiId, null, null,
+    Collection<String> iiaIds = provider.findAllIiaIdsByHeiId(Collections.singletonList(heiId),
+        heiId, null, null,
         null);
     for (String iiaId : iiaIds) {
       syncInterInstitutionalAgreement(heiId, provider, iiaId);
@@ -59,7 +60,7 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
     Optional<EwpInterInstitutionalAgreementMapping> mappingOptional = this.mappingService.getMapping(
         heiId, iiaId);
     if (mappingOptional.isEmpty()) {
-      Collection<Iia> iias = provider.findByHeiIdAndIiaIds(heiId,
+      Collection<Iia> iias = provider.findByHeiIdAndIiaIds(Collections.singletonList(heiId), heiId,
           Collections.singletonList(iiaId), false);
       registerMapping(heiId, iias.iterator().next());
     }

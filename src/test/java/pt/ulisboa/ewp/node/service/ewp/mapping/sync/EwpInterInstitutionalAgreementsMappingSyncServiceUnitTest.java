@@ -66,12 +66,14 @@ class EwpInterInstitutionalAgreementsMappingSyncServiceUnitTest {
 
     syncService.run();
 
-    verify(provider1, times(1)).findByHeiIdAndIiaIds(heiIds.get(0),
+    verify(provider1, times(1)).findByHeiIdAndIiaIds(Collections.singletonList(heiIds.get(0)),
+        heiIds.get(0),
         Collections.singletonList(iiaIds.get(0)), false);
     verify(mappingService, times(1)).registerMapping(heiIds.get(0), ounitIds.get(0),
         iiaIds.get(0), iiaCodes.get(0));
 
-    verify(provider2, times(1)).findByHeiIdAndIiaIds(heiIds.get(1),
+    verify(provider2, times(1)).findByHeiIdAndIiaIds(Collections.singletonList(heiIds.get(0)),
+        heiIds.get(1),
         Collections.singletonList(iiaIds.get(1)), false);
     verify(mappingService, times(1)).registerMapping(heiIds.get(1), ounitIds.get(1),
         iiaIds.get(1), iiaCodes.get(1));
@@ -124,12 +126,14 @@ class EwpInterInstitutionalAgreementsMappingSyncServiceUnitTest {
 
     syncService.run();
 
-    verify(provider1, times(1)).findByHeiIdAndIiaIds(heiIds.get(0),
+    verify(provider1, times(1)).findByHeiIdAndIiaIds(Collections.singletonList(heiIds.get(0)),
+        heiIds.get(0),
         Collections.singletonList(iiaIds.get(0)), false);
     verify(mappingService, times(1)).registerMapping(heiIds.get(0), ounitIds.get(0),
         iiaIds.get(0), iiaCodes.get(0));
 
-    verify(provider2, times(0)).findByHeiIdAndIiaIds(heiIds.get(0),
+    verify(provider2, times(0)).findByHeiIdAndIiaIds(Collections.singletonList(heiIds.get(0)),
+        heiIds.get(0),
         Collections.singletonList(iiaIds.get(0)), false);
     verify(mappingService, times(0)).registerMapping(heiIds.get(1), ounitIds.get(1),
         iiaIds.get(1), iiaCodes.get(1));

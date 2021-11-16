@@ -62,12 +62,14 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
 
     syncService.run();
 
-    verify(provider1, times(1)).findBySendingHeiIdAndOutgoingMobilityIds(heiIds.get(0),
+    verify(provider1, times(1)).findBySendingHeiIdAndOutgoingMobilityIds(
+        Collections.singletonList(heiIds.get(0)), heiIds.get(0),
         Collections.singletonList(omobilityIds.get(0)));
     verify(mappingService, times(1)).registerMapping(heiIds.get(0), ounitIds.get(0),
         omobilityIds.get(0));
 
-    verify(provider2, times(1)).findBySendingHeiIdAndOutgoingMobilityIds(heiIds.get(1),
+    verify(provider2, times(1)).findBySendingHeiIdAndOutgoingMobilityIds(
+        Collections.singletonList(heiIds.get(0)), heiIds.get(1),
         Collections.singletonList(omobilityIds.get(1)));
     verify(mappingService, times(1)).registerMapping(heiIds.get(1), ounitIds.get(1),
         omobilityIds.get(1));
@@ -115,12 +117,14 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
 
     syncService.run();
 
-    verify(provider1, times(1)).findBySendingHeiIdAndOutgoingMobilityIds(heiIds.get(0),
+    verify(provider1, times(1)).findBySendingHeiIdAndOutgoingMobilityIds(
+        Collections.singletonList(heiIds.get(0)), heiIds.get(0),
         Collections.singletonList(omobilityIds.get(0)));
     verify(mappingService, times(1)).registerMapping(heiIds.get(0), ounitIds.get(0),
         omobilityIds.get(0));
 
-    verify(provider2, times(0)).findBySendingHeiIdAndOutgoingMobilityIds(heiIds.get(1),
+    verify(provider2, times(0)).findBySendingHeiIdAndOutgoingMobilityIds(
+        Collections.singletonList(heiIds.get(0)), heiIds.get(1),
         Collections.singletonList(omobilityIds.get(1)));
     verify(mappingService, times(0)).registerMapping(heiIds.get(1), ounitIds.get(1),
         omobilityIds.get(1));

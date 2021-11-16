@@ -45,7 +45,8 @@ public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncServ
 
   private void syncOutgoingMobilitiesOfHeiId(String heiId,
       OutgoingMobilitiesV1HostProvider provider) {
-    Collection<String> outgoingMobilityIds = provider.findOutgoingMobilityIds(heiId, null, null,
+    Collection<String> outgoingMobilityIds = provider.findOutgoingMobilityIds(
+        Collections.singletonList(heiId), heiId, null, null,
         null);
     for (String outgoingMobilityId : outgoingMobilityIds) {
       syncOutgoingMobility(heiId, provider, outgoingMobilityId);
@@ -59,8 +60,7 @@ public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncServ
         heiId, outgoingMobilityId);
     if (mappingOptional.isEmpty()) {
       Collection<StudentMobilityForStudiesV1> outgoingMobilities = provider.findBySendingHeiIdAndOutgoingMobilityIds(
-          heiId,
-          Collections.singletonList(outgoingMobilityId));
+          Collections.singletonList(heiId), heiId, Collections.singletonList(outgoingMobilityId));
       registerMapping(heiId, outgoingMobilities.iterator().next());
     }
   }
