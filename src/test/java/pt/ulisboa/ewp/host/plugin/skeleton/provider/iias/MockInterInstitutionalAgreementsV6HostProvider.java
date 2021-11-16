@@ -52,13 +52,15 @@ public class MockInterInstitutionalAgreementsV6HostProvider extends
   }
 
   @Override
-  public Collection<String> findAllIiaIdsByHeiId(String heiId, @Nullable String partnerHeiId,
+  public Collection<String> findAllIiaIdsByHeiId(Collection<String> requesterCoveredHeiIds,
+      String heiId, @Nullable String partnerHeiId,
       Collection<String> receivingAcademicYearIds, LocalDateTime modifiedSince) {
     return heiIdToIiaIdsMap.get(heiId);
   }
 
   @Override
-  public Collection<Iia> findByHeiIdAndIiaIds(String heiId, Collection<String> iiaIds,
+  public Collection<Iia> findByHeiIdAndIiaIds(Collection<String> requesterCoveredHeiIds,
+      String heiId, Collection<String> iiaIds,
       @Nullable Boolean sendPdf) {
     this.heiIdToIiasMap.computeIfAbsent(heiId, h -> new ArrayList<>());
     return heiIdToIiasMap.get(heiId).stream()
@@ -68,7 +70,8 @@ public class MockInterInstitutionalAgreementsV6HostProvider extends
   }
 
   @Override
-  public Collection<Iia> findByHeiIdAndIiaCodes(String heiId, Collection<String> iiaCodes,
+  public Collection<Iia> findByHeiIdAndIiaCodes(Collection<String> requesterCoveredHeiIds,
+      String heiId, Collection<String> iiaCodes,
       @Nullable Boolean sendPdf) {
     this.heiIdToIiasMap.computeIfAbsent(heiId, h -> new ArrayList<>());
     return heiIdToIiasMap.get(heiId).stream()

@@ -38,12 +38,14 @@ public class MockOutgoingMobilitiesV1HostProvider extends OutgoingMobilitiesV1Ho
     return this;
   }
 
-  public int getMaxOmobilityIdsPerRequest() {
+  @Override
+  public int getMaxOutgoingMobilityIdsPerRequest() {
     return maxOmobilityIdsPerRequest;
   }
 
   @Override
-  public Collection<String> findOutgoingMobilityIds(String sendingHeiId,
+  public Collection<String> findOutgoingMobilityIds(Collection<String> requesterCoveredHeiIds,
+      String sendingHeiId,
       Collection<String> receivingHeiIds, @Nullable String receivingAcademicYearId,
       @Nullable LocalDateTime modifiedSince) {
     return heiIdToOmobilityIdsMap.get(sendingHeiId);
@@ -51,6 +53,7 @@ public class MockOutgoingMobilitiesV1HostProvider extends OutgoingMobilitiesV1Ho
 
   @Override
   public Collection<StudentMobilityForStudiesV1> findBySendingHeiIdAndOutgoingMobilityIds(
+      Collection<String> requesterCoveredHeiIds,
       String sendingHeiId, Collection<String> outgoingMobilityIds) {
     this.heiIdToOmobilitiesMap.computeIfAbsent(sendingHeiId, h -> new ArrayList<>());
     return heiIdToOmobilitiesMap.get(sendingHeiId).stream()

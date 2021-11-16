@@ -70,7 +70,8 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
 
     IiasIndexResponseV6 response = new IiasIndexResponseV6();
     providers.forEach(provider -> {
-      Collection<String> iiaIds = provider.findAllIiaIdsByHeiId(heiId, partnerHeiId,
+      Collection<String> iiaIds = provider.findAllIiaIdsByHeiId(Collections.singletonList(heiId),
+          heiId, partnerHeiId,
           receivingAcademicYearIds, modifiedSince);
       response.getIiaId().addAll(iiaIds);
     });
@@ -137,7 +138,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     for (Map.Entry<InterInstitutionalAgreementsV6HostProvider, Collection<String>> entry : providerToIiaIdsMap.entrySet()) {
       InterInstitutionalAgreementsV6HostProvider provider = entry.getKey();
       Collection<String> coveredIiaIds = entry.getValue();
-      provider.findByHeiIdAndIiaIds(heiId, coveredIiaIds, sendPdf)
+      provider.findByHeiIdAndIiaIds(Collections.singletonList(heiId), heiId, coveredIiaIds, sendPdf)
           .forEach(iia -> response.getIia().add(iia));
     }
     return ResponseEntity.ok(response);
@@ -164,7 +165,8 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     for (Map.Entry<InterInstitutionalAgreementsV6HostProvider, Collection<String>> entry : providerToIiaCodesMap.entrySet()) {
       InterInstitutionalAgreementsV6HostProvider provider = entry.getKey();
       Collection<String> coveredIiaCodes = entry.getValue();
-      provider.findByHeiIdAndIiaCodes(heiId, coveredIiaCodes, sendPdf)
+      provider.findByHeiIdAndIiaCodes(Collections.singletonList(heiId), heiId, coveredIiaCodes,
+              sendPdf)
           .forEach(iia -> response.getIia().add(iia));
     }
     return ResponseEntity.ok(response);
