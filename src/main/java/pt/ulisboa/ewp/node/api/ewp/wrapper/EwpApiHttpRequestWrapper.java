@@ -2,11 +2,14 @@ package pt.ulisboa.ewp.node.api.ewp.wrapper;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.RequestFacade;
@@ -32,6 +35,7 @@ public class EwpApiHttpRequestWrapper extends ContentCachingRequestWrapper {
 
   private final String originalQueryString;
   private String body;
+  private ServletInputStream inputStream;
 
   private EwpApiHostAuthenticationToken authenticationToken;
   private Predicate<String> headerFilter = headerName -> true;
@@ -43,6 +47,15 @@ public class EwpApiHttpRequestWrapper extends ContentCachingRequestWrapper {
 
     sanitizeRequest(request);
     initBody(request);
+    initInputStream();
+  }
+
+  @Override
+  public ServletInputStream getInputStream() throws IOException {
+    if (this.inputStream == null) {
+      return super.getInputStream();
+    }
+    return this.inputStream;
   }
 
   private void sanitizeRequest(HttpServletRequest request) {
@@ -80,6 +93,10 @@ public class EwpApiHttpRequestWrapper extends ContentCachingRequestWrapper {
     } else {
       this.body = "";
     }
+  }
+
+  private void initInputStream() {
+    this.inputStream = new ContentCachingInputStream(body.getBytes(StandardCharsets.UTF_8));
   }
 
   public String getOriginalQueryString() {
@@ -151,8 +168,75 @@ public class EwpApiHttpRequestWrapper extends ContentCachingRequestWrapper {
     return headerFilter.test(name.toLowerCase());
   }
 
-  /** Returns request body. It may be called multiple times. */
+  /**
+   * Returns request body. It may be called multiple times.
+   */
   public String getBody() {
     return body;
+  }
+
+  /**
+   * Reference: https://stackoverflow.com/questions/30484388/inputstream-to-servletinputstream/33836552
+   */
+  private class ContentCachingInputStream extends ServletInputStream {
+
+    private final byte[] bytes;
+
+    private int lastIndexRetrieved = -1;
+    private ReadListener readListener = null;
+
+    private ContentCachingInputStream(byte[] bytes) {
+      this.bytes = bytes;
+    }
+
+    @Override
+    public int read() throws IOException {
+      int i;
+      if (!isFinished()) {
+        i = bytes[lastIndexRetrieved + 1];
+        lastIndexRetrieved++;
+        if (isFinished() && (readListener != null)) {
+          try {
+            readListener.onAllDataRead();
+          } catch (IOException ex) {
+            readListener.onError(ex);
+            throw ex;
+          }
+        }
+        return i;
+      } else {
+        return -1;
+      }
+    }
+
+    @Override
+    public boolean isFinished() {
+      return (lastIndexRetrieved == bytes.length - 1);
+    }
+
+    @Override
+    public boolean isReady() {
+      // This implementation will never block
+      // We also never need to call the readListener from this method, as this method will never return false
+      return isFinished();
+    }
+
+    @Override
+    public void setReadListener(ReadListener listener) {
+      this.readListener = listener;
+      if (!isFinished()) {
+        try {
+          readListener.onDataAvailable();
+        } catch (IOException e) {
+          readListener.onError(e);
+        }
+      } else {
+        try {
+          readListener.onAllDataRead();
+        } catch (IOException e) {
+          readListener.onError(e);
+        }
+      }
+    }
   }
 }
