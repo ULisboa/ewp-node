@@ -19,7 +19,6 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpMethod;
@@ -81,8 +80,8 @@ class EwpApiInterInstitutionalAgreementsApprovalV1ControllerTest extends
     doReturn(true).when(hostPluginManager)
         .hasHostProvider(approvingHeiId, InterInstitutionalAgreementsApprovalV1HostProvider.class);
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(Mockito.anyString(),
-            (Class<InterInstitutionalAgreementsApprovalV1HostProvider>) Mockito.any(Class.class));
+        .getAllProvidersOfType(approvingHeiId,
+            InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
     doReturn(Arrays.asList(mockProvider1)).when(hostPluginManager)
         .getProvidersByHeiIdAndOunitId(approvingHeiId, ounitIds.get(0),

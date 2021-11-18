@@ -84,8 +84,7 @@ class EwpApiOutgoingMobilitiesV1ControllerIntegrationTest extends
     doReturn(true).when(hostPluginManager)
         .hasHostProvider(sendingHeiId, OutgoingMobilitiesV1HostProvider.class);
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(Mockito.anyString(),
-            (Class<OutgoingMobilitiesV1HostProvider>) Mockito.any(Class.class));
+        .getAllProvidersOfType(sendingHeiId, OutgoingMobilitiesV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
@@ -186,7 +185,7 @@ class EwpApiOutgoingMobilitiesV1ControllerIntegrationTest extends
 
   @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testInterInstitutionalAgreementsGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownIiasReturned(
+  public void testOutgoingMobilitiesGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownIiasReturned(
       HttpMethod method) throws Exception {
     String sendingHeiId = "test";
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");

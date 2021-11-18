@@ -13,11 +13,9 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.replication.SimpleCourseReplicationV1HostProvider;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.ounits.OrganizationalUnitsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -69,8 +67,7 @@ class EwpApiSimpleCourseReplicationV1ControllerTest extends AbstractEwpControlle
     doReturn(true).when(hostPluginManager)
         .hasHostProvider(heiId, SimpleCourseReplicationV1HostProvider.class);
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(Mockito.anyString(),
-            (Class<OrganizationalUnitsV2HostProvider>) Mockito.any(Class.class));
+        .getAllProvidersOfType(heiId, SimpleCourseReplicationV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
