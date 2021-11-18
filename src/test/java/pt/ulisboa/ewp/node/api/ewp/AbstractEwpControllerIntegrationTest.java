@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -47,6 +48,7 @@ import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestFilter;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.service.ewp.security.HttpSignatureService;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
+import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.XmlValidator;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
@@ -111,6 +113,15 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
   }
 
   protected ResultActions executeRequest(
+      RegistryClient registryClient, HttpMethod method, String uri, Serializable body)
+      throws Exception {
+    MockHttpServletRequestBuilder requestBuilder =
+        MockMvcRequestBuilders.request(method, uri).with(serializableBodyProcessor(body));
+
+    return executeRequest(registryClient, requestBuilder);
+  }
+
+  protected ResultActions executeRequest(
       RegistryClient registryClient, MockHttpServletRequestBuilder requestBuilder)
       throws Exception {
     RequestPostProcessor securityRequestProcessor =
@@ -143,6 +154,14 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
             .andReturn();
 
     validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/common-types.xsd");
+  }
+
+  protected RequestPostProcessor serializableBodyProcessor(Serializable serializable) {
+    return request -> {
+      request.setContentType(MediaType.TEXT_XML_VALUE);
+      request.setContent(XmlUtils.marshall(serializable).getBytes(StandardCharsets.UTF_8));
+      return request;
+    };
   }
 
   protected RequestPostProcessor httpParamsProcessor(HttpParams params) {

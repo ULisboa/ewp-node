@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,7 +33,10 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
           new HttpServletResponseWithCustomSendError(response);
       ModelAndView modelAndView =
           super.doResolveException(request, responseWithCustomSendError, handler, ex);
-      if (modelAndView == null) {
+      if (ex instanceof HttpMessageNotReadableException) {
+        modelAndView = handleHttpMessageNotReadableExceptionException(
+            (HttpMessageNotReadableException) ex, response);
+      } else if (modelAndView == null) {
         if (ex instanceof EwpBadRequestException) {
           modelAndView = handleEwpBadRequestException((EwpBadRequestException) ex, response);
         } else {
@@ -44,6 +48,13 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
       return modelAndView;
     }
     return null;
+  }
+
+  private ModelAndView handleHttpMessageNotReadableExceptionException(
+      HttpMessageNotReadableException exception, HttpServletResponse response) {
+    response.setStatus(HttpStatus.BAD_REQUEST.value());
+    return createModelAndViewFromException(
+        new IllegalArgumentException("Required request body is missing"));
   }
 
   private ModelAndView handleEwpBadRequestException(
