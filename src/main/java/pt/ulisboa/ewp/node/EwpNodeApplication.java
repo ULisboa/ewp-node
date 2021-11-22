@@ -140,6 +140,7 @@ public class EwpNodeApplication {
   public Jaxb2Marshaller jaxb2Marshaller() {
     Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
     marshaller.setPackagesToScan("eu.erasmuswithoutpaper.api", "pt.ulisboa.ewp.node");
+    marshaller.setSupportJaxbElementClass(true);
     Map<String, Object> jaxbProperties = new HashMap<>();
     jaxbProperties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true);
     marshaller.setMarshallerProperties(jaxbProperties);
