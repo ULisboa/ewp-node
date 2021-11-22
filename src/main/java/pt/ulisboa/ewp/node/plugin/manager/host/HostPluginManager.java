@@ -65,6 +65,10 @@ public class HostPluginManager extends DefaultPluginManager {
     return new HostPluginFactory();
   }
 
+  public <T extends HostProvider> boolean hasHostProvider(Class<T> providerClassType) {
+    return !getAllProvidersOfTypePerHeiId(providerClassType).isEmpty();
+  }
+
   public <T extends HostProvider> boolean hasHostProvider(String heiId,
       Class<T> providerClassType) {
     Collection<T> providers = getAllProvidersOfType(heiId, providerClassType);
@@ -154,6 +158,12 @@ public class HostPluginManager extends DefaultPluginManager {
     return result;
   }
 
+  public <T> Collection<T> getAllProvidersOfType(Class<T> providerClassType) {
+    return this.heiIdToPluginsMap.values().stream().flatMap(Collection::stream)
+        .flatMap(p -> getExtensions(p, providerClassType).stream())
+        .collect(Collectors.toList());
+  }
+
   public <T> Collection<T> getAllProvidersOfType(String heiId, Class<T> providerClassType) {
     this.heiIdToPluginsMap.computeIfAbsent(heiId, ignored -> new ArrayList<>());
     Collection<HostPlugin> plugins = this.heiIdToPluginsMap.get(heiId);
@@ -178,6 +188,10 @@ public class HostPluginManager extends DefaultPluginManager {
       return Collections.emptyList();
     }
     return getExtensions(pluginOptional.get(), providerClassType);
+  }
+
+  public Collection<String> getCoveredHeiIds() {
+    return this.heiIdToPluginsMap.keySet();
   }
 
   private Collection<HostPlugin> getAllPlugins() {
