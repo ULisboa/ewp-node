@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.ewp.controller.iias.approval;
+package pt.ulisboa.ewp.node.api.ewp.controller.iias.approvals;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;

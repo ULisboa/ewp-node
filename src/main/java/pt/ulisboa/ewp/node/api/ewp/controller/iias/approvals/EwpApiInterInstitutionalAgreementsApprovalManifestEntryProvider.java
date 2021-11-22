@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.ewp.controller.iias.approval;
+package pt.ulisboa.ewp.node.api.ewp.controller.iias.approvals;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalV1;

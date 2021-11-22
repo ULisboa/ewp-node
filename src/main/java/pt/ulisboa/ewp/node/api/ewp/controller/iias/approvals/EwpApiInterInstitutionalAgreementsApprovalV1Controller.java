@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.ewp.controller.iias.approval;
+package pt.ulisboa.ewp.node.api.ewp.controller.iias.approvals;
 
 import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalResponseV1;
 import io.swagger.v3.oas.annotations.Operation;
