@@ -36,7 +36,7 @@ public class EwpApiOutgoingMobilityCnrV1Controller {
   @Operation(
       summary = "IIAs CNR API.",
       tags = {"ewp"})
-  public ResponseEntity<OmobilityCnrResponseV1> iiaCnr(
+  public ResponseEntity<OmobilityCnrResponseV1> outgoingMobilityCnr(
       @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID) String sendingHeiId,
       @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID) List<String> omobilityIds) {
 

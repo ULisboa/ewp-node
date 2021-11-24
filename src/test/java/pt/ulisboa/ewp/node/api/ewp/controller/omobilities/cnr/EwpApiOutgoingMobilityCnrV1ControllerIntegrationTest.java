@@ -35,7 +35,7 @@ class EwpApiOutgoingMobilityCnrV1ControllerIntegrationTest extends
 
   @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  void testIiaCnr_TwoAdmissibleHostProviders_BothHostProvidersInvoked(
+  void testOutgoingMobilityCnr_TwoAdmissibleHostProviders_BothHostProvidersInvoked(
       HttpMethod method) throws Exception {
     String sendingHeiId = "test";
     String omobilityId = "om1";

@@ -37,7 +37,7 @@ public class EwpApiInterInstitutionalAgreementApprovalCnrV1Controller {
   @Operation(
       summary = "IIA Approval CNR API.",
       tags = {"ewp"})
-  public ResponseEntity<IiaApprovalCnrResponseV1> iiaCnr(
+  public ResponseEntity<IiaApprovalCnrResponseV1> iiaApprovalCnr(
       @RequestParam(value = EwpApiParamConstants.APPROVING_HEI_ID) String approvingHeiId,
       @RequestParam(value = EwpApiParamConstants.OWNER_HEI_ID) String ownerHeiId,
       @RequestParam(value = EwpApiParamConstants.IIA_ID) String iiaId) {
