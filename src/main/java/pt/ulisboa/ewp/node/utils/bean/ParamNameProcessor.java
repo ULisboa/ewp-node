@@ -36,12 +36,16 @@ public class ParamNameProcessor extends ServletModelAttributeMethodProcessor {
   @Override
   protected void bindRequestParameters(WebDataBinder binder, NativeWebRequest nativeWebRequest) {
     Object target = binder.getTarget();
-    Map<String, String> paramMappings = this.getParamMappings(target.getClass());
-    ParamNameDataBinder paramNameDataBinder =
-        new ParamNameDataBinder(target, binder.getObjectName(), paramMappings);
-    Objects.requireNonNull(requestMappingHandlerAdapter.getWebBindingInitializer())
-        .initBinder(paramNameDataBinder);
-    super.bindRequestParameters(paramNameDataBinder, nativeWebRequest);
+    if (target != null) {
+      Map<String, String> paramMappings = this.getParamMappings(target.getClass());
+      ParamNameDataBinder paramNameDataBinder =
+          new ParamNameDataBinder(target, binder.getObjectName(), paramMappings);
+      Objects.requireNonNull(requestMappingHandlerAdapter.getWebBindingInitializer())
+          .initBinder(paramNameDataBinder);
+      super.bindRequestParameters(paramNameDataBinder, nativeWebRequest);
+    } else {
+      throw new IllegalStateException("Missing binder's target");
+    }
   }
 
   /**

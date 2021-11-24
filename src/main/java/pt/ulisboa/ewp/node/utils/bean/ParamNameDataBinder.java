@@ -5,7 +5,9 @@ import javax.servlet.ServletRequest;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.web.servlet.mvc.method.annotation.ExtendedServletRequestDataBinder;
 
-/** ServletRequestDataBinder which supports fields renaming using {@link ParamName} */
+/**
+ * ServletRequestDataBinder which supports fields renaming using {@link ParamName}
+ */
 public class ParamNameDataBinder extends ExtendedServletRequestDataBinder {
 
   private final Map<String, String> paramMappings;
@@ -23,8 +25,10 @@ public class ParamNameDataBinder extends ExtendedServletRequestDataBinder {
       String paramName = entry.getKey();
       String fieldName = entry.getValue();
       if (mutablePropertyValues.contains(paramName)) {
-        mutablePropertyValues.add(
-            fieldName, mutablePropertyValues.getPropertyValue(paramName).getValue());
+        var propertyValue = mutablePropertyValues.getPropertyValue(paramName);
+        if (propertyValue != null) {
+          mutablePropertyValues.add(fieldName, propertyValue.getValue());
+        }
       }
     }
   }

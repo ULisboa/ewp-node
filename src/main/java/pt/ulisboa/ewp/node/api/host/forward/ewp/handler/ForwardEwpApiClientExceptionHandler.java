@@ -52,13 +52,15 @@ public class ForwardEwpApiClientExceptionHandler {
 
   @ExceptionHandler({BindException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<ForwardEwpApiResponse> handleBindException(BindException exception)
-      throws NoSuchFieldException {
-    for (FieldError fieldError : exception.getFieldErrors()) {
-      String fieldName =
-          PojoUtils.getUserFriendlyPropertyName(exception.getTarget().getClass(), fieldError);
-      String errorMessage = messages.get(fieldError);
-      MessageService.getInstance().add(fieldName, Severity.ERROR, errorMessage);
+  public ResponseEntity<ForwardEwpApiResponse> handleBindException(BindException exception) {
+    Object target = exception.getTarget();
+    if (target != null) {
+      for (FieldError fieldError : exception.getFieldErrors()) {
+        String fieldName =
+            PojoUtils.getUserFriendlyPropertyName(target.getClass(), fieldError);
+        String errorMessage = messages.get(fieldError);
+        MessageService.getInstance().add(fieldName, Severity.ERROR, errorMessage);
+      }
     }
 
     return ForwardEwpApiResponseUtils.toBadRequestResponseEntity();

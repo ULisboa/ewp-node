@@ -103,10 +103,17 @@ public class EwpNodeApplication {
   @Bean
   @Scope(BeanDefinition.SCOPE_PROTOTYPE)
   Logger logger(InjectionPoint injectionPoint) {
-    if (injectionPoint.getField() != null) {
-      return LoggerFactory.getLogger(injectionPoint.getField().getDeclaringClass());
+    var field = injectionPoint.getField();
+    if (field != null) {
+      return LoggerFactory.getLogger(field.getDeclaringClass());
     }
-    return LoggerFactory.getLogger(injectionPoint.getMethodParameter().getContainingClass());
+
+    var methodParameter = injectionPoint.getMethodParameter();
+    if (methodParameter != null) {
+      return LoggerFactory.getLogger(methodParameter.getContainingClass());
+    }
+
+    throw new IllegalStateException("Invalid injection point" + injectionPoint);
   }
 
   /**
