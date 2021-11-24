@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.omobilities;
 
+import eu.erasmuswithoutpaper.api.architecture.v1.EmptyV1;
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.omobilities.v1.OmobilitiesV1;
 import java.math.BigInteger;
@@ -39,6 +40,7 @@ public class EwpApiOutgoingMobilitiesManifestEntryProvider
         BigInteger.valueOf(maxOutgoingMobilityIdsPerRequest));
 
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
+    manifestEntry.setSendsNotifications(new EmptyV1());
     return manifestEntry;
   }
 }

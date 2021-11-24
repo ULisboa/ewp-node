@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.iias;
 
+import eu.erasmuswithoutpaper.api.architecture.v1.EmptyV1;
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
 import java.math.BigInteger;
@@ -43,6 +44,7 @@ public class EwpApiInterInstitutionalAgreementsManifestEntryProvider
     manifestEntry.setMaxIiaCodes(BigInteger.valueOf(maxIiaCodesPerRequest));
 
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
+    manifestEntry.setSendsNotifications(new EmptyV1());
     return manifestEntry;
   }
 }
