@@ -25,7 +25,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.PeriodicTrigger;
@@ -44,6 +43,7 @@ import pt.ulisboa.ewp.node.service.ewp.mapping.sync.EwpMappingSyncService;
 import pt.ulisboa.ewp.node.service.ewp.notification.EwpNotificationSenderDaemon;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.utils.bean.ParamNameProcessor;
+import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
 
 @SpringBootApplication(scanBasePackages = {"pt.ulisboa.ewp.node"})
 @EnableConfigurationProperties(
@@ -139,8 +139,11 @@ public class EwpNodeApplication {
    * when marshalling/unmarshalling.
    */
   @Bean
-  public MarshallingHttpMessageConverter marshallingHttpMessageConverter() {
-    return new MarshallingHttpMessageConverter(jaxb2Marshaller());
+  public Jaxb2HttpMessageConverter marshallingHttpMessageConverter() {
+    Jaxb2HttpMessageConverter result = new Jaxb2HttpMessageConverter();
+    result.setPackagesToScan("eu.erasmuswithoutpaper.api", "pt.ulisboa.ewp.node");
+    result.setSupportJaxbElementClass(true);
+    return result;
   }
 
   @Bean
@@ -148,6 +151,7 @@ public class EwpNodeApplication {
     Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
     marshaller.setPackagesToScan("eu.erasmuswithoutpaper.api", "pt.ulisboa.ewp.node");
     marshaller.setSupportJaxbElementClass(true);
+
     Map<String, Object> jaxbProperties = new HashMap<>();
     jaxbProperties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true);
     marshaller.setMarshallerProperties(jaxbProperties);

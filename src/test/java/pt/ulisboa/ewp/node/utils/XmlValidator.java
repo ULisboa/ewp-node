@@ -45,8 +45,6 @@ public class XmlValidator {
       SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
       Schema schema = schemaFactory.newSchema(schemaUrl);
       Validator validator = schema.newValidator();
-      validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-      validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
       validator.validate(new StreamSource(new StringReader(xml)));
       return true;
     } catch (IOException | SAXException e) {
