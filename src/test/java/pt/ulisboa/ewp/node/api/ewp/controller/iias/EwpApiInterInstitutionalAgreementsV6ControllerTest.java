@@ -6,12 +6,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia;
+import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia.CooperationConditions;
+import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia.Partner;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasIndexResponseV6;
+import eu.erasmuswithoutpaper.api.iias.v6.endpoints.StudentStudiesMobilitySpecV6;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,26 +115,37 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     List<String> iiaIds = Arrays.asList("a1", "b2", "c3");
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");
 
-    Iia iia1 = new Iia();
-    iia1.setConditionsHash(UUID.randomUUID().toString());
+    List<Iia> iias = new ArrayList<>();
 
-    Iia iia2 = new Iia();
-    iia2.setConditionsHash(UUID.randomUUID().toString());
-
-    Iia iia3 = new Iia();
-    iia3.setConditionsHash(UUID.randomUUID().toString());
-
-    List<Iia> iias = List.of(iia1, iia2, iia3);
+    for (int index = 0; index < iiaIds.size(); index++) {
+      Iia iia = new Iia();
+      for (int partnerIndex = 0; partnerIndex < 2; partnerIndex++) {
+        Partner partner = new Partner();
+        partner.setHeiId(UUID.randomUUID().toString());
+        iia.getPartner().add(partner);
+      }
+      CooperationConditions cooperationConditions = new CooperationConditions();
+      StudentStudiesMobilitySpecV6 studentStudiesMobilitySpecV6 = new StudentStudiesMobilitySpecV6();
+      studentStudiesMobilitySpecV6.setSendingHeiId(UUID.randomUUID().toString());
+      studentStudiesMobilitySpecV6.setReceivingHeiId(UUID.randomUUID().toString());
+      studentStudiesMobilitySpecV6.setReceivingOunitId(ounitIds.get(index));
+      studentStudiesMobilitySpecV6.getReceivingAcademicYearId().add("2021/2022");
+      studentStudiesMobilitySpecV6.setTotalMonthsPerYear(BigDecimal.TEN);
+      cooperationConditions.getStudentStudiesMobilitySpec().add(studentStudiesMobilitySpecV6);
+      iia.setCooperationConditions(cooperationConditions);
+      iia.setConditionsHash(DigestUtils.sha256Hex(UUID.randomUUID().toString()));
+      iias.add(iia);
+    }
 
     MockInterInstitutionalAgreementsV6HostProvider mockProvider1 = new MockInterInstitutionalAgreementsV6HostProvider(
         3, 0);
     MockInterInstitutionalAgreementsV6HostProvider mockProvider2 = new MockInterInstitutionalAgreementsV6HostProvider(
         3, 0);
 
-    mockProvider1.registerIia(heiId, iiaIds.get(0), UUID.randomUUID().toString(), iia1);
+    mockProvider1.registerIia(heiId, iiaIds.get(0), UUID.randomUUID().toString(), iias.get(0));
 
-    mockProvider2.registerIia(heiId, iiaIds.get(1), UUID.randomUUID().toString(), iia2);
-    mockProvider2.registerIia(heiId, iiaIds.get(2), UUID.randomUUID().toString(), iia3);
+    mockProvider2.registerIia(heiId, iiaIds.get(1), UUID.randomUUID().toString(), iias.get(1));
+    mockProvider2.registerIia(heiId, iiaIds.get(2), UUID.randomUUID().toString(), iias.get(2));
 
     for (int index = 0; index < iiaIds.size(); index++) {
       doReturn(Optional.of(
