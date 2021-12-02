@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.utils.http.converter.xml;
 
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
@@ -20,12 +21,19 @@ public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConver
 
   private boolean supportJaxbElementClass;
 
+  private NamespacePrefixMapper namespacePrefixMapper;
+
   public void setPackagesToScan(String... packagesToScan) {
     this.packagesToScan = packagesToScan;
   }
 
   public void setSupportJaxbElementClass(boolean supportJaxbElementClass) {
     this.supportJaxbElementClass = supportJaxbElementClass;
+  }
+
+  public void setNamespacePrefixMapper(
+      NamespacePrefixMapper namespacePrefixMapper) {
+    this.namespacePrefixMapper = namespacePrefixMapper;
   }
 
   @Override
@@ -63,6 +71,10 @@ public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConver
 
     Map<String, Object> jaxbProperties = new HashMap<>();
     jaxbProperties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+    if (this.namespacePrefixMapper != null) {
+      jaxbProperties.put("com.sun.xml.bind.namespacePrefixMapper", this.namespacePrefixMapper);
+    }
+
     marshaller.setMarshallerProperties(jaxbProperties);
 
     return marshaller;

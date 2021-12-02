@@ -43,6 +43,7 @@ import pt.ulisboa.ewp.node.service.ewp.mapping.sync.EwpMappingSyncService;
 import pt.ulisboa.ewp.node.service.ewp.notification.EwpNotificationSenderDaemon;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.utils.bean.ParamNameProcessor;
+import pt.ulisboa.ewp.node.utils.http.converter.xml.EwpNamespacePrefixMapper;
 import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
 
 @SpringBootApplication(scanBasePackages = {"pt.ulisboa.ewp.node"})
@@ -143,6 +144,7 @@ public class EwpNodeApplication {
     Jaxb2HttpMessageConverter result = new Jaxb2HttpMessageConverter();
     result.setPackagesToScan("eu.erasmuswithoutpaper.api", "pt.ulisboa.ewp.node");
     result.setSupportJaxbElementClass(true);
+    result.setNamespacePrefixMapper(new EwpNamespacePrefixMapper());
     return result;
   }
 
