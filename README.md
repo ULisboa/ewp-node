@@ -19,26 +19,26 @@ non-backward changes may be introduced.
 ### As Provider
 
 | API | Supported? | Major Versions Supported |
-| :----: | :---: | :---: |
-| Discovery Manifest | :heavy_check_mark: | 5 |
-| Echo | :heavy_check_mark: | 2 |
-| Institutions | :heavy_check_mark: | 2 |
-| Organizational Units | :heavy_check_mark: | 2 |
-| Courses | :heavy_check_mark: | 0 |
-| Simple Course Replication | :heavy_check_mark: | 1 |
-| Interinstitutional Agreements | :heavy_check_mark: | 4 |
-| Interinstitutional Agreements CNR |  |  |
-| Interinstitutional Approval | :heavy_check_mark: | 1 |
-| Interinstitutional Approval CNR |  |  |
-| Mobility Factsheet | :heavy_check_mark: | 1 |
-| Outgoing Mobilities | :heavy_check_mark: | 1 |
-| Outgoing Mobility Learning Agreements |  |  |
-| Outgoing Mobility CNR |  |  |
-| Outgoing Mobility Learning Agreement CNR |  |  |
-| Incoming Mobilities |  |  |
-| Incoming Mobility CNR |  |  |
-| Incoming Mobility ToR |  |  |
-| Incoming Mobility ToR CNR |  |  |
+| :----: | :---: |:------------------------:|
+| Discovery Manifest | :heavy_check_mark: |            5             |
+| Echo | :heavy_check_mark: |            2             |
+| Institutions | :heavy_check_mark: |            2             |
+| Organizational Units | :heavy_check_mark: |            2             |
+| Courses | :heavy_check_mark: |            0             |
+| Simple Course Replication | :heavy_check_mark: |            1             |
+| Interinstitutional Agreements | :heavy_check_mark: |            4             |
+| Interinstitutional Agreements CNR | :heavy_check_mark: |            2             |
+| Interinstitutional Approval | :heavy_check_mark: |            1             |
+| Interinstitutional Approval CNR | :heavy_check_mark: |            1             |
+| Mobility Factsheet | :heavy_check_mark: |            1             |
+| Outgoing Mobilities | :heavy_check_mark: |            1             |
+| Outgoing Mobility Learning Agreements | :heavy_check_mark: |            1             |
+| Outgoing Mobility CNR | :heavy_check_mark: |            1             |
+| Outgoing Mobility Learning Agreement CNR | :heavy_check_mark: |            1             |
+| Incoming Mobilities |  |                          |
+| Incoming Mobility CNR |  |                          |
+| Incoming Mobility ToR |  |                          |
+| Incoming Mobility ToR CNR |  |                          |
 
 ### As Consumer
 
