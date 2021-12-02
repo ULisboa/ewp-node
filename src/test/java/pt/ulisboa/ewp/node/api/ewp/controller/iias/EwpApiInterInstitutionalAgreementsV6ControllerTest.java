@@ -4,12 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import eu.erasmuswithoutpaper.api.architecture.v1.StringWithOptionalLangV1;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia.CooperationConditions;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia.Partner;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasIndexResponseV6;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.StudentStudiesMobilitySpecV6;
+import eu.erasmuswithoutpaper.api.types.contact.v1.ContactV1;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,6 +133,11 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
       studentStudiesMobilitySpecV6.setReceivingOunitId(ounitIds.get(index));
       studentStudiesMobilitySpecV6.getReceivingAcademicYearId().add("2021/2022");
       studentStudiesMobilitySpecV6.setTotalMonthsPerYear(BigDecimal.TEN);
+      ContactV1 receivingContact = new ContactV1();
+      StringWithOptionalLangV1 stringWithOptionalLangV1 = new StringWithOptionalLangV1();
+      stringWithOptionalLangV1.setValue("TEST");
+      receivingContact.getContactName().add(stringWithOptionalLangV1);
+      studentStudiesMobilitySpecV6.getReceivingContact().add(receivingContact);
       cooperationConditions.getStudentStudiesMobilitySpec().add(studentStudiesMobilitySpecV6);
       iia.setCooperationConditions(cooperationConditions);
       iia.setConditionsHash(DigestUtils.sha256Hex(UUID.randomUUID().toString()));
