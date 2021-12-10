@@ -2,13 +2,13 @@ package pt.ulisboa.ewp.node.service.ewp.iia;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class ConditionsHashCalculatorTest {
 
   @Test
-  @Ignore
+  @Disabled
   void testCalculateHashFor_ValidCooperationConditions_CorrectHashReturned() {
     // Arrange
     ConditionsHashCalculator hashCalculator = new ConditionsHashCalculator();
