@@ -2,6 +2,7 @@
 
 # DO NOT edit if using the provided DEV Docker image
 server:
+  port: 8443
   ssl:
     enabled: true
     key-store: classpath:keystore/localhost.p12 # REPLACE with the correct keystore file path

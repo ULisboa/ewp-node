@@ -28,6 +28,6 @@ RUN keytool -v -importkeystore -srckeystore /root/keystore/localhost.p12 -srcsto
 VOLUME /plugins
 
 EXPOSE 5005
-EXPOSE 8080
+EXPOSE 8443
 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", "-jar","/opt/app.jar"]

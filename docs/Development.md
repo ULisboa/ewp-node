@@ -33,7 +33,7 @@ These steps must be run inside the root folder of the EWP Node project.
     docker run --rm -it --name ewp-registry --net=host -v ${PWD}/docker/registry/dev/data:/root -v ${PWD}/src/main/resources/keystore/localhost.p12:/opt/keystore.p12 --entrypoint /root/entrypoint.sh docker.pkg.github.com/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
     ```
 
-Once both Docker containers have started, the EWP Node is available on port 8080, and the EWP Registry on port 8000.
+Once both Docker containers have started, the EWP Node is available on port 8443, and the EWP Registry on port 8000.
 
 ### Notes
 
