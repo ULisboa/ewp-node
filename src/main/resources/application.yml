@@ -5,7 +5,7 @@ baseContextPath:
 #server:
 #  ssl:
 #    key-store: <PATH to keystore>
-#    key-password: <KEYSTORE PASSWORD>
+#    key-store-password: <KEYSTORE PASSWORD>
 #    key-alias: <CERTIFICATE ALIAS>
 #    client-auth: want # "want" in order to allow client requests without embedded client certificate
 
@@ -26,6 +26,7 @@ registry:
   url: dev-registry.erasmuswithoutpaper.eu
   autoRefresh: true
   timeBetweenRetriesInMilliseconds: 180000
+  minTimeBetweenQueries: 60000
 
 # Security configuration
 security:

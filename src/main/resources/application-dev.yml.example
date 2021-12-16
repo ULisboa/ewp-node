@@ -1,0 +1,61 @@
+# If using the provided DEV Docker image then ONLY edit the bootstrap/plugins sections.
+
+# DO NOT edit if using the provided DEV Docker image
+server:
+  ssl:
+    enabled: true
+    key-store: classpath:keystore/localhost.p12 # REPLACE with the correct keystore file path
+    key-store-password: p@ssw0rd # REPLACE with the correct keystore password
+    key-alias: dev # REPLACE with the correct keystore alias
+    client-auth: want # "want" in order to allow client requests without embedded client certificate
+
+# DO NOT edit if using the provided DEV Docker image
+registry:
+  url: localhost:8000
+  autoRefresh: true
+  timeBetweenRetriesInMilliseconds: 3000
+  minTimeBetweenQueries: 3000
+
+# EDIT this section accordingly.
+bootstrap:
+  # Hosts are bootstrapped if no host is currently defined on DB
+  hosts:
+    # The code of a host is used to identify the host on communications from it.
+    # Namely, for the Forward EWP APIs, the JWT token produced must use as "iss" (issuer)
+    # the code of the host.
+    - code: ulisboa
+      description: University of Lisbon
+      adminEmail: admin@example.com
+      adminNotes: Sample host
+      # Configuration of the Forward EWP APIs
+      forwardEwpApi:
+        # Secret key that the host will use when generating a JWT token.
+        # This secret key is used on the EWP node to assert that the received JWT token
+        # was effectively produced by the host.
+        # Hence, both host and EWP node must know this secret.
+        secret: sample-host-forward-ewp-api-secret
+      coveredHeis:
+        - schacCode: ulisboa.pt
+          names:
+            - locale: pt-PT
+              value: Universidade de Lisboa
+            - locale: en
+              value: University of Lisbon
+          otherHeiIds:
+            - type: pic
+              value: 949885305
+            - type: erasmus
+              value: P  LISBOA109
+            - type: erasmus-charter
+              value: 269558-EPP-1-2015-1-PT-EPPKA3-ECHE
+
+plugins:
+  # Set the path to the plugins directory
+  path: /plugins/
+
+  # Variables may be defined per host plugin
+  # For instance, in the example below, a property example.key belonging to a plugin with ID
+  # ewp-host-plugin-demo is defined.
+  ewp-host-plugin-demo:
+    example:
+      key: test

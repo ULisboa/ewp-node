@@ -11,6 +11,7 @@ public class RegistryProperties {
   private String url;
   private boolean autoRefresh;
   private long timeBetweenRetriesInMilliseconds;
+  private long minTimeBetweenQueriesInMilliseconds;
 
   public String getUrl() {
     return url;
@@ -34,5 +35,13 @@ public class RegistryProperties {
 
   public void setTimeBetweenRetriesInMilliseconds(long timeBetweenRetriesInMilliseconds) {
     this.timeBetweenRetriesInMilliseconds = timeBetweenRetriesInMilliseconds;
+  }
+
+  public long getMinTimeBetweenQueriesInMilliseconds() {
+    return minTimeBetweenQueriesInMilliseconds;
+  }
+
+  public void setMinTimeBetweenQueriesInMilliseconds(long minTimeBetweenQueriesInMilliseconds) {
+    this.minTimeBetweenQueriesInMilliseconds = minTimeBetweenQueriesInMilliseconds;
   }
 }

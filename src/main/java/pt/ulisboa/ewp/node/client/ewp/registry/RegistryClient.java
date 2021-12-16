@@ -30,6 +30,7 @@ public class RegistryClient extends ClientImpl {
     options.setCatalogueFetcher(new DefaultCatalogueFetcher(properties.getUrl()));
     options.setAutoRefreshing(properties.isAutoRefresh());
     options.setTimeBetweenRetries(properties.getTimeBetweenRetriesInMilliseconds());
+    options.setMinTimeBetweenQueries(properties.getMinTimeBetweenQueriesInMilliseconds());
     return options;
   }
 

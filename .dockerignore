@@ -40,9 +40,13 @@ mvnw.cmd
 
 ### Docker ###
 Dockerfile
+Dockerfile.dev
 .dockerignore
 
 ### Others ###
 **/logs
 README.md
 .directory
+/plugins
+/docs
+src/main/resources/application-dev.yml**

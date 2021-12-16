@@ -1,0 +1,33 @@
+# Build and package
+FROM maven:3.6.3-slim as builder
+
+WORKDIR /build
+
+# Compile and package
+COPY pom.xml .
+RUN mvn dependency:resolve
+COPY . .
+RUN mvn -B package -DskipTests=true
+
+# Deploy
+FROM openjdk:11.0-jre-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+COPY --from=builder /build/src/main/resources/keystore/localhost.p12 /root/keystore/localhost.p12
+COPY --from=builder /build/target/*.jar /opt/app.jar
+
+ENV SPRING_PROFILES_ACTIVE=dev
+
+# Add localhost certificate to CACERTS
+ENV CACERTS_STORE /usr/local/openjdk-11/lib/security/cacerts
+RUN keytool -v -importkeystore -srckeystore /root/keystore/localhost.p12 -srcstoretype PKCS12 \
+  -srcstorepass p@ssw0rd -destkeystore ${CACERTS_STORE} -deststoretype JKS -deststorepass changeit \
+  -noprompt
+
+VOLUME /plugins
+
+EXPOSE 5005
+EXPOSE 8080
+
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", "-jar","/opt/app.jar"]

@@ -1,3 +1,46 @@
+# Running EWP Node with Local EWP Registry
+
+Sometimes it is useful to have a local EWP registry in order to test the correct behavior 
+of host plugins.
+
+## Preparation
+
+These steps must be run inside the root folder of the EWP Node project.
+
+1. Edit the file docker/registry/dev/data/manifest-sources.xml to use a correct HEI regular expression that 
+matches the target HEI ID;
+
+2. Copy the file src/main/resources/application-dev.yml.example to src/main/resources/application-dev.yml;
+
+3. Edit the file src/main/resources/application-dev.yml (only the sections of it mentioning that can be edited);
+   
+4. Build local EWP Node Docker image:
+    ```
+    docker build -f Dockerfile.dev -t ewp-node:dev . 
+    ```
+
+## Running local EWP Node and EWP Registry
+
+These steps must be run inside the root folder of the EWP Node project.
+
+1. Launch the EWP Node by running:
+    ```
+     docker run --rm --name ewp-node -v ${PWD}/src/main/resources/application-dev.yml:/config/application.yml -v ${PWD}/plugins:/plugins --net=host ewp-node:dev 
+    ```
+
+2. Launch the EWP Registry by running:
+    ```
+    docker run --rm -it --name ewp-registry --net=host -v ${PWD}/docker/registry/dev/data:/root -v ${PWD}/src/main/resources/keystore/localhost.p12:/opt/keystore.p12 --entrypoint /root/entrypoint.sh docker.pkg.github.com/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
+    ```
+
+Once both Docker containers have started, the EWP Node is available on port 8080, and the EWP Registry on port 8000.
+
+### Notes
+
+- Debugging of EWP Node is available on port 5005;
+- If there is a change of a host plugin, both the docker container of the EWP Node and EWP Registry must be restarted.
+By default, the EWP Registry periodically reloads the manifest every 5 minutes, hence the need to restart it if the host plugin has changed.
+
 # Add support for new EWP API
 
 ## As Provider
