@@ -48,7 +48,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 2000))
+            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 5000))
         .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
             .wasSuccess());
   }
@@ -68,7 +68,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 2000))
+            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 5000))
         .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
             .hasFailedDueToNoCnrApiAvailable());
   }
@@ -88,7 +88,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 2000))
+            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 5000))
         .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
             .hasFailedDueToMaxAttempts());
   }
@@ -107,7 +107,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 2000))
+            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 5000))
         .until(() -> {
           EwpChangeNotification changeNotification = changeNotificationRepository.findById(
               originalChangeNotification.getId()).get();
