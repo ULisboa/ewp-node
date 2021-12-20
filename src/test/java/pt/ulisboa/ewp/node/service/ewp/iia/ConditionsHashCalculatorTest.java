@@ -11,7 +11,7 @@ class ConditionsHashCalculatorTest {
   @Disabled
   void testCalculateHashFor_ValidCooperationConditions_CorrectHashReturned() {
     // Arrange
-    ConditionsHashCalculator hashCalculator = new ConditionsHashCalculator();
+    ConditionsHashCalculator conditionsHashCalculator = new ConditionsHashCalculator();
 
     String iiaGetXml = "<iias-get-response\n"
         + "    xmlns=\"https://github.com/erasmus-without-paper/ewp-specs-api-iias/blob/stable-v6/endpoints/get-response.xsd\"\n"
@@ -204,7 +204,7 @@ class ConditionsHashCalculatorTest {
         + "</iias-get-response>";
 
     // Act
-    String hash = hashCalculator.calculateHashFor(iiaGetXml);
+    String hash = conditionsHashCalculator.calculateHashFor(iiaGetXml);
 
     // Assert
     assertThat(hash).isEqualTo("7c045bc4ca23b3b9953adb27374aa27dcd41cfdda74fff9d2240a813a80443ae");

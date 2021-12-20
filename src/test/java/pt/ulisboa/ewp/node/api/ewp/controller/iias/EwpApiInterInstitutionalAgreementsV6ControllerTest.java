@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +138,6 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
       studentStudiesMobilitySpecV6.getReceivingContact().add(receivingContact);
       cooperationConditions.getStudentStudiesMobilitySpec().add(studentStudiesMobilitySpecV6);
       iia.setCooperationConditions(cooperationConditions);
-      iia.setConditionsHash(DigestUtils.sha256Hex(UUID.randomUUID().toString()));
       iias.add(iia);
     }
 
@@ -194,9 +191,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     assertThat(response).isNotNull();
     assertThat(response.getIia()).hasSize(iiaIds.size());
-    for (Iia iia : iias) {
-      assertThat(response.getIia().stream().map(Iia::getConditionsHash)
-          .collect(Collectors.toList())).contains(iia.getConditionsHash());
+    for (Iia iia : response.getIia()) {
+      assertThat(iia.getConditionsHash()).isNotBlank();
     }
   }
 
@@ -210,10 +206,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     List<String> ounitIds = Arrays.asList("o1", "o2");
 
     Iia iia1 = new Iia();
-    iia1.setConditionsHash(UUID.randomUUID().toString());
 
     Iia iia2 = new Iia();
-    iia2.setConditionsHash(UUID.randomUUID().toString());
 
     List<Iia> iias = List.of(iia1, iia2);
 
@@ -263,9 +257,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     assertThat(response).isNotNull();
     assertThat(response.getIia()).hasSize(knownIiaIds.size());
-    for (Iia iia : iias) {
-      assertThat(response.getIia().stream().map(Iia::getConditionsHash)
-          .collect(Collectors.toList())).contains(iia.getConditionsHash());
+    for (Iia iia : response.getIia()) {
+      assertThat(iia.getConditionsHash()).isNotBlank();
     }
   }
 
@@ -278,13 +271,10 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");
 
     Iia iia1 = new Iia();
-    iia1.setConditionsHash(UUID.randomUUID().toString());
 
     Iia iia2 = new Iia();
-    iia2.setConditionsHash(UUID.randomUUID().toString());
 
     Iia iia3 = new Iia();
-    iia3.setConditionsHash(UUID.randomUUID().toString());
 
     List<Iia> iias = List.of(iia1, iia2, iia3);
 
@@ -338,9 +328,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     assertThat(response).isNotNull();
     assertThat(response.getIia()).hasSize(iiaCodes.size());
-    for (Iia iia : iias) {
-      assertThat(response.getIia().stream().map(Iia::getConditionsHash)
-          .collect(Collectors.toList())).contains(iia.getConditionsHash());
+    for (Iia iia : response.getIia()) {
+      assertThat(iia.getConditionsHash()).isNotBlank();
     }
   }
 
@@ -354,10 +343,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     List<String> ounitIds = Arrays.asList("o1", "o2");
 
     Iia iia1 = new Iia();
-    iia1.setConditionsHash(UUID.randomUUID().toString());
 
     Iia iia2 = new Iia();
-    iia2.setConditionsHash(UUID.randomUUID().toString());
 
     List<Iia> iias = List.of(iia1, iia2);
 
@@ -407,9 +394,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     assertThat(response).isNotNull();
     assertThat(response.getIia()).hasSize(knownIiaCodes.size());
-    for (Iia iia : iias) {
-      assertThat(response.getIia().stream().map(Iia::getConditionsHash)
-          .collect(Collectors.toList())).contains(iia.getConditionsHash());
+    for (Iia iia : response.getIia()) {
+      assertThat(iia.getConditionsHash()).isNotBlank();
     }
   }
 

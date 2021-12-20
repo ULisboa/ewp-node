@@ -29,6 +29,7 @@ import pt.ulisboa.ewp.node.domain.repository.mapping.EwpInterInstitutionalAgreem
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownHeiIdException;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
+import pt.ulisboa.ewp.node.service.ewp.iia.ConditionsHashDecorator;
 
 @RestController
 @EwpApi
@@ -42,10 +43,14 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
 
   private final EwpInterInstitutionalAgreementMappingRepository mappingRepository;
 
+  private final ConditionsHashDecorator conditionsHashDecorator;
+
   public EwpApiInterInstitutionalAgreementsV6Controller(HostPluginManager hostPluginManager,
-      EwpInterInstitutionalAgreementMappingRepository mappingRepository) {
+      EwpInterInstitutionalAgreementMappingRepository mappingRepository,
+      ConditionsHashDecorator conditionsHashDecorator) {
     this.hostPluginManager = hostPluginManager;
     this.mappingRepository = mappingRepository;
+    this.conditionsHashDecorator = conditionsHashDecorator;
   }
 
   @RequestMapping(path = "/index", method = {RequestMethod.GET,
@@ -141,6 +146,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
       provider.findByHeiIdAndIiaIds(Collections.singletonList(heiId), heiId, coveredIiaIds, sendPdf)
           .forEach(iia -> response.getIia().add(iia));
     }
+    conditionsHashDecorator.decorateWithConditionsHashes(response);
     return ResponseEntity.ok(response);
   }
 
@@ -169,6 +175,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
               sendPdf)
           .forEach(iia -> response.getIia().add(iia));
     }
+    conditionsHashDecorator.decorateWithConditionsHashes(response);
     return ResponseEntity.ok(response);
   }
 

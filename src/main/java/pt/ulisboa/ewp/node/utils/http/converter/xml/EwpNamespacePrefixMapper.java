@@ -10,6 +10,9 @@ import java.util.regex.Pattern;
  */
 public class EwpNamespacePrefixMapper extends NamespacePrefixMapper {
 
+  private static final Pattern PATTERN_IIAS_GET_RESPONSE = Pattern.compile(
+      "https://github.com/erasmus-without-paper/ewp-specs-api-iias/blob/stable-v[0-9]+/endpoints/get-response.xsd");
+
   private static final Pattern PATTERN_SPECS_TYPES_CONTACT = Pattern.compile(
       "https://github.com/erasmus-without-paper/ewp-specs-types-contact/tree/stable-v[0-9]+");
 
@@ -19,10 +22,10 @@ public class EwpNamespacePrefixMapper extends NamespacePrefixMapper {
   private static final Pattern PATTERN_SPECS_TYPES_PHONE_NUMBER = Pattern.compile(
       "https://github.com/erasmus-without-paper/ewp-specs-types-phonenumber/tree/stable-v[0-9]+");
 
-  private Map<Pattern, String> patternToPrefixMap = new HashMap<>();
+  private final Map<Pattern, String> patternToPrefixMap = new HashMap<>();
 
   public EwpNamespacePrefixMapper() {
-    this.patternToPrefixMap = new HashMap<>();
+    this.patternToPrefixMap.put(PATTERN_IIAS_GET_RESPONSE, "");
     this.patternToPrefixMap.put(PATTERN_SPECS_TYPES_CONTACT, "c");
     this.patternToPrefixMap.put(PATTERN_SPECS_TYPES_ADDRESS, "a");
     this.patternToPrefixMap.put(PATTERN_SPECS_TYPES_PHONE_NUMBER, "pn");

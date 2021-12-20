@@ -28,14 +28,14 @@ public class ConditionsHashCalculator {
     org.apache.xml.security.Init.init();
   }
 
-  public String calculateHashFor(String iiaGetXml) {
-    Node cooperationConditionsNode = getCooperationConditionsFromXml(iiaGetXml);
+  public String calculateHashFor(String cooperationConditionsXml) {
+    Node cooperationConditionsNode = getCooperationConditionsNodeFromXml(cooperationConditionsXml);
     removeNodesByExpression(cooperationConditionsNode, "//sending-contact | //receiving-contact");
     String canonizedXml = canonizeXml(cooperationConditionsNode);
     return DigestUtils.sha256Hex(canonizedXml);
   }
 
-  private Node getCooperationConditionsFromXml(String xml) {
+  private Node getCooperationConditionsNodeFromXml(String xml) {
     DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
     try {
       DocumentBuilder builder = builderFactory.newDocumentBuilder();
@@ -45,11 +45,11 @@ public class ConditionsHashCalculator {
       xmlDocument = builder.parse(is);
 
       XPath xPath = XPathFactory.newInstance().newXPath();
-      String expression = "/iias-get-response/iia/cooperation-conditions";
+      String expression = "//cooperation-conditions";
 
-      return (Node) xPath.compile(expression)
-          .evaluate(xmlDocument, XPathConstants.NODE);
-    } catch (ParserConfigurationException | XPathExpressionException | IOException | SAXException e) {
+      return (Node) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE);
+
+    } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
       throw new IllegalStateException(e);
     }
   }
