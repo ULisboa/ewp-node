@@ -7,6 +7,17 @@
   <br>
 </h1>
 
+<p align="center">
+  <a href="https://github.com/ULisboa/ewp-node/actions/workflows/docker-image.yml">
+    <img src="https://github.com/ulisboa/ewp-node/actions/workflows/docker-image.yml/badge.svg?branch=master"
+        alt="Docker Image CI">
+  </a>
+  <a href="https://github.com/ULisboa/ewp-node/blob/master/LICENSE">
+    <img alt="GitHub" src="https://img.shields.io/github/license/ulisboa/ewp-node">
+  </a>
+  <img src="https://img.shields.io/badge/JDK-11+-green.svg" alt="JDK 11+">
+</p>
+
 <h4 align="center">A generic and flexible EWP node implementation.</h4>
 
 ## Work in Progress warning
