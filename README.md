@@ -35,10 +35,10 @@ non-backward changes may be introduced.
 | Outgoing Mobility Learning Agreements | :heavy_check_mark: |            1             |
 | Outgoing Mobility CNR | :heavy_check_mark: |            1             |
 | Outgoing Mobility Learning Agreement CNR | :heavy_check_mark: |            1             |
-| Incoming Mobilities |  |                          |
-| Incoming Mobility CNR |  |                          |
-| Incoming Mobility ToR |  |                          |
-| Incoming Mobility ToR CNR |  |                          |
+| Incoming Mobilities | :heavy_check_mark: |            1             |
+| Incoming Mobility CNR | :heavy_check_mark: |            1             |
+| Incoming Mobility ToR | :heavy_check_mark: |            1             |
+| Incoming Mobility ToR CNR | :heavy_check_mark: |            1             |
 
 ### As Consumer
 
