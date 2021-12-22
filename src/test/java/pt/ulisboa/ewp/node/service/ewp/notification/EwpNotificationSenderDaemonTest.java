@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doThrow;
 import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.OmobilityLaCnrResponseV1;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
       throws EwpClientErrorException, NoEwpCnrAPIException {
 
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
-        1, ZonedDateTime.now(), Status.PENDING, "abc", "qwe", "def");
+        1, ZonedDateTime.now(), Status.PENDING, "abc", "qwe", UUID.randomUUID().toString());
 
     EwpSuccessOperationResult<OmobilityLaCnrResponseV1> mockedSuccessResult = new EwpSuccessOperationResult.Builder<OmobilityLaCnrResponseV1>()
         .responseBody(new OmobilityLaCnrResponseV1())
@@ -59,7 +60,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
         EwpNotificationSenderDaemon.MAX_NUMBER_ATTEMPTS,
-        ZonedDateTime.now(), Status.PENDING, "abc", "qwe", "def");
+        ZonedDateTime.now(), Status.PENDING, "abc", "qwe", UUID.randomUUID().toString());
 
     doThrow(new NoEwpCnrAPIException(originalChangeNotification)).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
@@ -79,7 +80,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
         EwpNotificationSenderDaemon.MAX_NUMBER_ATTEMPTS,
-        ZonedDateTime.now(), Status.PENDING, "abc", "qwe", "def");
+        ZonedDateTime.now(), Status.PENDING, "abc", "qwe", UUID.randomUUID().toString());
 
     doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
@@ -98,7 +99,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
       throws EwpClientErrorException, NoEwpCnrAPIException {
 
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
-        1, ZonedDateTime.now(), Status.PENDING, "abc", "qwe", "def");
+        1, ZonedDateTime.now(), Status.PENDING, "abc", "qwe", UUID.randomUUID().toString());
 
     doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
