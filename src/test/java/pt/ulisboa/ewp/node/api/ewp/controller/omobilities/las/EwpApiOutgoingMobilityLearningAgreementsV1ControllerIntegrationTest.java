@@ -196,7 +196,7 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
 
   @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testOutgoingMobilityLearningAgreementsGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownIiasReturned(
+  public void testOutgoingMobilityLearningAgreementsGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownLearningAgreementsReturned(
       HttpMethod method) throws Exception {
     String sendingHeiId = "test";
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");
