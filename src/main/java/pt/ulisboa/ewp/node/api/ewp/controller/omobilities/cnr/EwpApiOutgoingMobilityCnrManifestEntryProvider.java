@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.api.ewp.controller.omobilities.cnr;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.omobilities.cnr.v1.OmobilityCnrV1;
+import java.math.BigInteger;
 import java.util.Collection;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.cnr.OutgoingMobilityCnrV1HostProvider;
@@ -27,6 +28,13 @@ public class EwpApiOutgoingMobilityCnrManifestEntryProvider
     manifestEntry.setAdminNotes(null);
     manifestEntry.setUrl(baseUrl + EwpApiOutgoingMobilityCnrV1Controller.BASE_PATH);
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
+
+    int maxOutgoingMobilityIdsPerRequest = hostProviders.stream().mapToInt(
+            OutgoingMobilityCnrV1HostProvider::getMaxOutgoingMobilityIdsPerRequest)
+        .min().orElse(0);
+    manifestEntry.setMaxOmobilityIds(
+        BigInteger.valueOf(maxOutgoingMobilityIdsPerRequest));
+
     return manifestEntry;
   }
 }
