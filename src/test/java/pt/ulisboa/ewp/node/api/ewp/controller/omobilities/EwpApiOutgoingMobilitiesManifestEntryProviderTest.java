@@ -20,7 +20,7 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
   @Test
   void testGetManifestEntries_NoRegisteredProviders_NoManifestEntriesReturned() {
     // Arrange
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager(""));
+    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
     EwpApiOutgoingMobilitiesManifestEntryProvider manifestEntryProvider = new EwpApiOutgoingMobilitiesManifestEntryProvider(
         hostPluginManager);
     String heiId = "abc";
@@ -40,7 +40,7 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
   @Test
   void testGetManifestEntries_OneRegisteredV1Provider_ManifestEntryReturned() {
     // Arrange
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager(""));
+    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
     EwpApiOutgoingMobilitiesManifestEntryProvider manifestEntryProvider = new EwpApiOutgoingMobilitiesManifestEntryProvider(
         hostPluginManager);
     String heiId = "abc";
@@ -72,7 +72,7 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
   @Test
   void testGetManifestEntries_TwoRegisteredV1Provider_ManifestEntryReturned() {
     // Arrange
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager(""));
+    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
     EwpApiOutgoingMobilitiesManifestEntryProvider manifestEntryProvider = new EwpApiOutgoingMobilitiesManifestEntryProvider(
         hostPluginManager);
     String heiId = "abc";

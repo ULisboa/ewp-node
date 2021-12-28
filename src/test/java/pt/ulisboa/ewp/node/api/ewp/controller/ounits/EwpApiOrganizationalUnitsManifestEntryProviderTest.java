@@ -19,7 +19,7 @@ class EwpApiOrganizationalUnitsManifestEntryProviderTest {
 
   @Test
   public void testGetManifestEntries_TwoApplicableHostProvidersWithSameVersion_OnlyOneManifestEntry() {
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager(""));
+    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
     EwpApiOrganizationalUnitsManifestEntryProvider manifestEntryProvider = new EwpApiOrganizationalUnitsManifestEntryProvider(
         hostPluginManager);
 

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.HostPlugin;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
@@ -32,13 +33,19 @@ public class HostPluginManager extends DefaultPluginManager {
   private final Map<String, Collection<HostPlugin>> heiIdToPluginsMap = new HashMap<>();
   private final Map<String, HostPlugin> heiIdToPrimaryPluginMap = new HashMap<>();
 
-  public HostPluginManager(@Value("${plugins.path}") String pluginsPath) {
+  private final Environment environment;
+
+  public HostPluginManager(@Value("${plugins.path}") String pluginsPath, Environment environment) {
     super(Path.of(pluginsPath));
-    LOGGER.info("Preparing to load plugins from path: {}", super.pluginsRoot.toAbsolutePath());
+    this.environment = environment;
     init();
   }
 
   private void init() {
+    LOGGER.info("Preparing to load plugins from path: {}", super.pluginsRoot.toAbsolutePath());
+
+    super.pluginFactory = createPluginFactory();
+
     super.loadPlugins();
     super.startPlugins();
 
@@ -62,7 +69,7 @@ public class HostPluginManager extends DefaultPluginManager {
 
   @Override
   protected PluginFactory createPluginFactory() {
-    return new HostPluginFactory();
+    return new HostPluginFactory(environment);
   }
 
   public <T extends HostProvider> boolean hasHostProvider(Class<T> providerClassType) {
