@@ -9,11 +9,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,7 +19,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -96,25 +91,6 @@ public class EwpNodeApplication {
           new PeriodicTrigger(mappingSyncService.getTaskIntervalInMilliseconds(),
               TimeUnit.MILLISECONDS));
     }
-  }
-
-  /**
-   * Injects a logger configured for the class requiring an injected logger.
-   */
-  @Bean
-  @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-  Logger logger(InjectionPoint injectionPoint) {
-    var field = injectionPoint.getField();
-    if (field != null) {
-      return LoggerFactory.getLogger(field.getDeclaringClass());
-    }
-
-    var methodParameter = injectionPoint.getMethodParameter();
-    if (methodParameter != null) {
-      return LoggerFactory.getLogger(methodParameter.getContainingClass());
-    }
-
-    throw new IllegalStateException("Invalid injection point" + injectionPoint);
   }
 
   /**
