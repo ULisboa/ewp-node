@@ -59,8 +59,8 @@ public class HttpSignatureRequestAuthenticationMethodSigner
       String formData = request.getBody().serialize();
       byte[] bodyBytes = formData.getBytes();
       byte[] digest = MessageDigest.getInstance(HttpSignatureUtils.SHA_256).digest(bodyBytes);
-      String digestHeader =
-          HttpSignatureUtils.SHA_256 + "=" + new String(Base64.encodeBase64(digest));
+      String digestValue = new String(Base64.encodeBase64(digest));
+      String digestHeader = HttpSignatureUtils.SHA_256 + "=" + digestValue;
       headers.set(HttpConstants.HEADER_DIGEST, digestHeader);
 
       List<String> requiredSignatureHeaderNames = new ArrayList<>();

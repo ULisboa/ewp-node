@@ -172,6 +172,9 @@ public class HttpSignatureUtils {
     String digestValueCalculated = new String(Base64.encodeBase64(digest));
 
     if (!digestValueCalculated.equals(digestValue)) {
+      LOGGER.debug("Failed digest verification: request body = '" + new String(bodyBytes)
+          + "'; provided digest = '" + digestValue + "'; calculated digest = '"
+          + digestValueCalculated);
       return VerificationResult.createFailure(
           "Digest mismatch! calculated for algorithm "
               + algorithm

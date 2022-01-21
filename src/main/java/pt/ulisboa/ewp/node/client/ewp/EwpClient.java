@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.client.ewp;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -14,12 +15,12 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Variant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientConflictException;
@@ -59,8 +60,7 @@ public class EwpClient {
   private final EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
   private final Jaxb2Marshaller jaxb2Marshaller;
 
-  public EwpClient(KeyStoreService keystoreService,
-      RequestAuthenticationSigner requestSigner,
+  public EwpClient(KeyStoreService keystoreService, RequestAuthenticationSigner requestSigner,
       ResponseAuthenticationVerifier responseVerifier,
       EwpHttpCommunicationLogService ewpHttpCommunicationLogService,
       Jaxb2Marshaller jaxb2Marshaller) {
@@ -81,24 +81,24 @@ public class EwpClient {
    * @return The result of a successful operation.
    * @throws EwpClientErrorException The request failed for some reason.
    */
-  public <T extends Serializable> EwpSuccessOperationResult<T> executeAndLog(
-      EwpRequest request, Class<T> responseBodyType) throws EwpClientErrorException {
+  public <T extends Serializable> EwpSuccessOperationResult<T> executeAndLog(EwpRequest request,
+      Class<T> responseBodyType) throws EwpClientErrorException {
     ZonedDateTime startProcessingDateTime = ZonedDateTime.now();
     try {
       EwpSuccessOperationResult<T> operationResult = execute(request, responseBodyType);
-      ewpHttpCommunicationLogService.logCommunicationToEwpNode(
-          operationResult, startProcessingDateTime, ZonedDateTime.now());
+      ewpHttpCommunicationLogService.logCommunicationToEwpNode(operationResult,
+          startProcessingDateTime, ZonedDateTime.now());
       return operationResult;
 
     } catch (EwpClientErrorException e) {
-      ewpHttpCommunicationLogService
-          .logCommunicationToEwpNode(e, startProcessingDateTime, ZonedDateTime.now());
+      ewpHttpCommunicationLogService.logCommunicationToEwpNode(e, startProcessingDateTime,
+          ZonedDateTime.now());
       throw e;
     }
   }
 
-  protected <T extends Serializable> EwpSuccessOperationResult<T> execute(
-      EwpRequest request, Class<T> expectedResponseBodyType) throws EwpClientErrorException {
+  protected <T extends Serializable> EwpSuccessOperationResult<T> execute(EwpRequest request,
+      Class<T> expectedResponseBodyType) throws EwpClientErrorException {
     EwpResponse response = null;
     EwpAuthenticationResult responseAuthenticationResult = null;
     try {
@@ -115,20 +115,19 @@ public class EwpClient {
 
       response = EwpResponse.create(invocation.invoke());
 
-      responseAuthenticationResult =
-          responseVerifier.verifyAgainstMethod(request, response);
+      responseAuthenticationResult = responseVerifier.verifyAgainstMethod(request, response);
       if (!responseAuthenticationResult.isValid()) {
-        throw new EwpServerAuthenticationFailedException(
-            request, response, responseAuthenticationResult);
+        throw new EwpServerAuthenticationFailedException(request, response,
+            responseAuthenticationResult);
       }
 
-      return resolveResponseToSuccessOperationStatus(
-          request, expectedResponseBodyType, response, responseAuthenticationResult);
+      return resolveResponseToSuccessOperationStatus(request, expectedResponseBodyType, response,
+          responseAuthenticationResult);
 
     } catch (EwpServerAuthenticationFailedException | XmlCannotUnmarshallToTypeException e) {
       LOGGER.error("Invalid server's response", e);
-      throw new EwpClientInvalidResponseException(request, response,
-          responseAuthenticationResult, e);
+      throw new EwpClientInvalidResponseException(request, response, responseAuthenticationResult,
+          e);
 
     } catch (EwpClientErrorException e) {
       throw e;
@@ -140,20 +139,15 @@ public class EwpClient {
   }
 
   private <T extends Serializable> EwpSuccessOperationResult<T> resolveResponseToSuccessOperationStatus(
-      EwpRequest request,
-      Class<T> expectedResponseBodyType,
-      EwpResponse response,
+      EwpRequest request, Class<T> expectedResponseBodyType, EwpResponse response,
       EwpAuthenticationResult responseAuthenticationResult)
       throws XmlCannotUnmarshallToTypeException, EwpClientErrorException {
 
     if (response.isSuccess()) {
-      T responseBody = XmlUtils
-          .unmarshall(jaxb2Marshaller, response.getRawBody(), expectedResponseBodyType);
-      return new EwpSuccessOperationResult.Builder<T>()
-          .request(request)
-          .response(response)
-          .responseAuthenticationResult(responseAuthenticationResult)
-          .responseBody(responseBody)
+      T responseBody = XmlUtils.unmarshall(jaxb2Marshaller, response.getRawBody(),
+          expectedResponseBodyType);
+      return new EwpSuccessOperationResult.Builder<T>().request(request).response(response)
+          .responseAuthenticationResult(responseAuthenticationResult).responseBody(responseBody)
           .build();
 
     } else {
@@ -161,15 +155,13 @@ public class EwpClient {
     }
   }
 
-  private EwpClientErrorException createClientErrorExceptionFromResponse(
-      EwpRequest request,
-      EwpResponse response,
-      EwpAuthenticationResult responseAuthenticationResult)
+  private EwpClientErrorException createClientErrorExceptionFromResponse(EwpRequest request,
+      EwpResponse response, EwpAuthenticationResult responseAuthenticationResult)
       throws XmlCannotUnmarshallToTypeException {
 
     if (response.isClientError()) {
-      ErrorResponseV1 errorResponse =
-          XmlUtils.unmarshall(jaxb2Marshaller, response.getRawBody(), ErrorResponseV1.class);
+      ErrorResponseV1 errorResponse = XmlUtils.unmarshall(jaxb2Marshaller, response.getRawBody(),
+          ErrorResponseV1.class);
       if (HttpStatus.BAD_REQUEST.equals(response.getStatus())) {
         return new EwpClientErrorResponseException(request, response, responseAuthenticationResult,
             errorResponse);
@@ -180,8 +172,8 @@ public class EwpClient {
 
       } else {
         return new EwpClientProcessorException(request, response,
-            new EwpClientAuthenticationFailedException(
-                request, response, errorResponse.getDeveloperMessage().getValue()));
+            new EwpClientAuthenticationFailedException(request, response,
+                errorResponse.getDeveloperMessage().getValue()));
       }
 
     } else if (response.isServerError()) {
@@ -189,19 +181,16 @@ public class EwpClient {
           new EwpServerException(request, response));
     }
 
-    return new EwpClientProcessorException(request, response, new IllegalStateException(
-        "Unknown response status code: " + response.getStatus()));
+    return new EwpClientProcessorException(request, response,
+        new IllegalStateException("Unknown response status code: " + response.getStatus()));
   }
 
   private Client getClient()
-      throws NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException,
-      UnrecoverableKeyException, KeyManagementException {
+      throws NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, UnrecoverableKeyException, KeyManagementException {
     DecodedKeystore decodedKeystore = keystoreService.getDecodedKeyStoreFromStorage();
-    SSLContext sslContext =
-        SecurityUtils.createSecurityContext(
-            decodedKeystore.getKeyStore(), null, decodedKeystore.getKeyStorePassword());
-    return ClientBuilder.newBuilder()
-        .sslContext(sslContext)
+    SSLContext sslContext = SecurityUtils.createSecurityContext(decodedKeystore.getKeyStore(), null,
+        decodedKeystore.getKeyStorePassword());
+    return ClientBuilder.newBuilder().sslContext(sslContext)
         .hostnameVerifier((hostname, session) -> hostname.equalsIgnoreCase(session.getPeerHost()))
         .build();
   }
@@ -217,8 +206,8 @@ public class EwpClient {
 
       case POST:
       case PUT:
-        return requestBuilder
-            .build(request.getMethod().name(), createBodyEntity(request.getBody()));
+        return requestBuilder.build(request.getMethod().name(),
+            createBodyEntity(request.getBody()));
 
       default:
         throw new IllegalArgumentException("Unsupported method: " + request.getMethod().name());
@@ -241,11 +230,19 @@ public class EwpClient {
   }
 
   private Entity<String> createFormDataEntity(EwpRequestFormDataBody body) {
+    String charset = StandardCharsets.UTF_8.name();
     String formDataAsString = HttpUtils.serializeFormData(body.getFormData().asMap());
-    return Entity.entity(formDataAsString, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+    Variant variant = Variant.mediaTypes(
+            javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED_TYPE.withCharset(charset))
+        .encodings(charset).build().get(0);
+    return Entity.entity(formDataAsString, variant);
   }
 
   private Entity<Serializable> createSerializableEntity(EwpRequestSerializableBody body) {
-    return Entity.entity(body.serialize(), MediaType.TEXT_XML_VALUE);
+    String charset = StandardCharsets.UTF_8.name();
+    Variant variant = Variant.mediaTypes(
+            javax.ws.rs.core.MediaType.TEXT_XML_TYPE.withCharset(charset)).encodings(charset).build()
+        .get(0);
+    return Entity.entity(body.serialize(), variant);
   }
 }
