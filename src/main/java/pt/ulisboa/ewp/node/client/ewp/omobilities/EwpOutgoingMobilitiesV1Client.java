@@ -16,6 +16,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataB
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilitiesApiConfiguration;
+import pt.ulisboa.ewp.node.service.ewp.mapping.cache.EwpMobilityMappingCacheService;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.OutgoingMobilities;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
@@ -24,8 +25,12 @@ import pt.ulisboa.ewp.node.utils.http.HttpParams;
 public class EwpOutgoingMobilitiesV1Client
     extends EwpApiClient<EwpOutgoingMobilitiesApiConfiguration> {
 
-  public EwpOutgoingMobilitiesV1Client(RegistryClient registryClient, EwpClient ewpClient) {
+  private final EwpMobilityMappingCacheService mobilityMappingCacheService;
+
+  public EwpOutgoingMobilitiesV1Client(RegistryClient registryClient, EwpClient ewpClient,
+      EwpMobilityMappingCacheService mobilityMappingCacheService) {
     super(registryClient, ewpClient);
+    this.mobilityMappingCacheService = mobilityMappingCacheService;
   }
 
   public ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO getApiSpecification(
@@ -64,7 +69,12 @@ public class EwpOutgoingMobilitiesV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataBody(bodyParams));
-    return ewpClient.executeAndLog(request, OmobilitiesGetResponseV1.class);
+    EwpSuccessOperationResult<OmobilitiesGetResponseV1> result = ewpClient.executeAndLog(
+        request, OmobilitiesGetResponseV1.class);
+
+    this.mobilityMappingCacheService.cacheMappingsFrom(result.getResponseBody());
+
+    return result;
   }
 
   @Override

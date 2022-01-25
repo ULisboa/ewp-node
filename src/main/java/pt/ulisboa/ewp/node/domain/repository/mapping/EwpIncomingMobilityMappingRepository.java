@@ -10,42 +10,42 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
-import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping;
-import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping_;
+import pt.ulisboa.ewp.node.domain.entity.mapping.EwpIncomingMobilityMapping;
+import pt.ulisboa.ewp.node.domain.entity.mapping.EwpIncomingMobilityMapping_;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
 
 @Repository
-public class EwpOutgoingMobilityMappingRepository extends
-    AbstractRepository<EwpOutgoingMobilityMapping> {
+public class EwpIncomingMobilityMappingRepository extends
+    AbstractRepository<EwpIncomingMobilityMapping> {
 
   @Autowired
   @Lazy
   private MessageResolver messages;
 
-  protected EwpOutgoingMobilityMappingRepository(SessionFactory sessionFactory) {
-    super(EwpOutgoingMobilityMapping.class, sessionFactory);
+  protected EwpIncomingMobilityMappingRepository(SessionFactory sessionFactory) {
+    super(EwpIncomingMobilityMapping.class, sessionFactory);
   }
 
-  public Optional<EwpOutgoingMobilityMapping> findByHeiIdAndOmobilityId(String heiId,
+  public Optional<EwpIncomingMobilityMapping> findByReceivingHeiIdAndOmobilityId(String rceivingHeiId,
       String omobilityId) {
     return runInSession(
         session -> {
           try {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<EwpOutgoingMobilityMapping> query = criteriaBuilder.createQuery(
-                EwpOutgoingMobilityMapping.class);
-            Root<EwpOutgoingMobilityMapping> selection = query.from(
-                EwpOutgoingMobilityMapping.class);
+            CriteriaQuery<EwpIncomingMobilityMapping> query = criteriaBuilder.createQuery(
+                EwpIncomingMobilityMapping.class);
+            Root<EwpIncomingMobilityMapping> selection = query.from(
+                EwpIncomingMobilityMapping.class);
             return Optional.ofNullable(
                 session
                     .createQuery(
                         query.where(
                             criteriaBuilder.equal(
-                                selection.get(EwpOutgoingMobilityMapping_.heiId), heiId),
+                                selection.get(EwpIncomingMobilityMapping_.receivingHeiId), rceivingHeiId),
                             criteriaBuilder.equal(
-                                selection.get(EwpOutgoingMobilityMapping_.omobilityId),
+                                selection.get(EwpIncomingMobilityMapping_.omobilityId),
                                 omobilityId)))
                     .getSingleResult());
 
@@ -56,21 +56,21 @@ public class EwpOutgoingMobilityMappingRepository extends
   }
 
   @Override
-  protected boolean checkDomainConstraints(EwpOutgoingMobilityMapping entity)
+  protected boolean checkDomainConstraints(EwpIncomingMobilityMapping entity)
       throws DomainException {
-    if (Strings.isNullOrEmpty(entity.getHeiId())) {
+    if (Strings.isNullOrEmpty(entity.getReceivingOunitId())) {
       throw new DomainException(
-          messages.get("error.outgoingMobilityMapping.heiId.must.be.defined"));
+          messages.get("error.incomingMobilityMapping.receivingHeiId.must.be.defined"));
     }
 
     if (Strings.isNullOrEmpty(entity.getOmobilityId())) {
       throw new DomainException(
-          messages.get("error.outgoingMobilityMapping.omobilityId.must.be.defined"));
+          messages.get("error.incomingMobilityMapping.omobilityId.must.be.defined"));
     }
 
-    if (findAll().stream().anyMatch(o -> o != entity && o.getHeiId().equals(entity.getHeiId()) &&
+    if (findAll().stream().anyMatch(o -> o != entity && o.getReceivingHeiId().equals(entity.getReceivingHeiId()) &&
         o.getOmobilityId().equals(entity.getOmobilityId()))) {
-      messages.get("error.outgoingMobilityMapping.must.be.unique");
+      messages.get("error.incomingMobilityMapping.must.be.unique");
     }
 
     return true;
