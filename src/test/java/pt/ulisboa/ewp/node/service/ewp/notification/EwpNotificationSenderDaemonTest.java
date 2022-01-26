@@ -35,8 +35,12 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
   void testRun_ScheduledChangeNotificationSuccess_NotificationMarkedAsSuccess()
       throws EwpClientErrorException, NoEwpCnrAPIException {
 
+    String sendingHeiId = UUID.randomUUID().toString();
+    String receivingHeiId = UUID.randomUUID().toString();
+    String omobilityId = UUID.randomUUID().toString();
+
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
-        1, ZonedDateTime.now(), Status.PENDING, "abc", "qwe", UUID.randomUUID().toString());
+        1, ZonedDateTime.now(), Status.PENDING, sendingHeiId, receivingHeiId, omobilityId);
 
     EwpSuccessOperationResult<OmobilityLaCnrResponseV1> mockedSuccessResult = new EwpSuccessOperationResult.Builder<OmobilityLaCnrResponseV1>()
         .responseBody(new OmobilityLaCnrResponseV1())
@@ -49,7 +53,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 5000))
+            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 10000))
         .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
             .wasSuccess());
   }
@@ -58,9 +62,13 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
   void testRun_ScheduledChangeNotificationNoCnrApiAvailable_NotificationMarkedAsFailure()
       throws EwpClientErrorException, NoEwpCnrAPIException {
 
+    String sendingHeiId = UUID.randomUUID().toString();
+    String receivingHeiId = UUID.randomUUID().toString();
+    String omobilityId = UUID.randomUUID().toString();
+
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
         EwpNotificationSenderDaemon.MAX_NUMBER_ATTEMPTS,
-        ZonedDateTime.now(), Status.PENDING, "abc", "qwe", UUID.randomUUID().toString());
+        ZonedDateTime.now(), Status.PENDING, sendingHeiId, receivingHeiId, omobilityId);
 
     doThrow(new NoEwpCnrAPIException(originalChangeNotification)).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
@@ -69,7 +77,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 5000))
+            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 10000))
         .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
             .hasFailedDueToNoCnrApiAvailable());
   }
@@ -78,9 +86,13 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
   void testRun_ScheduledChangeNotificationLastAttemptFailure_NotificationMarkedAsFailure()
       throws EwpClientErrorException, NoEwpCnrAPIException {
 
+    String sendingHeiId = UUID.randomUUID().toString();
+    String receivingHeiId = UUID.randomUUID().toString();
+    String omobilityId = UUID.randomUUID().toString();
+
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
         EwpNotificationSenderDaemon.MAX_NUMBER_ATTEMPTS,
-        ZonedDateTime.now(), Status.PENDING, "abc", "qwe", UUID.randomUUID().toString());
+        ZonedDateTime.now(), Status.PENDING, sendingHeiId, receivingHeiId, omobilityId);
 
     doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
@@ -89,7 +101,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 5000))
+            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 10000))
         .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
             .hasFailedDueToMaxAttempts());
   }
@@ -98,8 +110,12 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
   void testRun_ScheduledChangeNotificationNotLastAttemptFailure_NewAttemptScheduled()
       throws EwpClientErrorException, NoEwpCnrAPIException {
 
+    String sendingHeiId = UUID.randomUUID().toString();
+    String receivingHeiId = UUID.randomUUID().toString();
+    String omobilityId = UUID.randomUUID().toString();
+
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
-        1, ZonedDateTime.now(), Status.PENDING, "abc", "qwe", UUID.randomUUID().toString());
+        1, ZonedDateTime.now(), Status.PENDING, sendingHeiId, receivingHeiId, omobilityId);
 
     doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
@@ -108,7 +124,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 5000))
+            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 10000))
         .until(() -> {
           EwpChangeNotification changeNotification = changeNotificationRepository.findById(
               originalChangeNotification.getId()).get();
