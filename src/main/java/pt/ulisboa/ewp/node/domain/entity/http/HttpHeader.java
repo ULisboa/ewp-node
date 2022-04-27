@@ -67,7 +67,7 @@ public class HttpHeader {
     this.name = key;
   }
 
-  @Column(name = "value", nullable = false, columnDefinition = "TEXT")
+  @Column(name = "header_value", nullable = false, columnDefinition = "TEXT")
   public String getValue() {
     return value;
   }

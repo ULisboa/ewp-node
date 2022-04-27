@@ -64,7 +64,7 @@ public class Hei {
 
   @ElementCollection
   @MapKeyColumn(name = "locale")
-  @Column(name = "value")
+  @Column(name = "name")
   @CollectionTable(name = "EWP_HEI_NAMES", joinColumns = @JoinColumn(name = "hei_id"))
   public Map<Locale, String> getName() {
     return name;

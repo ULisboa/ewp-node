@@ -55,7 +55,7 @@ public class OtherHeiId {
     this.type = type;
   }
 
-  @Column(name = "value", nullable = false)
+  @Column(name = "id_value", nullable = false)
   public String getValue() {
     return value;
   }
