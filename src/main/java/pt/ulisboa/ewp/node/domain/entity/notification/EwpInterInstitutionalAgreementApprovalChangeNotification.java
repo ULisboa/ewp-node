@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.domain.entity.notification;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -85,6 +86,30 @@ public class EwpInterInstitutionalAgreementApprovalChangeNotification extends
         partnerHeiId.equals(otherChangeNotification.partnerHeiId) &&
         ownerHeiId.equals(otherChangeNotification.ownerHeiId) && iiaId.equals(
         otherChangeNotification.iiaId);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof EwpInterInstitutionalAgreementApprovalChangeNotification)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+    EwpInterInstitutionalAgreementApprovalChangeNotification that = (EwpInterInstitutionalAgreementApprovalChangeNotification) o;
+    return Objects.equals(getApprovingHeiId(), that.getApprovingHeiId())
+        && Objects.equals(getOwnerHeiId(), that.getOwnerHeiId())
+        && Objects.equals(getPartnerHeiId(), that.getPartnerHeiId())
+        && Objects.equals(getIiaId(), that.getIiaId());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), getApprovingHeiId(), getOwnerHeiId(), getPartnerHeiId(),
+        getIiaId());
   }
 
   @Override

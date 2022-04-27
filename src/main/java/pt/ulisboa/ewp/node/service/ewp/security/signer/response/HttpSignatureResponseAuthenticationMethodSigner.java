@@ -90,7 +90,9 @@ public class HttpSignatureResponseAuthenticationMethodSigner
       Signature signature =
           new Signature(
               decodedCertificateAndKey.getPublicKeyFingerprint(),
+              null,
               Algorithm.RSA_SHA256,
+              null,
               null,
               headerNames);
       Key key = decodedCertificateAndKey.getPrivateKey();

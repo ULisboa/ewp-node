@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -17,13 +16,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttribu
 /** Method processor that supports {@link ParamName} parameters renaming */
 public class ParamNameProcessor extends ServletModelAttributeMethodProcessor {
 
-  @Autowired private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
+  private final RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
   private static final Map<Class<?>, Map<String, String>> PARAM_MAPPINGS_CACHE =
       new ConcurrentHashMap<>(256);
 
-  public ParamNameProcessor() {
+  public ParamNameProcessor(RequestMappingHandlerAdapter requestMappingHandlerAdapter) {
     super(false);
+    this.requestMappingHandlerAdapter = requestMappingHandlerAdapter;
   }
 
   @Override

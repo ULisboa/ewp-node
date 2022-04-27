@@ -10,6 +10,6 @@ public class EwpApiConfiguration {
   @Bean
   public GroupedOpenApi ewpOpenApi() {
     String[] packagesToScan = {getClass().getPackage().getName()};
-    return GroupedOpenApi.builder().setGroup("ewp").packagesToScan(packagesToScan).build();
+    return GroupedOpenApi.builder().group("ewp").packagesToScan(packagesToScan).build();
   }
 }

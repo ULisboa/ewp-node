@@ -15,7 +15,7 @@ public class AdminApiConfiguration {
   public GroupedOpenApi adminOpenApi() {
     String[] packagesToScan = {getClass().getPackage().getName()};
     return GroupedOpenApi.builder()
-        .setGroup("admin")
+        .group("admin")
         .packagesToScan(packagesToScan)
         .addOpenApiCustomiser(new AdminOpenApiCustomiser())
         .build();

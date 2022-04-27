@@ -36,7 +36,7 @@ public class HttpCommunicationLogService {
 
     HttpResponseLog responseLog =
         HttpResponseLog.create(
-            response.getStatusCode(),
+            response.getStatus(),
             toHttpHeaderCollection(response),
             new String(response.getContentAsByteArray()));
     responseLog.getHeaders().forEach(header -> header.setResponseLog(responseLog));

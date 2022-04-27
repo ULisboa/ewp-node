@@ -199,7 +199,9 @@ public class HttpSignatureUtils {
     Signature signature =
         new Signature(
             decodedCertificateAndKey.getPublicKeyFingerprint(),
+            null,
             Algorithm.RSA_SHA256,
+            null,
             null,
             requiredSignatureHeaderNames);
     Key key = decodedCertificateAndKey.getPrivateKey();
