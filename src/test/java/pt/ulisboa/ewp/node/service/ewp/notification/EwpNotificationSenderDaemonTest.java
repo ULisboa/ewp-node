@@ -9,7 +9,6 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import pt.ulisboa.ewp.node.AbstractIntegrationTest;
@@ -48,7 +47,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
     doNothing().when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
-        Mockito.any());
+        originalChangeNotification);
 
     changeNotificationRepository.persist(originalChangeNotification);
     await()
@@ -72,7 +71,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
     doThrow(new NoEwpCnrAPIException(originalChangeNotification)).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
-        Mockito.any());
+        originalChangeNotification);
 
     changeNotificationRepository.persist(originalChangeNotification);
     await()
@@ -96,7 +95,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
     doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
-        Mockito.any());
+        originalChangeNotification);
 
     changeNotificationRepository.persist(originalChangeNotification);
     await()
@@ -119,7 +118,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
     doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
-        Mockito.any());
+        originalChangeNotification);
 
     changeNotificationRepository.persist(originalChangeNotification);
     await()

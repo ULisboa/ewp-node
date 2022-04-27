@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.domain.entity.notification;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -71,6 +72,29 @@ public class EwpIncomingMobilityChangeNotification extends EwpChangeNotification
     return sendingHeiId.equals(otherChangeNotification.sendingHeiId) &&
         receivingHeiId.equals(otherChangeNotification.receivingHeiId) && outgoingMobilityId.equals(
         otherChangeNotification.outgoingMobilityId);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof EwpIncomingMobilityChangeNotification)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+    EwpIncomingMobilityChangeNotification that = (EwpIncomingMobilityChangeNotification) o;
+    return Objects.equals(getSendingHeiId(), that.getSendingHeiId())
+        && Objects.equals(getReceivingHeiId(), that.getReceivingHeiId())
+        && Objects.equals(getOutgoingMobilityId(), that.getOutgoingMobilityId());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), getSendingHeiId(), getReceivingHeiId(),
+        getOutgoingMobilityId());
   }
 
   @Override

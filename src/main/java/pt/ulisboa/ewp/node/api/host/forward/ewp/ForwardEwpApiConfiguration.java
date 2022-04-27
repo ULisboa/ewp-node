@@ -17,7 +17,7 @@ public class ForwardEwpApiConfiguration {
   public GroupedOpenApi forwardEwpOpenApi() {
     String[] packagesToScan = {getClass().getPackage().getName()};
     return GroupedOpenApi.builder()
-        .setGroup("forward-ewp")
+        .group("forward-ewp")
         .packagesToScan(packagesToScan)
         .addOpenApiCustomiser(new ForwardEwpOpenApiCustomiser())
         .build();

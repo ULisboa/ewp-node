@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.domain.entity.notification;
 
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -143,6 +144,27 @@ public abstract class EwpChangeNotification {
   public boolean canBeMergedInto(EwpChangeNotification other) {
     return isPending() && other.isPending() && getCreationDateTime().isBefore(
         other.getCreationDateTime());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof EwpChangeNotification)) {
+      return false;
+    }
+    EwpChangeNotification that = (EwpChangeNotification) o;
+    return getId() == that.getId() && getAttemptNumber() == that.getAttemptNumber()
+        && Objects.equals(getCreationDateTime(), that.getCreationDateTime())
+        && Objects.equals(getScheduledDateTime(), that.getScheduledDateTime())
+        && getStatus() == that.getStatus();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getId(), getCreationDateTime(), getAttemptNumber(), getScheduledDateTime(),
+        getStatus());
   }
 
   @Override

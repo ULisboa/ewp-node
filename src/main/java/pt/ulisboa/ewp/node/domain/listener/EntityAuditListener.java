@@ -6,7 +6,7 @@ import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 public class EntityAuditListener {
@@ -16,7 +16,7 @@ public class EntityAuditListener {
   @PostPersist
   private void onPostPersist(Object object) {
     TransactionSynchronizationManager.registerSynchronization(
-        new TransactionSynchronizationAdapter() {
+        new TransactionSynchronization() {
 
           @Override
           public void afterCommit() {
@@ -28,7 +28,7 @@ public class EntityAuditListener {
   @PostUpdate
   private void onPostUpdate(Object object) {
     TransactionSynchronizationManager.registerSynchronization(
-        new TransactionSynchronizationAdapter() {
+        new TransactionSynchronization() {
 
           @Override
           public void afterCommit() {
@@ -40,7 +40,7 @@ public class EntityAuditListener {
   @PreRemove
   private void onPreRemove(Object object) {
     TransactionSynchronizationManager.registerSynchronization(
-        new TransactionSynchronizationAdapter() {
+        new TransactionSynchronization() {
 
           @Override
           public void beforeCommit(boolean readOnly) {
@@ -52,7 +52,7 @@ public class EntityAuditListener {
   @PostRemove
   private void onPostRemove(Object object) {
     TransactionSynchronizationManager.registerSynchronization(
-        new TransactionSynchronizationAdapter() {
+        new TransactionSynchronization() {
 
           @Override
           public void afterCommit() {
