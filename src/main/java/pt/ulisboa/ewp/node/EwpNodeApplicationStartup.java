@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -28,22 +29,28 @@ public class EwpNodeApplicationStartup implements ApplicationListener<Applicatio
 
   private final Collection<EwpMappingSyncService> mappingSyncServices;
 
-  public EwpNodeApplicationStartup(ThreadPoolTaskScheduler taskScheduler,
+  private final FeatureFlags featureFlags;
+
+  public EwpNodeApplicationStartup(@Autowired(required = false) ThreadPoolTaskScheduler taskScheduler,
       EwpNotificationSenderDaemon ewpNotificationSenderDaemon, BootstrapService bootstrapService,
       KeystoreBootstrapService keystoreBootstrapService,
-      Collection<EwpMappingSyncService> mappingSyncServices) {
+      Collection<EwpMappingSyncService> mappingSyncServices, FeatureFlags featureFlags) {
     this.taskScheduler = taskScheduler;
     this.ewpNotificationSenderDaemon = ewpNotificationSenderDaemon;
     this.bootstrapService = bootstrapService;
     this.keystoreBootstrapService = keystoreBootstrapService;
     this.mappingSyncServices = mappingSyncServices;
+    this.featureFlags = featureFlags;
   }
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
     this.bootstrapService.bootstrap();
     this.keystoreBootstrapService.bootstrap();
-    this.initSchedules();
+
+    if (this.featureFlags.isSchedulersEnabled()) {
+      this.initSchedules();
+    }
   }
 
   private void initSchedules() {

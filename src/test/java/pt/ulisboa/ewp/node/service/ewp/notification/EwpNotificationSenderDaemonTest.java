@@ -7,11 +7,18 @@ import static org.mockito.Mockito.doThrow;
 import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.OmobilityLaCnrResponseV1;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import pt.ulisboa.ewp.node.AbstractIntegrationTest;
+import pt.ulisboa.ewp.node.FeatureFlags;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -19,16 +26,41 @@ import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification.Status;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
+import pt.ulisboa.ewp.node.service.ewp.notification.EwpNotificationSenderDaemonTest.Config;
 import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificationHandlerCollection;
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpOutgoingMobilityLearningAgreementChangeNotificationHandler;
 
+@ContextConfiguration(classes = Config.class)
+@ActiveProfiles(profiles = {"dev", "test", FeatureFlags.FEATURE_FLAG_WITH_SCHEDULERS}, inheritProfiles = false)
 class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
   @Autowired
   private EwpChangeNotificationRepository changeNotificationRepository;
 
-  @SpyBean
+  @Autowired
+  private EwpNotificationSenderDaemon notificationSenderDaemon;
+
+  @Autowired
   private EwpOutgoingMobilityLearningAgreementChangeNotificationHandler outgoingMobilityLearningAgreementChangeNotificationHandler;
+
+  @Configuration
+  public static class Config {
+
+    @Bean
+    @Primary
+    public EwpChangeNotificationHandlerCollection changeNotificationHandlerCollection() {
+      return new EwpChangeNotificationHandlerCollection(
+          Collections.singletonList(outgoingMobilityLearningAgreementChangeNotificationHandler()));
+    }
+
+    @Bean
+    @Primary
+    public EwpOutgoingMobilityLearningAgreementChangeNotificationHandler outgoingMobilityLearningAgreementChangeNotificationHandler() {
+      return Mockito.spy(
+          new EwpOutgoingMobilityLearningAgreementChangeNotificationHandler(null, null));
+    }
+  }
 
   @Test
   void testRun_ScheduledChangeNotificationSuccess_NotificationMarkedAsSuccess()

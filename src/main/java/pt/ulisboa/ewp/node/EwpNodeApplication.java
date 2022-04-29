@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -15,6 +16,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -142,12 +144,15 @@ public class EwpNodeApplication {
   }
 
   @Bean
+  @Profile("!" + FeatureFlags.FEATURE_FLAG_NO_SCHEDULERS)
   public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
-    ThreadPoolTaskScheduler threadPoolTaskScheduler
-        = new ThreadPoolTaskScheduler();
+    ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
     threadPoolTaskScheduler.setPoolSize(5);
     threadPoolTaskScheduler.setThreadNamePrefix(
         "ThreadPoolTaskScheduler");
+    threadPoolTaskScheduler.setWaitForTasksToCompleteOnShutdown(true);
+    threadPoolTaskScheduler.setAwaitTerminationSeconds(30);
+    threadPoolTaskScheduler.setRejectedExecutionHandler(new AbortPolicy());
     return threadPoolTaskScheduler;
   }
 }

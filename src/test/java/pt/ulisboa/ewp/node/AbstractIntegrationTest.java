@@ -12,7 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest(
     classes = {EwpNodeApplication.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles(profiles = {"dev", "test"})
+@ActiveProfiles(profiles = {"dev", "test", FeatureFlags.FEATURE_FLAG_NO_SCHEDULERS})
 @ContextConfiguration(classes = EwpNodeApplication.class)
 @Import(ValidationAutoConfiguration.class)
 public abstract class AbstractIntegrationTest extends AbstractTest {

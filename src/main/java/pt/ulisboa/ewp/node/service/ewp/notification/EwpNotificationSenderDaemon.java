@@ -13,6 +13,7 @@ import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
 import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificationHandler;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificationHandlerCollection;
 
 @Service
 public class EwpNotificationSenderDaemon implements Runnable {
@@ -31,9 +32,17 @@ public class EwpNotificationSenderDaemon implements Runnable {
 
   public EwpNotificationSenderDaemon(
       EwpChangeNotificationRepository changeNotificationRepository,
-      Collection<EwpChangeNotificationHandler> changeNotificationHandlers) {
+      EwpChangeNotificationHandlerCollection changeNotificationHandlerCollection) {
     this.changeNotificationRepository = changeNotificationRepository;
 
+    this.setChangeNotificationHandlers(
+        changeNotificationHandlerCollection.getChangeNotificationHandlers()
+            .toArray(new EwpChangeNotificationHandler[0]));
+  }
+
+  public void setChangeNotificationHandlers(
+      EwpChangeNotificationHandler... changeNotificationHandlers) {
+    this.classTypeToSenderHandlerMap.clear();
     for (EwpChangeNotificationHandler changeNotificationHandler : changeNotificationHandlers) {
       this.registerSenderHandler(
           changeNotificationHandler.getSupportedChangeNotificationClassType(),
