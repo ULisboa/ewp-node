@@ -139,7 +139,8 @@ public class EwpNodeApplication {
     loggingFilter.setIncludeClientInfo(false);
     loggingFilter.setIncludeQueryString(true);
     loggingFilter.setIncludeHeaders(false);
-    loggingFilter.setIncludePayload(false);
+    loggingFilter.setIncludePayload(true);
+    loggingFilter.setMaxPayloadLength(500);
     return loggingFilter;
   }
 
