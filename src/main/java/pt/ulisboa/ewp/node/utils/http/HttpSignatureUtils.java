@@ -41,6 +41,8 @@ public class HttpSignatureUtils {
   public static final String HEADER_REQUEST_TARGET = "(request-target)";
   public static final String SHA_256 = "SHA-256";
 
+  private static final List<String> WHITELIST_DIGEST_ALGORITHMS = Arrays.asList(SHA_256.toLowerCase());
+
   private HttpSignatureUtils() {
   }
 
@@ -148,11 +150,13 @@ public class HttpSignatureUtils {
 
     for (Map.Entry<String, String> entry : digestValues.entrySet()) {
       String algorithm = entry.getKey();
-      String requestDigestValue = entry.getValue();
-      VerificationResult digestVerificationResult = verifyDigestAgainstAlgorithm(algorithm,
-          requestDigestValue, bodyBytes);
-      if (digestVerificationResult.isSuccess()) {
-        return digestVerificationResult;
+      if (WHITELIST_DIGEST_ALGORITHMS.contains(algorithm.toLowerCase())) {
+        String requestDigestValue = entry.getValue();
+        VerificationResult digestVerificationResult = verifyDigestAgainstAlgorithm(algorithm,
+            requestDigestValue, bodyBytes);
+        if (digestVerificationResult.isSuccess()) {
+          return digestVerificationResult;
+        }
       }
     }
 
