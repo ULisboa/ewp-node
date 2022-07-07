@@ -1,7 +1,5 @@
 package pt.ulisboa.ewp.node.utils.http;
 
-import static pt.ulisboa.ewp.node.service.ewp.security.HttpSignatureService.DATE_THRESHOLD_IN_MILLISECONDS;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -39,6 +37,7 @@ public class HttpSignatureUtils {
 
   public static final String DATETIME_WITH_TIMEZONE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
   public static final String HEADER_REQUEST_TARGET = "(request-target)";
+  public static final int DATE_THRESHOLD_IN_MILLISECONDS = 5 * 60 * 1000;
   public static final String SHA_256 = "SHA-256";
 
   private static final List<String> WHITELIST_DIGEST_ALGORITHMS = Arrays.asList(SHA_256.toLowerCase());

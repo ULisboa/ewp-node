@@ -52,16 +52,16 @@ import org.w3c.dom.Node;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.service.ewp.security.HttpSignatureService;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
+import pt.ulisboa.ewp.node.utils.http.HttpSignatureUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
 public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrationTest {
 
   private static final String[] EXPECTED_SIGNATURE_HEADERS_WITH_DATE = {
-      HttpSignatureService.HEADER_REQUEST_TARGET,
+      HttpSignatureUtils.HEADER_REQUEST_TARGET,
       HttpHeaders.HOST,
       HttpHeaders.DATE,
       HttpConstants.HEADER_DIGEST,

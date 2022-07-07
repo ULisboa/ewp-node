@@ -46,12 +46,12 @@ import org.tomitribe.auth.signatures.Signer;
 import pt.ulisboa.ewp.node.api.AbstractResourceIntegrationTest;
 import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestFilter;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.service.ewp.security.HttpSignatureService;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.XmlValidator;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.http.HttpSignatureUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
 public abstract class AbstractEwpControllerIntegrationTest extends AbstractResourceIntegrationTest {
@@ -208,7 +208,7 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
       HttpHeaders headers = HttpUtils.toExtendedHttpHeaders(request);
 
       TreeSet<String> signatureHeadersSet = new TreeSet<>(headers.keySet());
-      signatureHeadersSet.add(HttpSignatureService.HEADER_REQUEST_TARGET);
+      signatureHeadersSet.add(HttpSignatureUtils.HEADER_REQUEST_TARGET);
       String[] signatureHeaders = signatureHeadersSet.toArray(new String[0]);
 
       return signRequestWithHttpSignature(
