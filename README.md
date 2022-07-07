@@ -168,6 +168,10 @@ from the host's IP on port 80 outside the container.
 When the project is running, the endpoint [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) 
 will provide an interface to the APIs automatic documentation.
 
+## Additional documentation
+
+More documentation is available on the folder [docs/](docs/).
+
 ## License
 
 This project is licensed under the terms of the [MIT license](LICENSE).
