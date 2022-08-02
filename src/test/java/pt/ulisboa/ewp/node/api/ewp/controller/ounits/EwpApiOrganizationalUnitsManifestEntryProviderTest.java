@@ -8,7 +8,6 @@ import eu.erasmuswithoutpaper.api.ounits.v2.OrganizationalUnitsV2;
 import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2.Ounit;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -70,8 +69,7 @@ class EwpApiOrganizationalUnitsManifestEntryProviderTest {
     };
 
     String heiId = UUID.randomUUID().toString();
-    doReturn(Map.of(provider1.getClass(), Arrays.asList(provider1, provider2))).when(
-        hostPluginManager).getAllProvidersPerClassType(heiId);
+    doReturn(Arrays.asList(provider1, provider2)).when(hostPluginManager).getAllProviders(heiId);
 
     Collection<ManifestApiEntryBaseV1> manifestEntries = manifestEntryProvider.getManifestEntries(
         heiId, "http://example.com");

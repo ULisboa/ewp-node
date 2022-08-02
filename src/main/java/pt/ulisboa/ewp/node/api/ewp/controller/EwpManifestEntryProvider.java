@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
@@ -45,14 +46,49 @@ public abstract class EwpManifestEntryProvider {
   protected Collection<ManifestApiEntryBaseV1> getManifestEntriesSupportedByHost(String heiId,
       String baseUrl) {
     Collection<ManifestApiEntryBaseV1> manifestEntries = new ArrayList<>();
-    hostPluginManager.getAllProvidersPerClassType(heiId).forEach((classType, hostProviders) -> {
+
+    Set<Class<? extends HostProvider>> knownHostProviderClasses = this.hostProviderToManifestEntryConverters.keySet();
+    Map<Class<?>, Collection<HostProvider>> classToHostProvidersMap = buildClassToHostProvidersMap(
+        heiId, knownHostProviderClasses);
+
+    classToHostProvidersMap.forEach((classType, hostProviders) -> {
       Optional<ManifestApiEntryBaseV1> manifestEntryOptional = this
           .toManifestEntry(heiId, baseUrl, hostProviders);
       if (manifestEntryOptional.isPresent()) {
         manifestEntries.add(manifestEntryOptional.get());
       }
     });
+
     return manifestEntries;
+  }
+
+  private Map<Class<?>, Collection<HostProvider>> buildClassToHostProvidersMap(String heiId,
+      Set<Class<? extends HostProvider>> knownHostProviderClasses) {
+    Map<Class<?>, Collection<HostProvider>> classToHostProvidersMap = new HashMap<>();
+    hostPluginManager.getAllProviders(heiId).forEach(hostProvider -> {
+      Optional<Class<?>> hostProviderClassOptional = this.getHostProviderClassFromKnownClasses(
+          hostProvider, knownHostProviderClasses);
+      if (hostProviderClassOptional.isPresent()) {
+        Class<?> hostProviderClass = hostProviderClassOptional.get();
+        classToHostProvidersMap.computeIfAbsent(hostProviderClass, k -> new ArrayList<>());
+        classToHostProvidersMap.get(hostProviderClass).add(hostProvider);
+      }
+    });
+    return classToHostProvidersMap;
+  }
+
+  /**
+   * Given a host provider, returns the lowest superclass that belongs to the provided set of known
+   * classes.
+   */
+  private Optional<Class<?>> getHostProviderClassFromKnownClasses(HostProvider hostProvider,
+      Set<Class<? extends HostProvider>> knownHostProviderClasses) {
+    Class<?> currentClass = hostProvider.getClass();
+    while (currentClass != null && !knownHostProviderClasses.contains(currentClass)) {
+      currentClass = currentClass.getSuperclass();
+    }
+
+    return Optional.ofNullable(currentClass);
   }
 
   /**
