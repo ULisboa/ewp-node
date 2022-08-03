@@ -8,6 +8,7 @@ public class HostBootstrapProperties {
   private String description;
   private String adminEmail;
   private String adminNotes;
+  private String adminProvider;
   private HostForwardEwpApiBootstrapProperties forwardEwpApi;
   private List<HostCoveredHeiBootstrapProperties> coveredHeis;
 
@@ -41,6 +42,14 @@ public class HostBootstrapProperties {
 
   public void setAdminNotes(String adminNotes) {
     this.adminNotes = adminNotes;
+  }
+
+  public String getAdminProvider() {
+    return adminProvider;
+  }
+
+  public void setAdminProvider(String adminProvider) {
+    this.adminProvider = adminProvider;
   }
 
   public HostForwardEwpApiBootstrapProperties getForwardEwpApi() {

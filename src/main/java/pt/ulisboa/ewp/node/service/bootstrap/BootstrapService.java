@@ -62,7 +62,8 @@ public class BootstrapService {
             hostBootstrapProperties.getCode(),
             hostBootstrapProperties.getDescription(),
             hostBootstrapProperties.getAdminEmail(),
-            hostBootstrapProperties.getAdminNotes());
+            hostBootstrapProperties.getAdminNotes(),
+            hostBootstrapProperties.getAdminProvider());
 
     createHostForwardEwpApiConfiguration(host, hostBootstrapProperties.getForwardEwpApi());
 

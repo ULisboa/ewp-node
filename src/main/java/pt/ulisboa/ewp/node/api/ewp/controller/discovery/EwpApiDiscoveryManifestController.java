@@ -98,7 +98,8 @@ public class EwpApiDiscoveryManifestController {
               MultilineStringV1 adminNotes = new MultilineStringV1();
               adminNotes.setValue(hostConfiguration.getAdminNotes());
               host.setAdminNotes(adminNotes);
-              host.setAdminProvider("EWP Node");
+
+              host.setAdminProvider(hostConfiguration.getAdminProvider());
 
               host.setApisImplemented(
                   getApisImplemented(request, coveredHei.getSchacCode()));

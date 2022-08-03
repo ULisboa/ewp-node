@@ -69,6 +69,7 @@ bootstrap:
       description: Sample host
       adminEmail: admin@example.com
       adminNotes: Sample host
+      adminProvider: Sample Provider (EWP Node)
       # Configuration of the Forward EWP APIs
       forwardEwpApi:
         # Secret key that the host will use when generating a JWT token.

@@ -28,6 +28,7 @@ public class Host {
   private String description;
   private String adminEmail;
   private String adminNotes;
+  private String adminProvider;
 
   private HostForwardEwpApiConfiguration forwardEwpApiConfiguration;
   private Collection<Hei> coveredHeis = new HashSet<>();
@@ -35,11 +36,12 @@ public class Host {
 
   protected Host() {}
 
-  protected Host(String code, String description, String adminEmail, String adminNotes) {
+  protected Host(String code, String description, String adminEmail, String adminNotes, String adminProvider) {
     this.code = code;
     this.description = description;
     this.adminEmail = adminEmail;
     this.adminNotes = adminNotes;
+    this.adminProvider = adminProvider;
   }
 
   @Id
@@ -88,6 +90,15 @@ public class Host {
     this.adminNotes = adminNotes;
   }
 
+  @Column(name = "admin_provider")
+  public String getAdminProvider() {
+    return adminProvider;
+  }
+
+  public void setAdminProvider(String adminProvider) {
+    this.adminProvider = adminProvider;
+  }
+
   @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinColumn(name = "forward_ewp_api_configuration_id")
   public HostForwardEwpApiConfiguration getForwardEwpApiConfiguration() {
@@ -117,14 +128,14 @@ public class Host {
     this.httpCommunicationLogs = httpCommunicationLogs;
   }
 
-  public static Host create(String code, String description, String adminEmail, String adminNotes) {
-    return new Host(code, description, adminEmail, adminNotes);
+  public static Host create(String code, String description, String adminEmail, String adminNotes, String adminProvider) {
+    return new Host(code, description, adminEmail, adminNotes, adminProvider);
   }
 
   @Override
   public String toString() {
     return String.format(
-        "Host(code = %s; description = %s; adminEmail = %s; adminNotes = %s)",
-        code, description, adminEmail, adminNotes);
+        "Host(code = %s; description = %s; adminEmail = %s; adminNotes = %s; adminProvider = %s)",
+        code, description, adminEmail, adminNotes, adminProvider);
   }
 }
