@@ -34,6 +34,7 @@ bootstrap:
       description: Sample host
       adminEmail: admin@example.com
       adminNotes: Sample host
+      adminProvider: Sample Provider (EWP Node)
       forwardEwpApi:
         secret: sample-host-forward-ewp-api-secret
       notificationApi:
