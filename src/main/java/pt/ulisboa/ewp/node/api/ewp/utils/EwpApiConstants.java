@@ -12,7 +12,7 @@ public class EwpApiConstants {
    */
   public static final String REST_BASE_URI = "/rest/ewp/";
 
-  public static final String DISCOVERY_VERSION = "5.0.0";
+  public static final String DISCOVERY_VERSION = "6.0.0";
   public static final String ECHO_VERSION = "2.0.1";
 
   public static final int MAX_HEI_IDS = 1;

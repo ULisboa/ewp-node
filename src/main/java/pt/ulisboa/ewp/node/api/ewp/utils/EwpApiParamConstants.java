@@ -4,6 +4,10 @@ public class EwpApiParamConstants {
 
   private EwpApiParamConstants() {}
 
+  // NOTE: Special parameter that is not from EWP specification.
+  // It allows to identify which local host the client is interested on.
+  public static final String HOST_CODE = "host_code";
+
   public static final String APPROVING_HEI_ID = "approving_hei_id";
   public static final String ECHO = "echo";
   public static final String GLOBAL_ID = "global_id";

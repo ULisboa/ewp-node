@@ -2,8 +2,8 @@ package pt.ulisboa.ewp.node.api.ewp.controller.discovery;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringV1;
 import eu.erasmuswithoutpaper.api.architecture.v1.StringWithOptionalLangV1;
-import eu.erasmuswithoutpaper.api.discovery.v5.HostV5;
-import eu.erasmuswithoutpaper.api.discovery.v5.ManifestV5;
+import eu.erasmuswithoutpaper.api.discovery.v6.HostV6;
+import eu.erasmuswithoutpaper.api.discovery.v6.ManifestV6;
 import eu.erasmuswithoutpaper.api.registry.v1.ApisImplementedV1;
 import eu.erasmuswithoutpaper.api.registry.v1.OtherHeiIdV1;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,19 +16,25 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.domain.entity.Hei;
+import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
+import pt.ulisboa.ewp.node.exception.ApplicationException;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
 
@@ -57,51 +63,57 @@ public class EwpApiDiscoveryManifestController {
   @Operation(
       summary = "Discovery manifest API.",
       tags = {"ewp"})
-  public ResponseEntity<ManifestV5> manifest(HttpServletRequest request)
+  public ResponseEntity<ManifestV6> manifest(HttpServletRequest request,
+      @RequestParam(value = EwpApiParamConstants.HOST_CODE, defaultValue = "") String hostCode)
       throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
       KeyStoreException, IOException {
-    ManifestV5 manifest = new ManifestV5();
+    ManifestV6 manifest = new ManifestV6();
 
-    setHosts(request, manifest);
+    setHost(request, manifest, hostCode);
 
     return ResponseEntity.ok(manifest);
   }
 
-  private void setHosts(HttpServletRequest request, ManifestV5 manifest)
-      throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
-      KeyStoreException, IOException {
+  private void setHost(HttpServletRequest request, ManifestV6 manifest, String hostCode) {
     DecodedCertificateAndKey decodedCertificateAndKeyFromStorage =
         keyStoreService.getDecodedCertificateAndKeyFromStorage();
 
-    hostRepository
-        .findAll()
+    Host hostConfiguration;
+    if (!StringUtils.isEmpty(hostCode)) {
+      hostConfiguration = hostRepository.findByCode(hostCode).orElseThrow();
+    } else {
+      if (hostRepository.findAll().size() > 1) {
+        throw new ApplicationException("Request must indicate intended host code", HttpStatus.BAD_REQUEST);
+      }
+      hostConfiguration = hostRepository.findAll().iterator().next();
+    }
+
+    hostConfiguration
+        .getCoveredHeis()
         .forEach(
-            hostConfiguration ->
-                hostConfiguration
-                    .getCoveredHeis()
-                    .forEach(
-                        coveredHei -> {
-                          HostV5 host = new HostV5();
-                          host.getAdminEmail().add(hostConfiguration.getAdminEmail());
+            coveredHei -> {
+              HostV6 host = new HostV6();
+              host.getAdminEmail().add(hostConfiguration.getAdminEmail());
 
-                          MultilineStringV1 adminNotes = new MultilineStringV1();
-                          adminNotes.setValue(hostConfiguration.getAdminNotes());
-                          host.setAdminNotes(adminNotes);
+              MultilineStringV1 adminNotes = new MultilineStringV1();
+              adminNotes.setValue(hostConfiguration.getAdminNotes());
+              host.setAdminNotes(adminNotes);
+              host.setAdminProvider("EWP Node");
 
-                          host.setApisImplemented(
-                              getApisImplemented(request, coveredHei.getSchacCode()));
+              host.setApisImplemented(
+                  getApisImplemented(request, coveredHei.getSchacCode()));
 
-                          HostV5.InstitutionsCovered institutionsCovered =
-                              new HostV5.InstitutionsCovered();
-                          institutionsCovered.getHei().add(createHei(coveredHei));
-                          host.setInstitutionsCovered(institutionsCovered);
+              HostV6.InstitutionsCovered institutionsCovered =
+                  new HostV6.InstitutionsCovered();
+              institutionsCovered.setHei(createHei(coveredHei));
+              host.setInstitutionsCovered(institutionsCovered);
 
-                          host.setClientCredentialsInUse(
-                              getClientCredentialsInUse(decodedCertificateAndKeyFromStorage));
-                          host.setServerCredentialsInUse(
-                              getServerCredentialsInUse(decodedCertificateAndKeyFromStorage));
-                          manifest.getHost().add(host);
-                        }));
+              host.setClientCredentialsInUse(
+                  getClientCredentialsInUse(decodedCertificateAndKeyFromStorage));
+              host.setServerCredentialsInUse(
+                  getServerCredentialsInUse(decodedCertificateAndKeyFromStorage));
+              manifest.setHost(host);
+            });
   }
 
   private ApisImplementedV1 getApisImplemented(HttpServletRequest originalRequest, String heiId) {
@@ -114,13 +126,13 @@ public class EwpApiDiscoveryManifestController {
     return apisImplemented;
   }
 
-  private HostV5.ClientCredentialsInUse getClientCredentialsInUse(
+  private HostV6.ClientCredentialsInUse getClientCredentialsInUse(
       DecodedCertificateAndKey decodedCertificateAndKey) {
-    HostV5.ClientCredentialsInUse clientCredentialsInUse = null;
+    HostV6.ClientCredentialsInUse clientCredentialsInUse = null;
 
     String certificate = decodedCertificateAndKey.getFormattedCertificate();
     if (certificate != null) {
-      clientCredentialsInUse = new HostV5.ClientCredentialsInUse();
+      clientCredentialsInUse = new HostV6.ClientCredentialsInUse();
       clientCredentialsInUse.getCertificate().add(certificate);
 
       String formattedRsaPublicKey = decodedCertificateAndKey.getFormattedRsaPublicKey();
@@ -130,13 +142,13 @@ public class EwpApiDiscoveryManifestController {
     return clientCredentialsInUse;
   }
 
-  private HostV5.ServerCredentialsInUse getServerCredentialsInUse(
+  private HostV6.ServerCredentialsInUse getServerCredentialsInUse(
       DecodedCertificateAndKey decodedCertificateAndKey) {
-    HostV5.ServerCredentialsInUse serverCredentialsInUse = null;
+    HostV6.ServerCredentialsInUse serverCredentialsInUse = null;
 
     String rsaPublicKey = decodedCertificateAndKey.getFormattedRsaPublicKey();
     if (rsaPublicKey != null) {
-      serverCredentialsInUse = new HostV5.ServerCredentialsInUse();
+      serverCredentialsInUse = new HostV6.ServerCredentialsInUse();
       serverCredentialsInUse.getRsaPublicKey().add(rsaPublicKey);
     }
 
