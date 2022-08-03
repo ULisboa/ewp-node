@@ -31,7 +31,7 @@ non-backward changes may be introduced.
 
 | API | Supported? | Major Versions Supported |
 | :----: | :---: |:------------------------:|
-| Discovery Manifest | :heavy_check_mark: |            5             |
+| Discovery Manifest | :heavy_check_mark: |            6             |
 | Echo | :heavy_check_mark: |            2             |
 | Institutions | :heavy_check_mark: |            2             |
 | Organizational Units | :heavy_check_mark: |            2             |
