@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.las;
 
+import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.LasOutgoingStatsResponseV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.LearningAgreementV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasUpdateRequestV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasUpdateResponseV1;
@@ -55,6 +56,11 @@ public class MockOutgoingMobilityLearningAgreementsV1HostProvider extends
           response);
     }
     return this;
+  }
+
+  @Override
+  public LasOutgoingStatsResponseV1 getStats() {
+    return new LasOutgoingStatsResponseV1();
   }
 
   @Override

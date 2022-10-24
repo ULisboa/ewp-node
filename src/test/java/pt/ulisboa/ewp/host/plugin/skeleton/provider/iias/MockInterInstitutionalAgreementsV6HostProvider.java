@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.host.plugin.skeleton.provider.iias;
 
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia;
+import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasStatsResponseV6;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +40,11 @@ public class MockInterInstitutionalAgreementsV6HostProvider extends
     this.heiIdToIiasMap.computeIfAbsent(heiId, h -> new ArrayList<>());
     this.heiIdToIiasMap.get(heiId).add(Triple.of(iiaId, iiaCode, iia));
     return this;
+  }
+
+  @Override
+  public IiasStatsResponseV6 getStats() {
+    return new IiasStatsResponseV6();
   }
 
   @Override
