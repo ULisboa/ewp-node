@@ -2,11 +2,14 @@ package pt.ulisboa.ewp.node.api.ewp.controller.omobilities.las;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
+import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.LasOutgoingStatsResponseV1;
+import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.LasOutgoingStatsResponseV1.AcademicYearLaStats;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasGetResponseV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasIndexResponseV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasUpdateRequestV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasUpdateResponseV1;
 import io.swagger.v3.oas.annotations.Operation;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,10 +51,14 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
 
   private final EwpOutgoingMobilityMappingRepository mappingRepository;
 
+  private final String statsPortalHeiId;
+
   public EwpApiOutgoingMobilityLearningAgreementsV1Controller(HostPluginManager hostPluginManager,
-      EwpOutgoingMobilityMappingRepository mappingRepository) {
+      EwpOutgoingMobilityMappingRepository mappingRepository,
+      @Value("${stats.portal.heiId}") String statsPortalHeiId) {
     this.hostPluginManager = hostPluginManager;
     this.mappingRepository = mappingRepository;
+    this.statsPortalHeiId = statsPortalHeiId;
   }
 
   @RequestMapping(path = "/index", method = {RequestMethod.GET,
@@ -166,6 +174,143 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
     OmobilityLasUpdateResponseV1 response = provider.updateOutgoingMobilityLearningAgreement(
         authenticationToken.getPrincipal().getHeiIdsCoveredByClient(), updateData);
     return ResponseEntity.ok(response);
+  }
+
+  @RequestMapping(path = "/stats", method = {
+      RequestMethod.GET}, produces = MediaType.APPLICATION_XML_VALUE)
+  @Operation(summary = "Outgoing Mobility Learning Agreements Stats API.", tags = {"ewp"})
+  public ResponseEntity<LasOutgoingStatsResponseV1> getStats(
+      @RequestParam(EwpApiParamConstants.HEI_ID) String heiId,
+      EwpApiHostAuthenticationToken authenticationToken) {
+
+    if (!authenticationToken.getPrincipal().getHeiIdsCoveredByClient().contains(statsPortalHeiId)) {
+      throw new EwpBadRequestException(
+          "Unauthorized HEI IDs: " + authenticationToken.getPrincipal().getHeiIdsCoveredByClient());
+    }
+
+    Collection<OutgoingMobilityLearningAgreementsV1HostProvider> providers =
+        hostPluginManager.getAllProvidersOfType(heiId,
+            OutgoingMobilityLearningAgreementsV1HostProvider.class);
+
+    Map<String, AcademicYearLaStats> receivingAcademicYearToLaStatsMap = new HashMap<>();
+    for (OutgoingMobilityLearningAgreementsV1HostProvider provider : providers) {
+      LasOutgoingStatsResponseV1 stats = provider.getStats(heiId);
+      for (AcademicYearLaStats currentProviderLaStats : stats.getAcademicYearLaStats()) {
+        String receivingAcademicYearId = currentProviderLaStats.getReceivingAcademicYearId();
+        receivingAcademicYearToLaStatsMap.computeIfAbsent(
+            receivingAcademicYearId,
+            EwpApiOutgoingMobilityLearningAgreementsV1Controller::createEmptyAcademicYearLaStats);
+
+        receivingAcademicYearToLaStatsMap.put(receivingAcademicYearId,
+            mergeAcademicYearLaStats(receivingAcademicYearToLaStatsMap.get(receivingAcademicYearId),
+                currentProviderLaStats));
+      }
+    }
+
+    LasOutgoingStatsResponseV1 response = new LasOutgoingStatsResponseV1();
+    for (AcademicYearLaStats academicYearLaStats : receivingAcademicYearToLaStatsMap.values()) {
+      response.getAcademicYearLaStats().add(academicYearLaStats);
+    }
+
+    return ResponseEntity.ok(response);
+  }
+
+  private static AcademicYearLaStats createEmptyAcademicYearLaStats(String receivingAcademicYear) {
+    AcademicYearLaStats newLaStats = new AcademicYearLaStats();
+    newLaStats.setReceivingAcademicYearId(receivingAcademicYear);
+    newLaStats.setLaOutgoingTotal(BigInteger.ZERO);
+    newLaStats.setLaOutgoingNotModifiedAfterApproval(BigInteger.ZERO);
+    newLaStats.setLaOutgoingModifiedAfterApproval(BigInteger.ZERO);
+    newLaStats.setLaOutgoingLatestVersionApproved(BigInteger.ZERO);
+    newLaStats.setLaOutgoingLatestVersionRejected(BigInteger.ZERO);
+    newLaStats.setLaOutgoingLatestVersionAwaiting(BigInteger.ZERO);
+    return newLaStats;
+  }
+
+  private static AcademicYearLaStats mergeAcademicYearLaStats(AcademicYearLaStats firstLaStats,
+      AcademicYearLaStats secondLaStats) {
+
+    AcademicYearLaStats result = new AcademicYearLaStats();
+    result.setReceivingAcademicYearId(firstLaStats.getReceivingAcademicYearId());
+    if (!firstLaStats.getReceivingAcademicYearId()
+        .equals(secondLaStats.getReceivingAcademicYearId())) {
+      throw new IllegalArgumentException(
+          "Statistics to merge must be of same receiving academic year");
+    }
+
+    result.setLaOutgoingTotal(BigInteger.ZERO);
+    if (firstLaStats.getLaOutgoingTotal() != null) {
+      result.setLaOutgoingTotal(
+          result.getLaOutgoingTotal()
+              .add(firstLaStats.getLaOutgoingTotal()));
+    }
+    if (secondLaStats.getLaOutgoingTotal() != null) {
+      result.setLaOutgoingTotal(
+          result.getLaOutgoingTotal()
+              .add(secondLaStats.getLaOutgoingTotal()));
+    }
+
+    result.setLaOutgoingNotModifiedAfterApproval(BigInteger.ZERO);
+    if (firstLaStats.getLaOutgoingNotModifiedAfterApproval() != null) {
+      result.setLaOutgoingNotModifiedAfterApproval(
+          result.getLaOutgoingNotModifiedAfterApproval()
+              .add(firstLaStats.getLaOutgoingNotModifiedAfterApproval()));
+    }
+    if (secondLaStats.getLaOutgoingNotModifiedAfterApproval() != null) {
+      result.setLaOutgoingNotModifiedAfterApproval(
+          result.getLaOutgoingNotModifiedAfterApproval()
+              .add(secondLaStats.getLaOutgoingNotModifiedAfterApproval()));
+    }
+
+    result.setLaOutgoingModifiedAfterApproval(BigInteger.ZERO);
+    if (firstLaStats.getLaOutgoingModifiedAfterApproval() != null) {
+      result.setLaOutgoingModifiedAfterApproval(
+          result.getLaOutgoingModifiedAfterApproval()
+              .add(firstLaStats.getLaOutgoingModifiedAfterApproval()));
+    }
+    if (secondLaStats.getLaOutgoingModifiedAfterApproval() != null) {
+      result.setLaOutgoingModifiedAfterApproval(
+          result.getLaOutgoingModifiedAfterApproval()
+              .add(secondLaStats.getLaOutgoingModifiedAfterApproval()));
+    }
+
+    result.setLaOutgoingLatestVersionApproved(BigInteger.ZERO);
+    if (firstLaStats.getLaOutgoingLatestVersionApproved() != null) {
+      result.setLaOutgoingLatestVersionApproved(
+          result.getLaOutgoingLatestVersionApproved()
+              .add(firstLaStats.getLaOutgoingLatestVersionApproved()));
+    }
+    if (secondLaStats.getLaOutgoingLatestVersionApproved() != null) {
+      result.setLaOutgoingLatestVersionApproved(
+          result.getLaOutgoingLatestVersionApproved()
+              .add(secondLaStats.getLaOutgoingLatestVersionApproved()));
+    }
+
+    result.setLaOutgoingLatestVersionRejected(BigInteger.ZERO);
+    if (firstLaStats.getLaOutgoingLatestVersionRejected() != null) {
+      result.setLaOutgoingLatestVersionRejected(
+          result.getLaOutgoingLatestVersionRejected()
+              .add(firstLaStats.getLaOutgoingLatestVersionRejected()));
+    }
+    if (secondLaStats.getLaOutgoingLatestVersionRejected() != null) {
+      result.setLaOutgoingLatestVersionRejected(
+          result.getLaOutgoingLatestVersionRejected()
+              .add(secondLaStats.getLaOutgoingLatestVersionRejected()));
+    }
+
+    result.setLaOutgoingLatestVersionAwaiting(BigInteger.ZERO);
+    if (firstLaStats.getLaOutgoingLatestVersionAwaiting() != null) {
+      result.setLaOutgoingLatestVersionAwaiting(
+          result.getLaOutgoingLatestVersionAwaiting()
+              .add(firstLaStats.getLaOutgoingLatestVersionAwaiting()));
+    }
+    if (secondLaStats.getLaOutgoingLatestVersionAwaiting() != null) {
+      result.setLaOutgoingLatestVersionAwaiting(
+          result.getLaOutgoingLatestVersionAwaiting()
+              .add(secondLaStats.getLaOutgoingLatestVersionAwaiting()));
+    }
+
+    return result;
   }
 
   private String getOmobilityIdOfUpdateData(OmobilityLasUpdateRequestV1 updateData) {

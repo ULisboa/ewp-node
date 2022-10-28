@@ -7,6 +7,7 @@ import java.util.Collection;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.las.OutgoingMobilityLearningAgreementsV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @Component
@@ -36,6 +37,10 @@ public class EwpApiOutgoingMobilityLearningAgreementsManifestEntryProvider
     manifestEntry
         .setUpdateUrl(
             baseUrl + EwpApiOutgoingMobilityLearningAgreementsV1Controller.BASE_PATH + "/update");
+    manifestEntry.setStatsUrl(
+        baseUrl + EwpApiOutgoingMobilityLearningAgreementsV1Controller.BASE_PATH + "/stats?"
+            + EwpApiParamConstants.HEI_ID + "="
+            + heiId);
 
     int maxOutgoingMobilityIdsPerRequest = hostProviders.stream().mapToInt(
             OutgoingMobilityLearningAgreementsV1HostProvider::getMaxOutgoingMobilityIdsPerRequest)

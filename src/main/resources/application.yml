@@ -114,6 +114,10 @@ logging:
           filter:
             CommonsRequestLoggingFilter: DEBUG
 
+stats:
+  portal:
+    heiId: stats.erasmuswithoutpaper.eu
+
 # Plugins configuration
 # Here it is possible to pass configuration to a given plugin by its plugin ID.
 plugins:
