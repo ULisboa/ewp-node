@@ -10,19 +10,27 @@ import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia.CooperationConditions;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia.Partner;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasIndexResponseV6;
+import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasStatsResponseV6;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.StudentStudiesMobilitySpecV6;
 import eu.erasmuswithoutpaper.api.types.contact.v1.ContactV1;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.assertj.core.api.Condition;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.MockInterInstitutionalAgreementsV6HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
@@ -35,6 +43,9 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
+@TestPropertySource(properties = {
+    "stats.portal.heiId=test123",
+})
 class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     AbstractEwpControllerIntegrationTest {
 
@@ -397,6 +408,80 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     for (Iia iia : response.getIia()) {
       assertThat(iia.getConditionsHash()).isNotBlank();
     }
+  }
+
+  @Test
+  public void testStatsRetrieval_InvalidHeiId_ErrorReturned()
+      throws Exception {
+    String invalidHeiId = UUID.randomUUID().toString();
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, invalidHeiId);
+
+    assertErrorRequest(registryClient, HttpMethod.GET,
+        EwpApiConstants.API_BASE_URI
+            + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+            + "/stats", queryParams, HttpStatus.BAD_REQUEST,
+        new Condition<>(errorResponse -> errorResponse.getDeveloperMessage().getValue()
+            .contains("Unauthorized HEI ID"), "unauthorized HEI ID"));
+  }
+
+  @Test
+  public void testStatsRetrieval_ValidRequesterHeiIdAndTwoHostProviders_StatsMergedReturned()
+      throws Exception {
+    String heiId = UUID.randomUUID().toString();
+
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 = new MockInterInstitutionalAgreementsV6HostProvider(
+        3, 3);
+
+    IiasStatsResponseV6 stats1 = new IiasStatsResponseV6();
+    stats1.setIiaFetchable(BigInteger.valueOf(1L));
+    stats1.setIiaLocalUnapprovedPartnerApproved(BigInteger.valueOf(2L));
+    stats1.setIiaLocalApprovedPartnerUnapproved(BigInteger.valueOf(3L));
+    stats1.setIiaBothApproved(BigInteger.valueOf(4L));
+
+    mockProvider1.registerStats(heiId, stats1);
+
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 = new MockInterInstitutionalAgreementsV6HostProvider(
+        3, 3);
+
+    IiasStatsResponseV6 stats2 = new IiasStatsResponseV6();
+    stats2.setIiaFetchable(BigInteger.valueOf(11L));
+    stats2.setIiaLocalUnapprovedPartnerApproved(BigInteger.valueOf(12L));
+    stats2.setIiaLocalApprovedPartnerUnapproved(BigInteger.valueOf(13L));
+    stats2.setIiaBothApproved(BigInteger.valueOf(14L));
+
+    mockProvider2.registerStats(heiId, stats2);
+
+    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
+        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+
+    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.request(HttpMethod.GET,
+        EwpApiConstants.API_BASE_URI
+            + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+            + "/stats?" + EwpApiParamConstants.HEI_ID + "=" + heiId);
+
+    String responseXml = executeRequest(registryClient, requestBuilder,
+        tlsRequestProcessor(registryClient, List.of("test123")))
+        .andExpect(status().isOk())
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+    IiasStatsResponseV6 response = XmlUtils.unmarshall(responseXml,
+        IiasStatsResponseV6.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getIiaFetchable()).isEqualTo(
+        BigInteger.valueOf(12L));
+    assertThat(response.getIiaLocalUnapprovedPartnerApproved()).isEqualTo(
+        BigInteger.valueOf(14L));
+    assertThat(response.getIiaLocalApprovedPartnerUnapproved()).isEqualTo(
+        BigInteger.valueOf(16L));
+    assertThat(response.getIiaBothApproved()).isEqualTo(
+        BigInteger.valueOf(18L));
   }
 
 }

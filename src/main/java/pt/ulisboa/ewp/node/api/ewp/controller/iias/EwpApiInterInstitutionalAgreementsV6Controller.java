@@ -4,7 +4,9 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasIndexResponseV6;
+import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasStatsResponseV6;
 import io.swagger.v3.oas.annotations.Operation;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpInterInstitutionalAgreementMapping;
@@ -45,12 +49,16 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
 
   private final ConditionsHashDecorator conditionsHashDecorator;
 
+  private final String statsPortalHeiId;
+
   public EwpApiInterInstitutionalAgreementsV6Controller(HostPluginManager hostPluginManager,
       EwpInterInstitutionalAgreementMappingRepository mappingRepository,
-      ConditionsHashDecorator conditionsHashDecorator) {
+      ConditionsHashDecorator conditionsHashDecorator,
+      @Value("${stats.portal.heiId}") String statsPortalHeiId) {
     this.hostPluginManager = hostPluginManager;
     this.mappingRepository = mappingRepository;
     this.conditionsHashDecorator = conditionsHashDecorator;
+    this.statsPortalHeiId = statsPortalHeiId;
   }
 
   @RequestMapping(path = "/index", method = {RequestMethod.GET,
@@ -120,6 +128,31 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     } else {
       return iiasByCodes(heiId, iiaCodes, sendPdf);
     }
+  }
+
+  @RequestMapping(path = "/stats", method = {
+      RequestMethod.GET}, produces = MediaType.APPLICATION_XML_VALUE)
+  @Operation(summary = "IIAs Stats API.", tags = {"ewp"})
+  public ResponseEntity<IiasStatsResponseV6> getStats(
+      @RequestParam(EwpApiParamConstants.HEI_ID) String heiId,
+      EwpApiHostAuthenticationToken authenticationToken) {
+
+    if (!authenticationToken.getPrincipal().getHeiIdsCoveredByClient().contains(statsPortalHeiId)) {
+      throw new EwpBadRequestException(
+          "Unauthorized HEI IDs: " + authenticationToken.getPrincipal().getHeiIdsCoveredByClient());
+    }
+
+    Collection<InterInstitutionalAgreementsV6HostProvider> providers =
+        hostPluginManager.getAllProvidersOfType(heiId,
+            InterInstitutionalAgreementsV6HostProvider.class);
+
+    IiasStatsResponseV6 statsResponse = createEmptyStatsResponse();
+    for (InterInstitutionalAgreementsV6HostProvider provider : providers) {
+      IiasStatsResponseV6 newStats = provider.getStats(heiId);
+      statsResponse = mergeStatsResponses(statsResponse, newStats);
+    }
+
+    return ResponseEntity.ok(statsResponse);
   }
 
   private ResponseEntity<IiasGetResponseV6> iiasByIds(String heiId, List<String> iiaIds,
@@ -232,6 +265,71 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
         }
       }
     }
+    return result;
+  }
+
+  private static IiasStatsResponseV6 createEmptyStatsResponse() {
+    IiasStatsResponseV6 result = new IiasStatsResponseV6();
+    result.setIiaFetchable(BigInteger.ZERO);
+    result.setIiaLocalUnapprovedPartnerApproved(BigInteger.ZERO);
+    result.setIiaLocalApprovedPartnerUnapproved(BigInteger.ZERO);
+    result.setIiaBothApproved(BigInteger.ZERO);
+    return result;
+  }
+
+  private static IiasStatsResponseV6 mergeStatsResponses(IiasStatsResponseV6 first,
+      IiasStatsResponseV6 second) {
+
+    IiasStatsResponseV6 result = new IiasStatsResponseV6();
+
+    result.setIiaFetchable(BigInteger.ZERO);
+    if (first.getIiaFetchable() != null) {
+      result.setIiaFetchable(
+          result.getIiaFetchable()
+              .add(first.getIiaFetchable()));
+    }
+    if (second.getIiaFetchable() != null) {
+      result.setIiaFetchable(
+          result.getIiaFetchable()
+              .add(second.getIiaFetchable()));
+    }
+
+    result.setIiaLocalUnapprovedPartnerApproved(BigInteger.ZERO);
+    if (first.getIiaLocalUnapprovedPartnerApproved() != null) {
+      result.setIiaLocalUnapprovedPartnerApproved(
+          result.getIiaLocalUnapprovedPartnerApproved()
+              .add(first.getIiaLocalUnapprovedPartnerApproved()));
+    }
+    if (second.getIiaLocalUnapprovedPartnerApproved() != null) {
+      result.setIiaLocalUnapprovedPartnerApproved(
+          result.getIiaLocalUnapprovedPartnerApproved()
+              .add(second.getIiaLocalUnapprovedPartnerApproved()));
+    }
+
+    result.setIiaLocalApprovedPartnerUnapproved(BigInteger.ZERO);
+    if (first.getIiaLocalApprovedPartnerUnapproved() != null) {
+      result.setIiaLocalApprovedPartnerUnapproved(
+          result.getIiaLocalApprovedPartnerUnapproved()
+              .add(first.getIiaLocalApprovedPartnerUnapproved()));
+    }
+    if (second.getIiaLocalApprovedPartnerUnapproved() != null) {
+      result.setIiaLocalApprovedPartnerUnapproved(
+          result.getIiaLocalApprovedPartnerUnapproved()
+              .add(second.getIiaLocalApprovedPartnerUnapproved()));
+    }
+
+    result.setIiaBothApproved(BigInteger.ZERO);
+    if (first.getIiaBothApproved() != null) {
+      result.setIiaBothApproved(
+          result.getIiaBothApproved()
+              .add(first.getIiaBothApproved()));
+    }
+    if (second.getIiaBothApproved() != null) {
+      result.setIiaBothApproved(
+          result.getIiaBothApproved()
+              .add(second.getIiaBothApproved()));
+    }
+
     return result;
   }
 }

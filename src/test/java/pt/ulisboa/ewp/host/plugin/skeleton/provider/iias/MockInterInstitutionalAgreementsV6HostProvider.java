@@ -20,6 +20,7 @@ public class MockInterInstitutionalAgreementsV6HostProvider extends
 
   private final Map<String, Collection<String>> heiIdToIiaIdsMap = new HashMap<>();
   private final Map<String, Collection<Triple<String, String, Iia>>> heiIdToIiasMap = new HashMap<>();
+  private final Map<String, IiasStatsResponseV6> heiIdToStatsMap = new HashMap<>();
 
   public MockInterInstitutionalAgreementsV6HostProvider(int maxIiaIdsPerRequest,
       int maxIiaCodesPerRequest) {
@@ -42,9 +43,10 @@ public class MockInterInstitutionalAgreementsV6HostProvider extends
     return this;
   }
 
-  @Override
-  public IiasStatsResponseV6 getStats() {
-    return new IiasStatsResponseV6();
+  public MockInterInstitutionalAgreementsV6HostProvider registerStats(
+      String heiId, IiasStatsResponseV6 statsResponse) {
+    this.heiIdToStatsMap.put(heiId, statsResponse);
+    return this;
   }
 
   @Override
@@ -84,5 +86,10 @@ public class MockInterInstitutionalAgreementsV6HostProvider extends
         .filter(e -> iiaCodes.contains(e.getMiddle()))
         .map(Triple::getRight)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public IiasStatsResponseV6 getStats(String heiId) {
+    return this.heiIdToStatsMap.get(heiId);
   }
 }
