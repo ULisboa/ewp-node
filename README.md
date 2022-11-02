@@ -37,18 +37,18 @@ non-backward changes may be introduced.
 | Organizational Units | :heavy_check_mark: |            2             |
 | Courses | :heavy_check_mark: |            0             |
 | Simple Course Replication | :heavy_check_mark: |            1             |
-| Interinstitutional Agreements | :heavy_check_mark: |            4             |
+| Interinstitutional Agreements | :heavy_check_mark: |            6             |
 | Interinstitutional Agreements CNR | :heavy_check_mark: |            2             |
 | Interinstitutional Approval | :heavy_check_mark: |            1             |
 | Interinstitutional Approval CNR | :heavy_check_mark: |            1             |
 | Mobility Factsheet | :heavy_check_mark: |            1             |
-| Outgoing Mobilities | :heavy_check_mark: |            1             |
+| Outgoing Mobilities | :heavy_check_mark: |          1 & 2           |
 | Outgoing Mobility Learning Agreements | :heavy_check_mark: |            1             |
 | Outgoing Mobility CNR | :heavy_check_mark: |            1             |
 | Outgoing Mobility Learning Agreement CNR | :heavy_check_mark: |            1             |
 | Incoming Mobilities | :heavy_check_mark: |            1             |
 | Incoming Mobility CNR | :heavy_check_mark: |            1             |
-| Incoming Mobility ToR | :heavy_check_mark: |            1             |
+| Incoming Mobility ToR | :heavy_check_mark: |          1 & 2           |
 | Incoming Mobility ToR CNR | :heavy_check_mark: |            1             |
 
 ### As Consumer
