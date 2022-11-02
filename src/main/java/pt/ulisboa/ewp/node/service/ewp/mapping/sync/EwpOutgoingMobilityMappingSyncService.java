@@ -1,12 +1,14 @@
 package pt.ulisboa.ewp.node.service.ewp.mapping.sync;
 
 import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.StudentMobilityForStudiesV1;
+import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.StudentMobilityV2;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV1HostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV2HostProvider;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.service.ewp.mapping.EwpOutgoingMobilityMappingService;
@@ -33,27 +35,53 @@ public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncServ
 
   @Override
   public void run() {
+    syncOutgoingMobilitiesFromProvidersV1();
+    syncOutgoingMobilitiesFromProvidersV2();
+  }
+
+  private void syncOutgoingMobilitiesFromProvidersV1() {
     Map<String, Collection<OutgoingMobilitiesV1HostProvider>> providersPerHeiId = hostPluginManager.getAllProvidersOfTypePerHeiId(
         OutgoingMobilitiesV1HostProvider.class);
     for (Map.Entry<String, Collection<OutgoingMobilitiesV1HostProvider>> entry : providersPerHeiId.entrySet()) {
       String heiId = entry.getKey();
       for (OutgoingMobilitiesV1HostProvider provider : entry.getValue()) {
-        syncOutgoingMobilitiesOfHeiId(heiId, provider);
+        syncOutgoingMobilitiesOfHeiIdFromProviderV1(heiId, provider);
       }
     }
   }
 
-  private void syncOutgoingMobilitiesOfHeiId(String heiId,
+  private void syncOutgoingMobilitiesFromProvidersV2() {
+    Map<String, Collection<OutgoingMobilitiesV2HostProvider>> providersPerHeiId = hostPluginManager.getAllProvidersOfTypePerHeiId(
+        OutgoingMobilitiesV2HostProvider.class);
+    for (Map.Entry<String, Collection<OutgoingMobilitiesV2HostProvider>> entry : providersPerHeiId.entrySet()) {
+      String heiId = entry.getKey();
+      for (OutgoingMobilitiesV2HostProvider provider : entry.getValue()) {
+        syncOutgoingMobilitiesOfHeiIdFromProviderV2(heiId, provider);
+      }
+    }
+  }
+
+  private void syncOutgoingMobilitiesOfHeiIdFromProviderV1(String heiId,
       OutgoingMobilitiesV1HostProvider provider) {
     Collection<String> outgoingMobilityIds = provider.findOutgoingMobilityIds(
         Collections.singletonList(heiId), heiId, null, null,
         null);
     for (String outgoingMobilityId : outgoingMobilityIds) {
-      syncOutgoingMobility(heiId, provider, outgoingMobilityId);
+      syncOutgoingMobilityFromProviderV1(heiId, provider, outgoingMobilityId);
     }
   }
 
-  private void syncOutgoingMobility(String heiId,
+  private void syncOutgoingMobilitiesOfHeiIdFromProviderV2(String heiId,
+      OutgoingMobilitiesV2HostProvider provider) {
+    Collection<String> outgoingMobilityIds = provider.findOutgoingMobilityIds(
+        Collections.singletonList(heiId), heiId, null, null,
+        null);
+    for (String outgoingMobilityId : outgoingMobilityIds) {
+      syncOutgoingMobilityFromProviderV2(heiId, provider, outgoingMobilityId);
+    }
+  }
+
+  private void syncOutgoingMobilityFromProviderV1(String heiId,
       OutgoingMobilitiesV1HostProvider provider,
       String outgoingMobilityId) {
     Optional<EwpOutgoingMobilityMapping> mappingOptional = this.mappingService.getMapping(
@@ -65,7 +93,24 @@ public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncServ
     }
   }
 
+  private void syncOutgoingMobilityFromProviderV2(String heiId,
+      OutgoingMobilitiesV2HostProvider provider,
+      String outgoingMobilityId) {
+    Optional<EwpOutgoingMobilityMapping> mappingOptional = this.mappingService.getMapping(
+        heiId, outgoingMobilityId);
+    if (mappingOptional.isEmpty()) {
+      Collection<StudentMobilityV2> outgoingMobilities = provider.findBySendingHeiIdAndOutgoingMobilityIds(
+          Collections.singletonList(heiId), heiId, Collections.singletonList(outgoingMobilityId));
+      registerMapping(heiId, outgoingMobilities.iterator().next());
+    }
+  }
+
   private void registerMapping(String heiId, StudentMobilityForStudiesV1 outgoingMobility) {
+    this.mappingService.registerMapping(heiId, outgoingMobility.getSendingHei().getOunitId(),
+        outgoingMobility.getOmobilityId());
+  }
+
+  private void registerMapping(String heiId, StudentMobilityV2 outgoingMobility) {
     this.mappingService.registerMapping(heiId, outgoingMobility.getSendingHei().getOunitId(),
         outgoingMobility.getOmobilityId());
   }
