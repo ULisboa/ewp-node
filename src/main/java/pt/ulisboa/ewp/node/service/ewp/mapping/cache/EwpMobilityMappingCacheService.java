@@ -2,6 +2,8 @@ package pt.ulisboa.ewp.node.service.ewp.mapping.cache;
 
 import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.OmobilitiesGetResponseV1;
 import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.StudentMobilityForStudiesV1;
+import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.OmobilitiesGetResponseV2;
+import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.StudentMobilityV2;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.service.ewp.mapping.EwpIncomingMobilityMappingService;
 
@@ -20,6 +22,13 @@ public class EwpMobilityMappingCacheService {
 
   public void cacheMappingsFrom(OmobilitiesGetResponseV1 omobilitiesGetResponseV1) {
     for (StudentMobilityForStudiesV1 mobility : omobilitiesGetResponseV1.getSingleMobilityObject()) {
+      this.incomingMobilityMappingService.registerMapping(mobility.getReceivingHei().getHeiId(),
+          mobility.getReceivingHei().getOunitId(), mobility.getOmobilityId());
+    }
+  }
+
+  public void cacheMappingsFrom(OmobilitiesGetResponseV2 omobilitiesGetResponseV2) {
+    for (StudentMobilityV2 mobility : omobilitiesGetResponseV2.getSingleMobilityObject()) {
       this.incomingMobilityMappingService.registerMapping(mobility.getReceivingHei().getHeiId(),
           mobility.getReceivingHei().getOunitId(), mobility.getOmobilityId());
     }

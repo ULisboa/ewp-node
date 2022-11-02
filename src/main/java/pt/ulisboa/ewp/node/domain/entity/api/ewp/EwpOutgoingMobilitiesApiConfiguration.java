@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
 import eu.erasmuswithoutpaper.api.omobilities.v1.OmobilitiesV1;
+import eu.erasmuswithoutpaper.api.omobilities.v2.OmobilitiesV2;
 import java.math.BigInteger;
 import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
@@ -63,6 +64,16 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
   }
 
   public static EwpOutgoingMobilitiesApiConfiguration create(OmobilitiesV1 apiElement) {
+    return new EwpOutgoingMobilitiesApiConfiguration(
+        apiElement.getIndexUrl(),
+        apiElement.getGetUrl(),
+        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
+        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
+        apiElement.getMaxOmobilityIds(),
+        apiElement.getSendsNotifications() != null);
+  }
+
+  public static EwpOutgoingMobilitiesApiConfiguration create(OmobilitiesV2 apiElement) {
     return new EwpOutgoingMobilitiesApiConfiguration(
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
