@@ -23,6 +23,7 @@ public class MockOutgoingMobilityLearningAgreementsV1HostProvider extends
   private final Map<String, Collection<String>> heiIdToOmobilityIdsMap = new HashMap<>();
   private final Map<String, Collection<Pair<String, LearningAgreementV1>>> heiIdToLearningAgreementsMap = new HashMap<>();
   private final Map<String, OmobilityLasUpdateResponseV1> omobilityIdToUpdateResponseMap = new HashMap<>();
+  private final Map<String, LasOutgoingStatsResponseV1> heiIdToStatsMap = new HashMap<>();
 
   public MockOutgoingMobilityLearningAgreementsV1HostProvider(int maxOmobilityIdsPerRequest) {
     this.maxOmobilityIdsPerRequest = maxOmobilityIdsPerRequest;
@@ -58,9 +59,10 @@ public class MockOutgoingMobilityLearningAgreementsV1HostProvider extends
     return this;
   }
 
-  @Override
-  public LasOutgoingStatsResponseV1 getStats() {
-    return new LasOutgoingStatsResponseV1();
+  public MockOutgoingMobilityLearningAgreementsV1HostProvider registerStats(
+      String heiId, LasOutgoingStatsResponseV1 statsResponse) {
+    this.heiIdToStatsMap.put(heiId, statsResponse);
+    return this;
   }
 
   @Override
@@ -98,5 +100,10 @@ public class MockOutgoingMobilityLearningAgreementsV1HostProvider extends
       return this.omobilityIdToUpdateResponseMap.get(
           updateData.getCommentProposalV1().getOmobilityId());
     }
+  }
+
+  @Override
+  public LasOutgoingStatsResponseV1 getStats(String heiId) {
+    return this.heiIdToStatsMap.get(heiId);
   }
 }

@@ -1,11 +1,13 @@
 package pt.ulisboa.ewp.node.api.ewp;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
+import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +26,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -83,7 +86,9 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
       HttpParams params,
       String errorMessage)
       throws Exception {
-    assertErrorRequest(registryClient, method, uri, params, HttpStatus.BAD_REQUEST, errorMessage);
+    assertErrorRequest(registryClient, method, uri, params, HttpStatus.BAD_REQUEST,
+        new Condition<>(errorResponse -> errorResponse.getDeveloperMessage().getValue()
+            .equalsIgnoreCase(errorMessage), "valid developer message"));
   }
 
   protected void assertErrorRequest(
@@ -92,13 +97,16 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
       String uri,
       HttpParams params,
       HttpStatus expectedHttpStatus,
-      String errorMessage)
+      Condition<ErrorResponseV1> errorResponseCondition)
       throws Exception {
     MvcResult mvcResult =
         executeRequest(registryClient, method, uri, params)
             .andExpect(status().is(expectedHttpStatus.value()))
-            .andExpect(xpath("/error-response/developer-message").string(errorMessage))
             .andReturn();
+
+    ErrorResponseV1 errorResponseV1 = (ErrorResponseV1) mvcResult.getModelAndView().getModel()
+        .values().iterator().next();
+    assertThat(errorResponseV1).satisfies(errorResponseCondition);
 
     validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/common-types.xsd");
   }
@@ -128,7 +136,14 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
         tlsRequestProcessor(
             registryClient, Collections.singletonList(UUID.randomUUID().toString()));
 
-    requestBuilder = requestBuilder.with(securityRequestProcessor);
+    return executeRequest(registryClient, requestBuilder, securityRequestProcessor);
+  }
+
+  protected ResultActions executeRequest(
+      RegistryClient registryClient, MockHttpServletRequestBuilder requestBuilder,
+      RequestPostProcessor requestPostProcessor)
+      throws Exception {
+    requestBuilder = requestBuilder.with(requestPostProcessor);
 
     return this.mockMvc.perform(requestBuilder).andDo(MockMvcResultHandlers.print());
   }

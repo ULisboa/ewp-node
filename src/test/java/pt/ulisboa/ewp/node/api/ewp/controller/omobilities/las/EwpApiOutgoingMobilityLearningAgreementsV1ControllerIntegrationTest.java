@@ -6,24 +6,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringWithOptionalLangV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.ApproveProposalV1;
+import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.LasOutgoingStatsResponseV1;
+import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.LasOutgoingStatsResponseV1.AcademicYearLaStats;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.LearningAgreementV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.MobilityInstitutionV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasGetResponseV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasIndexResponseV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasUpdateRequestV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasUpdateResponseV1;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.assertj.core.api.Condition;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.las.MockOutgoingMobilityLearningAgreementsV1HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.las.OutgoingMobilityLearningAgreementsV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
@@ -36,6 +45,9 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
+@TestPropertySource(properties = {
+    "stats.portal.heiId=test123",
+})
 class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extends
     AbstractEwpControllerIntegrationTest {
 
@@ -325,6 +337,93 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
     assertThat(response.getSuccessUserMessage()).hasSize(1);
     assertThat(response.getSuccessUserMessage().get(0).getValue()).isEqualTo(
         expectedResponse.getSuccessUserMessage().get(0).getValue());
+  }
+
+  @Test
+  public void testStatsRetrieval_InvalidHeiId_ErrorReturned()
+      throws Exception {
+    String invalidHeiId = UUID.randomUUID().toString();
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, invalidHeiId);
+
+    assertErrorRequest(registryClient, HttpMethod.GET,
+        EwpApiConstants.API_BASE_URI
+            + EwpApiOutgoingMobilityLearningAgreementsV1Controller.BASE_PATH
+            + "/stats", queryParams, HttpStatus.BAD_REQUEST,
+        new Condition<>(errorResponse -> errorResponse.getDeveloperMessage().getValue()
+            .contains("Unauthorized HEI ID"), "unauthorized HEI ID"));
+  }
+
+  @Test
+  public void testStatsRetrieval_ValidRequesterHeiIdAndTwoHostProviders_StatsMergedReturned()
+      throws Exception {
+    String heiId = UUID.randomUUID().toString();
+    String receivingAcademicYear = "0000/0001";
+
+    MockOutgoingMobilityLearningAgreementsV1HostProvider mockProvider1 = new MockOutgoingMobilityLearningAgreementsV1HostProvider(
+        3);
+
+    LasOutgoingStatsResponseV1 stats1 = new LasOutgoingStatsResponseV1();
+    AcademicYearLaStats academicYearLaStats1 = new AcademicYearLaStats();
+    academicYearLaStats1.setReceivingAcademicYearId(receivingAcademicYear);
+    academicYearLaStats1.setLaOutgoingTotal(BigInteger.ONE);
+    stats1.getAcademicYearLaStats().add(academicYearLaStats1);
+
+    mockProvider1.registerStats(heiId, stats1);
+
+    MockOutgoingMobilityLearningAgreementsV1HostProvider mockProvider2 = new MockOutgoingMobilityLearningAgreementsV1HostProvider(
+        3);
+
+    LasOutgoingStatsResponseV1 stats2 = new LasOutgoingStatsResponseV1();
+    AcademicYearLaStats academicYearLaStats2 = new AcademicYearLaStats();
+    academicYearLaStats2.setReceivingAcademicYearId(receivingAcademicYear);
+    academicYearLaStats2.setLaOutgoingTotal(BigInteger.TWO);
+    stats2.getAcademicYearLaStats().add(academicYearLaStats2);
+
+    mockProvider2.registerStats(heiId, stats2);
+
+    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
+        .getAllProvidersOfType(heiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+
+    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.request(HttpMethod.GET,
+        EwpApiConstants.API_BASE_URI
+            + EwpApiOutgoingMobilityLearningAgreementsV1Controller.BASE_PATH
+            + "/stats?" + EwpApiParamConstants.HEI_ID + "=" + heiId);
+
+    String responseXml = executeRequest(registryClient, requestBuilder,
+        tlsRequestProcessor(registryClient, List.of("test123")))
+        .andExpect(status().isOk())
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+    LasOutgoingStatsResponseV1 response = XmlUtils.unmarshall(responseXml,
+        LasOutgoingStatsResponseV1.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getAcademicYearLaStats()).hasSize(1);
+    assertThat(response.getAcademicYearLaStats().get(0).getReceivingAcademicYearId()).isEqualTo(
+        receivingAcademicYear);
+    assertThat(response.getAcademicYearLaStats().get(0).getLaOutgoingTotal()).isEqualTo(
+        BigInteger.valueOf(3L));
+    assertThat(
+        response.getAcademicYearLaStats().get(0).getLaOutgoingNotModifiedAfterApproval()).isEqualTo(
+        BigInteger.ZERO);
+    assertThat(
+        response.getAcademicYearLaStats().get(0).getLaOutgoingModifiedAfterApproval()).isEqualTo(
+        BigInteger.ZERO);
+    assertThat(
+        response.getAcademicYearLaStats().get(0).getLaOutgoingLatestVersionApproved()).isEqualTo(
+        BigInteger.ZERO);
+    assertThat(
+        response.getAcademicYearLaStats().get(0).getLaOutgoingLatestVersionRejected()).isEqualTo(
+        BigInteger.ZERO);
+    assertThat(
+        response.getAcademicYearLaStats().get(0).getLaOutgoingLatestVersionAwaiting()).isEqualTo(
+        BigInteger.ZERO);
   }
 
 }
