@@ -91,6 +91,18 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
             .equalsIgnoreCase(errorMessage), "valid developer message"));
   }
 
+  protected void assertNotFound(
+      RegistryClient registryClient,
+      HttpMethod method,
+      String uri,
+      HttpParams params,
+      String errorMessage)
+      throws Exception {
+    assertErrorRequest(registryClient, method, uri, params, HttpStatus.NOT_FOUND,
+        new Condition<>(errorResponse -> errorResponse.getDeveloperMessage().getValue()
+            .equalsIgnoreCase(errorMessage), "valid developer message"));
+  }
+
   protected void assertErrorRequest(
       RegistryClient registryClient,
       HttpMethod method,

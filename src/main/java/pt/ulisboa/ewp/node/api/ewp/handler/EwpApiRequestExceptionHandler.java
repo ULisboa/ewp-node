@@ -15,6 +15,7 @@ import org.springframework.web.servlet.view.xml.MarshallingView;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
+import pt.ulisboa.ewp.node.exception.ewp.EwpNotFoundException;
 
 @Component
 public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolver {
@@ -39,6 +40,8 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
       } else if (modelAndView == null) {
         if (ex instanceof EwpBadRequestException) {
           modelAndView = handleEwpBadRequestException((EwpBadRequestException) ex, response);
+        } else if (ex instanceof EwpNotFoundException) {
+          modelAndView = handleEwpNotFoundException((EwpNotFoundException) ex, response);
         } else {
           modelAndView = handleUnknownException(ex, response);
         }
@@ -60,6 +63,12 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
   private ModelAndView handleEwpBadRequestException(
       EwpBadRequestException exception, HttpServletResponse response) {
     response.setStatus(HttpStatus.BAD_REQUEST.value());
+    return createModelAndViewFromException(exception);
+  }
+
+  private ModelAndView handleEwpNotFoundException(
+      EwpNotFoundException exception, HttpServletResponse response) {
+    response.setStatus(HttpStatus.NOT_FOUND.value());
     return createModelAndViewFromException(exception);
   }
 

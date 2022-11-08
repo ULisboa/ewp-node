@@ -10,6 +10,7 @@ public class EwpApiParamConstants {
 
   public static final String APPROVING_HEI_ID = "approving_hei_id";
   public static final String ECHO = "echo";
+  public static final String FILE_ID = "file_id";
   public static final String GLOBAL_ID = "global_id";
   public static final String HEI_ID = "hei_id";
   public static final String IIA_ID = "iia_id";
