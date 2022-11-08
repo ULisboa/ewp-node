@@ -6,14 +6,24 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.LasIncomingStatsResponseV1;
+import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.LasIncomingStatsResponseV1.AcademicYearLaStats;
 import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.OmobilityLaCnrResponseV1;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import org.assertj.core.api.Condition;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.las.cnr.MockOutgoingMobilityLearningAgreementCnrV1HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.las.cnr.OutgoingMobilityLearningAgreementCnrV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
@@ -24,6 +34,9 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
+@TestPropertySource(properties = {
+    "stats.portal.heiId=test123",
+})
 class EwpApiOutgoingMobilityLearningAgreementCnrV1ControllerIntegrationTest extends
     AbstractEwpControllerIntegrationTest {
 
@@ -68,5 +81,87 @@ class EwpApiOutgoingMobilityLearningAgreementCnrV1ControllerIntegrationTest exte
 
     verify(mockProvider1, times(1)).onChangeNotification(sendingHeiId, List.of(omobilityId));
     verify(mockProvider2, times(1)).onChangeNotification(sendingHeiId, List.of(omobilityId));
+  }
+
+  @Test
+  public void testStatsRetrieval_InvalidHeiId_ErrorReturned()
+      throws Exception {
+    String invalidHeiId = UUID.randomUUID().toString();
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, invalidHeiId);
+
+    assertErrorRequest(registryClient, HttpMethod.GET,
+        EwpApiConstants.API_BASE_URI
+            + EwpApiOutgoingMobilityLearningAgreementCnrV1Controller.BASE_PATH
+            + "/stats", queryParams, HttpStatus.BAD_REQUEST,
+        new Condition<>(errorResponse -> errorResponse.getDeveloperMessage().getValue()
+            .contains("Unauthorized HEI ID"), "unauthorized HEI ID"));
+  }
+
+  @Test
+  public void testStatsRetrieval_ValidRequesterHeiIdAndTwoHostProviders_StatsMergedReturned()
+      throws Exception {
+    String heiId = UUID.randomUUID().toString();
+    String receivingAcademicYear = "0000/0001";
+
+    MockOutgoingMobilityLearningAgreementCnrV1HostProvider mockProvider1 = new MockOutgoingMobilityLearningAgreementCnrV1HostProvider();
+
+    LasIncomingStatsResponseV1 stats1 = new LasIncomingStatsResponseV1();
+    AcademicYearLaStats academicYearLaStats1 = new AcademicYearLaStats();
+    academicYearLaStats1.setReceivingAcademicYearId(receivingAcademicYear);
+    academicYearLaStats1.setLaIncomingTotal(BigInteger.ONE);
+    stats1.getAcademicYearLaStats().add(academicYearLaStats1);
+
+    mockProvider1.registerStats(heiId, stats1);
+
+    MockOutgoingMobilityLearningAgreementCnrV1HostProvider mockProvider2 = new MockOutgoingMobilityLearningAgreementCnrV1HostProvider();
+
+    LasIncomingStatsResponseV1 stats2 = new LasIncomingStatsResponseV1();
+    AcademicYearLaStats academicYearLaStats2 = new AcademicYearLaStats();
+    academicYearLaStats2.setReceivingAcademicYearId(receivingAcademicYear);
+    academicYearLaStats2.setLaIncomingTotal(BigInteger.TWO);
+    stats2.getAcademicYearLaStats().add(academicYearLaStats2);
+
+    mockProvider2.registerStats(heiId, stats2);
+
+    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
+        .getAllProvidersOfType(heiId, OutgoingMobilityLearningAgreementCnrV1HostProvider.class);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+
+    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.request(HttpMethod.GET,
+        EwpApiConstants.API_BASE_URI
+            + EwpApiOutgoingMobilityLearningAgreementCnrV1Controller.BASE_PATH
+            + "/stats?" + EwpApiParamConstants.HEI_ID + "=" + heiId);
+
+    String responseXml = executeRequest(registryClient, requestBuilder,
+        tlsRequestProcessor(registryClient, List.of("test123")))
+        .andExpect(status().isOk())
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+    LasIncomingStatsResponseV1 response = XmlUtils.unmarshall(responseXml,
+        LasIncomingStatsResponseV1.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getAcademicYearLaStats()).hasSize(1);
+    assertThat(response.getAcademicYearLaStats().get(0).getReceivingAcademicYearId()).isEqualTo(
+        receivingAcademicYear);
+    assertThat(response.getAcademicYearLaStats().get(0).getLaIncomingTotal()).isEqualTo(
+        BigInteger.valueOf(3L));
+    assertThat(
+        response.getAcademicYearLaStats().get(0).getLaIncomingSomeVersionApproved()).isEqualTo(
+        BigInteger.ZERO);
+    assertThat(
+        response.getAcademicYearLaStats().get(0).getLaIncomingLatestVersionApproved()).isEqualTo(
+        BigInteger.ZERO);
+    assertThat(
+        response.getAcademicYearLaStats().get(0).getLaIncomingLatestVersionRejected()).isEqualTo(
+        BigInteger.ZERO);
+    assertThat(
+        response.getAcademicYearLaStats().get(0).getLaIncomingLatestVersionAwaiting()).isEqualTo(
+        BigInteger.ZERO);
   }
 }
