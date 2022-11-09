@@ -13,7 +13,7 @@ import pt.ulisboa.ewp.host.plugin.skeleton.provider.files.FileResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.files.FilesRequestDto;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.files.FileRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
@@ -42,7 +42,7 @@ public class ForwardEwpApiFilesV1Controller extends AbstractForwardEwpApiControl
       summary = "EWP Files Forward API.",
       tags = {"Files"})
   public ResponseEntity<ForwardEwpApiResponseWithData<FileResponse>> getFile(
-      @Valid @ParameterObject @RequestParam FilesRequestDto requestDto)
+      @Valid @ParameterObject @RequestParam FileRequestDto requestDto)
       throws EwpClientErrorException {
 
     EwpSuccessOperationResult<FileResponse> fileResponse = client.getFile(requestDto.getHeiId(),
