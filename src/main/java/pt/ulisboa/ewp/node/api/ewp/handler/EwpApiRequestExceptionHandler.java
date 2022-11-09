@@ -32,11 +32,14 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
     if (request.getRequestURI().startsWith(EwpApiConstants.API_BASE_URI)) {
       HttpServletResponseWithCustomSendError responseWithCustomSendError =
           new HttpServletResponseWithCustomSendError(response);
+
       ModelAndView modelAndView =
           super.doResolveException(request, responseWithCustomSendError, handler, ex);
+
       if (ex instanceof HttpMessageNotReadableException) {
         modelAndView = handleHttpMessageNotReadableExceptionException(
             (HttpMessageNotReadableException) ex, response);
+
       } else if (modelAndView == null) {
         if (ex instanceof EwpBadRequestException) {
           modelAndView = handleEwpBadRequestException((EwpBadRequestException) ex, response);
@@ -45,6 +48,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
         } else {
           modelAndView = handleUnknownException(ex, response);
         }
+
       } else {
         fillModelAndViewWithException(modelAndView, ex);
       }

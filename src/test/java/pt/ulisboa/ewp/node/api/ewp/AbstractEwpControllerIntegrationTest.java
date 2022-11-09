@@ -47,7 +47,8 @@ import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
 import pt.ulisboa.ewp.node.api.AbstractResourceIntegrationTest;
-import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestFilter;
+import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiCommunicationLoggerFilter;
+import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestAndResponseWrapperFilter;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
@@ -74,7 +75,9 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
   public void setup() {
     this.mockMvc =
         MockMvcBuilders.webAppContextSetup(this.wac)
-            .addFilters(new EwpApiRequestFilter(ewpHttpCommunicationLogService))
+            .addFilters(
+                new EwpApiRequestAndResponseWrapperFilter(),
+                new EwpApiCommunicationLoggerFilter(ewpHttpCommunicationLogService))
             .apply(springSecurity())
             .build();
   }
