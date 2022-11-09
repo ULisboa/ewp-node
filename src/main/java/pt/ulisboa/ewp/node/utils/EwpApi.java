@@ -9,6 +9,7 @@ public enum EwpApi {
   ORGANIZATIONAL_UNITS("organizational-units"),
   COURSES("courses"),
   SIMPLE_COURSE_REPLICATION("simple-course-replication"),
+  FILES("file"),
   FACTSHEETS("factsheet"),
   INTERINSTITUTIONAL_AGREEMENTS("iias"),
   INTERINSTITUTIONAL_AGREEMENT_CNR("iia-cnr"),

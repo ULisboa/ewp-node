@@ -4,6 +4,7 @@ import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.courses.replication.v1.SimpleCourseReplicationV1;
 import eu.erasmuswithoutpaper.api.courses.v0.CoursesV0;
 import eu.erasmuswithoutpaper.api.factsheet.v1.FactsheetV1;
+import eu.erasmuswithoutpaper.api.files.v1.FileV1;
 import eu.erasmuswithoutpaper.api.iias.approval.cnr.v1.IiaApprovalCnrV1;
 import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalV1;
 import eu.erasmuswithoutpaper.api.iias.cnr.v2.IiaCnrV2;
@@ -28,6 +29,7 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpFactsheetApiConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpFilesApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilitiesApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilityCnrApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilityToRApiConfiguration;
@@ -153,6 +155,17 @@ public final class EwpApiSpecification {
     public static final EwpApiVersionSpecification<FactsheetV1, EwpFactsheetApiConfiguration>
         V1 = new EwpApiVersionSpecification<>(EwpApi.FACTSHEETS, 1, FactsheetV1.class,
         EwpFactsheetApiConfiguration::create);
+
+  }
+
+  public static class Files {
+
+    private Files() {
+    }
+
+    public static final EwpApiVersionSpecification<FileV1, EwpFilesApiConfiguration>
+        V1 = new EwpApiVersionSpecification<>(EwpApi.FILES, 1, FileV1.class,
+        EwpFilesApiConfiguration::create);
 
   }
 
