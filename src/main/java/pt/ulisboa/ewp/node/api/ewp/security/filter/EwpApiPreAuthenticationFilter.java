@@ -7,24 +7,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.stream.StreamResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.firewall.FirewalledRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.exception.EwpApiSecurityException;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
-import pt.ulisboa.ewp.node.utils.LoggerUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
-/** Filter that prepares the environment for further EWP authentication methods. */
+/**
+ * Filter that prepares the environment for further EWP authentication methods.
+ */
 public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
 
-  private Jaxb2Marshaller jaxb2Marshaller;
+  private static final Logger LOG = LoggerFactory.getLogger(EwpApiPreAuthenticationFilter.class);
+
+  private final Jaxb2Marshaller jaxb2Marshaller;
 
   public EwpApiPreAuthenticationFilter(Jaxb2Marshaller jaxb2Marshaller) {
     this.jaxb2Marshaller = jaxb2Marshaller;
@@ -34,21 +38,8 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-    EwpApiHttpRequestWrapper ewpApiHttpRequestWrapper;
-    if (request instanceof HttpServletRequestWrapper) {
-      request = (HttpServletRequest) ((HttpServletRequestWrapper) request).getRequest();
-    }
-    if (request instanceof FirewalledRequest) {
-      ewpApiHttpRequestWrapper =
-          (EwpApiHttpRequestWrapper) ((FirewalledRequest) request).getRequest();
-    } else if (request instanceof EwpApiHttpRequestWrapper) {
-      ewpApiHttpRequestWrapper = (EwpApiHttpRequestWrapper) request;
-    } else {
-      LoggerUtils.warning(
-          "Unknown request type, wrapping it: " + request.getClass().getName(),
-          this.getClass().getCanonicalName());
-      ewpApiHttpRequestWrapper = new EwpApiHttpRequestWrapper(request);
-    }
+
+    EwpApiHttpRequestWrapper ewpApiHttpRequestWrapper = getEwpApiHttpRequestWrapper(request);
 
     try {
       chain.doFilter(ewpApiHttpRequestWrapper, response);
@@ -88,5 +79,26 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
 
     StreamResult streamResult = new StreamResult(response.getOutputStream());
     jaxb2Marshaller.marshal(object, streamResult);
+  }
+
+  private EwpApiHttpRequestWrapper getEwpApiHttpRequestWrapper(HttpServletRequest request) {
+    if (request instanceof EwpApiHttpRequestWrapper) {
+      return (EwpApiHttpRequestWrapper) request;
+    }
+
+    // NOTE: The request may be already wrapped in some other wrapper.
+    // Therefore, use the embedded request.
+    if (request instanceof HttpServletRequestWrapper) {
+      return getEwpApiHttpRequestWrapper(
+          (HttpServletRequest) ((HttpServletRequestWrapper) request).getRequest());
+    }
+
+    LOG.warn("Unknown request type, wrapping it: " + request.getClass().getName());
+    try {
+      return new EwpApiHttpRequestWrapper(request);
+
+    } catch (IOException e) {
+      throw new IllegalStateException("Invalid request: " + request, e);
+    }
   }
 }
