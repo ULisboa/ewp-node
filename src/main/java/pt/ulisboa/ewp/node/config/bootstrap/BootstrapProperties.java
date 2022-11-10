@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Scope;
 public class BootstrapProperties {
 
   private List<HostBootstrapProperties> hosts;
-  private List<UserProfileBootstrapProperties> userProfiles;
 
   public List<HostBootstrapProperties> getHosts() {
     return hosts;
@@ -19,13 +18,5 @@ public class BootstrapProperties {
 
   public void setHosts(List<HostBootstrapProperties> hosts) {
     this.hosts = hosts;
-  }
-
-  public List<UserProfileBootstrapProperties> getUserProfiles() {
-    return userProfiles;
-  }
-
-  public void setUserProfiles(List<UserProfileBootstrapProperties> userProfiles) {
-    this.userProfiles = userProfiles;
   }
 }
