@@ -23,9 +23,6 @@ security:
 
   keyStore:
     password: sample-keystore-password
-  api:
-    admin:
-      secret: sample-admin-api-secret
 
 bootstrap:
   # Hosts are bootstrapped if no host is currently defined on DB
