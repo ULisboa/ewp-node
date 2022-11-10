@@ -15,11 +15,8 @@ import pt.ulisboa.ewp.node.domain.entity.Hei;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.entity.OtherHeiId;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.HostForwardEwpApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.user.UserProfile;
-import pt.ulisboa.ewp.node.domain.entity.user.UserRole;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
 import pt.ulisboa.ewp.node.domain.repository.KeyStoreConfigurationRepository;
-import pt.ulisboa.ewp.node.domain.repository.UserProfileRepository;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 
 @Service
@@ -36,11 +33,8 @@ public class BootstrapService {
 
   @Autowired private KeyStoreService keystoreService;
 
-  @Autowired private UserProfileRepository userProfileRepository;
-
   public void bootstrap() {
     bootstrapEwpHosts();
-    bootstrapUserProfiles();
   }
 
   private void bootstrapEwpHosts() {
@@ -106,21 +100,5 @@ public class BootstrapService {
             });
 
     return hei;
-  }
-
-  private void bootstrapUserProfiles() {
-    if (userProfileRepository.findAll().isEmpty()) {
-      log.info("Bootstrapping user profiles");
-      bootstrapProperties
-          .getUserProfiles()
-          .forEach(
-              userProfileBootstrapProperties ->
-                  userProfileRepository.persist(
-                      UserProfile.create(
-                          userProfileBootstrapProperties.getUsername(),
-                          UserRole.valueOf(userProfileBootstrapProperties.getRole()))));
-    } else {
-      log.info("Skipping bootstrap of user profiles (user profiles was found on database)");
-    }
   }
 }

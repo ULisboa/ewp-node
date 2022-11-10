@@ -53,11 +53,6 @@ security:
     # Password used when generating/decoding the local keystore
     password: sample-keystore-password
 
-  # Configuration of the API provided by the node for management
-  api:
-    admin:
-      secret: sample-admin-api-secret
-
 # Configuration of basic data to load when launching for the first time
 bootstrap:
   # Hosts are bootstrapped if no host is currently defined on DB
@@ -91,13 +86,6 @@ bootstrap:
               value: S S01
             - type: erasmus-charter
               value: 123456
-
-  # User profiles are bootstrapped if no user profile is currently defined on DB
-  # The Admin APIs use the admin user and expect that it has ADMIN role.
-  # Hence, this configuration may be used as is.
-  userProfiles:
-    - username: admin
-      role: ADMIN
 
 # swagger-ui custom path
 springdoc:

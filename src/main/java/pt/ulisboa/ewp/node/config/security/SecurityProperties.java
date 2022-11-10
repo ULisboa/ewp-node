@@ -11,7 +11,6 @@ public class SecurityProperties {
   private boolean allowMissingClientCertificate;
   private SecurityClientTlsProperties clientTls;
   private SecurityKeyStoreProperties keyStore;
-  private SecurityRestProperties api;
 
   public boolean isAllowMissingClientCertificate() {
     return allowMissingClientCertificate;
@@ -35,13 +34,5 @@ public class SecurityProperties {
 
   public void setKeyStore(SecurityKeyStoreProperties keyStore) {
     this.keyStore = keyStore;
-  }
-
-  public SecurityRestProperties getApi() {
-    return api;
-  }
-
-  public void setApi(SecurityRestProperties api) {
-    this.api = api;
   }
 }
