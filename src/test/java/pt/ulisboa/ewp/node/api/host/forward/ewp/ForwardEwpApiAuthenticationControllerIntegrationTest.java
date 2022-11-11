@@ -95,6 +95,6 @@ public class ForwardEwpApiAuthenticationControllerIntegrationTest extends
     return get(ForwardEwpApiConstants.API_BASE_URI + "authentication/test")
         .header(
             ForwardEwpApiSecurityCommonConstants.HEADER_NAME,
-            ForwardEwpApiSecurityCommonConstants.TOKEN_PREFIX + token);
+            ForwardEwpApiSecurityCommonConstants.BEATER_TOKEN_PREFIX + token);
   }
 }

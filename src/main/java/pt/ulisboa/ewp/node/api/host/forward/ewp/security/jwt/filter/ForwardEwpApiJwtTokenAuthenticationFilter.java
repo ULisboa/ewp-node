@@ -1,23 +1,27 @@
-package pt.ulisboa.ewp.node.api.host.forward.ewp.security.filter;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import pt.ulisboa.ewp.node.api.common.security.jwt.AbstractJwtTokenAuthenticationFilter;
-import pt.ulisboa.ewp.node.api.common.security.jwt.JwtAuthenticationUserDetails;
-import pt.ulisboa.ewp.node.api.common.utils.ApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiAuthenticationToken;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiHostPrincipal;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.JwtAuthenticationUserDetails;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
+import pt.ulisboa.ewp.node.utils.provider.ApplicationContextProvider;
 
 /**
  * A filter that authenticates an host, for the Forward EWP APIs. It expects a JWT with the claim
@@ -73,13 +77,32 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
   protected void onUnsuccessfulAuthentication(
       HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
     try {
-      ApiUtils.writeResponseBody(
-          response,
-          HttpServletResponse.SC_UNAUTHORIZED,
-          MediaType.APPLICATION_XML,
-          ForwardEwpApiResponseUtils.createResponseWithMessages());
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML.toString());
+      response.getWriter().write(serialize(ForwardEwpApiResponseUtils.createResponseWithMessages(),
+          MediaType.APPLICATION_XML));
+
     } catch (IOException | JAXBException e) {
       logger.error("Failed to write response's body", e);
+    }
+  }
+
+  public static String serialize(Object object, MediaType mediaType)
+      throws JsonProcessingException, JAXBException {
+    if (mediaType.equals(MediaType.APPLICATION_JSON)) {
+      return new ObjectMapper().writeValueAsString(object);
+
+    } else if (mediaType.equals(MediaType.APPLICATION_XML)) {
+      StringWriter result = new StringWriter();
+      ApplicationContextProvider.getApplicationContext()
+          .getBean(Jaxb2Marshaller.class)
+          .getJaxbContext()
+          .createMarshaller()
+          .marshal(object, result);
+      return result.toString();
+
+    } else {
+      throw new IllegalArgumentException("Unsupported media type: " + mediaType);
     }
   }
 }

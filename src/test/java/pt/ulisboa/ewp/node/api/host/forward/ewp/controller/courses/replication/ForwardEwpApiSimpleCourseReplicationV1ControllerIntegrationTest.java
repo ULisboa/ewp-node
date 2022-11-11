@@ -22,11 +22,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import pt.ulisboa.ewp.node.api.AbstractResourceIntegrationTest;
-import pt.ulisboa.ewp.node.api.common.security.SecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse.Message.MessageSeverity;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.courses.replication.EwpSimpleCourseReplicationV1Client;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
@@ -78,8 +78,8 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
             .perform(
                 get(API_FIND_ALL_URI)
                     .header(
-                        SecurityCommonConstants.HEADER_NAME,
-                        SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
+                        ForwardEwpApiSecurityCommonConstants.HEADER_NAME,
+                        ForwardEwpApiSecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
             .andExpect(status().isBadRequest())
             .andExpect(
                 header().string(HttpConstants.HEADER_X_HAS_DATA_OBJECT, String.valueOf(false)))
@@ -105,8 +105,8 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
             .perform(
                 get(API_FIND_ALL_URI + "?hei_id=" + heiId)
                     .header(
-                        SecurityCommonConstants.HEADER_NAME,
-                        SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
+                        ForwardEwpApiSecurityCommonConstants.HEADER_NAME,
+                        ForwardEwpApiSecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
             .andExpect(status().isBadRequest())
             .andExpect(
                 header().string(HttpConstants.HEADER_X_HAS_DATA_OBJECT, String.valueOf(false)))
@@ -131,8 +131,8 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
             .perform(
                 get(API_FIND_ALL_URI + "?hei_id=" + heiId)
                     .header(
-                        SecurityCommonConstants.HEADER_NAME,
-                        SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
+                        ForwardEwpApiSecurityCommonConstants.HEADER_NAME,
+                        ForwardEwpApiSecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
             .andExpect(status().isInternalServerError())
             .andReturn();
 
@@ -157,8 +157,8 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
             .perform(
                 get(API_FIND_ALL_URI + "?hei_id=" + heiId)
                     .header(
-                        SecurityCommonConstants.HEADER_NAME,
-                        SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
+                        ForwardEwpApiSecurityCommonConstants.HEADER_NAME,
+                        ForwardEwpApiSecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
             .andExpect(status().isBadGateway())
             .andReturn();
 
@@ -186,8 +186,8 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
             .perform(
                 get(API_FIND_ALL_URI + "?hei_id=" + heiId)
                     .header(
-                        SecurityCommonConstants.HEADER_NAME,
-                        SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
+                        ForwardEwpApiSecurityCommonConstants.HEADER_NAME,
+                        ForwardEwpApiSecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
             .andExpect(status().isBadRequest())
             .andExpect(
                 header().string(HttpConstants.HEADER_X_HAS_DATA_OBJECT, String.valueOf(true)))
@@ -220,8 +220,8 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
             .perform(
                 get(API_FIND_ALL_URI + "?hei_id=" + heiId)
                     .header(
-                        SecurityCommonConstants.HEADER_NAME,
-                        SecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
+                        ForwardEwpApiSecurityCommonConstants.HEADER_NAME,
+                        ForwardEwpApiSecurityCommonConstants.BEATER_TOKEN_PREFIX + jwtToken))
             .andExpect(status().isOk())
             .andReturn();
 

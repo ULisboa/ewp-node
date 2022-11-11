@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ApiResponseBodyDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
@@ -19,6 +20,13 @@ import pt.ulisboa.ewp.node.utils.messaging.Severity;
 public class ForwardEwpApiResponseUtils {
 
   private ForwardEwpApiResponseUtils() {
+  }
+
+  public static <T> ApiResponseBodyDTO<T> createApiResponseBody(T data) {
+    ApiResponseBodyDTO<T> responseBody = new ApiResponseBodyDTO<>();
+    responseBody.setMessages(MessageService.getInstance().consumeMessages());
+    responseBody.setData(data);
+    return responseBody;
   }
 
   public static ResponseEntity<ForwardEwpApiResponse> toAcceptedResponseEntity() {

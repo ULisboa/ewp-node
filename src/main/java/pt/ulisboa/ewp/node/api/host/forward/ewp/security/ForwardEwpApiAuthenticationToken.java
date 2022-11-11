@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Objects;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import pt.ulisboa.ewp.node.api.common.security.jwt.JwtAuthenticationUserDetails;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.JwtAuthenticationUserDetails;
 
 public class ForwardEwpApiAuthenticationToken extends AbstractAuthenticationToken {
 

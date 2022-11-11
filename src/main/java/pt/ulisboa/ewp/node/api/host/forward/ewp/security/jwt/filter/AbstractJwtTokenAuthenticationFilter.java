@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.common.security.jwt;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -17,7 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import pt.ulisboa.ewp.node.api.common.security.SecurityCommonConstants;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
@@ -83,14 +83,14 @@ public abstract class AbstractJwtTokenAuthenticationFilter extends BasicAuthenti
 
   @SuppressWarnings("WeakerAccess")
   protected String getToken(HttpServletRequest request) {
-    String tokenHeader = request.getHeader(SecurityCommonConstants.HEADER_NAME);
+    String tokenHeader = request.getHeader(ForwardEwpApiSecurityCommonConstants.HEADER_NAME);
 
     if (tokenHeader == null
-        || !tokenHeader.startsWith(SecurityCommonConstants.BEATER_TOKEN_PREFIX)) {
+        || !tokenHeader.startsWith(ForwardEwpApiSecurityCommonConstants.BEATER_TOKEN_PREFIX)) {
       return null;
     }
 
-    return tokenHeader.replace(SecurityCommonConstants.BEATER_TOKEN_PREFIX, "");
+    return tokenHeader.replace(ForwardEwpApiSecurityCommonConstants.BEATER_TOKEN_PREFIX, "");
   }
 
   protected Authentication getAuthentication(String token) {
@@ -113,7 +113,8 @@ public abstract class AbstractJwtTokenAuthenticationFilter extends BasicAuthenti
         LoggerUtils.error(
             "No token secret found for verification of JWT token: " + jwtToken,
             AbstractJwtTokenAuthenticationFilter.class.getSimpleName());
-        throwAuthenticationErrorCode(SecurityCommonConstants.ERROR_VERIFICATION_ERROR_CODE);
+        throwAuthenticationErrorCode(
+            ForwardEwpApiSecurityCommonConstants.ERROR_VERIFICATION_ERROR_CODE);
       }
     } catch (TokenExpiredException e) {
       LoggerUtils.error(

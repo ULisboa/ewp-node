@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.common.security.logging;
+package pt.ulisboa.ewp.node.api.common.filter.security.logging;
 
 import java.io.IOException;
 import javax.servlet.Filter;

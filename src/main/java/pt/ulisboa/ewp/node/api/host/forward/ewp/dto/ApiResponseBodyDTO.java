@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.common.dto;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.dto;
 
 import java.util.Collection;
 import java.util.Collections;

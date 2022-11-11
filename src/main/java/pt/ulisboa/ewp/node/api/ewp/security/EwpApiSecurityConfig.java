@@ -16,7 +16,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.session.SessionManagementFilter;
-import pt.ulisboa.ewp.node.api.common.security.logging.MDCAuthenticationFilter;
+import pt.ulisboa.ewp.node.api.common.filter.security.logging.MDCAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiPreAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiResponseSignerFilter;

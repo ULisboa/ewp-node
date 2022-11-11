@@ -11,7 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.security.filter.ForwardEwpApiJwtTokenAuthenticationFilter;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.filter.ForwardEwpApiJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.service.http.log.host.HostHttpCommunicationLogService;

@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.common.security.jwt;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 
