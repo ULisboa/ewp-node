@@ -21,6 +21,8 @@ import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.MockOutgoingMobi
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.MockOutgoingMobilitiesV2HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV1HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV2HostProvider;
+import pt.ulisboa.ewp.node.config.sync.SyncMappingsProperties;
+import pt.ulisboa.ewp.node.config.sync.SyncProperties;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.service.ewp.mapping.EwpOutgoingMobilityMappingService;
@@ -32,8 +34,9 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
     HostPluginManager hostPluginManager = Mockito.mock(HostPluginManager.class);
     EwpOutgoingMobilityMappingService mappingService = Mockito.mock(
         EwpOutgoingMobilityMappingService.class);
+    SyncProperties syncProperties = SyncProperties.create(SyncMappingsProperties.create(1000));
     EwpOutgoingMobilityMappingSyncService syncService = new EwpOutgoingMobilityMappingSyncService(
-        hostPluginManager, mappingService);
+        syncProperties, hostPluginManager, mappingService);
 
     List<String> heiIds = Arrays.asList("h1", "h2");
     List<String> ounitIds = Arrays.asList("o1", "o2");
@@ -83,8 +86,9 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
     HostPluginManager hostPluginManager = Mockito.mock(HostPluginManager.class);
     EwpOutgoingMobilityMappingService mappingService = Mockito.mock(
         EwpOutgoingMobilityMappingService.class);
+    SyncProperties syncProperties = SyncProperties.create(SyncMappingsProperties.create(1000));
     EwpOutgoingMobilityMappingSyncService syncService = new EwpOutgoingMobilityMappingSyncService(
-        hostPluginManager, mappingService);
+        syncProperties, hostPluginManager, mappingService);
 
     List<String> heiIds = Arrays.asList("h1", "h2");
     List<String> ounitIds = Arrays.asList("o1", "o2");
@@ -138,8 +142,9 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
     HostPluginManager hostPluginManager = Mockito.mock(HostPluginManager.class);
     EwpOutgoingMobilityMappingService mappingService = Mockito.mock(
         EwpOutgoingMobilityMappingService.class);
+    SyncProperties syncProperties = SyncProperties.create(SyncMappingsProperties.create(1000));
     EwpOutgoingMobilityMappingSyncService syncService = new EwpOutgoingMobilityMappingSyncService(
-        hostPluginManager, mappingService);
+        syncProperties, hostPluginManager, mappingService);
 
     List<String> heiIds = Arrays.asList("h1", "h2");
     List<String> ounitIds = Arrays.asList("o1", "o2");
@@ -189,8 +194,9 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
     HostPluginManager hostPluginManager = Mockito.mock(HostPluginManager.class);
     EwpOutgoingMobilityMappingService mappingService = Mockito.mock(
         EwpOutgoingMobilityMappingService.class);
+    SyncProperties syncProperties = SyncProperties.create(SyncMappingsProperties.create(1000));
     EwpOutgoingMobilityMappingSyncService syncService = new EwpOutgoingMobilityMappingSyncService(
-        hostPluginManager, mappingService);
+        syncProperties, hostPluginManager, mappingService);
 
     List<String> heiIds = Arrays.asList("h1", "h2");
     List<String> ounitIds = Arrays.asList("o1", "o2");

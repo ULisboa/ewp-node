@@ -29,6 +29,7 @@ import pt.ulisboa.ewp.node.config.bootstrap.BootstrapProperties;
 import pt.ulisboa.ewp.node.config.cnr.CnrProperties;
 import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
+import pt.ulisboa.ewp.node.config.sync.SyncProperties;
 import pt.ulisboa.ewp.node.domain.utils.DatabaseProperties;
 import pt.ulisboa.ewp.node.utils.bean.ParamNameProcessor;
 import pt.ulisboa.ewp.node.utils.http.converter.xml.EwpNamespacePrefixMapper;
@@ -41,7 +42,8 @@ import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
         BootstrapProperties.class,
         RegistryProperties.class,
         SecurityProperties.class,
-        CnrProperties.class
+        CnrProperties.class,
+        SyncProperties.class
     })
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)

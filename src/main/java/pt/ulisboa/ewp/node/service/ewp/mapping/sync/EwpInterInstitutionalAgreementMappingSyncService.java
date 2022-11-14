@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
+import pt.ulisboa.ewp.node.config.sync.SyncProperties;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpInterInstitutionalAgreementMapping;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.service.ewp.mapping.EwpInterInstitutionalAgreementMappingService;
@@ -19,15 +20,14 @@ import pt.ulisboa.ewp.node.service.ewp.mapping.EwpInterInstitutionalAgreementMap
 @Service
 public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMappingSyncService {
 
-  // TODO allow to set this by setting
-  public static final int TASK_INTERVAL_IN_MILLISECONDS = 30 * 60 * 1000; // 30 minutes
-
+  private final SyncProperties syncProperties;
   private final HostPluginManager hostPluginManager;
   private final EwpInterInstitutionalAgreementMappingService mappingService;
 
   public EwpInterInstitutionalAgreementMappingSyncService(
-      HostPluginManager hostPluginManager,
+      SyncProperties syncProperties, HostPluginManager hostPluginManager,
       EwpInterInstitutionalAgreementMappingService mappingService) {
+    this.syncProperties = syncProperties;
     this.hostPluginManager = hostPluginManager;
     this.mappingService = mappingService;
   }
@@ -80,6 +80,6 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
 
   @Override
   public long getTaskIntervalInMilliseconds() {
-    return TASK_INTERVAL_IN_MILLISECONDS;
+    return syncProperties.getMappings().getIntervalInMilliseconds();
   }
 }

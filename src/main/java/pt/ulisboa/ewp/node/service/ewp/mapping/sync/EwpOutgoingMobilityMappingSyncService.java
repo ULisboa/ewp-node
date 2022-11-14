@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV1HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV2HostProvider;
+import pt.ulisboa.ewp.node.config.sync.SyncProperties;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.service.ewp.mapping.EwpOutgoingMobilityMappingService;
@@ -20,15 +21,14 @@ import pt.ulisboa.ewp.node.service.ewp.mapping.EwpOutgoingMobilityMappingService
 @Service
 public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncService {
 
-  // TODO allow to set this by setting
-  public static final int TASK_INTERVAL_IN_MILLISECONDS = 30 * 60 * 1000; // 30 minutes
-
+  private final SyncProperties syncProperties;
   private final HostPluginManager hostPluginManager;
   private final EwpOutgoingMobilityMappingService mappingService;
 
   public EwpOutgoingMobilityMappingSyncService(
-      HostPluginManager hostPluginManager,
+      SyncProperties syncProperties, HostPluginManager hostPluginManager,
       EwpOutgoingMobilityMappingService mappingService) {
+    this.syncProperties = syncProperties;
     this.hostPluginManager = hostPluginManager;
     this.mappingService = mappingService;
   }
@@ -117,6 +117,6 @@ public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncServ
 
   @Override
   public long getTaskIntervalInMilliseconds() {
-    return TASK_INTERVAL_IN_MILLISECONDS;
+    return syncProperties.getMappings().getIntervalInMilliseconds();
   }
 }

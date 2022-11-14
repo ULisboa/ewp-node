@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.MockInterInstitutionalAgreementsV6HostProvider;
+import pt.ulisboa.ewp.node.config.sync.SyncMappingsProperties;
+import pt.ulisboa.ewp.node.config.sync.SyncProperties;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpInterInstitutionalAgreementMapping;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.service.ewp.mapping.EwpInterInstitutionalAgreementMappingService;
@@ -29,8 +31,9 @@ class EwpInterInstitutionalAgreementsMappingSyncServiceUnitTest {
     HostPluginManager hostPluginManager = Mockito.mock(HostPluginManager.class);
     EwpInterInstitutionalAgreementMappingService mappingService = Mockito.mock(
         EwpInterInstitutionalAgreementMappingService.class);
+    SyncProperties syncProperties = SyncProperties.create(SyncMappingsProperties.create(1000));
     EwpInterInstitutionalAgreementMappingSyncService syncService = new EwpInterInstitutionalAgreementMappingSyncService(
-        hostPluginManager, mappingService);
+        syncProperties, hostPluginManager, mappingService);
 
     List<String> heiIds = Arrays.asList("h1", "h2");
     List<String> ounitIds = Arrays.asList("o1", "o2");
@@ -84,8 +87,9 @@ class EwpInterInstitutionalAgreementsMappingSyncServiceUnitTest {
     HostPluginManager hostPluginManager = Mockito.mock(HostPluginManager.class);
     EwpInterInstitutionalAgreementMappingService mappingService = Mockito.mock(
         EwpInterInstitutionalAgreementMappingService.class);
+    SyncProperties syncProperties = SyncProperties.create(SyncMappingsProperties.create(1000));
     EwpInterInstitutionalAgreementMappingSyncService syncService = new EwpInterInstitutionalAgreementMappingSyncService(
-        hostPluginManager, mappingService);
+        syncProperties, hostPluginManager, mappingService);
 
     List<String> heiIds = Arrays.asList("h1", "h2");
     List<String> ounitIds = Arrays.asList("o1", "o2");
