@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.config.cnr.CnrProperties;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
 import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
@@ -18,21 +19,18 @@ import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificatio
 @Service
 public class EwpNotificationSenderDaemon implements Runnable {
 
-  // TODO allow to set this by setting
-  public static final int TASK_INTERVAL_IN_MILLISECONDS = 5000;
-
-  // TODO allow to set this by setting
-  public static final int MAX_NUMBER_ATTEMPTS = 10; // maximum wait time = 2^10 minutes = 1024 minutes ~ 17 hours
-
   private static final Logger LOG = LoggerFactory.getLogger(EwpNotificationSenderDaemon.class);
 
+  private final CnrProperties cnrProperties;
   private final EwpChangeNotificationRepository changeNotificationRepository;
 
   private final Map<Class<?>, EwpChangeNotificationHandler> classTypeToSenderHandlerMap = new HashMap<>();
 
   public EwpNotificationSenderDaemon(
+      CnrProperties cnrProperties,
       EwpChangeNotificationRepository changeNotificationRepository,
       EwpChangeNotificationHandlerCollection changeNotificationHandlerCollection) {
+    this.cnrProperties = cnrProperties;
     this.changeNotificationRepository = changeNotificationRepository;
 
     this.setChangeNotificationHandlers(
@@ -94,7 +92,7 @@ public class EwpNotificationSenderDaemon implements Runnable {
   }
 
   private void scheduleNewAttempt(EwpChangeNotification changeNotification) {
-    if (changeNotification.getAttemptNumber() >= MAX_NUMBER_ATTEMPTS) {
+    if (changeNotification.getAttemptNumber() >= cnrProperties.getMaxNumberAttempts()) {
       changeNotification.markAsFailedDueToMaxAttempts();
 
     } else {
@@ -112,5 +110,9 @@ public class EwpNotificationSenderDaemon implements Runnable {
   private void registerSenderHandler(Class<?> classType,
       EwpChangeNotificationHandler sendHandler) {
     this.classTypeToSenderHandlerMap.put(classType, sendHandler);
+  }
+
+  public long getTaskIntervalInMilliseconds() {
+    return this.cnrProperties.getIntervalInMilliseconds();
   }
 }

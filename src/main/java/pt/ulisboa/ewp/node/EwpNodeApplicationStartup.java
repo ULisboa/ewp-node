@@ -55,7 +55,7 @@ public class EwpNodeApplicationStartup implements ApplicationListener<Applicatio
 
   private void initSchedules() {
     taskScheduler.schedule(ewpNotificationSenderDaemon,
-        new PeriodicTrigger(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS,
+        new PeriodicTrigger(ewpNotificationSenderDaemon.getTaskIntervalInMilliseconds(),
             TimeUnit.MILLISECONDS));
 
     for (EwpMappingSyncService mappingSyncService : mappingSyncServices) {

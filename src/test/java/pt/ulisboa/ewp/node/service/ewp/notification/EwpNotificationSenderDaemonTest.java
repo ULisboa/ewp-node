@@ -17,11 +17,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import pt.ulisboa.ewp.node.AbstractIntegrationTest;
 import pt.ulisboa.ewp.node.FeatureFlags;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.config.cnr.CnrProperties;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification.Status;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
@@ -32,7 +34,12 @@ import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificatio
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpOutgoingMobilityLearningAgreementChangeNotificationHandler;
 
 @ContextConfiguration(classes = Config.class)
-@ActiveProfiles(profiles = {"dev", "test", FeatureFlags.FEATURE_FLAG_WITH_SCHEDULERS}, inheritProfiles = false)
+@ActiveProfiles(profiles = {"dev", "test",
+    FeatureFlags.FEATURE_FLAG_WITH_SCHEDULERS}, inheritProfiles = false)
+@TestPropertySource(properties = {
+    "cnr.intervalInMilliseconds=1000",
+    "cnr.maxNumberAttempts=3"
+})
 class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
   @Autowired
@@ -40,6 +47,9 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
   @Autowired
   private EwpNotificationSenderDaemon notificationSenderDaemon;
+
+  @Autowired
+  private CnrProperties cnrProperties;
 
   @Autowired
   private EwpOutgoingMobilityLearningAgreementChangeNotificationHandler outgoingMobilityLearningAgreementChangeNotificationHandler;
@@ -84,7 +94,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 10000))
+            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
         .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
             .wasSuccess());
   }
@@ -98,7 +108,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     String omobilityId = UUID.randomUUID().toString();
 
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
-        EwpNotificationSenderDaemon.MAX_NUMBER_ATTEMPTS,
+        cnrProperties.getMaxNumberAttempts(),
         ZonedDateTime.now(), Status.PENDING, sendingHeiId, receivingHeiId, omobilityId);
 
     doThrow(new NoEwpCnrAPIException(originalChangeNotification)).when(
@@ -108,7 +118,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 10000))
+            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
         .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
             .hasFailedDueToNoCnrApiAvailable());
   }
@@ -122,7 +132,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     String omobilityId = UUID.randomUUID().toString();
 
     EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
-        EwpNotificationSenderDaemon.MAX_NUMBER_ATTEMPTS,
+        cnrProperties.getMaxNumberAttempts(),
         ZonedDateTime.now(), Status.PENDING, sendingHeiId, receivingHeiId, omobilityId);
 
     doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
@@ -132,7 +142,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 10000))
+            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
         .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
             .hasFailedDueToMaxAttempts());
   }
@@ -155,7 +165,7 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
-            Duration.ofMillis(EwpNotificationSenderDaemon.TASK_INTERVAL_IN_MILLISECONDS + 10000))
+            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
         .until(() -> {
           EwpChangeNotification changeNotification = changeNotificationRepository.findById(
               originalChangeNotification.getId()).get();

@@ -53,6 +53,14 @@ security:
     # Password used when generating/decoding the local keystore
     password: sample-keystore-password
 
+cnr:
+  # Frequency on which notification daemon runs to process new/pending notifications
+  intervalInMilliseconds: 5000
+  # Maximum number of attempts to send a notification before considering it as a failure.
+  # The notification daemon uses exponential delay, on the powers of 2 (in minutes), as wait time between attempts.
+  # With then 10 maximum attempts, wait time for the last attempt = 2^10 minutes = 1024 minutes ~ 17 hours
+  maxNumberAttempts: 10
+
 # Configuration of basic data to load when launching for the first time
 bootstrap:
   # Hosts are bootstrapped if no host is currently defined on DB
