@@ -3,11 +3,11 @@ package pt.ulisboa.ewp.node.client.ewp.operation.request.body;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 
-public class EwpRequestFormDataBody extends EwpRequestBody {
+public class EwpRequestFormDataUrlEncodedBody extends EwpRequestBody {
 
   private final HttpParams formData;
 
-  public EwpRequestFormDataBody(HttpParams formData) {
+  public EwpRequestFormDataUrlEncodedBody(HttpParams formData) {
     this.formData = formData;
   }
 
@@ -17,6 +17,6 @@ public class EwpRequestFormDataBody extends EwpRequestBody {
 
   @Override
   public String serialize() {
-    return HttpUtils.serializeFormData(formData.asMap());
+    return HttpUtils.serializeFormDataUrlEncoded(this.getFormData().asMap());
   }
 }

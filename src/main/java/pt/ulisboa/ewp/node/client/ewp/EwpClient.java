@@ -30,7 +30,7 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseExceptio
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestBody;
-import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestSerializableBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -219,8 +219,8 @@ public class EwpClient {
   }
 
   private Entity<?> createBodyEntity(EwpRequestBody body) {
-    if (body instanceof EwpRequestFormDataBody) {
-      return createFormDataEntity(((EwpRequestFormDataBody) body));
+    if (body instanceof EwpRequestFormDataUrlEncodedBody) {
+      return createFormDataEntity(((EwpRequestFormDataUrlEncodedBody) body));
     } else if (body instanceof EwpRequestSerializableBody) {
       return createSerializableEntity((EwpRequestSerializableBody) body);
     } else {
@@ -229,9 +229,9 @@ public class EwpClient {
     }
   }
 
-  private Entity<String> createFormDataEntity(EwpRequestFormDataBody body) {
+  private Entity<String> createFormDataEntity(EwpRequestFormDataUrlEncodedBody body) {
     String charset = StandardCharsets.UTF_8.name();
-    String formDataAsString = HttpUtils.serializeFormData(body.getFormData().asMap());
+    String formDataAsString = HttpUtils.serializeFormDataUrlEncoded(body.getFormData().asMap());
     Variant variant = Variant.mediaTypes(
             javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED_TYPE.withCharset(charset))
         .encodings(charset).build().get(0);

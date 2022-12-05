@@ -11,7 +11,7 @@ import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilityToRApiConfiguration;
@@ -46,7 +46,7 @@ public class EwpIncomingMobilityToRsV1Client extends
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
     EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
-        new EwpRequestFormDataBody(bodyParams));
+        new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpClient.executeAndLog(request, ImobilityTorsIndexResponseV1.class);
   }
 
@@ -61,7 +61,7 @@ public class EwpIncomingMobilityToRsV1Client extends
     bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, outgoingMobilityIds);
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
-        new EwpRequestFormDataBody(bodyParams));
+        new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpClient.executeAndLog(request, ImobilityTorsGetResponseV1.class);
   }
 

@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -61,6 +62,9 @@ public class HttpSignatureRequestAuthenticationMethodSigner
       byte[] digest = MessageDigest.getInstance(HttpSignatureUtils.SHA_256).digest(bodyBytes);
       String digestValue = new String(Base64.encodeBase64(digest));
       String digestHeader = HttpSignatureUtils.SHA_256 + "=" + digestValue;
+      LOGGER.debug(
+          "Calculated digest for '" + formData + "' (in bytes: " + Arrays.toString(bodyBytes)
+              + "): " + digestHeader);
       headers.set(HttpConstants.HEADER_DIGEST, digestHeader);
 
       List<String> requiredSignatureHeaderNames = new ArrayList<>();

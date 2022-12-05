@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestBody;
-import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
@@ -22,7 +22,7 @@ public class EwpRequest implements Serializable {
   private String urlWithoutQueryParams;
   private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
   private HttpParams queryParams = new HttpParams();
-  private EwpRequestBody body = new EwpRequestFormDataBody(new HttpParams());
+  private EwpRequestBody body = new EwpRequestFormDataUrlEncodedBody(new HttpParams());
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.TLS;
 
   public EwpRequest(HttpMethod method, @NotNull String urlWithoutQueryParams) {

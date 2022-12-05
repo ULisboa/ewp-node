@@ -7,7 +7,7 @@ import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpFactsheetApiConfiguration;
@@ -31,7 +31,7 @@ public class EwpFactsheetsV1Client extends
     bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
-        new EwpRequestFormDataBody(bodyParams));
+        new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpClient.executeAndLog(request, FactsheetResponseV1.class);
   }
 

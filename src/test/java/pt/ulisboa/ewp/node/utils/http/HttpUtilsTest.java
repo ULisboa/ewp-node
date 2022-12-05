@@ -14,14 +14,14 @@ public class HttpUtilsTest {
   @Test
   public void testSerializeFormDataWithNoParams() {
     Map<String, List<String>> params = new HashMap<>();
-    assertThat(HttpUtils.serializeFormData(params)).isEqualTo("");
+    assertThat(HttpUtils.serializeFormDataUrlEncoded(params)).isEqualTo("");
   }
 
   @Test
   public void testSerializeFormDataWithOneParams() {
     Map<String, List<String>> params = new HashMap<>();
     params.put("a", Collections.singletonList("b"));
-    assertThat(HttpUtils.serializeFormData(params)).isEqualTo("a=b");
+    assertThat(HttpUtils.serializeFormDataUrlEncoded(params)).isEqualTo("a=b");
   }
 
   @Test
@@ -29,14 +29,14 @@ public class HttpUtilsTest {
     Map<String, List<String>> params = new HashMap<>();
     params.put("a", Collections.singletonList("b"));
     params.put("c", Collections.singletonList("d"));
-    assertThat(HttpUtils.serializeFormData(params)).isEqualTo("a=b&c=d");
+    assertThat(HttpUtils.serializeFormDataUrlEncoded(params)).isEqualTo("a=b&c=d");
   }
 
   @Test
   public void testSerializeFormDataWithTwoParamsWithSameKey() {
     Map<String, List<String>> params = new HashMap<>();
     params.put("a", Arrays.asList("b", "c"));
-    assertThat(HttpUtils.serializeFormData(params)).isEqualTo("a=b&a=c");
+    assertThat(HttpUtils.serializeFormDataUrlEncoded(params)).isEqualTo("a=b&a=c");
   }
 
 }

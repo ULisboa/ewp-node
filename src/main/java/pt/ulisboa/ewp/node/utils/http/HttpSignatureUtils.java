@@ -165,6 +165,11 @@ public class HttpSignatureUtils {
   private static VerificationResult verifyDigestAgainstAlgorithm(
       String algorithm, String digestValue, byte[] bodyBytes) {
 
+    LOGGER.debug(
+        "Attempting to verify digest of body '" + new String(bodyBytes) + "'" + "' (in bytes: "
+            + Arrays.toString(bodyBytes)
+            + ")");
+
     byte[] digest;
     try {
       digest = MessageDigest.getInstance(algorithm).digest(bodyBytes);

@@ -76,10 +76,10 @@ public class HttpUtils {
   }
 
   public static String serializeQueryString(Map<String, List<String>> params) {
-    return serializeFormData(params);
+    return serializeFormDataUrlEncoded(params);
   }
 
-  public static String serializeFormData(Map<String, List<String>> params) {
+  public static String serializeFormDataUrlEncoded(Map<String, List<String>> params) {
     final StringBuilder sb = new StringBuilder();
 
     for (Map.Entry<String, List<String>> entry : params.entrySet()) {
@@ -87,15 +87,16 @@ public class HttpUtils {
         if (sb.length() > 0) {
           sb.append('&');
         }
-        sb.append(entry.getKey());
+
+        sb.append(UriUtils.encode(entry.getKey(), "UTF-8"));
         if (value != null) {
           sb.append('=');
-          sb.append(value);
+          sb.append(UriUtils.encode(value, "UTF-8"));
         }
       }
     }
 
-    return UriUtils.encodeQuery(sb.toString(), "UTF-8");
+    return sb.toString();
   }
 
   public static void setHeaders(HttpServletResponse response, HttpHeaders headers) {

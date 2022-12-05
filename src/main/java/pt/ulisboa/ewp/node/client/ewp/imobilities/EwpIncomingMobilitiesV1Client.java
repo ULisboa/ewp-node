@@ -9,7 +9,7 @@ import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
 import pt.ulisboa.ewp.node.client.ewp.EwpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
-import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataBody;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilitiesApiConfiguration;
@@ -43,7 +43,7 @@ public class EwpIncomingMobilitiesV1Client extends
     bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, omobilityIds);
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
-        new EwpRequestFormDataBody(bodyParams));
+        new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpClient.executeAndLog(request, ImobilitiesGetResponseV1.class);
   }
 
