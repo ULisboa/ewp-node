@@ -37,6 +37,12 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations) {
+
+    // NOTE: Requests for manifest are not logged to avoid using too much log space
+    if (isRequestForManifest(request)) {
+      return;
+    }
+
     HttpRequestLog requestLog = toHttpRequestLog(request);
     HttpResponseLog responseLog = toHttpResponseLog(response);
 
@@ -130,5 +136,9 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
             response.getRawBody());
     responseLog.getHeaders().forEach(header -> header.setResponseLog(responseLog));
     return responseLog;
+  }
+
+  private boolean isRequestForManifest(EwpApiHttpRequestWrapper request) {
+    return request.getRequestURI().endsWith("/manifest");
   }
 }
