@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import pt.ulisboa.ewp.node.domain.entity.Host;
+import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.entity.http.log.host.HttpCommunicationFromHostLog;
@@ -29,6 +30,7 @@ public class HttpCommunicationFromHostLogRepository
 
   public boolean create(
       Host host,
+      HostForwardEwpApiClient hostForwardEwpApiClient,
       HttpRequestLog request,
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
@@ -37,6 +39,7 @@ public class HttpCommunicationFromHostLogRepository
     HttpCommunicationFromHostLog communicationFromHostLog =
         new HttpCommunicationFromHostLog(
             host,
+            hostForwardEwpApiClient,
             request,
             response,
             startProcessingDateTime,

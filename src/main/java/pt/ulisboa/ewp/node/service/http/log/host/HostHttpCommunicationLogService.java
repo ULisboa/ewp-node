@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import pt.ulisboa.ewp.node.domain.entity.Host;
+import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.repository.http.log.host.HttpCommunicationFromHostLogRepository;
@@ -21,6 +22,7 @@ public class HostHttpCommunicationLogService extends HttpCommunicationLogService
 
   public void logCommunicationFromHost(
       Host host,
+      HostForwardEwpApiClient hostForwardEwpApiClient,
       ContentCachingRequestWrapper request,
       ContentCachingResponseWrapper response,
       ZonedDateTime startProcessingDateTime,
@@ -31,6 +33,7 @@ public class HostHttpCommunicationLogService extends HttpCommunicationLogService
 
     httpCommunicationFromHostLogRepository.create(
         host,
+        hostForwardEwpApiClient,
         requestLog,
         responseLog,
         startProcessingDateTime,

@@ -58,6 +58,7 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
 
     logCommunication(
         hostForwardEwpApiClient != null ? hostForwardEwpApiClient.getHost() : null,
+        hostForwardEwpApiClient,
         requestWrapper,
         responseWrapper,
         startProcessingDateTime,
@@ -69,12 +70,13 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
 
   private void logCommunication(
       Host host,
+      HostForwardEwpApiClient hostForwardEwpApiClient,
       ContentCachingRequestWrapper request,
       ContentCachingResponseWrapper response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations) {
-    hostCommunicationLogService.logCommunicationFromHost(host,
+    hostCommunicationLogService.logCommunicationFromHost(host, hostForwardEwpApiClient,
         request, response, startProcessingDateTime, endProcessingDateTime, observations);
   }
 }

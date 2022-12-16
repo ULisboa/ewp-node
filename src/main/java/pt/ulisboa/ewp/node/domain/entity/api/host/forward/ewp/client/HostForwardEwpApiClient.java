@@ -1,5 +1,8 @@
 package pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client;
 
+import java.util.Collection;
+import java.util.HashSet;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -7,10 +10,12 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.HostForwardEwpApi;
+import pt.ulisboa.ewp.node.domain.entity.http.log.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.domain.listener.EntityAuditListener;
 
 @Entity
@@ -21,6 +26,7 @@ public class HostForwardEwpApiClient {
   private String id;
   private HostForwardEwpApi forwardEwpApi;
   private String secret;
+  private Collection<HttpCommunicationFromHostLog> httpCommunicationFromHostLogs = new HashSet<>();
 
   protected HostForwardEwpApiClient() {
   }
@@ -64,6 +70,16 @@ public class HostForwardEwpApiClient {
   @Transient
   public Host getHost() {
     return forwardEwpApi.getHost();
+  }
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "hostForwardEwpApiClient", cascade = CascadeType.ALL)
+  public Collection<HttpCommunicationFromHostLog> getHttpCommunicationFromHostLogs() {
+    return httpCommunicationFromHostLogs;
+  }
+
+  public void setHttpCommunicationFromHostLogs(
+      Collection<HttpCommunicationFromHostLog> httpCommunicationFromHostLogs) {
+    this.httpCommunicationFromHostLogs = httpCommunicationFromHostLogs;
   }
 
   public void update(String secret) {
