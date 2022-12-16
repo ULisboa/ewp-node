@@ -28,7 +28,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.INSTITUTIONS)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "institutions/v2")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiInstitutionsV2Controller extends AbstractForwardEwpApiController {
 
   private final EwpInstitutionsV2Client client;

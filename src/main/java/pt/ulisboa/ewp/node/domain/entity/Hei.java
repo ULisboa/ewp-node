@@ -93,6 +93,10 @@ public class Hei {
     this.otherHeiIds = otherHeiIds;
   }
 
+  public void update(Map<Locale, String> name) {
+    this.name = name;
+  }
+
   public static Hei create(Host host, String id, Map<Locale, String> name) {
     return new Hei(host, id, name);
   }

@@ -23,7 +23,7 @@ import pt.ulisboa.ewp.node.validation.annotation.ValidEwpApiLocalName;
 
 @RestController
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI)
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 @Validated
 public class ForwardEwpApiGeneralController {
 

@@ -27,7 +27,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.FACTSHEETS)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "factsheets/v1")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiFactsheetsV1Controller extends AbstractForwardEwpApiController {
 
   private final EwpFactsheetsV1Client client;

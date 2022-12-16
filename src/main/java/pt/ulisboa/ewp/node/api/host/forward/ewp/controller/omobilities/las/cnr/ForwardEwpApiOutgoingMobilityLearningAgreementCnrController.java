@@ -23,7 +23,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "omobilities/las/cnr")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrController extends
     AbstractForwardEwpApiController {
 

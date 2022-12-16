@@ -56,10 +56,12 @@ public class ForwardEwpApiAuthenticationControllerIntegrationTest extends
   @Test
   public void testGetAuthenticatedWithCorrectAuthentication() throws Exception {
     Host host = hostRepository.findByCode("sample-host").get();
+    String clientId = "client-1";
     String token =
         JWT.create()
-            .withIssuer(host.getCode())
-            .sign(Algorithm.HMAC256(host.getForwardEwpApiConfiguration().getSecret()));
+            .withIssuer(clientId)
+            .sign(Algorithm.HMAC256(
+                host.getForwardEwpApi().getClientById(clientId).get().getSecret()));
     this.mockMvc
         .perform(getRequest(token))
         .andDo(MockMvcResultHandlers.print())

@@ -28,7 +28,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.INCOMING_MOBILITIES)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "imobilities/v1")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiIncomingMobilitiesV1Controller extends AbstractForwardEwpApiController {
 
   private final EwpIncomingMobilitiesV1Client client;

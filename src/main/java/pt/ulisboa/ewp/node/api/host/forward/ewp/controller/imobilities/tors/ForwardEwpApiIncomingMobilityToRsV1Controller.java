@@ -30,7 +30,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.INCOMING_MOBILITY_TORS)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "imobilities/tors/v1")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiIncomingMobilityToRsV1Controller extends AbstractForwardEwpApiController {
 
   private final EwpIncomingMobilityToRsV1Client client;

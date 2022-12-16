@@ -33,10 +33,11 @@ bootstrap:
       adminNotes: Sample host
       adminProvider: Sample Provider (EWP Node)
       forwardEwpApi:
-        secret: sample-host-forward-ewp-api-secret
-      notificationApi:
-        baseUrl: https://example.com/rest
-        secret: sample-host-notification-api-secret
+        clients:
+          - id: client-1
+            secret: sample-host-forward-ewp-api-secret-1
+          - id: client-2
+            secret: sample-host-forward-ewp-api-secret-2
       coveredHeis:
         - schacCode: sample.edu
           names:

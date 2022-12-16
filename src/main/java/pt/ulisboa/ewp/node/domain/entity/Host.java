@@ -2,6 +2,8 @@ package pt.ulisboa.ewp.node.domain.entity;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.HostForwardEwpApiConfiguration;
+import javax.persistence.Transient;
+import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.HostForwardEwpApi;
 import pt.ulisboa.ewp.node.domain.entity.http.log.host.HostHttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.listener.EntityAuditListener;
 
@@ -30,13 +33,15 @@ public class Host {
   private String adminNotes;
   private String adminProvider;
 
-  private HostForwardEwpApiConfiguration forwardEwpApiConfiguration;
-  private Collection<Hei> coveredHeis = new HashSet<>();
+  private HostForwardEwpApi forwardEwpApi;
+  private Set<Hei> coveredHeis = new HashSet<>();
   private Collection<HostHttpCommunicationLog> httpCommunicationLogs = new HashSet<>();
 
-  protected Host() {}
+  protected Host() {
+  }
 
-  protected Host(String code, String description, String adminEmail, String adminNotes, String adminProvider) {
+  protected Host(String code, String description, String adminEmail, String adminNotes,
+      String adminProvider) {
     this.code = code;
     this.description = description;
     this.adminEmail = adminEmail;
@@ -100,22 +105,27 @@ public class Host {
   }
 
   @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinColumn(name = "forward_ewp_api_configuration_id")
-  public HostForwardEwpApiConfiguration getForwardEwpApiConfiguration() {
-    return forwardEwpApiConfiguration;
+  @JoinColumn(name = "forward_ewp_api_id")
+  public HostForwardEwpApi getForwardEwpApi() {
+    return forwardEwpApi;
   }
 
-  public void setForwardEwpApiConfiguration(
-      HostForwardEwpApiConfiguration forwardEwpApiConfiguration) {
-    this.forwardEwpApiConfiguration = forwardEwpApiConfiguration;
+  public void setForwardEwpApi(
+      HostForwardEwpApi forwardEwpApi) {
+    this.forwardEwpApi = forwardEwpApi;
   }
 
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "host", cascade = CascadeType.ALL)
-  public Collection<Hei> getCoveredHeis() {
+  public Set<Hei> getCoveredHeis() {
     return coveredHeis;
   }
 
-  public void setCoveredHeis(Collection<Hei> coveredHeis) {
+  @Transient
+  public Optional<Hei> getCoveredHei(String schacCode) {
+    return coveredHeis.stream().filter(ch -> ch.getSchacCode().equals(schacCode)).findFirst();
+  }
+
+  public void setCoveredHeis(Set<Hei> coveredHeis) {
     this.coveredHeis = coveredHeis;
   }
 
@@ -128,7 +138,16 @@ public class Host {
     this.httpCommunicationLogs = httpCommunicationLogs;
   }
 
-  public static Host create(String code, String description, String adminEmail, String adminNotes, String adminProvider) {
+  public void update(String description, String adminEmail, String adminNotes,
+      String adminProvider) {
+    this.description = description;
+    this.adminEmail = adminEmail;
+    this.adminNotes = adminNotes;
+    this.adminProvider = adminProvider;
+  }
+
+  public static Host create(String code, String description, String adminEmail, String adminNotes,
+      String adminProvider) {
     return new Host(code, description, adminEmail, adminNotes, adminProvider);
   }
 

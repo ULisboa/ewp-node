@@ -6,17 +6,17 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.JwtAuthenticationUserDetails;
 
-public class ForwardEwpApiAuthenticationToken extends AbstractAuthenticationToken {
+public class ForwardEwpApiClientAuthenticationToken extends AbstractAuthenticationToken {
 
   private final transient JwtAuthenticationUserDetails details;
-  private final transient ForwardEwpApiHostPrincipal principal;
+  private final transient ForwardEwpApiHostClientPrincipal principal;
 
-  public ForwardEwpApiAuthenticationToken(
-      JwtAuthenticationUserDetails details, ForwardEwpApiHostPrincipal principal) {
+  public ForwardEwpApiClientAuthenticationToken(
+      JwtAuthenticationUserDetails details, ForwardEwpApiHostClientPrincipal principal) {
     super(
         Collections.singletonList(
             new SimpleGrantedAuthority(
-                ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX)));
+                ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX)));
     this.details = details;
     this.principal = principal;
     setAuthenticated(true);
@@ -33,7 +33,7 @@ public class ForwardEwpApiAuthenticationToken extends AbstractAuthenticationToke
   }
 
   @Override
-  public ForwardEwpApiHostPrincipal getPrincipal() {
+  public ForwardEwpApiHostClientPrincipal getPrincipal() {
     return principal;
   }
 
@@ -53,7 +53,7 @@ public class ForwardEwpApiAuthenticationToken extends AbstractAuthenticationToke
     if (!super.equals(o)) {
       return false;
     }
-    ForwardEwpApiAuthenticationToken that = (ForwardEwpApiAuthenticationToken) o;
+    ForwardEwpApiClientAuthenticationToken that = (ForwardEwpApiClientAuthenticationToken) o;
     return Objects.equals(details, that.details) && Objects.equals(principal, that.principal);
   }
 

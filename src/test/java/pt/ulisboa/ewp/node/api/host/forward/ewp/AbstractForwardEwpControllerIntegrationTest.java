@@ -58,9 +58,11 @@ public abstract class AbstractForwardEwpControllerIntegrationTest extends
 
   protected RequestPostProcessor jwtTokenRequestProcessor(Host host) {
     return request -> {
+      String clientId = "client-1";
       String jwtToken = JWT.create()
-          .withIssuer(host.getCode())
-          .sign(Algorithm.HMAC256(host.getForwardEwpApiConfiguration().getSecret()));
+          .withIssuer(clientId)
+          .sign(Algorithm.HMAC256(
+              host.getForwardEwpApi().getClientById(clientId).get().getSecret()));
 
       request.addHeader("Authorization", "Bearer " + jwtToken);
       return request;

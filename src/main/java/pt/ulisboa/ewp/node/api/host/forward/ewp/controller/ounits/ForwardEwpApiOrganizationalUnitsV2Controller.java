@@ -30,7 +30,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.ORGANIZATIONAL_UNITS)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "ounits/v2")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiOrganizationalUnitsV2Controller extends AbstractForwardEwpApiController {
 
   private final EwpOrganizationalUnitsV2Client client;

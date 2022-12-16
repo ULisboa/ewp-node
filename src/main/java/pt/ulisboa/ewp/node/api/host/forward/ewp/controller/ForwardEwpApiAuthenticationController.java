@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiAuthenticationTestResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiAuthenticationToken;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiClientAuthenticationToken;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
@@ -18,7 +18,7 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 
 @RestController
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "authentication")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 @Validated
 public class ForwardEwpApiAuthenticationController extends AbstractForwardEwpApiController {
 
@@ -32,10 +32,11 @@ public class ForwardEwpApiAuthenticationController extends AbstractForwardEwpApi
       description = "Used for testing authentication of EWP Forward APIs.",
       tags = {"Authentication"})
   public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiAuthenticationTestResponseDTO>>
-      testAuthentication(ForwardEwpApiAuthenticationToken authentication) {
+  testAuthentication(ForwardEwpApiClientAuthenticationToken authentication) {
     ForwardEwpApiAuthenticationTestResponseDTO response =
         new ForwardEwpApiAuthenticationTestResponseDTO();
-    response.setHostCode(authentication.getPrincipal().getHost().getCode());
+    response.setHostCode(
+        authentication.getPrincipal().getHostForwardEwpApiClient().getHost().getCode());
     return ForwardEwpApiResponseUtils.toOkResponseEntity(response);
   }
 }

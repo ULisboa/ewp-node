@@ -30,7 +30,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.COURSES)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "courses/v0")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiController {
 
   private final EwpCoursesV0Client client;

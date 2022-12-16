@@ -28,7 +28,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.SIMPLE_COURSE_REPLICATION)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "courses/replication/v1")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiSimpleCourseReplicationV1Controller
     extends AbstractForwardEwpApiController {
 

@@ -45,8 +45,8 @@ import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 public class ForwardEwpApiInstitutionsV2ControllerIntegrationTest extends
     AbstractResourceIntegrationTest {
 
-  private static final String TOKEN_SECRET = "sample-host-forward-ewp-api-secret";
-  private static final String HOST_CODE = "sample-host";
+  private static final String TOKEN_SECRET = "sample-host-forward-ewp-api-secret-1";
+  private static final String HOST_CLIENT_ID = "client-1";
 
   private static final String API_FIND_URI =
       ForwardEwpApiConstants.API_BASE_URI + "institutions/v2";
@@ -61,7 +61,8 @@ public class ForwardEwpApiInstitutionsV2ControllerIntegrationTest extends
 
   @BeforeEach
   public void beforeTest() {
-    jwtToken = JWT.create().withIssuer(HOST_CODE).sign(Algorithm.HMAC256(TOKEN_SECRET.getBytes()));
+    jwtToken = JWT.create().withIssuer(HOST_CLIENT_ID)
+        .sign(Algorithm.HMAC256(TOKEN_SECRET.getBytes()));
   }
 
   @Test

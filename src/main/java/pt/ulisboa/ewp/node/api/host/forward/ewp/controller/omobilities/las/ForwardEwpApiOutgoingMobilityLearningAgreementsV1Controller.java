@@ -33,7 +33,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENTS)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "omobilities/las/v1")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiOutgoingMobilityLearningAgreementsV1Controller extends
     AbstractForwardEwpApiController {
 

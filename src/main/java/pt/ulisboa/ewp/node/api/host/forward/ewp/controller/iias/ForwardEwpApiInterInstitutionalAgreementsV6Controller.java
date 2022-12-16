@@ -31,7 +31,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.INTERINSTITUTIONAL_AGREEMENTS)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "iias/v6")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiInterInstitutionalAgreementsV6Controller
     extends AbstractForwardEwpApiController {
 

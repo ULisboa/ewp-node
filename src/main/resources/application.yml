@@ -81,11 +81,21 @@ bootstrap:
       adminProvider: Sample Provider (EWP Node)
       # Configuration of the Forward EWP APIs
       forwardEwpApi:
-        # Secret key that the host will use when generating a JWT token.
-        # This secret key is used on the EWP node to assert that the received JWT token
-        # was effectively produced by the host.
-        # Hence, both host and EWP node must know this secret.
-        secret: sample-host-forward-ewp-api-secret
+        # OPTIONAL
+        # A list of clients that are able to use the Forward EWP APIs
+        clients:
+          # Each client has an ID and a secret.
+          # The ID must be used as "iss" (issuer) of the JWT token used for authentication
+          # for the Forward EWP APIs.
+          # The ID must be unique among all clients, independent of the host.
+          # The secret is used when generating a JWT token.
+          # This secret key is used by the EWP node to assert that the received JWT token
+          # was effectively produced by the client.
+          # Hence, both host and EWP node must know this secret.
+          - id: client-1
+            secret: sample-host-forward-ewp-api-secret-1
+          - id: client-2
+            secret: sample-host-forward-ewp-api-secret-2
       coveredHeis:
         - schacCode: sample.edu
           names:

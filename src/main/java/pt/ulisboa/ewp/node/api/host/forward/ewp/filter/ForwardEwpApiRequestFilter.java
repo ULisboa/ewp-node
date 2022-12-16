@@ -14,6 +14,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.filter.ForwardEwpApiJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.domain.entity.Host;
+import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.service.http.log.host.HostHttpCommunicationLogService;
 
 /**
@@ -51,11 +52,12 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
     filterChain.doFilter(requestWrapper, responseWrapper);
     ZonedDateTime endProcessingDateTime = ZonedDateTime.now();
 
-    Host host = (Host) request
-        .getAttribute(ForwardEwpApiJwtTokenAuthenticationFilter.REQUEST_ATTRIBUTE_HOST_NAME);
+    HostForwardEwpApiClient hostForwardEwpApiClient = (HostForwardEwpApiClient) request
+        .getAttribute(
+            ForwardEwpApiJwtTokenAuthenticationFilter.REQUEST_ATTRIBUTE_HOST_FORWARD_EWP_API_CLIENT_NAME);
 
     logCommunication(
-        host,
+        hostForwardEwpApiClient != null ? hostForwardEwpApiClient.getHost() : null,
         requestWrapper,
         responseWrapper,
         startProcessingDateTime,

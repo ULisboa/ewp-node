@@ -26,7 +26,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.FILES)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "files/v1")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiFilesV1Controller extends AbstractForwardEwpApiController {
 
   private final EwpFilesV1Client client;

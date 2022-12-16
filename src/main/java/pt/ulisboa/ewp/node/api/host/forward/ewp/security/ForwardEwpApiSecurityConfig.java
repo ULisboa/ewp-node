@@ -8,15 +8,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import pt.ulisboa.ewp.node.api.common.filter.security.logging.MDCAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.filter.ForwardEwpApiJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
-import pt.ulisboa.ewp.node.domain.repository.HostRepository;
+import pt.ulisboa.ewp.node.domain.repository.host.forward.ewp.client.HostForwardEwpApiClientRepository;
 
 @Configuration
 @Order(2)
 public class ForwardEwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final HostRepository repository;
+  private final HostForwardEwpApiClientRepository repository;
 
-  public ForwardEwpApiSecurityConfig(HostRepository repository) {
+  public ForwardEwpApiSecurityConfig(HostForwardEwpApiClientRepository repository) {
     this.repository = repository;
   }
 

@@ -23,7 +23,7 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 @RestController
 @ForwardEwpApi(EwpApi.OUTGOING_MOBILITY_CNR)
 @RequestMapping(ForwardEwpApiConstants.API_BASE_URI + "omobilities/cnr")
-@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_WITH_PREFIX})
+@Secured({ForwardEwpApiSecurityCommonConstants.ROLE_HOST_CLIENT_WITH_PREFIX})
 public class ForwardEwpApiOutgoingMobilityCnrController extends AbstractForwardEwpApiController {
 
   private final EwpChangeNotificationRepository changeNotificationRepository;

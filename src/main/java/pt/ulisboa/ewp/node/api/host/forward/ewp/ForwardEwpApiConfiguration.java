@@ -38,8 +38,8 @@ public class ForwardEwpApiConfiguration {
                   .name(securitySchemeName)
                   .type(SecurityScheme.Type.HTTP)
                   .description(
-                      "JWT token with \"iss\" claim filled with the host's code. "
-                          + "The token shall be encoded using the host's secret")
+                      "JWT token with \"iss\" claim filled with the client ID. "
+                          + "The token shall be encoded using the client's secret")
                   .scheme("bearer")
                   .bearerFormat("JWT"));
     }
