@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.config.bootstrap;
 
 import java.util.List;
+import java.util.Optional;
 
 public class HostCoveredHeiBootstrapProperties {
 
@@ -26,6 +27,10 @@ public class HostCoveredHeiBootstrapProperties {
 
   public List<OtherHeiIdBootstrapProperties> getOtherHeiIds() {
     return otherHeiIds;
+  }
+
+  public Optional<OtherHeiIdBootstrapProperties> getOtherHeiIdByType(String type) {
+    return this.otherHeiIds.stream().filter(ohi -> ohi.getType().equals(type)).findFirst();
   }
 
   public void setOtherHeiIds(List<OtherHeiIdBootstrapProperties> otherHeiIds) {

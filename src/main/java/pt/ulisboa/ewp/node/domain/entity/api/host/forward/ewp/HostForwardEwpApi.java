@@ -59,6 +59,11 @@ public class HostForwardEwpApi {
   }
 
   @Transient
+  public Optional<HostForwardEwpApiClient> getActiveClientById(String clientId) {
+    return getClientById(clientId).filter(HostForwardEwpApiClient::isActive);
+  }
+
+  @Transient
   public Optional<HostForwardEwpApiClient> getClientById(String clientId) {
     return this.clients.stream().filter(c -> c.getId().equals(clientId)).findFirst();
   }

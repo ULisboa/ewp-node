@@ -50,8 +50,8 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
   @Override
   protected Optional<String> getTokenSecret(DecodedJWT jwt) {
     String issuer = jwt.getIssuer();
-    Optional<HostForwardEwpApiClient> hostForwardEwpApiClientOptional = clientRepository.findById(
-        issuer);
+    Optional<HostForwardEwpApiClient> hostForwardEwpApiClientOptional = clientRepository.findByIdAndActive(
+        issuer, true);
     if (hostForwardEwpApiClientOptional.isPresent()) {
       HostForwardEwpApiClient hostForwardEwpApiClient = hostForwardEwpApiClientOptional.get();
       return Optional.ofNullable(hostForwardEwpApiClient.getSecret());
@@ -63,8 +63,8 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
   @Override
   protected ForwardEwpApiClientAuthenticationToken resolveToAuthentication(
       DecodedJWT decodedToken) {
-    Optional<HostForwardEwpApiClient> hostForwardEwpApiClientOptional = clientRepository.findById(
-        decodedToken.getIssuer());
+    Optional<HostForwardEwpApiClient> hostForwardEwpApiClientOptional = clientRepository.findByIdAndActive(
+        decodedToken.getIssuer(), true);
     assert hostForwardEwpApiClientOptional.isPresent();
     HostForwardEwpApiClient hostForwardEwpApiClient = hostForwardEwpApiClientOptional.get();
 

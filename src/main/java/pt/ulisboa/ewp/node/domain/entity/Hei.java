@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -84,13 +85,17 @@ public class Hei {
     this.host = host;
   }
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "hei", cascade = CascadeType.ALL)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "hei", cascade = CascadeType.ALL, orphanRemoval = true)
   public Collection<OtherHeiId> getOtherHeiIds() {
     return otherHeiIds;
   }
 
   public void setOtherHeiIds(Collection<OtherHeiId> otherHeiIds) {
     this.otherHeiIds = otherHeiIds;
+  }
+
+  public Optional<OtherHeiId> getOtherHeiIdByType(String type) {
+    return this.otherHeiIds.stream().filter(ohi -> ohi.getType().equals(type)).findFirst();
   }
 
   public void update(Map<Locale, String> name) {

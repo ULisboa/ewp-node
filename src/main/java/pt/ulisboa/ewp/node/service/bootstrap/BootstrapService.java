@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.service.bootstrap;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -21,8 +22,6 @@ import pt.ulisboa.ewp.node.domain.entity.OtherHeiId;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.HostForwardEwpApi;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
-import pt.ulisboa.ewp.node.domain.repository.KeyStoreConfigurationRepository;
-import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 
 @Service
 @Transactional
@@ -37,11 +36,6 @@ public class BootstrapService {
   @Autowired
   private HostRepository hostRepository;
 
-  @Autowired
-  private KeyStoreConfigurationRepository keyStoreConfigurationRepository;
-
-  @Autowired
-  private KeyStoreService keystoreService;
 
   public void bootstrap() {
     bootstrapEwpHosts();
@@ -91,8 +85,33 @@ public class BootstrapService {
       forwardEwpApi = host.getForwardEwpApi();
     }
 
-    for (HostForwardEwpApiClientBootstrapProperties clientProperties : forwardEwpApiProperties.getClients()) {
+    syncHostForwardEwpApiClients(forwardEwpApi, forwardEwpApiProperties);
+  }
+
+  private void syncHostForwardEwpApiClients(HostForwardEwpApi forwardEwpApi,
+      HostForwardEwpApiBootstrapProperties hostForwardEwpApiBootstrapProperties) {
+
+    markOldHostForwardEwpApiClientsAsInactive(forwardEwpApi, hostForwardEwpApiBootstrapProperties);
+
+    for (HostForwardEwpApiClientBootstrapProperties clientProperties : hostForwardEwpApiBootstrapProperties.getClients()) {
       createOrUpdateHostForwardEwpApiClient(forwardEwpApi, clientProperties);
+    }
+  }
+
+  /**
+   * Host Forward EWP API clients that no longer are specified on bootstrap properties are marked as
+   * inactive with a new random secret.
+   */
+  private void markOldHostForwardEwpApiClientsAsInactive(HostForwardEwpApi forwardEwpApi,
+      HostForwardEwpApiBootstrapProperties hostForwardEwpApiBootstrapProperties) {
+    Iterator<HostForwardEwpApiClient> clientIterator = forwardEwpApi.getClients().iterator();
+    while (clientIterator.hasNext()) {
+      HostForwardEwpApiClient client = clientIterator.next();
+      Optional<HostForwardEwpApiClientBootstrapProperties> bootstrapClientProperties = hostForwardEwpApiBootstrapProperties.getClientById(
+          client.getId());
+      if (bootstrapClientProperties.isEmpty()) {
+        client.setActive(false);
+      }
     }
   }
 
@@ -102,11 +121,12 @@ public class BootstrapService {
         clientProperties.getId());
     if (existingClientOptional.isPresent()) {
       HostForwardEwpApiClient client = existingClientOptional.get();
-      client.update(clientProperties.getSecret());
+      client.setSecret(clientProperties.getSecret());
+      client.setActive(true);
     } else {
       forwardEwpApi.getClients()
           .add(HostForwardEwpApiClient.create(forwardEwpApi, clientProperties.getId(),
-              clientProperties.getSecret()));
+              clientProperties.getSecret(), true));
     }
   }
 
@@ -127,21 +147,47 @@ public class BootstrapService {
       hei = Hei.create(host, coveredHeiProperties.getSchacCode(), localizedName);
     }
 
-    createOtherHeiIds(hei, coveredHeiProperties);
+    syncOtherHeiIds(hei, coveredHeiProperties);
 
     host.getCoveredHeis().add(hei);
 
     return hei;
   }
 
-  private static void createOtherHeiIds(Hei hei,
+  private void syncOtherHeiIds(Hei hei,
       HostCoveredHeiBootstrapProperties coveredHeiProperties) {
-    hei.getOtherHeiIds().clear();
-    for (OtherHeiIdBootstrapProperties otherHeiIdProperties : coveredHeiProperties.getOtherHeiIds()) {
-      OtherHeiId otherHeiId =
-          OtherHeiId.create(
-              hei, otherHeiIdProperties.getType(), otherHeiIdProperties.getValue());
-      hei.getOtherHeiIds().add(otherHeiId);
+    deleteOldOtherHeiIds(hei, coveredHeiProperties);
+    createOrUpdateOtherHeiIds(hei, coveredHeiProperties);
+  }
+
+  private void deleteOldOtherHeiIds(Hei hei,
+      HostCoveredHeiBootstrapProperties coveredHeiProperties) {
+    Iterator<OtherHeiId> otherHeiIdIterator = hei.getOtherHeiIds().iterator();
+    while (otherHeiIdIterator.hasNext()) {
+      OtherHeiId otherHeiId = otherHeiIdIterator.next();
+      Optional<OtherHeiIdBootstrapProperties> boostrapOtherHeiIdProperties = coveredHeiProperties.getOtherHeiIdByType(
+          otherHeiId.getType());
+      if (boostrapOtherHeiIdProperties.isEmpty()) {
+        otherHeiIdIterator.remove();
+      }
     }
   }
+
+  private void createOrUpdateOtherHeiIds(Hei hei,
+      HostCoveredHeiBootstrapProperties coveredHeiProperties) {
+    for (OtherHeiIdBootstrapProperties otherHeiIdProperties : coveredHeiProperties.getOtherHeiIds()) {
+      Optional<OtherHeiId> existingOtherHeiIdOptional = hei.getOtherHeiIdByType(
+          otherHeiIdProperties.getType());
+      if (existingOtherHeiIdOptional.isPresent()) {
+        OtherHeiId existingOtherHeiId = existingOtherHeiIdOptional.get();
+        existingOtherHeiId.setValue(otherHeiIdProperties.getValue());
+      } else {
+        OtherHeiId otherHeiId =
+            OtherHeiId.create(
+                hei, otherHeiIdProperties.getType(), otherHeiIdProperties.getValue());
+        hei.getOtherHeiIds().add(otherHeiId);
+      }
+    }
+  }
+
 }

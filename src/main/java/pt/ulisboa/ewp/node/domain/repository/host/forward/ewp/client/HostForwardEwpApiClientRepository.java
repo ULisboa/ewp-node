@@ -20,7 +20,7 @@ public class HostForwardEwpApiClientRepository extends AbstractRepository<HostFo
     super(HostForwardEwpApiClient.class, sessionFactory);
   }
 
-  public Optional<HostForwardEwpApiClient> findById(String id) {
+  public Optional<HostForwardEwpApiClient> findByIdAndActive(String id, boolean active) {
     return runInSession(
         session -> {
           CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -29,7 +29,10 @@ public class HostForwardEwpApiClientRepository extends AbstractRepository<HostFo
           Root<HostForwardEwpApiClient> selection = query.from(HostForwardEwpApiClient.class);
           return session
               .createQuery(query.where(
-                  criteriaBuilder.equal(selection.get(HostForwardEwpApiClient_.id), id)))
+                  criteriaBuilder.and(
+                      criteriaBuilder.equal(selection.get(HostForwardEwpApiClient_.id), id),
+                      criteriaBuilder.equal(selection.get(HostForwardEwpApiClient_.active), active)
+                  )))
               .stream()
               .findFirst();
         });

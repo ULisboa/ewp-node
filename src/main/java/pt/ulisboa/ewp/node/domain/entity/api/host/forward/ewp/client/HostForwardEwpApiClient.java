@@ -18,6 +18,11 @@ import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.HostForwardEwpApi;
 import pt.ulisboa.ewp.node.domain.entity.http.log.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.domain.listener.EntityAuditListener;
 
+/**
+ * Specifies a Host Forward EWP API client. A client must never be deleted. Instead, it should be
+ * marked as inactive. This is necessary to guarantee the persistence of old HTTP communication logs
+ * to that client.
+ */
 @Entity
 @EntityListeners(EntityAuditListener.class)
 @Table(name = "HOST_FORWARD_EWP_API_CLIENT")
@@ -26,15 +31,18 @@ public class HostForwardEwpApiClient {
   private String id;
   private HostForwardEwpApi forwardEwpApi;
   private String secret;
+  private boolean active;
   private Collection<HttpCommunicationFromHostLog> httpCommunicationFromHostLogs = new HashSet<>();
 
   protected HostForwardEwpApiClient() {
   }
 
-  protected HostForwardEwpApiClient(HostForwardEwpApi forwardEwpApi, String id, String secret) {
+  protected HostForwardEwpApiClient(HostForwardEwpApi forwardEwpApi, String id, String secret,
+      boolean active) {
     this.forwardEwpApi = forwardEwpApi;
     this.id = id;
     this.secret = secret;
+    this.active = active;
   }
 
   @Id
@@ -67,6 +75,14 @@ public class HostForwardEwpApiClient {
     this.secret = secret;
   }
 
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+  }
+
   @Transient
   public Host getHost() {
     return forwardEwpApi.getHost();
@@ -82,20 +98,18 @@ public class HostForwardEwpApiClient {
     this.httpCommunicationFromHostLogs = httpCommunicationFromHostLogs;
   }
 
-  public void update(String secret) {
-    this.secret = secret;
-  }
-
   public static HostForwardEwpApiClient create(HostForwardEwpApi forwardEwpApi, String id,
-      String secret) {
-    return new HostForwardEwpApiClient(forwardEwpApi, id, secret);
+      String secret, boolean active) {
+    return new HostForwardEwpApiClient(forwardEwpApi, id, secret, active);
   }
 
   @Override
   public String toString() {
     return "HostForwardEwpApiClient{" +
         "id='" + id + '\'' +
+        ", host=" + forwardEwpApi.getHost().getCode() +
         ", secret=REDACTED" +
+        ", active=" + active +
         '}';
   }
 }

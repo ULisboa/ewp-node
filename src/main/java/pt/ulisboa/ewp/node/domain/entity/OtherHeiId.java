@@ -81,6 +81,7 @@ public class OtherHeiId {
   @Override
   public String toString() {
     return String.format(
-        "OtherHeiId(hei schac code = %s; type = %s; value = %s)", hei.getSchacCode(), type, value);
+        "OtherHeiId(hei schac code = %s; type = %s; value = %s)",
+        hei != null ? hei.getSchacCode() : null, type, value);
   }
 }
