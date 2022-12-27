@@ -3,11 +3,17 @@ package pt.ulisboa.ewp.node.api.ewp.controller.courses;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 
 import eu.erasmuswithoutpaper.api.courses.v0.CoursesResponseV0;
+import eu.erasmuswithoutpaper.api.courses.v0.CoursesResponseV0.LearningOpportunitySpecification;
 import io.swagger.v3.oas.annotations.Operation;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.Set;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,28 +50,25 @@ public class EwpApiCoursesV0Controller {
   public ResponseEntity<CoursesResponseV0> courses(
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
       @RequestParam(value = EwpApiParamConstants.LOS_ID, required = false)
-          List<String> losIds,
+      List<String> losIds,
       @RequestParam(value = EwpApiParamConstants.LOS_CODE, required = false)
-          List<String> losCodes,
+      List<String> losCodes,
       @RequestParam(value = EwpApiParamConstants.LOIS_BEFORE, required = false)
       @DateTimeFormat(iso = DATE)
-          LocalDate loisBefore,
+      LocalDate loisBefore,
       @RequestParam(value = EwpApiParamConstants.LOIS_AFTER, required = false)
       @DateTimeFormat(iso = DATE)
-          LocalDate loisAfter,
+      LocalDate loisAfter,
       @RequestParam(value = EwpApiParamConstants.LOS_AT_DATE, required = false)
       @DateTimeFormat(iso = DATE)
-          LocalDate losAtDate) {
+      LocalDate losAtDate) {
 
     losIds = losIds != null ? losIds : Collections.emptyList();
     losCodes = losCodes != null ? losCodes : Collections.emptyList();
 
-    Optional<CoursesV0HostProvider> providerOptional =
-        hostPluginManager.getProvider(heiId, CoursesV0HostProvider.class);
-    if (providerOptional.isEmpty()) {
+    if (!hostPluginManager.hasHostProvider(heiId, CoursesV0HostProvider.class)) {
       throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
     }
-    CoursesV0HostProvider provider = providerOptional.get();
 
     if (!losIds.isEmpty() && !losCodes.isEmpty()) {
       throw new EwpBadRequestException(
@@ -77,40 +80,79 @@ public class EwpApiCoursesV0Controller {
           "At least some LOS ID or code must be provided");
     }
 
+    Collection<CoursesV0HostProvider> providers = hostPluginManager.getAllProvidersOfType(
+        heiId, CoursesV0HostProvider.class);
+
     if (!losIds.isEmpty()) {
-      return coursesByIds(provider, heiId, losIds, loisBefore, loisAfter, losAtDate);
+      return coursesByIds(providers, heiId, losIds, loisBefore, loisAfter, losAtDate);
     } else {
-      return coursesByCodes(provider, heiId, losCodes, loisBefore, loisAfter, losAtDate);
+      return coursesByCodes(providers, heiId, losCodes, loisBefore, loisAfter, losAtDate);
     }
   }
 
   private ResponseEntity<CoursesResponseV0> coursesByIds(
-      CoursesV0HostProvider provider, String heiId, List<String> losIds, LocalDate loisBefore,
+      Collection<CoursesV0HostProvider> providers, String heiId, List<String> losIds,
+      LocalDate loisBefore,
       LocalDate loisAfter, LocalDate losAtDate) {
-    if (losIds.size() > provider.getMaxLosIdsPerRequest()) {
+
+    int maxLosIdsPerRequest = providers.stream().mapToInt(
+        CoursesV0HostProvider::getMaxLosIdsPerRequest).max().orElse(0);
+    if (losIds.size() > maxLosIdsPerRequest) {
       throw new EwpBadRequestException(
-          "Maximum number of valid LOS IDs per request is "
-              + provider.getMaxLosIdsPerRequest());
+          "Maximum number of valid LOS IDs per request is " + maxLosIdsPerRequest);
+    }
+
+    Map<String, LearningOpportunitySpecification> losIdToLosMap = new HashMap<>();
+    Set<String> missingLosIds = new HashSet<>(losIds);
+    Iterator<CoursesV0HostProvider> providerIterator = providers.iterator();
+    while (providerIterator.hasNext() && !missingLosIds.isEmpty()) {
+      CoursesV0HostProvider provider = providerIterator.next();
+      Collection<LearningOpportunitySpecification> learningOpportunitySpecifications = provider.findByHeiIdAndLosIds(
+          heiId, missingLosIds, loisBefore, loisAfter, losAtDate);
+      for (LearningOpportunitySpecification learningOpportunitySpecification : learningOpportunitySpecifications) {
+        losIdToLosMap.put(learningOpportunitySpecification.getLosId(),
+            learningOpportunitySpecification);
+        missingLosIds.remove(learningOpportunitySpecification.getLosId());
+      }
     }
 
     CoursesResponseV0 response = new CoursesResponseV0();
-    response.getLearningOpportunitySpecification()
-        .addAll(provider.findByHeiIdAndLosIds(heiId, losIds, loisBefore, loisAfter, losAtDate));
+    for (LearningOpportunitySpecification learningOpportunitySpecification : losIdToLosMap.values()) {
+      response.getLearningOpportunitySpecification().add(learningOpportunitySpecification);
+    }
     return ResponseEntity.ok(response);
   }
 
   private ResponseEntity<CoursesResponseV0> coursesByCodes(
-      CoursesV0HostProvider provider, String heiId, List<String> losCodes, LocalDate loisBefore,
+      Collection<CoursesV0HostProvider> providers, String heiId, List<String> losCodes,
+      LocalDate loisBefore,
       LocalDate loisAfter, LocalDate losAtDate) {
-    if (losCodes.size() > provider.getMaxLosCodesPerRequest()) {
+
+    int maxLosCodesPerRequest = providers.stream().mapToInt(
+        CoursesV0HostProvider::getMaxLosCodesPerRequest).max().orElse(0);
+    if (losCodes.size() > maxLosCodesPerRequest) {
       throw new EwpBadRequestException(
-          "Maximum number of valid LOS codes per request is "
-              + provider.getMaxLosCodesPerRequest());
+          "Maximum number of valid LOS codes per request is " + maxLosCodesPerRequest);
+    }
+
+    Map<String, LearningOpportunitySpecification> losCodeToLosMap = new HashMap<>();
+    Set<String> missingLosCodes = new HashSet<>(losCodes);
+    Iterator<CoursesV0HostProvider> providerIterator = providers.iterator();
+    while (providerIterator.hasNext() && !missingLosCodes.isEmpty()) {
+      CoursesV0HostProvider provider = providerIterator.next();
+      Collection<LearningOpportunitySpecification> learningOpportunitySpecifications = provider.findByHeiIdAndLosCodes(
+          heiId, missingLosCodes, loisBefore, loisAfter, losAtDate);
+      for (LearningOpportunitySpecification learningOpportunitySpecification : learningOpportunitySpecifications) {
+        losCodeToLosMap.put(learningOpportunitySpecification.getLosCode(),
+            learningOpportunitySpecification);
+        missingLosCodes.remove(learningOpportunitySpecification.getLosCode());
+      }
     }
 
     CoursesResponseV0 response = new CoursesResponseV0();
-    response.getLearningOpportunitySpecification()
-        .addAll(provider.findByHeiIdAndLosCodes(heiId, losCodes, loisBefore, loisAfter, losAtDate));
+    for (LearningOpportunitySpecification learningOpportunitySpecification : losCodeToLosMap.values()) {
+      response.getLearningOpportunitySpecification().add(learningOpportunitySpecification);
+    }
     return ResponseEntity.ok(response);
   }
 }

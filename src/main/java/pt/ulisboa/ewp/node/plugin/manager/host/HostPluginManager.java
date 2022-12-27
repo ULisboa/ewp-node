@@ -164,7 +164,7 @@ public class HostPluginManager extends DefaultPluginManager {
 
   public <T> Collection<T> getAllProvidersOfType(String heiId, Class<T> providerClassType) {
     this.heiIdToPluginsMap.computeIfAbsent(heiId, ignored -> new ArrayList<>());
-    Collection<HostPlugin> plugins = this.heiIdToPluginsMap.get(heiId);
+    Collection<HostPlugin> plugins = getSortedPlugins(heiId);
     return plugins.stream()
         .flatMap(p -> getExtensions(p, providerClassType).stream())
         .collect(Collectors.toList());
@@ -190,6 +190,26 @@ public class HostPluginManager extends DefaultPluginManager {
 
   public Collection<String> getCoveredHeiIds() {
     return this.heiIdToPluginsMap.keySet();
+  }
+
+  /**
+   * Returns the sorted collection of plugins covering a given HEI ID. The sorting rules are, in
+   * order:
+   * <p>
+   * 1. Primary host plugins before non-primary host plugins
+   * <p>
+   * 2. Lexicographical order of the plugin IDs
+   */
+  private Collection<HostPlugin> getSortedPlugins(String heiId) {
+    return this.heiIdToPluginsMap.get(heiId)
+        .stream()
+        .sorted((x, y) -> {
+          if (x.isPrimaryForHeiId(heiId) != y.isPrimaryForHeiId(heiId)) {
+            return x.isPrimaryForHeiId(heiId) ? -1 : 1;
+          }
+          return x.getWrapper().getPluginId().compareTo(y.getWrapper().getPluginId());
+        })
+        .collect(Collectors.toList());
   }
 
   private Collection<HostPlugin> getAllPlugins() {
