@@ -136,10 +136,10 @@ public class EwpApiIncomingMobilityToRsV2Controller {
       if (mappingOptional.isPresent()) {
         EwpOutgoingMobilityMapping mapping = mappingOptional.get();
 
-        Collection<IncomingMobilityToRsV2HostProvider> providers = hostPluginManager.getProvidersByHeiIdAndOunitId(
+        Optional<IncomingMobilityToRsV2HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
             heiId, mapping.getOunitId(), IncomingMobilityToRsV2HostProvider.class);
-        if (!providers.isEmpty()) {
-          IncomingMobilityToRsV2HostProvider provider = providers.iterator().next();
+        if (providerOptional.isPresent()) {
+          IncomingMobilityToRsV2HostProvider provider = providerOptional.get();
           result.computeIfAbsent(provider, ignored -> new ArrayList<>());
           result.get(provider).add(omobilityId);
         }

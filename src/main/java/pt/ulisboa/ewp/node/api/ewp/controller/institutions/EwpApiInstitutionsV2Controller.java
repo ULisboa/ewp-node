@@ -53,7 +53,7 @@ public class EwpApiInstitutionsV2Controller {
 
     String heiId = heiIds.get(0);
 
-    Optional<InstitutionsV2HostProvider> hostProviderOptional = hostPluginManager.getProvider(
+    Optional<InstitutionsV2HostProvider> hostProviderOptional = hostPluginManager.getPrimaryProvider(
         heiId, InstitutionsV2HostProvider.class);
     InstitutionsResponseV2 response = new InstitutionsResponseV2();
     if (hostProviderOptional.isPresent()) {

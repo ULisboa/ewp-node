@@ -79,14 +79,14 @@ class EwpApiIncomingMobilitiesV1ControllerIntegrationTest extends
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(receivingHeiId, IncomingMobilitiesV1HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(receivingHeiId, ounitIds.get(0),
+    doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(0),
             IncomingMobilitiesV1HostProvider.class);
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(receivingHeiId, ounitIds.get(1),
+    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(1),
             IncomingMobilitiesV1HostProvider.class);
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(receivingHeiId, ounitIds.get(2),
+    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(2),
             IncomingMobilitiesV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
@@ -153,14 +153,14 @@ class EwpApiIncomingMobilitiesV1ControllerIntegrationTest extends
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(receivingHeiId, IncomingMobilitiesV1HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(receivingHeiId, ounitIds.get(0),
+    doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(0),
             IncomingMobilitiesV1HostProvider.class);
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(receivingHeiId, ounitIds.get(1),
+    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(1),
             IncomingMobilitiesV1HostProvider.class);
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(receivingHeiId, ounitIds.get(2),
+    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(2),
             IncomingMobilitiesV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();

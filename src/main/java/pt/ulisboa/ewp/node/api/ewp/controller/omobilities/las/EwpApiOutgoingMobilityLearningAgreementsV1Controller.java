@@ -163,7 +163,7 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
           "Unknown learning agreement with omobility_id: " + omobilityId);
     }
 
-    Optional<OutgoingMobilityLearningAgreementsV1HostProvider> providerOptional = hostPluginManager.getProvider(
+    Optional<OutgoingMobilityLearningAgreementsV1HostProvider> providerOptional = hostPluginManager.getSingleProvider(
         sendingHeiId, mappingOptional.get().getOunitId(),
         OutgoingMobilityLearningAgreementsV1HostProvider.class);
     if (providerOptional.isEmpty()) {
@@ -330,10 +330,10 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
       if (mappingOptional.isPresent()) {
         EwpOutgoingMobilityMapping mapping = mappingOptional.get();
 
-        Collection<OutgoingMobilityLearningAgreementsV1HostProvider> providers = hostPluginManager.getProvidersByHeiIdAndOunitId(
+        Optional<OutgoingMobilityLearningAgreementsV1HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
             heiId, mapping.getOunitId(), OutgoingMobilityLearningAgreementsV1HostProvider.class);
-        if (!providers.isEmpty()) {
-          OutgoingMobilityLearningAgreementsV1HostProvider provider = providers.iterator().next();
+        if (providerOptional.isPresent()) {
+          OutgoingMobilityLearningAgreementsV1HostProvider provider = providerOptional.get();
           result.computeIfAbsent(provider, ignored -> new ArrayList<>());
           result.get(provider).add(omobilityId);
         }

@@ -175,14 +175,14 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(heiId, ounitIds.get(0),
+    doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(0),
             InterInstitutionalAgreementsV6HostProvider.class);
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(heiId, ounitIds.get(1),
+    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(1),
             InterInstitutionalAgreementsV6HostProvider.class);
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(heiId, ounitIds.get(2),
+    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(2),
             InterInstitutionalAgreementsV6HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
@@ -244,11 +244,11 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(heiId, ounitIds.get(0),
+    doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(0),
             InterInstitutionalAgreementsV6HostProvider.class);
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(heiId, ounitIds.get(1),
+    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(1),
             InterInstitutionalAgreementsV6HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
@@ -312,14 +312,14 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(heiId, ounitIds.get(0),
+    doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(0),
             InterInstitutionalAgreementsV6HostProvider.class);
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(heiId, ounitIds.get(1),
+    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(1),
             InterInstitutionalAgreementsV6HostProvider.class);
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(heiId, ounitIds.get(2),
+    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(2),
             InterInstitutionalAgreementsV6HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
@@ -381,11 +381,11 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(heiId, ounitIds.get(0),
+    doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(0),
             InterInstitutionalAgreementsV6HostProvider.class);
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(heiId, ounitIds.get(1),
+    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(1),
             InterInstitutionalAgreementsV6HostProvider.class);
 
     HttpParams queryParams = new HttpParams();

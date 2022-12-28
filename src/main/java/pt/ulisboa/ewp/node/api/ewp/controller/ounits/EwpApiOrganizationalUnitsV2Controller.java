@@ -75,6 +75,10 @@ public class EwpApiOrganizationalUnitsV2Controller {
     Map<OrganizationalUnitsV2HostProvider, Collection<String>> providerToOunitIdsMap = hostPluginManager.getOunitIdsCoveredPerProviderOfHeiId(
         heiId, ounitIds, OrganizationalUnitsV2HostProvider.class);
 
+    if (providerToOunitIdsMap.isEmpty()) {
+      throw new EwpUnknownHeiIdException(heiId);
+    }
+
     int maxOunitIdsPerRequest = providerToOunitIdsMap.keySet().stream().mapToInt(
             OrganizationalUnitsV2HostProvider::getMaxOunitIdsPerRequest)
         .min().orElse(0);
@@ -105,6 +109,10 @@ public class EwpApiOrganizationalUnitsV2Controller {
   private ResponseEntity<OunitsResponseV2> ounitsByCodes(String heiId, List<String> ounitCodes) {
     Map<OrganizationalUnitsV2HostProvider, Collection<String>> providerToOunitCodesMap = hostPluginManager.getOunitCodesCoveredPerProviderOfHeiId(
         heiId, ounitCodes, OrganizationalUnitsV2HostProvider.class);
+
+    if (providerToOunitCodesMap.isEmpty()) {
+      throw new EwpUnknownHeiIdException(heiId);
+    }
 
     int maxOunitCodesPerRequest = providerToOunitCodesMap.keySet().stream().mapToInt(
             OrganizationalUnitsV2HostProvider::getMaxOunitCodesPerRequest)

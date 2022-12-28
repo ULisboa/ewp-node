@@ -227,11 +227,11 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
       if (mappingOptional.isPresent()) {
         EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
 
-        Collection<InterInstitutionalAgreementsV6HostProvider> providers = hostPluginManager.getProvidersByHeiIdAndOunitId(
+        Optional<InterInstitutionalAgreementsV6HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
             heiId, mapping.getOunitId(),
             InterInstitutionalAgreementsV6HostProvider.class);
-        if (!providers.isEmpty()) {
-          InterInstitutionalAgreementsV6HostProvider provider = providers.iterator().next();
+        if (providerOptional.isPresent()) {
+          InterInstitutionalAgreementsV6HostProvider provider = providerOptional.get();
           result.computeIfAbsent(provider, ignored -> new ArrayList<>());
           result.get(provider).add(iiaId);
         }
@@ -255,11 +255,11 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
       if (mappingOptional.isPresent()) {
         EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
 
-        Collection<InterInstitutionalAgreementsV6HostProvider> providers = hostPluginManager.getProvidersByHeiIdAndOunitId(
+        Optional<InterInstitutionalAgreementsV6HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
             heiId, mapping.getOunitId(),
             InterInstitutionalAgreementsV6HostProvider.class);
-        if (!providers.isEmpty()) {
-          InterInstitutionalAgreementsV6HostProvider provider = providers.iterator().next();
+        if (providerOptional.isPresent()) {
+          InterInstitutionalAgreementsV6HostProvider provider = providerOptional.get();
           result.computeIfAbsent(provider, ignored -> new ArrayList<>());
           result.get(provider).add(iiaCode);
         }

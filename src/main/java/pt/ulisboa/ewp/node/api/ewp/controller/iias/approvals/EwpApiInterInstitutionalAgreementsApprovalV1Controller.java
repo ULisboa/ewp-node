@@ -81,11 +81,11 @@ public class EwpApiInterInstitutionalAgreementsApprovalV1Controller {
       if (mappingOptional.isPresent()) {
         EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
 
-        Collection<InterInstitutionalAgreementsApprovalV1HostProvider> providers = hostPluginManager.getProvidersByHeiIdAndOunitId(
+        Optional<InterInstitutionalAgreementsApprovalV1HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
             heiId, mapping.getOunitId(),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
-        if (!providers.isEmpty()) {
-          InterInstitutionalAgreementsApprovalV1HostProvider provider = providers.iterator().next();
+        if (providerOptional.isPresent()) {
+          InterInstitutionalAgreementsApprovalV1HostProvider provider = providerOptional.get();
           result.computeIfAbsent(provider, ignored -> new ArrayList<>());
           result.get(provider).add(iiaId);
         }

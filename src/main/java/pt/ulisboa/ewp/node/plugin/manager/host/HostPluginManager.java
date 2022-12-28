@@ -3,10 +3,11 @@ package pt.ulisboa.ewp.node.plugin.manager.host;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.pf4j.DefaultPluginManager;
@@ -60,7 +61,9 @@ public class HostPluginManager extends DefaultPluginManager {
       if (plugin.isPrimaryForHeiId(heiId)) {
         if (this.heiIdToPrimaryPluginMap.containsKey(heiId)) {
           throw new IllegalStateException(
-              "Multiple plugins are set as primary for HEI ID: " + heiId);
+              "Multiple plugins are set as primary for HEI ID " + heiId + ": " +
+                  this.heiIdToPrimaryPluginMap.get(heiId).getWrapper().getPluginId() + " and "
+                  + plugin.getWrapper().getPluginId());
         }
         this.heiIdToPrimaryPluginMap.put(heiId, plugin);
       }
@@ -82,35 +85,34 @@ public class HostPluginManager extends DefaultPluginManager {
     return !providers.isEmpty();
   }
 
-  public <T extends HostProvider> Optional<T> getProvider(
+  public <T extends HostProvider> Optional<T> getPrimaryProvider(
       String heiId, Class<T> providerClassType) {
-    return getProvider(heiId, null, providerClassType);
+    Optional<HostPlugin> primaryPluginOptional = getPrimaryPluginCoveringHeiId(heiId);
+    if (primaryPluginOptional.isEmpty()) {
+      return Optional.empty();
+    }
+    return getSingleProvider(primaryPluginOptional.get(), providerClassType);
   }
 
-  public <T extends HostProvider> Optional<T> getProvider(
+  public <T extends HostProvider> Optional<T> getSingleProvider(
       String heiId, String ounitId, Class<T> providerClassType) {
-    Collection<T> extensions = getProvidersByHeiIdAndOunitId(heiId, ounitId, providerClassType);
-    if (!extensions.isEmpty() && extensions.size() > 1) {
-      LOGGER.warn(
-          "Multiple providers detected for HEI ID {} and OUNIT ID {}, will use the first one",
-          heiId, ounitId);
+    Optional<HostPlugin> pluginOptional = getSinglePluginCoveringHeiIdAndOunitId(heiId, ounitId);
+    if (pluginOptional.isEmpty()) {
+      return Optional.empty();
     }
-    return extensions.stream().findFirst();
+    return getSingleProvider(pluginOptional.get(), providerClassType);
   }
 
   public <T extends HostProvider> Map<T, Collection<String>> getOunitIdsCoveredPerProviderOfHeiId(
       String heiId,
       Collection<String> ounitIds, Class<T> providerClassType) throws EwpUnknownHeiIdException {
 
-    if (!hasHostProvider(heiId, providerClassType)) {
-      throw new EwpUnknownHeiIdException(heiId);
-    }
-
     Map<T, Collection<String>> result = new HashMap<>();
     for (String ounitId : ounitIds) {
-      Collection<T> providers = getProvidersByHeiIdAndOunitId(heiId, ounitId, providerClassType);
-      if (!providers.isEmpty()) {
-        T provider = providers.iterator().next();
+      Optional<T> providerOptional = getSingleProviderByHeiIdAndOunitId(heiId, ounitId,
+          providerClassType);
+      if (providerOptional.isPresent()) {
+        T provider = providerOptional.get();
         result.computeIfAbsent(provider, ignored -> new ArrayList<>());
         result.get(provider).add(ounitId);
       }
@@ -126,16 +128,12 @@ public class HostPluginManager extends DefaultPluginManager {
       String heiId,
       Collection<String> ounitCodes, Class<T> providerClassType) {
 
-    if (!hasHostProvider(heiId, providerClassType)) {
-      throw new EwpUnknownHeiIdException(heiId);
-    }
-
     Map<T, Collection<String>> result = new HashMap<>();
     for (String ounitCode : ounitCodes) {
-      Collection<T> providers = getProvidersByHeiIdAndOunitCode(heiId, ounitCode,
+      Optional<T> providerOptional = getSingleProviderByHeiIdAndOunitCode(heiId, ounitCode,
           providerClassType);
-      if (!providers.isEmpty()) {
-        T provider = providers.iterator().next();
+      if (providerOptional.isPresent()) {
+        T provider = providerOptional.get();
         result.computeIfAbsent(provider, ignored -> new ArrayList<>());
         result.get(provider).add(ounitCode);
       }
@@ -170,26 +168,42 @@ public class HostPluginManager extends DefaultPluginManager {
         .collect(Collectors.toList());
   }
 
-  public <T> Collection<T> getProvidersByHeiIdAndOunitId(String heiId, String ounitId,
+  public <T> Optional<T> getSingleProviderByHeiIdAndOunitId(String heiId, String ounitId,
       Class<T> providerClassType) {
-    Optional<HostPlugin> pluginOptional = getAnyPluginForHeiIdAndOunitId(heiId, ounitId);
+    Optional<HostPlugin> pluginOptional = getSinglePluginCoveringHeiIdAndOunitId(heiId, ounitId);
     if (pluginOptional.isEmpty()) {
-      return Collections.emptyList();
+      return Optional.empty();
     }
-    return getExtensions(pluginOptional.get(), providerClassType);
+    return getSingleProvider(pluginOptional.get(), providerClassType);
   }
 
-  public <T> Collection<T> getProvidersByHeiIdAndOunitCode(String heiId, String ounitCode,
+  public <T> Optional<T> getSingleProviderByHeiIdAndOunitCode(String heiId, String ounitCode,
       Class<T> providerClassType) {
-    Optional<HostPlugin> pluginOptional = getAnyPluginForHeiIdAndOunitCode(heiId, ounitCode);
+    Optional<HostPlugin> pluginOptional = getSinglePluginCoveringHeiIdAndOunitCode(heiId,
+        ounitCode);
     if (pluginOptional.isEmpty()) {
-      return Collections.emptyList();
+      return Optional.empty();
     }
-    return getExtensions(pluginOptional.get(), providerClassType);
+    return getSingleProvider(pluginOptional.get(), providerClassType);
   }
 
-  public Collection<String> getCoveredHeiIds() {
-    return this.heiIdToPluginsMap.keySet();
+  public <T> Optional<T> getSingleProvider(HostPlugin hostPlugin, Class<T> providerClassType) {
+    Collection<T> providers = getAllProviders(hostPlugin, providerClassType);
+    if (providers.isEmpty()) {
+      return Optional.empty();
+    }
+    if (providers.size() > 1) {
+      LOGGER.warn(
+          "Multiple admissible providers of class {} found for the same host plugin with ID {}: {}",
+          providerClassType.getSimpleName(),
+          hostPlugin.getWrapper().getPluginId(),
+          providers.stream().map(p -> p.getClass().getSimpleName()).collect(Collectors.toList()));
+    }
+    return Optional.ofNullable(providers.iterator().next());
+  }
+
+  private <T> Collection<T> getAllProviders(HostPlugin hostPlugin, Class<T> providerClassType) {
+    return getExtensions(hostPlugin, providerClassType);
   }
 
   /**
@@ -220,37 +234,53 @@ public class HostPluginManager extends DefaultPluginManager {
         .collect(Collectors.toList());
   }
 
+  private Optional<HostPlugin> getSinglePluginCoveringHeiIdAndOunitId(String heiId,
+      @Nullable String ounitId) {
+    if (ounitId == null) {
+      return getPrimaryPluginCoveringHeiId(heiId);
+
+    } else {
+      return getSinglePluginCoveringHeiIdAndSatisfyingCondition(heiId,
+          p -> p.getCoveredOunitIdsByHeiId(heiId).contains(ounitId));
+    }
+  }
+
+  private Optional<HostPlugin> getSinglePluginCoveringHeiIdAndOunitCode(String heiId,
+      @Nullable String ounitCode) {
+    if (ounitCode == null) {
+      return getPrimaryPluginCoveringHeiId(heiId);
+
+    } else {
+      return getSinglePluginCoveringHeiIdAndSatisfyingCondition(heiId,
+          p -> p.getCoveredOunitCodesByHeiId(heiId).contains(ounitCode));
+    }
+  }
+
+  private Optional<HostPlugin> getSinglePluginCoveringHeiIdAndSatisfyingCondition(String heiId,
+      Predicate<HostPlugin> filter) {
+    List<HostPlugin> plugins = this.heiIdToPluginsMap.getOrDefault(heiId, new ArrayList<>())
+        .stream()
+        .filter(filter)
+        .collect(Collectors.toList());
+    if (plugins.isEmpty()) {
+      return Optional.empty();
+    }
+    if (plugins.size() > 1) {
+      LOGGER.warn("Multiple admissible plugins found for the same HEI ID {}: {}", heiId,
+          plugins.stream().map(p -> p.getWrapper().getPluginId()).collect(
+              Collectors.toList()));
+    }
+    return Optional.ofNullable(plugins.iterator().next());
+  }
+
   private <T> Collection<T> getExtensions(Plugin plugin, Class<T> extensionType) {
     return super.getExtensions(extensionType, plugin.getWrapper().getPluginId());
   }
 
-  private Optional<HostPlugin> getAnyPluginForHeiIdAndOunitId(String heiId,
-      @Nullable String ounitId) {
-    if (ounitId == null) {
-      return Optional.ofNullable(this.heiIdToPrimaryPluginMap.get(heiId));
-
-    } else {
-      for (HostPlugin hostPlugin : this.heiIdToPluginsMap.getOrDefault(heiId, new ArrayList<>())) {
-        if (hostPlugin.getCoveredOunitIdsByHeiId(heiId).contains(ounitId)) {
-          return Optional.of(hostPlugin);
-        }
-      }
+  private Optional<HostPlugin> getPrimaryPluginCoveringHeiId(String heiId) {
+    if (!this.heiIdToPrimaryPluginMap.containsKey(heiId)) {
       return Optional.empty();
     }
-  }
-
-  private Optional<HostPlugin> getAnyPluginForHeiIdAndOunitCode(String heiId,
-      @Nullable String ounitCode) {
-    if (ounitCode == null) {
-      return Optional.ofNullable(this.heiIdToPrimaryPluginMap.get(heiId));
-
-    } else {
-      for (HostPlugin hostPlugin : this.heiIdToPluginsMap.getOrDefault(heiId, new ArrayList<>())) {
-        if (hostPlugin.getCoveredOunitCodesByHeiId(heiId).contains(ounitCode)) {
-          return Optional.of(hostPlugin);
-        }
-      }
-      return Optional.empty();
-    }
+    return Optional.ofNullable(this.heiIdToPrimaryPluginMap.get(heiId));
   }
 }

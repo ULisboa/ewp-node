@@ -142,7 +142,8 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         .when(hostPluginManager.hasHostProvider(heiId,
             OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
-    Mockito.when(hostPluginManager.getProvider(heiId, OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.getPrimaryProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     Map<OrganizationalUnitsV2HostProvider, Collection<String>> providerToOunitCodesMap = Map.of(

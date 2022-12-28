@@ -83,16 +83,16 @@ class EwpApiInterInstitutionalAgreementsApprovalV1ControllerTest extends
         .getAllProvidersOfType(approvingHeiId,
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(approvingHeiId, ounitIds.get(0),
+    doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(approvingHeiId, ounitIds.get(0),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(approvingHeiId, ounitIds.get(1),
+    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(approvingHeiId, ounitIds.get(1),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider2)).when(hostPluginManager)
-        .getProvidersByHeiIdAndOunitId(approvingHeiId, ounitIds.get(2),
+    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
+        .getSingleProviderByHeiIdAndOunitId(approvingHeiId, ounitIds.get(2),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
