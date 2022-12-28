@@ -202,9 +202,6 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     assertThat(response).isNotNull();
     assertThat(response.getIia()).hasSize(iiaIds.size());
-    for (Iia iia : response.getIia()) {
-      assertThat(iia.getConditionsHash()).isNotBlank();
-    }
   }
 
   @ParameterizedTest
@@ -268,9 +265,6 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     assertThat(response).isNotNull();
     assertThat(response.getIia()).hasSize(knownIiaIds.size());
-    for (Iia iia : response.getIia()) {
-      assertThat(iia.getConditionsHash()).isNotBlank();
-    }
   }
 
   @ParameterizedTest
@@ -339,9 +333,6 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     assertThat(response).isNotNull();
     assertThat(response.getIia()).hasSize(iiaCodes.size());
-    for (Iia iia : response.getIia()) {
-      assertThat(iia.getConditionsHash()).isNotBlank();
-    }
   }
 
   @ParameterizedTest
@@ -405,9 +396,6 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     assertThat(response).isNotNull();
     assertThat(response.getIia()).hasSize(knownIiaCodes.size());
-    for (Iia iia : response.getIia()) {
-      assertThat(iia.getConditionsHash()).isNotBlank();
-    }
   }
 
   @Test
