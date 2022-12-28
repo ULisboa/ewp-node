@@ -5,6 +5,7 @@ import java.io.StringReader;
 import java.net.URL;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -43,7 +44,10 @@ public class XmlValidator {
   public boolean validate(String xml, URL schemaUrl) {
     try {
       SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-      Schema schema = schemaFactory.newSchema(schemaUrl);
+      Schema schema = schemaFactory.newSchema(new Source[]{
+          new StreamSource("http://www.w3.org/2001/xml.xsd"),
+          new StreamSource(schemaUrl.toString())
+      });
       Validator validator = schema.newValidator();
       validator.validate(new StreamSource(new StringReader(xml)));
       return true;
