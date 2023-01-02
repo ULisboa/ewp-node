@@ -117,7 +117,9 @@ public class EwpApiUtils {
     if (httpSecurityOptions != null) {
       List<Object> clientAuthMethods = httpSecurityOptions.getClientAuthMethods().getAny();
       for (Object object : clientAuthMethods) {
-        result.add(EwpClientAuthenticationConfigurationFactory.getInstance().create(object));
+        Optional<EwpClientAuthenticationConfiguration> configurationOptional = EwpClientAuthenticationConfigurationFactory.getInstance()
+            .create(object);
+        configurationOptional.ifPresent(result::add);
       }
     }
     return result;
@@ -129,7 +131,9 @@ public class EwpApiUtils {
     if (httpSecurityOptions != null) {
       List<Object> serverAuthMethods = httpSecurityOptions.getServerAuthMethods().getAny();
       for (Object object : serverAuthMethods) {
-        result.add(EwpServerAuthenticationConfigurationFactory.getInstance().create(object));
+        Optional<EwpServerAuthenticationConfiguration> configurationOptional = EwpServerAuthenticationConfigurationFactory.getInstance()
+            .create(object);
+        configurationOptional.ifPresent(result::add);
       }
     }
     return result;

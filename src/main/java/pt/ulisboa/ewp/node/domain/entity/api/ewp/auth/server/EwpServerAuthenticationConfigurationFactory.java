@@ -3,9 +3,15 @@ package pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server;
 import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.v1.SrvauthHttpsigV1;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EwpServerAuthenticationConfigurationFactory {
+
+  private static final Logger LOG = LoggerFactory.getLogger(
+      EwpServerAuthenticationConfigurationFactory.class);
 
   private static EwpServerAuthenticationConfigurationFactory instance;
 
@@ -29,12 +35,12 @@ public class EwpServerAuthenticationConfigurationFactory {
     this.dictionary.put(clazz, object -> converter.apply(clazz.cast(object)));
   }
 
-  public <T> EwpServerAuthenticationConfiguration create(T object) {
+  public <T> Optional<EwpServerAuthenticationConfiguration> create(T object) {
     if (dictionary.containsKey(object.getClass())) {
-      return dictionary.get(object.getClass()).apply(object);
+      return Optional.ofNullable(dictionary.get(object.getClass()).apply(object));
     } else {
-      throw new IllegalArgumentException(
-          "Unknown class type: " + object.getClass().getCanonicalName());
+      LOG.debug("Unknown class type: " + object.getClass().getCanonicalName());
+      return Optional.empty();
     }
   }
 }

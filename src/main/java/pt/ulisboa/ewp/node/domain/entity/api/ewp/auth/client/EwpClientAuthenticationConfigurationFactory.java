@@ -4,9 +4,15 @@ import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.httpsig.v1.Cliauth
 import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.none.v1.CliauthAnonymousV1;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EwpClientAuthenticationConfigurationFactory {
+
+  private static final Logger LOG = LoggerFactory.getLogger(
+      EwpClientAuthenticationConfigurationFactory.class);
 
   private static EwpClientAuthenticationConfigurationFactory instance;
 
@@ -33,12 +39,12 @@ public class EwpClientAuthenticationConfigurationFactory {
     this.dictionary.put(clazz, object -> converter.apply(clazz.cast(object)));
   }
 
-  public <T> EwpClientAuthenticationConfiguration create(T object) {
+  public <T> Optional<EwpClientAuthenticationConfiguration> create(T object) {
     if (dictionary.containsKey(object.getClass())) {
-      return dictionary.get(object.getClass()).apply(object);
+      return Optional.ofNullable(dictionary.get(object.getClass()).apply(object));
     } else {
-      throw new IllegalArgumentException(
-          "Unknown class type: " + object.getClass().getCanonicalName());
+      LOG.debug("Unknown class type: " + object.getClass().getCanonicalName());
+      return Optional.empty();
     }
   }
 }
