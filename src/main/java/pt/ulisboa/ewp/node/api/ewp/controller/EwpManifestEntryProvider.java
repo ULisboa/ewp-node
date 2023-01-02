@@ -2,7 +2,6 @@ package pt.ulisboa.ewp.node.api.ewp.controller;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.httpsig.v1.CliauthHttpsigV1;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.tlscert.v1.CliauthTlscertV1;
 import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.v1.SrvauthHttpsigV1;
 import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.v1.SrvauthTlscertV1;
 import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
@@ -134,10 +133,6 @@ public abstract class EwpManifestEntryProvider {
 
     HttpSecurityOptions.ClientAuthMethods clientAuthMethods =
         new HttpSecurityOptions.ClientAuthMethods();
-
-    CliauthTlscertV1 cliauthTlscert = new CliauthTlscertV1();
-    cliauthTlscert.setAllowsSelfSigned(true);
-    clientAuthMethods.getAny().add(cliauthTlscert);
 
     clientAuthMethods.getAny().add(new CliauthHttpsigV1());
 
