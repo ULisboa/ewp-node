@@ -17,8 +17,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult.Builder;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpFilesApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationTlsCertificateConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationTlsCertificateConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationHttpSignatureConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationHttpSignatureConfiguration;
 
 class EwpFilesV1ClientUnitTest {
 
@@ -34,8 +34,8 @@ class EwpFilesV1ClientUnitTest {
 
     EwpFilesApiConfiguration apiConfiguration = new EwpFilesApiConfiguration(
         "https://www.example.org",
-        List.of(new EwpClientAuthenticationTlsCertificateConfiguration(true)),
-        List.of(new EwpServerAuthenticationTlsCertificateConfiguration()));
+        List.of(new EwpClientAuthenticationHttpSignatureConfiguration()),
+        List.of(new EwpServerAuthenticationHttpSignatureConfiguration()));
 
     EwpResponse ewpResponse = new EwpResponse.Builder(HttpStatus.OK).mediaType(mediaType).build();
 

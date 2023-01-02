@@ -21,10 +21,8 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfigurationFactory;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationTlsCertificateConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfigurationFactory;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationTlsCertificateConfiguration;
 import pt.ulisboa.ewp.node.utils.EwpApi;
 import pt.ulisboa.ewp.node.utils.SemanticVersion;
 
@@ -121,9 +119,6 @@ public class EwpApiUtils {
       for (Object object : clientAuthMethods) {
         result.add(EwpClientAuthenticationConfigurationFactory.getInstance().create(object));
       }
-    } else {
-      // Default authentication methods according to EWP documentation
-      result.add(new EwpClientAuthenticationTlsCertificateConfiguration(true));
     }
     return result;
   }
@@ -136,9 +131,6 @@ public class EwpApiUtils {
       for (Object object : serverAuthMethods) {
         result.add(EwpServerAuthenticationConfigurationFactory.getInstance().create(object));
       }
-    } else {
-      // Default authentication methods according to EWP documentation
-      result.add(new EwpServerAuthenticationTlsCertificateConfiguration());
     }
     return result;
   }

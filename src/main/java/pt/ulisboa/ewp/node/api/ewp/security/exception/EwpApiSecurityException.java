@@ -9,10 +9,6 @@ public class EwpApiSecurityException extends AuthenticationException {
   private final HttpStatus status;
   private final EwpAuthenticationMethod authMethod;
 
-  public EwpApiSecurityException(String message, HttpStatus status) {
-    this(message, status, EwpAuthenticationMethod.TLS);
-  }
-
   public EwpApiSecurityException(String message, HttpStatus status,
       EwpAuthenticationMethod authMethod) {
     super(message);

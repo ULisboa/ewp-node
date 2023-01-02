@@ -99,33 +99,6 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
   }
 
   @Test
-  public void testEchoGetWithTLSAndNoParameters() throws Exception {
-    assertSuccessfulEchoRequest(
-        Collections.emptyList(),
-        this::getRequest,
-        tlsRequestProcessor(registryClient, EXPECTED_HEI_IDS),
-        new HttpHeaders());
-  }
-
-  @Test
-  public void testEchoGetWithTLSAndOneParameter() throws Exception {
-    assertSuccessfulEchoRequest(
-        Collections.singletonList("a1"),
-        this::getRequest,
-        tlsRequestProcessor(registryClient, EXPECTED_HEI_IDS),
-        new HttpHeaders());
-  }
-
-  @Test
-  public void testEchoGetWithTLSAndTwoParameters() throws Exception {
-    assertSuccessfulEchoRequest(
-        Arrays.asList("a1", "b2"),
-        this::getRequest,
-        tlsRequestProcessor(registryClient, EXPECTED_HEI_IDS),
-        new HttpHeaders());
-  }
-
-  @Test
   public void testEchoGetWithHttpSignatureAndInvalidAlgorithm() throws Exception {
     assertUnsuccessfulEchoRequest(
         InvalidEchoHttpSignatureTestDataWrapper.create(
@@ -306,33 +279,6 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_XML))
         .andExpect(status().isUnauthorized());
-  }
-
-  @Test
-  public void testEchoPostWithTLSAndNoParameters() throws Exception {
-    assertSuccessfulEchoRequest(
-        Collections.emptyList(),
-        this::postRequest,
-        tlsRequestProcessor(registryClient, EXPECTED_HEI_IDS),
-        new HttpHeaders());
-  }
-
-  @Test
-  public void testEchoPostWithTLSAndOneParameter() throws Exception {
-    assertSuccessfulEchoRequest(
-        Collections.singletonList("a1"),
-        this::postRequest,
-        tlsRequestProcessor(registryClient, EXPECTED_HEI_IDS),
-        new HttpHeaders());
-  }
-
-  @Test
-  public void testEchoPostWithTLSAndTwoParameters() throws Exception {
-    assertSuccessfulEchoRequest(
-        Arrays.asList("a1", "b2"),
-        this::postRequest,
-        tlsRequestProcessor(registryClient, EXPECTED_HEI_IDS),
-        new HttpHeaders());
   }
 
   @Test

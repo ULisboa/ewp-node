@@ -2,7 +2,6 @@ package pt.ulisboa.ewp.node.api.ewp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
@@ -15,17 +14,17 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +42,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.UriUtils;
 import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
@@ -148,8 +148,8 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
       RegistryClient registryClient, MockHttpServletRequestBuilder requestBuilder)
       throws Exception {
     RequestPostProcessor securityRequestProcessor =
-        tlsRequestProcessor(
-            registryClient, Collections.singletonList(UUID.randomUUID().toString()));
+        httpSignatureRequestProcessor(registryClient,
+            Collections.singletonList(UUID.randomUUID().toString()));
 
     return executeRequest(registryClient, requestBuilder, securityRequestProcessor);
   }
@@ -188,6 +188,7 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
 
   protected RequestPostProcessor serializableBodyProcessor(Serializable serializable) {
     return request -> {
+      request.setCharacterEncoding("UTF-8");
       request.setContentType(MediaType.TEXT_XML_VALUE);
       request.setContent(XmlUtils.marshall(serializable).getBytes(StandardCharsets.UTF_8));
       return request;
@@ -209,20 +210,50 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
     };
   }
 
-  protected RequestPostProcessor tlsRequestProcessor(
+  /**
+   * Modifies an HTTP request to include valid HTTP Signature headers. Also, configures required
+   * mocks in order for HTTP Signature authentication to succeed.
+   */
+  protected RequestPostProcessor httpSignatureRequestProcessor(
       RegistryClient registryClient, Collection<String> clientCoveredHeiIds) {
     return request -> {
-      X509Certificate mockedX509Certificate = mock(X509Certificate.class);
+      HttpHeaders headers = HttpUtils.toExtendedHttpHeaders(request);
 
+      request.addHeader(HttpHeaders.HOST, "localhost");
+      request.addHeader(HttpHeaders.DATE,
+          DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
+      request.addHeader(HttpConstants.HEADER_X_REQUEST_ID, UUID.randomUUID().toString());
+
+      addRequestDigestHeader(request);
+
+      String keyId = UUID.randomUUID().toString();
+      Algorithm algorithm = Algorithm.RSA_SHA256;
+
+      TreeSet<String> signatureHeadersSet = new TreeSet<>(headers.keySet());
+      signatureHeadersSet.add(HttpSignatureUtils.HEADER_REQUEST_TARGET);
+      signatureHeadersSet.add(HttpHeaders.HOST);
+      signatureHeadersSet.add(HttpHeaders.DATE);
+      signatureHeadersSet.add(HttpConstants.HEADER_X_REQUEST_ID);
+      signatureHeadersSet.add(HttpConstants.HEADER_DIGEST);
+      String[] signatureHeaders = signatureHeadersSet.toArray(new String[0]);
+
+      KeyPair keyPair = createKeyPair();
+
+      Signature signature = generateSignatureForRequest(request, keyPair, keyId, algorithm,
+          signatureHeaders);
+      request.addHeader("Authorization", signature);
+
+      request.addHeader(
+          HttpConstants.HEADER_ACCEPT_SIGNATURE, Algorithm.RSA_SHA256.getPortableName());
+      request.addHeader(HttpConstants.HEADER_WANT_DIGEST, "SHA-256");
+
+      doReturn(keyPair.getPublic())
+          .when(registryClient)
+          .findClientRsaPublicKey(keyId);
       doReturn(clientCoveredHeiIds)
           .when(registryClient)
-          .getHeisCoveredByCertificate(mockedX509Certificate);
-      doReturn(mockedX509Certificate)
-          .when(registryClient)
-          .getCertificateKnownInEwpNetwork(new X509Certificate[] {mockedX509Certificate});
+          .getHeisCoveredByClientKey((RSAPublicKey) keyPair.getPublic());
 
-      request.setAttribute(
-          "javax.servlet.request.X509Certificate", new X509Certificate[] {mockedX509Certificate});
       return request;
     };
   }
@@ -333,6 +364,23 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
     }
   }
 
+  private Signature generateSignatureForRequest(HttpServletRequest request, KeyPair keyPair,
+      String keyId,
+      Algorithm algorithm, String[] signatureHeaders) {
+    Signer signer =
+        new Signer(keyPair.getPrivate(), new Signature(keyId, algorithm, null, signatureHeaders));
+
+    String queryParams = request.getQueryString();
+    String requestString = request.getPathInfo() + (queryParams == null ? "" : "?" + queryParams);
+    try {
+      return signer.sign(
+          request.getMethod().toLowerCase(), requestString,
+          HttpUtils.toHeadersMap(HttpUtils.toExtendedHttpHeaders(request)));
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
   private void addRequestDigestHeader(MockHttpServletRequest request) {
     try {
       request.addHeader("Digest", "SHA-256=" + getDigest(request));
@@ -341,12 +389,26 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
     }
   }
 
-  private String getDigest(HttpServletRequest httpServletRequest)
+  private String getDigest(MockHttpServletRequest httpServletRequest)
       throws IOException, NoSuchAlgorithmException {
-    String body =
-        httpServletRequest.getReader() != null
-            ? IOUtils.toString(httpServletRequest.getReader())
-            : "";
+    String body = "";
+    switch (httpServletRequest.getMethod()) {
+      case "POST":
+      case "PUT":
+        if (httpServletRequest.getContentAsByteArray() != null
+            && httpServletRequest.getCharacterEncoding() != null) {
+          body = httpServletRequest.getContentAsString();
+        } else {
+          body = httpServletRequest.getParameterMap().entrySet().stream()
+              .flatMap(e -> Arrays.stream(e.getValue())
+                  .map(
+                      v -> UriUtils.encodeQuery(e.getKey(), "UTF-8") + "=" + UriUtils.encodeQuery(v,
+                          "UTF-8"))
+              )
+              .collect(Collectors.joining("&"));
+        }
+        break;
+    }
     MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
     byte[] digest = messageDigest.digest(body.getBytes(StandardCharsets.UTF_8));
     return new String(Base64.getEncoder().encode(digest));

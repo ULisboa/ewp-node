@@ -13,6 +13,5 @@ public class EwpClientConstants {
       Collections.unmodifiableList(
           Arrays.asList(
               EwpAuthenticationMethod.HTTP_SIGNATURE,
-              EwpAuthenticationMethod.TLS,
               EwpAuthenticationMethod.ANONYMOUS));
 }

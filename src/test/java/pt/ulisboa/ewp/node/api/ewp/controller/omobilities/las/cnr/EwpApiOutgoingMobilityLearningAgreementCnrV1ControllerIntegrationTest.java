@@ -137,7 +137,7 @@ class EwpApiOutgoingMobilityLearningAgreementCnrV1ControllerIntegrationTest exte
             + "/stats?" + EwpApiParamConstants.HEI_ID + "=" + heiId);
 
     String responseXml = executeRequest(registryClient, requestBuilder,
-        tlsRequestProcessor(registryClient, List.of("test123")))
+        httpSignatureRequestProcessor(registryClient, List.of("test123")))
         .andExpect(status().isOk())
         .andReturn()
         .getResponse()

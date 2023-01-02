@@ -2,7 +2,6 @@ package pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client;
 
 import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.httpsig.v1.CliauthHttpsigV1;
 import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.none.v1.CliauthAnonymousV1;
-import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.tlscert.v1.CliauthTlscertV1;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -22,10 +21,6 @@ public class EwpClientAuthenticationConfigurationFactory {
   }
 
   private EwpClientAuthenticationConfigurationFactory() {
-    registerConverter(
-        CliauthTlscertV1.class,
-        o -> new EwpClientAuthenticationTlsCertificateConfiguration(o.isAllowsSelfSigned()));
-
     registerConverter(
         CliauthHttpsigV1.class, o -> new EwpClientAuthenticationHttpSignatureConfiguration());
 

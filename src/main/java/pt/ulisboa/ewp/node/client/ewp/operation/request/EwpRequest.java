@@ -23,7 +23,7 @@ public class EwpRequest implements Serializable {
   private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
   private HttpParams queryParams = new HttpParams();
   private EwpRequestBody body = new EwpRequestFormDataUrlEncodedBody(new HttpParams());
-  private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.TLS;
+  private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.HTTP_SIGNATURE;
 
   public EwpRequest(HttpMethod method, @NotNull String urlWithoutQueryParams) {
     this.method = method;

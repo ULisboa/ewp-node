@@ -1,7 +1,6 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server;
 
 import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.v1.SrvauthHttpsigV1;
-import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.v1.SrvauthTlscertV1;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -23,9 +22,6 @@ public class EwpServerAuthenticationConfigurationFactory {
   private EwpServerAuthenticationConfigurationFactory() {
     registerConverter(
         SrvauthHttpsigV1.class, o -> new EwpServerAuthenticationHttpSignatureConfiguration());
-
-    registerConverter(
-        SrvauthTlscertV1.class, o -> new EwpServerAuthenticationTlsCertificateConfiguration());
   }
 
   public <T> void registerConverter(
