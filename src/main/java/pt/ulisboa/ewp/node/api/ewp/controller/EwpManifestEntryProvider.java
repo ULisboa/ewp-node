@@ -3,7 +3,6 @@ package pt.ulisboa.ewp.node.api.ewp.controller;
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.client.auth.methods.cliauth.httpsig.v1.CliauthHttpsigV1;
 import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.httpsig.v1.SrvauthHttpsigV1;
-import eu.erasmuswithoutpaper.api.client.auth.methods.srvauth.tlscert.v1.SrvauthTlscertV1;
 import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -141,7 +140,6 @@ public abstract class EwpManifestEntryProvider {
     HttpSecurityOptions.ServerAuthMethods serverAuthMethods =
         new HttpSecurityOptions.ServerAuthMethods();
 
-    serverAuthMethods.getAny().add(new SrvauthTlscertV1());
     serverAuthMethods.getAny().add(new SrvauthHttpsigV1());
 
     httpSecurityOptions.setServerAuthMethods(serverAuthMethods);
