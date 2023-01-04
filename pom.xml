@@ -12,7 +12,7 @@
 
   <groupId>pt.ulisboa</groupId>
   <artifactId>ewp-node</artifactId>
-  <version>0.11.0</version>
+  <version>0.12.0</version>
   <packaging>jar</packaging>
 
   <name>EWP Node</name>

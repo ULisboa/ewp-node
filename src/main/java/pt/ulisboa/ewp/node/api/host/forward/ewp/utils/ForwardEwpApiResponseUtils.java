@@ -7,9 +7,11 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ApiResponseBodyDTO;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.filter.ForwardEwpApiRequestFilter;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
@@ -20,13 +22,6 @@ import pt.ulisboa.ewp.node.utils.messaging.Severity;
 public class ForwardEwpApiResponseUtils {
 
   private ForwardEwpApiResponseUtils() {
-  }
-
-  public static <T> ApiResponseBodyDTO<T> createApiResponseBody(T data) {
-    ApiResponseBodyDTO<T> responseBody = new ApiResponseBodyDTO<>();
-    responseBody.setMessages(MessageService.getInstance().consumeMessages());
-    responseBody.setData(data);
-    return responseBody;
   }
 
   public static ResponseEntity<ForwardEwpApiResponse> toAcceptedResponseEntity() {
@@ -45,13 +40,15 @@ public class ForwardEwpApiResponseUtils {
 
   public static <T> ResponseEntity<ForwardEwpApiResponseWithData<T>> toSuccessResponseEntity(
       T responseBody) {
-    ForwardEwpApiResponseWithData<T> response = createResponseWithMessagesAndData(responseBody);
+    ForwardEwpApiResponseWithData<T> response = createResponseWithMessagesAndData(
+        responseBody);
     return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(response);
   }
 
   public static <T> ResponseEntity<ForwardEwpApiResponseWithData<T>> toSuccessResponseEntity(
       EwpResponse ewpResponse, T responseBody) {
-    ForwardEwpApiResponseWithData<T> response = createResponseWithMessagesAndData(responseBody);
+    ForwardEwpApiResponseWithData<T> response = createResponseWithMessagesAndData(
+        responseBody);
     return ResponseEntity.status(ewpResponse.getStatus())
         .contentType(MediaType.APPLICATION_XML)
         .body(response);
@@ -59,7 +56,8 @@ public class ForwardEwpApiResponseUtils {
 
   public static <T> ResponseEntity<ForwardEwpApiResponseWithData<T>> toOkResponseEntity(
       T responseBody) {
-    ForwardEwpApiResponseWithData<T> response = createResponseWithMessagesAndData(responseBody);
+    ForwardEwpApiResponseWithData<T> response = createResponseWithMessagesAndData(
+        responseBody);
     return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(response);
   }
 
@@ -72,7 +70,7 @@ public class ForwardEwpApiResponseUtils {
   }
 
   public static ResponseEntity<ForwardEwpApiResponseWithData<ErrorResponseV1>>
-      toErrorResponseEntity(ErrorResponseV1 errorResponse) {
+  toErrorResponseEntity(ErrorResponseV1 errorResponse) {
     ForwardEwpApiResponseWithData<ErrorResponseV1> response =
         createResponseWithMessagesAndData(errorResponse);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -95,17 +93,31 @@ public class ForwardEwpApiResponseUtils {
         .body(response);
   }
 
-  public static <T> ForwardEwpApiResponseWithData<T> createResponseWithMessagesAndData(T data) {
-    ForwardEwpApiResponseWithData<T> response = new ForwardEwpApiResponseWithData<>();
+  public static <T> ForwardEwpApiResponseWithData<T> createResponseWithMessagesAndData(
+      T data) {
+    Long communicationId = getCommunicationIdFromCurrentRequest();
+    ForwardEwpApiResponseWithData<T> response = new ForwardEwpApiResponseWithData<>(
+        communicationId);
     decorateResponseWithOtherMessages(response);
     response.getData().setObject(data);
     return response;
   }
 
   public static ForwardEwpApiResponse createResponseWithMessages() {
-    ForwardEwpApiResponse response = new ForwardEwpApiResponse();
+    Long communicationId = getCommunicationIdFromCurrentRequest();
+    ForwardEwpApiResponse response = new ForwardEwpApiResponse(communicationId);
     decorateResponseWithOtherMessages(response);
     return response;
+  }
+
+  private static Long getCommunicationIdFromCurrentRequest() {
+    RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+    if (requestAttributes == null) {
+      return null;
+    }
+    return (Long) requestAttributes.getAttribute(
+        ForwardEwpApiRequestFilter.REQUEST_ATTRIBUTE_COMMUNICATION_ID_NAME,
+        RequestAttributes.SCOPE_REQUEST);
   }
 
   public static void decorateResponseWithOtherMessages(ForwardEwpApiResponse response) {

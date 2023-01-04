@@ -10,7 +10,9 @@ import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.http.log.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.domain.repository.http.log.host.HttpCommunicationFromHostLogRepository;
+import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.service.http.log.HttpCommunicationLogService;
 
 @Service
@@ -20,18 +22,18 @@ public class HostHttpCommunicationLogService extends HttpCommunicationLogService
   @Autowired
   private HttpCommunicationFromHostLogRepository httpCommunicationFromHostLogRepository;
 
-  public void logCommunicationFromHost(
+  public HttpCommunicationFromHostLog logCommunicationFromHost(
       Host host,
       HostForwardEwpApiClient hostForwardEwpApiClient,
       ContentCachingRequestWrapper request,
       ContentCachingResponseWrapper response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) {
+      String observations) throws DomainException {
     HttpRequestLog requestLog = toHttpRequestLog(request);
     HttpResponseLog responseLog = toHttpResponseLog(response);
 
-    httpCommunicationFromHostLogRepository.create(
+    return httpCommunicationFromHostLogRepository.create(
         host,
         hostForwardEwpApiClient,
         requestLog,
@@ -39,5 +41,9 @@ public class HostHttpCommunicationLogService extends HttpCommunicationLogService
         startProcessingDateTime,
         endProcessingDateTime,
         observations);
+  }
+
+  public boolean persist(HttpCommunicationFromHostLog httpCommunicationFromHostLog) {
+    return httpCommunicationFromHostLogRepository.persist(httpCommunicationFromHostLog);
   }
 }

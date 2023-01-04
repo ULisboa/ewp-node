@@ -89,8 +89,9 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
     try {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML.toString());
-      response.getWriter().write(serialize(ForwardEwpApiResponseUtils.createResponseWithMessages(),
-          MediaType.APPLICATION_XML));
+      response.getWriter()
+          .write(serialize(ForwardEwpApiResponseUtils.createResponseWithMessages(),
+              MediaType.APPLICATION_XML));
 
     } catch (IOException | JAXBException e) {
       logger.error("Failed to write response's body", e);

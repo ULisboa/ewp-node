@@ -88,7 +88,7 @@ public class HttpCommunicationLog {
     this.startProcessingDateTime = startProcessingDateTime;
   }
 
-  @Column(name = "end_processing_date_time", nullable = false)
+  @Column(name = "end_processing_date_time")
   public ZonedDateTime getEndProcessingDateTime() {
     return endProcessingDateTime;
   }

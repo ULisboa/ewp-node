@@ -28,14 +28,18 @@ public class HttpCommunicationFromHostLogRepository
     super(HttpCommunicationFromHostLog.class, sessionFactory);
   }
 
-  public boolean create(
+  public boolean persist(HttpCommunicationFromHostLog communicationLog) {
+    return super.persist(communicationLog);
+  }
+
+  public HttpCommunicationFromHostLog create(
       Host host,
       HostForwardEwpApiClient hostForwardEwpApiClient,
       HttpRequestLog request,
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) {
+      String observations) throws DomainException {
     HttpCommunicationFromHostLog communicationFromHostLog =
         new HttpCommunicationFromHostLog(
             host,
@@ -45,7 +49,12 @@ public class HttpCommunicationFromHostLogRepository
             startProcessingDateTime,
             endProcessingDateTime,
             observations);
-    return persist(communicationFromHostLog);
+
+    if (persist(communicationFromHostLog)) {
+      return communicationFromHostLog;
+    } else {
+      throw new DomainException("Failed to create communication log");
+    }
   }
 
   @Override
@@ -56,21 +65,10 @@ public class HttpCommunicationFromHostLogRepository
           messages.get("error.http.communication.from.host.log.request.must.be.defined"));
     }
 
-    if (entity.getResponse() == null) {
-      throw new DomainException(
-          messages.get("error.http.communication.from.host.log.response.must.be.defined"));
-    }
-
     if (entity.getStartProcessingDateTime() == null) {
       throw new DomainException(
           messages.get(
               "error.http.communication.from.host.log.start.processing.date.time.must.be.defined"));
-    }
-
-    if (entity.getEndProcessingDateTime() == null) {
-      throw new DomainException(
-          messages.get(
-              "error.http.communication.from.host.log.end.processing.date.time.must.be.defined"));
     }
 
     return true;

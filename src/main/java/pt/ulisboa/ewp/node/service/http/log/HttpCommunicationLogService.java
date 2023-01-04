@@ -18,7 +18,7 @@ import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 @Transactional
 public class HttpCommunicationLogService {
 
-  protected HttpRequestLog toHttpRequestLog(ContentCachingRequestWrapper request) {
+  public HttpRequestLog toHttpRequestLog(ContentCachingRequestWrapper request) {
     HttpRequestLog requestLog =
         HttpRequestLog.create(
             HttpMethod.fromString(request.getMethod()),
@@ -29,7 +29,7 @@ public class HttpCommunicationLogService {
     return requestLog;
   }
 
-  protected HttpResponseLog toHttpResponseLog(ContentCachingResponseWrapper response) {
+  public HttpResponseLog toHttpResponseLog(ContentCachingResponseWrapper response) {
     if (response == null) {
       return null;
     }

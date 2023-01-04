@@ -13,6 +13,13 @@ public class ForwardEwpApiResponseWithData<T> extends ForwardEwpApiResponse {
 
   private Data<T> data;
 
+  public ForwardEwpApiResponseWithData() {
+  }
+
+  public ForwardEwpApiResponseWithData(Long communicationId) {
+    super(communicationId);
+  }
+
   public Data<T> getData() {
     if (this.data == null) {
       this.data = new Data<>();

@@ -16,9 +16,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "forward-ewp-api-response")
 public class ForwardEwpApiResponse {
 
+  private Long communicationId;
+
   @XmlElementWrapper(name = "messages")
   @XmlElement(name = "message")
   private List<Message> messages;
+
+  public ForwardEwpApiResponse() {
+  }
+
+  public ForwardEwpApiResponse(Long communicationId) {
+    this.communicationId = communicationId;
+  }
+
+  public long getCommunicationId() {
+    return communicationId;
+  }
+
+  public void setCommunicationId(long communicationId) {
+    this.communicationId = communicationId;
+  }
 
   public List<Message> getMessages() {
     if (this.messages == null) {
