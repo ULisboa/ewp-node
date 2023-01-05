@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.filter.ForwardEwpApiRequestFilter;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
@@ -24,10 +27,18 @@ public class EwpRequest implements Serializable {
   private HttpParams queryParams = new HttpParams();
   private EwpRequestBody body = new EwpRequestFormDataUrlEncodedBody(new HttpParams());
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.HTTP_SIGNATURE;
+  private Long parentCommunicationId;
 
   public EwpRequest(HttpMethod method, @NotNull String urlWithoutQueryParams) {
     this.method = method;
     this.urlWithoutQueryParams = urlWithoutQueryParams;
+
+    RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+    if (requestAttributes != null) {
+      this.parentCommunicationId = (Long) requestAttributes.getAttribute(
+          ForwardEwpApiRequestFilter.REQUEST_ATTRIBUTE_COMMUNICATION_ID_NAME,
+          RequestAttributes.SCOPE_REQUEST);
+    }
   }
 
   public String getId() {
@@ -104,6 +115,10 @@ public class EwpRequest implements Serializable {
       url.append('?').append(queryString);
     }
     return url.toString();
+  }
+
+  public Long getParentCommunicationId() {
+    return parentCommunicationId;
   }
 
   public static EwpRequest createGet(

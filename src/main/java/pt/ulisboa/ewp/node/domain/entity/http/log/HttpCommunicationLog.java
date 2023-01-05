@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.domain.entity.http.log;
 
 import java.time.ZonedDateTime;
 
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -14,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -32,20 +35,25 @@ public class HttpCommunicationLog {
   private ZonedDateTime startProcessingDateTime;
   private ZonedDateTime endProcessingDateTime;
   private String observations;
+  private HttpCommunicationLog parentCommunication;
+  private Set<HttpCommunicationLog> childrenCommunications;
 
-  protected HttpCommunicationLog() {}
+  protected HttpCommunicationLog() {
+  }
 
   protected HttpCommunicationLog(
       HttpRequestLog request,
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) {
+      String observations,
+      HttpCommunicationLog parentCommunication) {
     this.request = request;
     this.response = response;
     this.startProcessingDateTime = startProcessingDateTime;
     this.endProcessingDateTime = endProcessingDateTime;
     this.observations = observations;
+    this.parentCommunication = parentCommunication;
   }
 
   @Id
@@ -104,5 +112,26 @@ public class HttpCommunicationLog {
 
   public void setObservations(String observations) {
     this.observations = observations;
+  }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_communication_id")
+  public HttpCommunicationLog getParentCommunication() {
+    return parentCommunication;
+  }
+
+  public void setParentCommunication(
+      HttpCommunicationLog parentCommunication) {
+    this.parentCommunication = parentCommunication;
+  }
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCommunication", cascade = CascadeType.ALL)
+  public Set<HttpCommunicationLog> getChildrenCommunications() {
+    return childrenCommunications;
+  }
+
+  public void setChildrenCommunications(
+      Set<HttpCommunicationLog> childrenCommunications) {
+    this.childrenCommunications = childrenCommunications;
   }
 }

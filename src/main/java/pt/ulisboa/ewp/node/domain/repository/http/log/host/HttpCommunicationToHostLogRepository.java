@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.http.log.host.HttpCommunicationToHostLog;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
@@ -33,7 +34,8 @@ public class HttpCommunicationToHostLogRepository
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) {
+      String observations,
+      HttpCommunicationLog parentCommunication) {
     HttpCommunicationToHostLog communicationToHostLog =
         new HttpCommunicationToHostLog(
             host,
@@ -41,7 +43,7 @@ public class HttpCommunicationToHostLogRepository
             response,
             startProcessingDateTime,
             endProcessingDateTime,
-            observations);
+            observations, parentCommunication);
     return persist(communicationToHostLog);
   }
 

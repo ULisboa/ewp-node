@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
 
 @Entity
 @DiscriminatorValue("EWP_OUT")
@@ -21,13 +22,15 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) {
+      String observations,
+      HttpCommunicationLog parentCommunication) {
     super(
         authenticationMethod,
         request,
         response,
         startProcessingDateTime,
         endProcessingDateTime,
-        observations);
+        observations,
+        parentCommunication);
   }
 }

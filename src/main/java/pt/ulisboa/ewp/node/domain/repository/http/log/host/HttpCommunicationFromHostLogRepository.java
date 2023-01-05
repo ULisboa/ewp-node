@@ -10,6 +10,7 @@ import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.http.log.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
@@ -39,7 +40,8 @@ public class HttpCommunicationFromHostLogRepository
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) throws DomainException {
+      String observations,
+      HttpCommunicationLog parentCommunication) throws DomainException {
     HttpCommunicationFromHostLog communicationFromHostLog =
         new HttpCommunicationFromHostLog(
             host,
@@ -48,7 +50,7 @@ public class HttpCommunicationFromHostLogRepository
             response,
             startProcessingDateTime,
             endProcessingDateTime,
-            observations);
+            observations, parentCommunication);
 
     if (persist(communicationFromHostLog)) {
       return communicationFromHostLog;

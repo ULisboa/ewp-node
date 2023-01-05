@@ -66,6 +66,6 @@ public class EwpApiCommunicationLoggerFilter extends OncePerRequestFilter {
         contentCachingResponseWrapper,
         startProcessingDateTime,
         endProcessingDateTime,
-        "");
+        "", null);
   }
 }

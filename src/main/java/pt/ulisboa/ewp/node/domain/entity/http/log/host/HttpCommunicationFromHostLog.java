@@ -10,6 +10,7 @@ import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
 
 @Entity
 @DiscriminatorValue("HOST_IN")
@@ -27,14 +28,16 @@ public class HttpCommunicationFromHostLog extends HostHttpCommunicationLog {
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) {
+      String observations,
+      HttpCommunicationLog parentCommunication) {
     super(
         host,
         request,
         response,
         startProcessingDateTime,
         endProcessingDateTime,
-        observations);
+        observations,
+        parentCommunication);
     this.hostForwardEwpApiClient = hostForwardEwpApiClient;
   }
 

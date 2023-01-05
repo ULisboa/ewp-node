@@ -102,7 +102,7 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
           null,
           startProcessingDateTime,
           null,
-          "");
+          "", null);
     } catch (DomainException e) {
       throw new IllegalStateException(e);
     }

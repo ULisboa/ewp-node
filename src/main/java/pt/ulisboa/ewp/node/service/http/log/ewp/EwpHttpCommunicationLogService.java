@@ -18,6 +18,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpMethod;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.repository.http.log.ewp.HttpCommunicationFromEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.domain.repository.http.log.ewp.HttpCommunicationToEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.service.http.log.HttpCommunicationLogService;
@@ -37,7 +38,8 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       ContentCachingResponseWrapper response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) {
+      String observations,
+      HttpCommunicationLog parentCommunication) {
 
     // NOTE: Requests for manifest are not logged to avoid using too much log space
     if (isRequestForManifest(request) && response.getStatus() == HttpStatus.OK.value()) {
@@ -62,24 +64,28 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         responseLog,
         startProcessingDateTime,
         endProcessingDateTime,
-        observations);
+        observations,
+        parentCommunication);
   }
 
   public <T extends Serializable> void logCommunicationToEwpNode(
       EwpSuccessOperationResult<T> successOperationResult,
       ZonedDateTime startProcessingDateTime,
-      ZonedDateTime endProcessingDateTime) {
+      ZonedDateTime endProcessingDateTime,
+      HttpCommunicationLog parentCommunication) {
     logCommunicationToEwpNode(successOperationResult.getRequest(),
         successOperationResult.getResponse(),
-        startProcessingDateTime, endProcessingDateTime, "");
+        startProcessingDateTime, endProcessingDateTime, "", parentCommunication);
   }
 
   public void logCommunicationToEwpNode(
       EwpClientErrorException clientErrorException,
       ZonedDateTime startProcessingDateTime,
-      ZonedDateTime endProcessingDateTime) {
+      ZonedDateTime endProcessingDateTime,
+      HttpCommunicationLog parentCommunication) {
     logCommunicationToEwpNode(clientErrorException.getRequest(), clientErrorException.getResponse(),
-        startProcessingDateTime, endProcessingDateTime, clientErrorException.getDetailedMessage());
+        startProcessingDateTime, endProcessingDateTime, clientErrorException.getDetailedMessage(),
+        parentCommunication);
   }
 
   public void logCommunicationToEwpNode(
@@ -87,7 +93,8 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       EwpResponse response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) {
+      String observations,
+      HttpCommunicationLog parentCommunication) {
     HttpRequestLog requestLog = toHttpRequestLog(request);
     HttpResponseLog responseLog = toHttpResponseLog(response);
     httpCommunicationToEwpNodeLogRepository.create(
@@ -96,7 +103,8 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         responseLog,
         startProcessingDateTime,
         endProcessingDateTime,
-        observations);
+        observations,
+        parentCommunication);
   }
 
   private HttpRequestLog toHttpRequestLog(EwpApiHttpRequestWrapper request) {

@@ -2,25 +2,32 @@ package pt.ulisboa.ewp.node.client.ewp.interceptor;
 
 import java.time.ZonedDateTime;
 import java.util.WeakHashMap;
+import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.repository.http.log.HttpCommunicationLogRepository;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 
 @Component
+@Transactional
 public class EwpClientLoggerInterceptor implements EwpClientInterceptor {
 
   private static final Logger LOG = LoggerFactory.getLogger(EwpClientLoggerInterceptor.class);
 
   private final EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
+  private final HttpCommunicationLogRepository httpCommunicationLogRepository;
 
   private final WeakHashMap<EwpRequest, EwpCommunicationContext> requestToCommunicationContextMap = new WeakHashMap<>();
 
-  public EwpClientLoggerInterceptor(EwpHttpCommunicationLogService ewpHttpCommunicationLogService) {
+  public EwpClientLoggerInterceptor(EwpHttpCommunicationLogService ewpHttpCommunicationLogService,
+      HttpCommunicationLogRepository httpCommunicationLogRepository) {
     this.ewpHttpCommunicationLogService = ewpHttpCommunicationLogService;
+    this.httpCommunicationLogRepository = httpCommunicationLogRepository;
   }
 
   @Override
@@ -38,8 +45,12 @@ public class EwpClientLoggerInterceptor implements EwpClientInterceptor {
     }
     EwpCommunicationContext communicationContext = this.requestToCommunicationContextMap.get(
         request);
+
+    HttpCommunicationLog parentCommunication = this.httpCommunicationLogRepository.findById(
+        request.getParentCommunicationId()).orElse(null);
+
     ewpHttpCommunicationLogService.logCommunicationToEwpNode(successOperationResult,
-        communicationContext.startProcessingDateTime, ZonedDateTime.now());
+        communicationContext.startProcessingDateTime, ZonedDateTime.now(), parentCommunication);
   }
 
   @Override
@@ -50,9 +61,13 @@ public class EwpClientLoggerInterceptor implements EwpClientInterceptor {
     }
     EwpCommunicationContext communicationContext = this.requestToCommunicationContextMap.get(
         request);
+
+    HttpCommunicationLog parentCommunication = this.httpCommunicationLogRepository.findById(
+        request.getParentCommunicationId()).orElse(null);
+
     this.ewpHttpCommunicationLogService.logCommunicationToEwpNode(e,
         communicationContext.startProcessingDateTime,
-        ZonedDateTime.now());
+        ZonedDateTime.now(), parentCommunication);
   }
 
   private static class EwpCommunicationContext {

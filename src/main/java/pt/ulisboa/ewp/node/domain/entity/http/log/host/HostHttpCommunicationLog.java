@@ -25,8 +25,10 @@ public abstract class HostHttpCommunicationLog extends HttpCommunicationLog {
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) {
-    super(request, response, startProcessingDateTime, endProcessingDateTime, observations);
+      String observations,
+      HttpCommunicationLog parentCommunication) {
+    super(request, response, startProcessingDateTime, endProcessingDateTime, observations,
+        parentCommunication);
     this.host = host;
   }
 

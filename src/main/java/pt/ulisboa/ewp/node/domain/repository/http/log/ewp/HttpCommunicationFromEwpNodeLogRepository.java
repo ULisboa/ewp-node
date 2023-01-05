@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.http.log.ewp.HttpCommunicationFromEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
@@ -36,7 +37,8 @@ public class HttpCommunicationFromEwpNodeLogRepository
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      String observations) {
+      String observations,
+      HttpCommunicationLog parentCommunication) {
     HttpCommunicationFromEwpNodeLog communicationFromEwpNodeLog =
         new HttpCommunicationFromEwpNodeLog(
             authenticationMethod,
@@ -45,7 +47,7 @@ public class HttpCommunicationFromEwpNodeLogRepository
             response,
             startProcessingDateTime,
             endProcessingDateTime,
-            observations);
+            observations, parentCommunication);
     return persist(communicationFromEwpNodeLog);
   }
 
