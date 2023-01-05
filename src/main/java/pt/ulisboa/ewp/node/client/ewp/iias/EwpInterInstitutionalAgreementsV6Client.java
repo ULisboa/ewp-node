@@ -54,7 +54,7 @@ public class EwpInterInstitutionalAgreementsV6Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, IiasIndexResponseV6.class);
+    return ewpClient.execute(request, IiasIndexResponseV6.class);
   }
 
   public EwpSuccessOperationResult<IiasGetResponseV6> findByHeiIdAndIiaIds(
@@ -69,7 +69,7 @@ public class EwpInterInstitutionalAgreementsV6Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, IiasGetResponseV6.class);
+    return ewpClient.execute(request, IiasGetResponseV6.class);
   }
 
   public EwpSuccessOperationResult<IiasGetResponseV6> findByHeiIdAndIiaCodes(
@@ -84,7 +84,7 @@ public class EwpInterInstitutionalAgreementsV6Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, IiasGetResponseV6.class);
+    return ewpClient.execute(request, IiasGetResponseV6.class);
   }
 
   @Override

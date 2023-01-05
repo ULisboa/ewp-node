@@ -61,7 +61,7 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, OmobilityLasIndexResponseV1.class);
+    return ewpClient.execute(request, OmobilityLasIndexResponseV1.class);
   }
 
   public EwpSuccessOperationResult<OmobilityLasGetResponseV1> findBySendingHeiIdAndOutgoingMobilityIds(
@@ -75,7 +75,7 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, OmobilityLasGetResponseV1.class);
+    return ewpClient.execute(request, OmobilityLasGetResponseV1.class);
   }
 
   public EwpSuccessOperationResult<OmobilityLasUpdateResponseV1> updateOutgoingMobilityLearningAgreement(
@@ -85,7 +85,7 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUpdateUrl(),
         new EwpRequestSerializableBody(updateData));
-    return ewpClient.executeAndLog(request, OmobilityLasUpdateResponseV1.class);
+    return ewpClient.execute(request, OmobilityLasUpdateResponseV1.class);
   }
 
   @Override

@@ -32,7 +32,7 @@ public class EwpFilesV1Client extends
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    EwpSuccessOperationResult<byte[]> successOperationResult = ewpClient.executeAndLog(
+    EwpSuccessOperationResult<byte[]> successOperationResult = ewpClient.execute(
         request, byte[].class);
 
     FileResponse fileResponse = createFileResponse(successOperationResult);

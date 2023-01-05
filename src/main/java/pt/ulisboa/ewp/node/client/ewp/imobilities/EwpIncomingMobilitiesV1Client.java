@@ -44,7 +44,7 @@ public class EwpIncomingMobilitiesV1Client extends
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, ImobilitiesGetResponseV1.class);
+    return ewpClient.execute(request, ImobilitiesGetResponseV1.class);
   }
 
   @Override

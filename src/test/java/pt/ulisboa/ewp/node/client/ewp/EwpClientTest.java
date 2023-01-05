@@ -21,6 +21,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.bind.Marshaller;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -45,7 +46,6 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.service.ewp.security.signer.request.RequestAuthenticationSigner;
 import pt.ulisboa.ewp.node.service.ewp.security.verifier.EwpAuthenticationResult;
 import pt.ulisboa.ewp.node.service.ewp.security.verifier.response.ResponseAuthenticationVerifier;
-import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
@@ -70,10 +70,8 @@ class EwpClientTest extends AbstractTest {
     this.keyStoreService = mock(KeyStoreService.class);
     this.requestSigner = mock(RequestAuthenticationSigner.class);
     this.responseVerifier = mock(ResponseAuthenticationVerifier.class);
-    EwpHttpCommunicationLogService ewpHttpCommunicationLogService = mock(
-        EwpHttpCommunicationLogService.class);
-    this.client = new EwpClient(keyStoreService, requestSigner, responseVerifier,
-        ewpHttpCommunicationLogService, createJaxb2Marshaller());
+    this.client = new EwpClient(List.of(), keyStoreService, requestSigner, responseVerifier,
+        createJaxb2Marshaller());
   }
 
   @Test
@@ -106,7 +104,7 @@ class EwpClientTest extends AbstractTest {
             .withBody(XmlUtils.marshall(createJaxb2Marshaller(), expectedResponse)));
 
     EwpSuccessOperationResult<ResponseV2> result = client
-        .executeAndLog(request, ResponseV2.class);
+        .execute(request, ResponseV2.class);
     assertThat(result, notNullValue());
     assertThat(result.getResponseBody().getHeiId(),
         equalTo(Collections.singletonList("test_heiid")));
@@ -143,7 +141,7 @@ class EwpClientTest extends AbstractTest {
             .withBody(XmlUtils.marshall(createJaxb2Marshaller(), expectedResponse)));
 
     EwpSuccessOperationResult<ResponseV2> result = client
-        .executeAndLog(request, ResponseV2.class);
+        .execute(request, ResponseV2.class);
     assertThat(result, notNullValue());
     assertThat(result.getResponseBody().getHeiId(),
         equalTo(Collections.singletonList("test_heiid")));
@@ -175,7 +173,7 @@ class EwpClientTest extends AbstractTest {
         .respond(response().withStatusCode(200).withContentType(MediaType.APPLICATION_XML)
             .withBody(XmlUtils.marshall(createJaxb2Marshaller(), expectedResponse)));
 
-    assertThatThrownBy(() -> client.executeAndLog(request, ResponseV2.class))
+    assertThatThrownBy(() -> client.execute(request, ResponseV2.class))
         .isInstanceOf(EwpClientInvalidResponseException.class)
         .hasMessage(
             "Server returned an invalid response: Server authentication failed for authentication method "
@@ -211,7 +209,7 @@ class EwpClientTest extends AbstractTest {
         .respond(response().withStatusCode(400).withContentType(MediaType.APPLICATION_XML)
             .withBody(XmlUtils.marshall(createJaxb2Marshaller(), errorResponse)));
 
-    assertThatThrownBy(() -> client.executeAndLog(request, ResponseV2.class))
+    assertThatThrownBy(() -> client.execute(request, ResponseV2.class))
         .isInstanceOf(EwpClientErrorResponseException.class)
         .hasMessage(
             "Error response obtained: user message test [developer message: developer message test]");
@@ -246,7 +244,7 @@ class EwpClientTest extends AbstractTest {
         .respond(response().withStatusCode(401).withContentType(MediaType.APPLICATION_XML)
             .withBody(XmlUtils.marshall(createJaxb2Marshaller(), errorResponse)));
 
-    assertThatThrownBy(() -> client.executeAndLog(request, ResponseV2.class))
+    assertThatThrownBy(() -> client.execute(request, ResponseV2.class))
         .isInstanceOf(EwpClientProcessorException.class)
         .hasMessage(
             "Processor error: Client authentication failed for authentication method HTTP_SIGNATURE: developer message");
@@ -273,7 +271,7 @@ class EwpClientTest extends AbstractTest {
         .respond(response().withStatusCode(500).withContentType(MediaType.APPLICATION_XML)
             .withBody(""));
 
-    assertThatThrownBy(() -> client.executeAndLog(request, ResponseV2.class))
+    assertThatThrownBy(() -> client.execute(request, ResponseV2.class))
         .isInstanceOf(EwpClientInvalidResponseException.class)
         .hasMessage("Server returned an invalid response: Server exception: Internal Server Error");
   }
@@ -299,7 +297,7 @@ class EwpClientTest extends AbstractTest {
         .respond(response().withStatusCode(600).withContentType(MediaType.APPLICATION_XML)
             .withBody(""));
 
-    assertThatThrownBy(() -> client.executeAndLog(request, ResponseV2.class))
+    assertThatThrownBy(() -> client.execute(request, ResponseV2.class))
         .isInstanceOf(EwpClientProcessorException.class)
         .hasMessage("Processor error: Unknown response status code: null");
   }

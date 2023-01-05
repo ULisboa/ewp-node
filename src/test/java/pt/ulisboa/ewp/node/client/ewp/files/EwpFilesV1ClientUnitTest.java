@@ -43,7 +43,7 @@ class EwpFilesV1ClientUnitTest {
         data).response(ewpResponse).build();
 
     EwpClient ewpClient = Mockito.mock(EwpClient.class);
-    doReturn(successOperationResult).when(ewpClient).executeAndLog(Mockito.any(), Mockito.any());
+    doReturn(successOperationResult).when(ewpClient).execute(Mockito.any(), Mockito.any());
 
     EwpFilesV1Client client = Mockito.spy(new EwpFilesV1Client(null, ewpClient));
     doReturn(apiConfiguration).when(client).getApiConfigurationForHeiId(heiId);

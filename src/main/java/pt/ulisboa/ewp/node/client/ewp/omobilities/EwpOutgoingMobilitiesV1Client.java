@@ -56,7 +56,7 @@ public class EwpOutgoingMobilitiesV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, OmobilitiesIndexResponseV1.class);
+    return ewpClient.execute(request, OmobilitiesIndexResponseV1.class);
   }
 
   public EwpSuccessOperationResult<OmobilitiesGetResponseV1> findBySendingHeiIdAndOmobilityIds(
@@ -69,7 +69,7 @@ public class EwpOutgoingMobilitiesV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    EwpSuccessOperationResult<OmobilitiesGetResponseV1> result = ewpClient.executeAndLog(
+    EwpSuccessOperationResult<OmobilitiesGetResponseV1> result = ewpClient.execute(
         request, OmobilitiesGetResponseV1.class);
 
     this.mobilityMappingCacheService.cacheMappingsFrom(result.getResponseBody());

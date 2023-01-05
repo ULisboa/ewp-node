@@ -30,7 +30,7 @@ public class EwpInstitutionsV2Client extends EwpApiClient<EwpInstitutionApiConfi
     queryParams.param(EwpApiParamConstants.HEI_ID, Collections.singletonList(heiId));
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeAndLog(request, InstitutionsResponseV2.class);
+    return ewpClient.execute(request, InstitutionsResponseV2.class);
   }
 
   @Override

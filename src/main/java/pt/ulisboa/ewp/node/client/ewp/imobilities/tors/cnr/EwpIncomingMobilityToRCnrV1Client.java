@@ -37,7 +37,7 @@ public class EwpIncomingMobilityToRCnrV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, ImobilityTorCnrResponseV1.class);
+    return ewpClient.execute(request, ImobilityTorCnrResponseV1.class);
   }
 
   @Override

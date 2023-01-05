@@ -37,7 +37,7 @@ public class EwpInterInstitutionalAgreementCnrV2Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, IiaCnrResponseV2.class);
+    return ewpClient.execute(request, IiaCnrResponseV2.class);
   }
 
   @Override

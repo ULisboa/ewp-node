@@ -51,7 +51,7 @@ public class EwpInterInstitutionalAgreementsApprovalsV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, IiasApprovalResponseV1.class);
+    return ewpClient.execute(request, IiasApprovalResponseV1.class);
   }
 
   @Override

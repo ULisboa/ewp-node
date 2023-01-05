@@ -42,7 +42,7 @@ public class EwpOrganizationalUnitsV2Client
     queryParams.param(EwpApiParamConstants.OUNIT_ID, organizationalUnitIds);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeAndLog(request, OunitsResponseV2.class);
+    return ewpClient.execute(request, OunitsResponseV2.class);
   }
 
   public EwpSuccessOperationResult<OunitsResponseV2> findByOunitCodes(
@@ -55,7 +55,7 @@ public class EwpOrganizationalUnitsV2Client
     queryParams.param(EwpApiParamConstants.OUNIT_CODE, organizationalUnitCodes);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeAndLog(request, OunitsResponseV2.class);
+    return ewpClient.execute(request, OunitsResponseV2.class);
   }
 
   @Override

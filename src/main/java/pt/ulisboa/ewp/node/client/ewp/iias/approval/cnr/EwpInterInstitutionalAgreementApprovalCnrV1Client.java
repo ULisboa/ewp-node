@@ -37,7 +37,7 @@ public class EwpInterInstitutionalAgreementApprovalCnrV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, IiaApprovalCnrResponseV1.class);
+    return ewpClient.execute(request, IiaApprovalCnrResponseV1.class);
   }
 
   @Override

@@ -32,7 +32,7 @@ public class EwpSimpleCourseReplicationV1Client
     queryParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeAndLog(request, CourseReplicationResponseV1.class);
+    return ewpClient.execute(request, CourseReplicationResponseV1.class);
   }
 
   @Override

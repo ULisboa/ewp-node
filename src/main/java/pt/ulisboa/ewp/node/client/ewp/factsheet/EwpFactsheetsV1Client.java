@@ -32,7 +32,7 @@ public class EwpFactsheetsV1Client extends
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, FactsheetResponseV1.class);
+    return ewpClient.execute(request, FactsheetResponseV1.class);
   }
 
   @Override

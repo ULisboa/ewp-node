@@ -46,7 +46,7 @@ public class EwpOutgoingMobilityLearningAgreementCnrV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, OmobilityLaCnrResponseV1.class);
+    return ewpClient.execute(request, OmobilityLaCnrResponseV1.class);
   }
 
   @Override

@@ -47,7 +47,7 @@ public class EwpIncomingMobilityToRsV2Client extends
 
     EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, ImobilityTorsIndexResponseV2.class);
+    return ewpClient.execute(request, ImobilityTorsIndexResponseV2.class);
   }
 
   public EwpSuccessOperationResult<ImobilityTorsGetResponseV2> findByReceivingHeiIdAndOutgoingMobilityIds(
@@ -62,7 +62,7 @@ public class EwpIncomingMobilityToRsV2Client extends
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.executeAndLog(request, ImobilityTorsGetResponseV2.class);
+    return ewpClient.execute(request, ImobilityTorsGetResponseV2.class);
   }
 
   @Override

@@ -8,7 +8,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
-import java.time.ZonedDateTime;
+import java.util.Collection;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -28,6 +28,7 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
+import pt.ulisboa.ewp.node.client.ewp.interceptor.EwpClientInterceptor;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
@@ -41,7 +42,6 @@ import pt.ulisboa.ewp.node.exception.ewp.EwpServerException;
 import pt.ulisboa.ewp.node.service.ewp.security.signer.request.RequestAuthenticationSigner;
 import pt.ulisboa.ewp.node.service.ewp.security.verifier.EwpAuthenticationResult;
 import pt.ulisboa.ewp.node.service.ewp.security.verifier.response.ResponseAuthenticationVerifier;
-import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.utils.SecurityUtils;
 import pt.ulisboa.ewp.node.utils.XmlUtils;
@@ -54,20 +54,20 @@ public class EwpClient {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(EwpClient.class);
 
+  private final Collection<EwpClientInterceptor> interceptors;
   private final KeyStoreService keystoreService;
   private final RequestAuthenticationSigner requestSigner;
   private final ResponseAuthenticationVerifier responseVerifier;
-  private final EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
   private final Jaxb2Marshaller jaxb2Marshaller;
 
-  public EwpClient(KeyStoreService keystoreService, RequestAuthenticationSigner requestSigner,
+  public EwpClient(Collection<EwpClientInterceptor> interceptors, KeyStoreService keystoreService,
+      RequestAuthenticationSigner requestSigner,
       ResponseAuthenticationVerifier responseVerifier,
-      EwpHttpCommunicationLogService ewpHttpCommunicationLogService,
       Jaxb2Marshaller jaxb2Marshaller) {
+    this.interceptors = interceptors;
     this.keystoreService = keystoreService;
     this.requestSigner = requestSigner;
     this.responseVerifier = responseVerifier;
-    this.ewpHttpCommunicationLogService = ewpHttpCommunicationLogService;
     this.jaxb2Marshaller = jaxb2Marshaller;
   }
 
@@ -81,23 +81,22 @@ public class EwpClient {
    * @return The result of a successful operation.
    * @throws EwpClientErrorException The request failed for some reason.
    */
-  public <T extends Serializable> EwpSuccessOperationResult<T> executeAndLog(EwpRequest request,
+  public <T extends Serializable> EwpSuccessOperationResult<T> execute(EwpRequest request,
       Class<T> responseBodyType) throws EwpClientErrorException {
-    ZonedDateTime startProcessingDateTime = ZonedDateTime.now();
+    this.interceptors.forEach(i -> i.onPreparing(request));
     try {
-      EwpSuccessOperationResult<T> operationResult = execute(request, responseBodyType);
-      ewpHttpCommunicationLogService.logCommunicationToEwpNode(operationResult,
-          startProcessingDateTime, ZonedDateTime.now());
+      EwpSuccessOperationResult<T> operationResult = executeInternal(request, responseBodyType);
+      this.interceptors.forEach(i -> i.onSuccess(request, operationResult));
       return operationResult;
 
     } catch (EwpClientErrorException e) {
-      ewpHttpCommunicationLogService.logCommunicationToEwpNode(e, startProcessingDateTime,
-          ZonedDateTime.now());
+      this.interceptors.forEach(i -> i.onError(request, e));
       throw e;
     }
   }
 
-  protected <T extends Serializable> EwpSuccessOperationResult<T> execute(EwpRequest request,
+  protected <T extends Serializable> EwpSuccessOperationResult<T> executeInternal(
+      EwpRequest request,
       Class<T> expectedResponseBodyType) throws EwpClientErrorException {
     EwpResponse response = null;
     EwpAuthenticationResult responseAuthenticationResult = null;

@@ -47,7 +47,7 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
     queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeAndLog(request, CoursesResponseV0.class);
+    return ewpClient.execute(request, CoursesResponseV0.class);
   }
 
   public EwpSuccessOperationResult<CoursesResponseV0> findByLosCodes(
@@ -67,7 +67,7 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
     queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.executeAndLog(request, CoursesResponseV0.class);
+    return ewpClient.execute(request, CoursesResponseV0.class);
   }
 
   @Override
