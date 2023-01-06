@@ -141,3 +141,19 @@ plugins:
   ewp-host-plugin-demo:
     example:
       key: test
+
+#management:
+#  endpoints:
+#    web:
+#      base-path: /actuator
+#      exposure:
+#        include: health,communications
+
+# Actuator security configuration
+# Recommended to be set if actuator endpoints are enabled (section management above)
+#actuator:
+#  security:
+#    username: actuator
+#    # "actuator" (without quotes) in bcrypt format
+#    # "{bcrypt}" specifies the password storage format (see https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html)
+#    password: "{bcrypt}$2a$12$LhR/y3dZkZgtGhztW7lJQeHntPjGOIuawW7urzwA5hh4qAOjvcA4K"

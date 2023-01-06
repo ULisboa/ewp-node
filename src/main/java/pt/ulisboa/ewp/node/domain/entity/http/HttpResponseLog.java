@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.utils.StringUtils;
 
@@ -84,5 +85,22 @@ public class HttpResponseLog {
   public static HttpResponseLog create(
       int statusCode, Collection<HttpHeader> headers, String body) {
     return new HttpResponseLog(statusCode, headers, body);
+  }
+
+  public String toRawString(int maximumBodyLineLength) {
+    StringBuilder result = new StringBuilder();
+    HttpStatus httpStatus = HttpStatus.resolve(getStatusCode());
+    result.append("HTTP/1.1 ").append(getStatusCode()).append(" ")
+        .append(httpStatus != null ? httpStatus.getReasonPhrase() : "Unknown")
+        .append(System.lineSeparator());
+    for (HttpHeader header : getHeaders()) {
+      String headerLine = header.getName() + ": " + header.getValue();
+      result.append(StringUtils.breakTextWithLineLengthLimit(headerLine, System.lineSeparator(),
+          maximumBodyLineLength)).append(System.lineSeparator());
+    }
+    result.append(System.lineSeparator());
+    result.append(StringUtils.breakTextWithLineLengthLimit(getBody(), System.lineSeparator(),
+        maximumBodyLineLength)).append(System.lineSeparator());
+    return result.toString();
   }
 }

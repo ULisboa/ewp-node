@@ -2,7 +2,10 @@ package pt.ulisboa.ewp.node.domain.entity.http.log;
 
 import java.time.ZonedDateTime;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -20,6 +23,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
 
@@ -123,6 +127,13 @@ public class HttpCommunicationLog {
   public void setParentCommunication(
       HttpCommunicationLog parentCommunication) {
     this.parentCommunication = parentCommunication;
+  }
+
+  @Transient
+  public Collection<HttpCommunicationLog> getSortedChildrenCommunications() {
+    return getChildrenCommunications().stream()
+        .sorted(Comparator.comparing(HttpCommunicationLog::getStartProcessingDateTime))
+        .collect(Collectors.toList());
   }
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCommunication", cascade = CascadeType.ALL)

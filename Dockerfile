@@ -12,6 +12,13 @@ FROM openjdk:11.0-jre-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends wget
 
+# Install mermaid-cli for diagrams generation (requires node.js)
+RUN apt-get update && apt-get install -y --no-install-recommends chromium && ln -T /usr/bin/chromium /usr/bin/chromium-browser
+RUN wget -O - https://deb.nodesource.com/setup_16.x | bash -
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs
+RUN npm install -g @mermaid-js/mermaid-cli
+COPY puppeteer-config.json /opt/puppeteer-config.json
+
 COPY --from=builder /build/target/*.jar /opt/app.jar
 
 ENV SPRING_CONFIG_LOCATION=/config/application.yml

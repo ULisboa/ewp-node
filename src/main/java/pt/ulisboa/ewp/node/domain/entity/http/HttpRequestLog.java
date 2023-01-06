@@ -100,4 +100,19 @@ public class HttpRequestLog {
       HttpMethod method, String url, Collection<HttpHeader> headers, String body) {
     return new HttpRequestLog(method, url, headers, body);
   }
+
+  public String toRawString(int maximumBodyLineLength) {
+    StringBuilder result = new StringBuilder();
+    result.append(getMethod().toString()).append(" ").append(getUrl())
+        .append(" HTTP/1.1").append(System.lineSeparator());
+    for (HttpHeader header : getHeaders()) {
+      String headerLine = header.getName() + ": " + header.getValue();
+      result.append(StringUtils.breakTextWithLineLengthLimit(headerLine, System.lineSeparator(),
+          maximumBodyLineLength)).append(System.lineSeparator());
+    }
+    result.append(System.lineSeparator());
+    result.append(StringUtils.breakTextWithLineLengthLimit(getBody(), System.lineSeparator(),
+        maximumBodyLineLength)).append(System.lineSeparator());
+    return result.toString();
+  }
 }
