@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -25,6 +26,9 @@ public class CommunicationDiagramsActuatorEndpoint {
 
   private static final Logger LOG = LoggerFactory.getLogger(
       CommunicationDiagramsActuatorEndpoint.class);
+
+  private static final String EXECUTABLE = "mmdc";
+  private static final String PUPPETEER_CONFIG_FILE = "/opt/puppeteer-config.json";
 
   private static final String DIAGRAM_OUTPUT_FORMAT = "svg";
   private static final int MAXIMUM_MESSAGE_LINE_LENGTH = 60;
@@ -61,9 +65,13 @@ public class CommunicationDiagramsActuatorEndpoint {
       outputTempFile = File.createTempFile("ewp-node-communication-diagram-",
           "." + DIAGRAM_OUTPUT_FORMAT);
 
-      Process process = Runtime.getRuntime().exec(
-          "mmdc -i " + inputTempFile.getAbsolutePath() + " -o " + outputTempFile.getAbsolutePath()
-              + " -p " + "/opt/puppeteer-config.json");
+      Map<String, String> arguments = new HashMap<>();
+      arguments.put("-i", inputTempFile.getAbsolutePath());
+      arguments.put("-o", outputTempFile.getAbsolutePath());
+      arguments.put("-p", PUPPETEER_CONFIG_FILE);
+      Process process = Runtime.getRuntime().exec(EXECUTABLE +
+          " " + arguments.entrySet().stream().map(e -> e.getKey() + " " + e.getValue())
+          .collect(Collectors.joining(" ")));
       process.waitFor();
 
       if (process.exitValue() != 0) {
