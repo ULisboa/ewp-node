@@ -13,6 +13,8 @@ FROM openjdk:11.0-jre-slim
 RUN apt-get update && apt-get install -y --no-install-recommends wget
 
 # Install mermaid-cli for diagrams generation (requires node.js)
+ENV CHROME_BIN="/usr/bin/chromium-browser" \
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
 RUN apt-get update && apt-get install -y --no-install-recommends chromium && ln -T /usr/bin/chromium /usr/bin/chromium-browser
 RUN wget -O - https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get update && apt-get install -y --no-install-recommends nodejs
