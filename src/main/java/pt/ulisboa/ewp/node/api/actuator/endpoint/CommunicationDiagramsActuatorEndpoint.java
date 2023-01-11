@@ -46,7 +46,6 @@ public class CommunicationDiagramsActuatorEndpoint {
     }
     HttpCommunicationLog communicationLog = communicationLogOptional.get();
     String sequenceDiagramString = createSequenceDiagramInMermaidFormat(communicationLog);
-    System.out.println(sequenceDiagramString);
     return generateDiagram(sequenceDiagramString);
   }
 
@@ -129,7 +128,10 @@ public class CommunicationDiagramsActuatorEndpoint {
     }
 
     if (communicationLog instanceof HttpCommunicationFromHostLog) {
-      return ((HttpCommunicationFromHostLog) communicationLog).getHostForwardEwpApiClient().getId();
+      HttpCommunicationFromHostLog communicationFromHostLog = (HttpCommunicationFromHostLog) communicationLog;
+      if (communicationFromHostLog.getHostForwardEwpApiClient() != null) {
+        return communicationFromHostLog.getHostForwardEwpApiClient().getId();
+      }
     }
 
     return "Requester";
