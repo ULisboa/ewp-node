@@ -50,7 +50,8 @@ public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConver
   }
 
   @Override
-  protected void writeToResult(Object object, HttpHeaders headers, Result result) throws Exception {
+  public void writeToResult(Object object, HttpHeaders headers, Result result)
+      throws TransformerException {
     try {
       // NOTE: try marshall object without other classes scanned by marshaller
       // If successful, it ensures that the main namespace uses an empty namespace prefix.

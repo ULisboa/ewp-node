@@ -6,13 +6,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.exception.EwpApiSecurityException;
@@ -20,6 +20,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
+import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
 
 /**
  * Filter that prepares the environment for further EWP authentication methods.
@@ -28,10 +29,10 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
 
   private static final Logger LOG = LoggerFactory.getLogger(EwpApiPreAuthenticationFilter.class);
 
-  private final Jaxb2Marshaller jaxb2Marshaller;
+  private final Jaxb2HttpMessageConverter jaxb2HttpMessageConverter;
 
-  public EwpApiPreAuthenticationFilter(Jaxb2Marshaller jaxb2Marshaller) {
-    this.jaxb2Marshaller = jaxb2Marshaller;
+  public EwpApiPreAuthenticationFilter(Jaxb2HttpMessageConverter jaxb2HttpMessageConverter) {
+    this.jaxb2HttpMessageConverter = jaxb2HttpMessageConverter;
   }
 
   @Override
@@ -48,7 +49,7 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
         response.addHeader(HttpHeaders.WWW_AUTHENTICATE, "Signature realm=\"EWP\"");
         response.addHeader(HttpConstants.HEADER_WANT_DIGEST, "SHA-256");
 
-        writeResponseBody(
+        writeResponse(
             response,
             EwpApiUtils.createErrorResponseWithDeveloperMessage(
                 "No authorization method found in the request"));
@@ -59,7 +60,7 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private void fillResponseWithAuthenticationError(
-      HttpServletResponse response, AuthenticationException exception) throws IOException {
+      HttpServletResponse response, AuthenticationException exception) {
     if (exception instanceof EwpApiSecurityException) {
       EwpApiSecurityException ewpApiSecurityException = (EwpApiSecurityException) exception;
 
@@ -70,15 +71,22 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
       }
     }
 
-    writeResponseBody(
+    writeResponse(
         response, EwpApiUtils.createErrorResponseWithDeveloperMessage(exception.getMessage()));
   }
 
-  private void writeResponseBody(HttpServletResponse response, Object object) throws IOException {
-    response.setContentType(MediaType.APPLICATION_XML_VALUE);
+  private void writeResponse(HttpServletResponse response, Object object) {
+    try {
+      StreamResult streamResult = new StreamResult(response.getOutputStream());
 
-    StreamResult streamResult = new StreamResult(response.getOutputStream());
-    jaxb2Marshaller.marshal(object, streamResult);
+      HttpHeaders headers = new HttpHeaders();
+      headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
+
+      this.jaxb2HttpMessageConverter.writeToResult(object, headers, streamResult);
+
+    } catch (IOException | TransformerException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   private EwpApiHttpRequestWrapper getEwpApiHttpRequestWrapper(HttpServletRequest request) {
