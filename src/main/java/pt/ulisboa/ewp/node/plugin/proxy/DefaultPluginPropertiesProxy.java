@@ -25,12 +25,7 @@ public class DefaultPluginPropertiesProxy implements PluginPropertiesProxy {
     }
 
     String completeKey = getCompletePropertyKey(key);
-    try {
-      return environment.resolveRequiredPlaceholders("${" + completeKey + "}");
-    } catch (IllegalArgumentException e) {
-      LOGGER.debug("No property {} has been found", completeKey);
-      return null;
-    }
+    return environment.getProperty(completeKey);
   }
 
   private String getCompletePropertyKey(String key) {
