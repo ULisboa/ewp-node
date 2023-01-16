@@ -52,7 +52,7 @@ import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.keystore.KeyStoreGenerator;
 
 @ExtendWith(MockServerExtension.class)
-class EwpClientTest extends AbstractTest {
+class EwpHttpClientTest extends AbstractTest {
 
   private ClientAndServer mockServer;
 
@@ -60,7 +60,7 @@ class EwpClientTest extends AbstractTest {
   private RequestAuthenticationSigner requestSigner;
   private ResponseAuthenticationVerifier responseVerifier;
 
-  private EwpClient client;
+  private EwpHttpClient client;
 
   @BeforeEach
   public void beforeEach(ClientAndServer mockServer) {
@@ -70,7 +70,7 @@ class EwpClientTest extends AbstractTest {
     this.keyStoreService = mock(KeyStoreService.class);
     this.requestSigner = mock(RequestAuthenticationSigner.class);
     this.responseVerifier = mock(ResponseAuthenticationVerifier.class);
-    this.client = new EwpClient(List.of(), keyStoreService, requestSigner, responseVerifier,
+    this.client = new EwpHttpClient(List.of(), keyStoreService, requestSigner, responseVerifier,
         createJaxb2Marshaller());
   }
 

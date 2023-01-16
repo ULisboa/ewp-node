@@ -6,22 +6,24 @@ import java.util.Collection;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiCoursesApiSpecificationResponseDTO;
-import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
-import pt.ulisboa.ewp.node.client.ewp.EwpClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.Courses;
-import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> {
+public class EwpCoursesV0Client {
 
-  public EwpCoursesV0Client(RegistryClient registryClient, EwpClient ewpClient) {
-    super(registryClient, ewpClient);
+  private final RegistryClient registryClient;
+  private final EwpHttpClient ewpHttpClient;
+
+  public EwpCoursesV0Client(RegistryClient registryClient, EwpHttpClient ewpHttpClient) {
+    this.registryClient = registryClient;
+    this.ewpHttpClient = ewpHttpClient;
   }
 
   public ForwardEwpApiCoursesApiSpecificationResponseDTO getApiSpecification(String heiId) {
@@ -47,7 +49,7 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
     queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.execute(request, CoursesResponseV0.class);
+    return ewpHttpClient.execute(request, CoursesResponseV0.class);
   }
 
   public EwpSuccessOperationResult<CoursesResponseV0> findByLosCodes(
@@ -67,11 +69,10 @@ public class EwpCoursesV0Client extends EwpApiClient<EwpCourseApiConfiguration> 
     queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.execute(request, CoursesResponseV0.class);
+    return ewpHttpClient.execute(request, CoursesResponseV0.class);
   }
 
-  @Override
-  public EwpApiVersionSpecification<?, EwpCourseApiConfiguration> getApiVersionSpecification() {
-    return Courses.V0;
+  protected EwpCourseApiConfiguration getApiConfigurationForHeiId(String heiId) {
+    return Courses.V0.getConfigurationForHeiId(registryClient, heiId);
   }
 }

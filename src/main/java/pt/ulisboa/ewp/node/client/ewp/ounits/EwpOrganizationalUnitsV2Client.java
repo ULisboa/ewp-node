@@ -5,23 +5,25 @@ import java.util.Collection;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO;
-import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
-import pt.ulisboa.ewp.node.client.ewp.EwpClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.OrganizationalUnits;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpOrganizationalUnitsV2Client
-    extends EwpApiClient<EwpOrganizationalUnitApiConfiguration> {
+public class EwpOrganizationalUnitsV2Client {
 
-  public EwpOrganizationalUnitsV2Client(RegistryClient registryClient, EwpClient ewpClient) {
-    super(registryClient, ewpClient);
+  private final RegistryClient registryClient;
+  private final EwpHttpClient ewpHttpClient;
+
+  public EwpOrganizationalUnitsV2Client(RegistryClient registryClient,
+      EwpHttpClient ewpHttpClient) {
+    this.registryClient = registryClient;
+    this.ewpHttpClient = ewpHttpClient;
   }
 
   public ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO getApiSpecification(
@@ -42,7 +44,7 @@ public class EwpOrganizationalUnitsV2Client
     queryParams.param(EwpApiParamConstants.OUNIT_ID, organizationalUnitIds);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.execute(request, OunitsResponseV2.class);
+    return ewpHttpClient.execute(request, OunitsResponseV2.class);
   }
 
   public EwpSuccessOperationResult<OunitsResponseV2> findByOunitCodes(
@@ -55,12 +57,11 @@ public class EwpOrganizationalUnitsV2Client
     queryParams.param(EwpApiParamConstants.OUNIT_CODE, organizationalUnitCodes);
 
     EwpRequest request = EwpRequest.createGet(api, api.getUrl(), queryParams);
-    return ewpClient.execute(request, OunitsResponseV2.class);
+    return ewpHttpClient.execute(request, OunitsResponseV2.class);
   }
 
-  @Override
-  public EwpApiVersionSpecification<?, EwpOrganizationalUnitApiConfiguration>
-  getApiVersionSpecification() {
-    return OrganizationalUnits.V2;
+  protected EwpOrganizationalUnitApiConfiguration getApiConfigurationForHeiId(
+      String heiId) {
+    return OrganizationalUnits.V2.getConfigurationForHeiId(registryClient, heiId);
   }
 }

@@ -5,25 +5,26 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.approval.ForwardEwpApiInterInstitutionalAgreementsApprovalApiSpecificationResponseDTO;
-import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
-import pt.ulisboa.ewp.node.client.ewp.EwpClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementApprovalApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.InterInstitutionalAgreementApprovals;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpInterInstitutionalAgreementsApprovalsV1Client
-    extends EwpApiClient<EwpInterInstitutionalAgreementApprovalApiConfiguration> {
+public class EwpInterInstitutionalAgreementsApprovalsV1Client {
 
-  public EwpInterInstitutionalAgreementsApprovalsV1Client(
-      RegistryClient registryClient, EwpClient ewpClient) {
-    super(registryClient, ewpClient);
+  private final RegistryClient registryClient;
+  private final EwpHttpClient ewpHttpClient;
+
+  public EwpInterInstitutionalAgreementsApprovalsV1Client(RegistryClient registryClient,
+      EwpHttpClient ewpHttpClient) {
+    this.registryClient = registryClient;
+    this.ewpHttpClient = ewpHttpClient;
   }
 
   public ForwardEwpApiInterInstitutionalAgreementsApprovalApiSpecificationResponseDTO getApiSpecification(
@@ -51,12 +52,11 @@ public class EwpInterInstitutionalAgreementsApprovalsV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.execute(request, IiasApprovalResponseV1.class);
+    return ewpHttpClient.execute(request, IiasApprovalResponseV1.class);
   }
 
-  @Override
-  public EwpApiVersionSpecification<?, EwpInterInstitutionalAgreementApprovalApiConfiguration>
-  getApiVersionSpecification() {
-    return InterInstitutionalAgreementApprovals.V1;
+  protected EwpInterInstitutionalAgreementApprovalApiConfiguration getApiConfigurationForHeiId(
+      String heiId) {
+    return InterInstitutionalAgreementApprovals.V1.getConfigurationForHeiId(registryClient, heiId);
   }
 }

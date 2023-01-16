@@ -4,25 +4,26 @@ import eu.erasmuswithoutpaper.api.imobilities.tors.cnr.v1.ImobilityTorCnrRespons
 import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
-import pt.ulisboa.ewp.node.client.ewp.EwpClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilityToRCnrApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.IncomingMobilityToRCnr;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpIncomingMobilityToRCnrV1Client
-    extends EwpApiClient<EwpIncomingMobilityToRCnrApiConfiguration> {
+public class EwpIncomingMobilityToRCnrV1Client {
+
+  private final RegistryClient registryClient;
+  private final EwpHttpClient ewpHttpClient;
 
   public EwpIncomingMobilityToRCnrV1Client(RegistryClient registryClient,
-      EwpClient ewpClient) {
-    super(registryClient, ewpClient);
+      EwpHttpClient ewpHttpClient) {
+    this.registryClient = registryClient;
+    this.ewpHttpClient = ewpHttpClient;
   }
 
   public EwpSuccessOperationResult<ImobilityTorCnrResponseV1> sendChangeNotification(
@@ -37,12 +38,11 @@ public class EwpIncomingMobilityToRCnrV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.execute(request, ImobilityTorCnrResponseV1.class);
+    return ewpHttpClient.execute(request, ImobilityTorCnrResponseV1.class);
   }
 
-  @Override
-  public EwpApiVersionSpecification<?, EwpIncomingMobilityToRCnrApiConfiguration>
-  getApiVersionSpecification() {
-    return IncomingMobilityToRCnr.V1;
+  protected EwpIncomingMobilityToRCnrApiConfiguration getApiConfigurationForHeiId(
+      String heiId) {
+    return IncomingMobilityToRCnr.V1.getConfigurationForHeiId(registryClient, heiId);
   }
 }

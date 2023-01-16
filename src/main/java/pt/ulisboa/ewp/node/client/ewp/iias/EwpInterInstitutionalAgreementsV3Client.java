@@ -8,25 +8,26 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO;
-import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
-import pt.ulisboa.ewp.node.client.ewp.EwpClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.InterInstitutionalAgreements;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpInterInstitutionalAgreementsV3Client
-    extends EwpApiClient<EwpInterInstitutionalAgreementApiConfiguration> {
+public class EwpInterInstitutionalAgreementsV3Client {
 
-  public EwpInterInstitutionalAgreementsV3Client(
-      RegistryClient registryClient, EwpClient ewpClient) {
-    super(registryClient, ewpClient);
+  private final RegistryClient registryClient;
+  private final EwpHttpClient ewpHttpClient;
+
+  public EwpInterInstitutionalAgreementsV3Client(RegistryClient registryClient,
+      EwpHttpClient ewpHttpClient) {
+    this.registryClient = registryClient;
+    this.ewpHttpClient = ewpHttpClient;
   }
 
   public ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO getApiSpecification(
@@ -54,7 +55,7 @@ public class EwpInterInstitutionalAgreementsV3Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.execute(request, IiasIndexResponseV3.class);
+    return ewpHttpClient.execute(request, IiasIndexResponseV3.class);
   }
 
   public EwpSuccessOperationResult<IiasGetResponseV3> findByHeiIdAndIiaIds(
@@ -69,7 +70,7 @@ public class EwpInterInstitutionalAgreementsV3Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.execute(request, IiasGetResponseV3.class);
+    return ewpHttpClient.execute(request, IiasGetResponseV3.class);
   }
 
   public EwpSuccessOperationResult<IiasGetResponseV3> findByHeiIdAndIiaCodes(
@@ -84,12 +85,11 @@ public class EwpInterInstitutionalAgreementsV3Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.execute(request, IiasGetResponseV3.class);
+    return ewpHttpClient.execute(request, IiasGetResponseV3.class);
   }
 
-  @Override
-  public EwpApiVersionSpecification<?, EwpInterInstitutionalAgreementApiConfiguration>
-  getApiVersionSpecification() {
-    return InterInstitutionalAgreements.V3;
+  protected EwpInterInstitutionalAgreementApiConfiguration getApiConfigurationForHeiId(
+      String heiId) {
+    return InterInstitutionalAgreements.V3.getConfigurationForHeiId(registryClient, heiId);
   }
 }

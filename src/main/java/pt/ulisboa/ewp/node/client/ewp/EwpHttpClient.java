@@ -50,9 +50,9 @@ import pt.ulisboa.ewp.node.utils.keystore.DecodedKeystore;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class EwpClient {
+public class EwpHttpClient {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(EwpClient.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(EwpHttpClient.class);
 
   private final Collection<EwpClientInterceptor> interceptors;
   private final KeyStoreService keystoreService;
@@ -60,7 +60,8 @@ public class EwpClient {
   private final ResponseAuthenticationVerifier responseVerifier;
   private final Jaxb2Marshaller jaxb2Marshaller;
 
-  public EwpClient(Collection<EwpClientInterceptor> interceptors, KeyStoreService keystoreService,
+  public EwpHttpClient(Collection<EwpClientInterceptor> interceptors,
+      KeyStoreService keystoreService,
       RequestAuthenticationSigner requestSigner,
       ResponseAuthenticationVerifier responseVerifier,
       Jaxb2Marshaller jaxb2Marshaller) {

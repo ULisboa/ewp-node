@@ -7,24 +7,26 @@ import java.util.Collection;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.imobilities.tors.ForwardEwpApiIncomingMobilityToRsApiSpecificationResponseDTO;
-import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
-import pt.ulisboa.ewp.node.client.ewp.EwpClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpIncomingMobilityToRApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.IncomingMobilityToRs;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpIncomingMobilityToRsV2Client extends
-    EwpApiClient<EwpIncomingMobilityToRApiConfiguration> {
+public class EwpIncomingMobilityToRsV2Client {
 
-  public EwpIncomingMobilityToRsV2Client(RegistryClient registryClient, EwpClient ewpClient) {
-    super(registryClient, ewpClient);
+  private final RegistryClient registryClient;
+  private final EwpHttpClient ewpHttpClient;
+
+  public EwpIncomingMobilityToRsV2Client(RegistryClient registryClient,
+      EwpHttpClient ewpHttpClient) {
+    this.registryClient = registryClient;
+    this.ewpHttpClient = ewpHttpClient;
   }
 
   public ForwardEwpApiIncomingMobilityToRsApiSpecificationResponseDTO getApiSpecification(
@@ -47,7 +49,7 @@ public class EwpIncomingMobilityToRsV2Client extends
 
     EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.execute(request, ImobilityTorsIndexResponseV2.class);
+    return ewpHttpClient.execute(request, ImobilityTorsIndexResponseV2.class);
   }
 
   public EwpSuccessOperationResult<ImobilityTorsGetResponseV2> findByReceivingHeiIdAndOutgoingMobilityIds(
@@ -62,11 +64,11 @@ public class EwpIncomingMobilityToRsV2Client extends
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.execute(request, ImobilityTorsGetResponseV2.class);
+    return ewpHttpClient.execute(request, ImobilityTorsGetResponseV2.class);
   }
 
-  @Override
-  public EwpApiVersionSpecification<?, EwpIncomingMobilityToRApiConfiguration> getApiVersionSpecification() {
-    return IncomingMobilityToRs.V2;
+  protected EwpIncomingMobilityToRApiConfiguration getApiConfigurationForHeiId(
+      String heiId) {
+    return IncomingMobilityToRs.V2.getConfigurationForHeiId(registryClient, heiId);
   }
 }

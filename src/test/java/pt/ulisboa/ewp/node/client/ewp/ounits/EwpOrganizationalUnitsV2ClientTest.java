@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.client.ewp;
+package pt.ulisboa.ewp.node.client.ewp.ounits;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -11,7 +11,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import pt.ulisboa.ewp.node.AbstractTest;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO;
-import pt.ulisboa.ewp.node.client.ewp.ounits.EwpOrganizationalUnitsV2Client;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
 
 public class EwpOrganizationalUnitsV2ClientTest extends AbstractTest {

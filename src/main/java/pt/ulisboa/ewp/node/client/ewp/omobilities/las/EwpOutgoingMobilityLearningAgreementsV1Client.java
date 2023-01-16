@@ -10,8 +10,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.las.ForwardEwpApiOutgoingMobilityLearningAgreementsApiSpecificationResponseDTO;
-import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
-import pt.ulisboa.ewp.node.client.ewp.EwpClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
@@ -19,17 +18,19 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestSerializa
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilityLearningAgreementsApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.OutgoingMobilityLearningAgreements;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpOutgoingMobilityLearningAgreementsV1Client
-    extends EwpApiClient<EwpOutgoingMobilityLearningAgreementsApiConfiguration> {
+public class EwpOutgoingMobilityLearningAgreementsV1Client {
+
+  private final RegistryClient registryClient;
+  private final EwpHttpClient ewpHttpClient;
 
   public EwpOutgoingMobilityLearningAgreementsV1Client(RegistryClient registryClient,
-      EwpClient ewpClient) {
-    super(registryClient, ewpClient);
+      EwpHttpClient ewpHttpClient) {
+    this.registryClient = registryClient;
+    this.ewpHttpClient = ewpHttpClient;
   }
 
   public ForwardEwpApiOutgoingMobilityLearningAgreementsApiSpecificationResponseDTO getApiSpecification(
@@ -61,7 +62,7 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.execute(request, OmobilityLasIndexResponseV1.class);
+    return ewpHttpClient.execute(request, OmobilityLasIndexResponseV1.class);
   }
 
   public EwpSuccessOperationResult<OmobilityLasGetResponseV1> findBySendingHeiIdAndOutgoingMobilityIds(
@@ -75,7 +76,7 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.execute(request, OmobilityLasGetResponseV1.class);
+    return ewpHttpClient.execute(request, OmobilityLasGetResponseV1.class);
   }
 
   public EwpSuccessOperationResult<OmobilityLasUpdateResponseV1> updateOutgoingMobilityLearningAgreement(
@@ -85,12 +86,11 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUpdateUrl(),
         new EwpRequestSerializableBody(updateData));
-    return ewpClient.execute(request, OmobilityLasUpdateResponseV1.class);
+    return ewpHttpClient.execute(request, OmobilityLasUpdateResponseV1.class);
   }
 
-  @Override
-  public EwpApiVersionSpecification<?, EwpOutgoingMobilityLearningAgreementsApiConfiguration>
-  getApiVersionSpecification() {
-    return OutgoingMobilityLearningAgreements.V1;
+  protected EwpOutgoingMobilityLearningAgreementsApiConfiguration getApiConfigurationForHeiId(
+      String heiId) {
+    return OutgoingMobilityLearningAgreements.V1.getConfigurationForHeiId(registryClient, heiId);
   }
 }

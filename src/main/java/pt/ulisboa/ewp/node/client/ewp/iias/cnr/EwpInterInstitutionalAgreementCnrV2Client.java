@@ -4,25 +4,26 @@ import eu.erasmuswithoutpaper.api.iias.cnr.v2.IiaCnrResponseV2;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.client.ewp.EwpApiClient;
-import pt.ulisboa.ewp.node.client.ewp.EwpClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementCnrApiConfiguration;
-import pt.ulisboa.ewp.node.utils.EwpApiSpecification.EwpApiVersionSpecification;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.InterInstitutionalAgreementCnr;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 @Service
-public class EwpInterInstitutionalAgreementCnrV2Client
-    extends EwpApiClient<EwpInterInstitutionalAgreementCnrApiConfiguration> {
+public class EwpInterInstitutionalAgreementCnrV2Client {
+
+  private final RegistryClient registryClient;
+  private final EwpHttpClient ewpHttpClient;
 
   public EwpInterInstitutionalAgreementCnrV2Client(RegistryClient registryClient,
-      EwpClient ewpClient) {
-    super(registryClient, ewpClient);
+      EwpHttpClient ewpHttpClient) {
+    this.registryClient = registryClient;
+    this.ewpHttpClient = ewpHttpClient;
   }
 
   public EwpSuccessOperationResult<IiaCnrResponseV2> sendChangeNotification(
@@ -37,12 +38,11 @@ public class EwpInterInstitutionalAgreementCnrV2Client
 
     EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpClient.execute(request, IiaCnrResponseV2.class);
+    return ewpHttpClient.execute(request, IiaCnrResponseV2.class);
   }
 
-  @Override
-  public EwpApiVersionSpecification<?, EwpInterInstitutionalAgreementCnrApiConfiguration>
-  getApiVersionSpecification() {
-    return InterInstitutionalAgreementCnr.V2;
+  protected EwpInterInstitutionalAgreementCnrApiConfiguration getApiConfigurationForHeiId(
+      String heiId) {
+    return InterInstitutionalAgreementCnr.V2.getConfigurationForHeiId(registryClient, heiId);
   }
 }

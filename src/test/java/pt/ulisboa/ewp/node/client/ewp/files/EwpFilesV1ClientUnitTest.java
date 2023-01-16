@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.files.FileResponse;
-import pt.ulisboa.ewp.node.client.ewp.EwpClient;
+import pt.ulisboa.ewp.node.client.ewp.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -42,7 +42,7 @@ class EwpFilesV1ClientUnitTest {
     EwpSuccessOperationResult<Serializable> successOperationResult = new Builder<>().responseBody(
         data).response(ewpResponse).build();
 
-    EwpClient ewpClient = Mockito.mock(EwpClient.class);
+    EwpHttpClient ewpClient = Mockito.mock(EwpHttpClient.class);
     doReturn(successOperationResult).when(ewpClient).execute(Mockito.any(), Mockito.any());
 
     EwpFilesV1Client client = Mockito.spy(new EwpFilesV1Client(null, ewpClient));
