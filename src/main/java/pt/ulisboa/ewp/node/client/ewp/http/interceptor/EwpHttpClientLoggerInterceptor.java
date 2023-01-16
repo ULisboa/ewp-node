@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.client.ewp.interceptor;
+package pt.ulisboa.ewp.node.client.ewp.http.interceptor;
 
 import java.time.ZonedDateTime;
 import java.util.WeakHashMap;
@@ -15,16 +15,17 @@ import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 
 @Component
 @Transactional
-public class EwpClientLoggerInterceptor implements EwpClientInterceptor {
+public class EwpHttpClientLoggerInterceptor implements EwpHttpClientInterceptor {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EwpClientLoggerInterceptor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(EwpHttpClientLoggerInterceptor.class);
 
   private final EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
   private final HttpCommunicationLogRepository httpCommunicationLogRepository;
 
   private final WeakHashMap<EwpRequest, EwpCommunicationContext> requestToCommunicationContextMap = new WeakHashMap<>();
 
-  public EwpClientLoggerInterceptor(EwpHttpCommunicationLogService ewpHttpCommunicationLogService,
+  public EwpHttpClientLoggerInterceptor(
+      EwpHttpCommunicationLogService ewpHttpCommunicationLogService,
       HttpCommunicationLogRepository httpCommunicationLogRepository) {
     this.ewpHttpCommunicationLogService = ewpHttpCommunicationLogService;
     this.httpCommunicationLogRepository = httpCommunicationLogRepository;

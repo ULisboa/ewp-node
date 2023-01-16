@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.client.ewp.interceptor;
+package pt.ulisboa.ewp.node.client.ewp.http.interceptor;
 
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
@@ -7,7 +7,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult
 /**
  * Interceptor that allows to receive events before/after requests to EWP.
  */
-public interface EwpClientInterceptor {
+public interface EwpHttpClientInterceptor {
 
   /**
    * Called before sending a request.

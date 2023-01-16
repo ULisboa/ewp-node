@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.client.ewp;
+package pt.ulisboa.ewp.node.client.ewp.http;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import java.io.Serializable;
@@ -28,7 +28,7 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
-import pt.ulisboa.ewp.node.client.ewp.interceptor.EwpClientInterceptor;
+import pt.ulisboa.ewp.node.client.ewp.http.interceptor.EwpHttpClientInterceptor;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
@@ -54,13 +54,13 @@ public class EwpHttpClient {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(EwpHttpClient.class);
 
-  private final Collection<EwpClientInterceptor> interceptors;
+  private final Collection<EwpHttpClientInterceptor> interceptors;
   private final KeyStoreService keystoreService;
   private final RequestAuthenticationSigner requestSigner;
   private final ResponseAuthenticationVerifier responseVerifier;
   private final Jaxb2Marshaller jaxb2Marshaller;
 
-  public EwpHttpClient(Collection<EwpClientInterceptor> interceptors,
+  public EwpHttpClient(Collection<EwpHttpClientInterceptor> interceptors,
       KeyStoreService keystoreService,
       RequestAuthenticationSigner requestSigner,
       ResponseAuthenticationVerifier responseVerifier,

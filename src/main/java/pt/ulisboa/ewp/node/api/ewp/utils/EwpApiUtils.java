@@ -16,7 +16,6 @@ import java.util.function.Function;
 import org.w3c.dom.Element;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdAndMajorVersionException;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.client.ewp.utils.EwpClientConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
@@ -27,6 +26,9 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 import pt.ulisboa.ewp.node.utils.SemanticVersion;
 
 public class EwpApiUtils {
+
+  private static final List<EwpAuthenticationMethod> AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER =
+      List.of(EwpAuthenticationMethod.HTTP_SIGNATURE, EwpAuthenticationMethod.ANONYMOUS);
 
   private EwpApiUtils() {
   }
@@ -145,8 +147,7 @@ public class EwpApiUtils {
    */
   public static EwpAuthenticationMethod getBestSupportedApiAuthenticationMethod(
       EwpApiConfiguration api) {
-    for (EwpAuthenticationMethod authenticationMethod :
-        EwpClientConstants.AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER) {
+    for (EwpAuthenticationMethod authenticationMethod : AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER) {
       if (api.supportsAuthenticationMethod(authenticationMethod)) {
         return authenticationMethod;
       }
