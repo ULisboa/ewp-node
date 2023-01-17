@@ -16,8 +16,6 @@ import java.util.function.Function;
 import org.w3c.dom.Element;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdAndMajorVersionException;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
-import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfigurationFactory;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
@@ -26,9 +24,6 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 import pt.ulisboa.ewp.node.utils.SemanticVersion;
 
 public class EwpApiUtils {
-
-  private static final List<EwpAuthenticationMethod> AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER =
-      List.of(EwpAuthenticationMethod.HTTP_SIGNATURE, EwpAuthenticationMethod.ANONYMOUS);
 
   private EwpApiUtils() {
   }
@@ -139,22 +134,6 @@ public class EwpApiUtils {
       }
     }
     return result;
-  }
-
-  /**
-   * Returns the "best" supported API authentication method using a predefined list of
-   * authentication methods order.
-   */
-  public static EwpAuthenticationMethod getBestSupportedApiAuthenticationMethod(
-      EwpApiConfiguration api) {
-    for (EwpAuthenticationMethod authenticationMethod : AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER) {
-      if (api.supportsAuthenticationMethod(authenticationMethod)) {
-        return authenticationMethod;
-      }
-    }
-
-    throw new IllegalStateException(
-        "Failed to find an admissible authentication method for API: " + api);
   }
 
   public static ErrorResponseV1 createErrorResponseWithDeveloperMessage(String developerMessage) {

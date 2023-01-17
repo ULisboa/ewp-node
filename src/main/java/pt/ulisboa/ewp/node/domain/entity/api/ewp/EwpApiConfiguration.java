@@ -17,8 +17,22 @@ public class EwpApiConfiguration {
     this.supportedServerAuthenticationMethods = supportedServerAuthenticationMethods;
   }
 
-  public Collection<EwpClientAuthenticationConfiguration>
-      getSupportedClientAuthenticationMethods() {
+  /**
+   * Returns the "best" supported API authentication method using a predefined list of
+   * authentication methods order.
+   */
+  public EwpAuthenticationMethod getBestSupportedAuthenticationMethod() {
+    for (EwpAuthenticationMethod authenticationMethod : EwpAuthenticationMethod.AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER) {
+      if (supportsAuthenticationMethod(authenticationMethod)) {
+        return authenticationMethod;
+      }
+    }
+
+    throw new IllegalStateException(
+        "Failed to find an admissible authentication method for API: " + this);
+  }
+
+  public Collection<EwpClientAuthenticationConfiguration> getSupportedClientAuthenticationMethods() {
     return supportedClientAuthenticationMethods;
   }
 
@@ -27,8 +41,7 @@ public class EwpApiConfiguration {
     this.supportedClientAuthenticationMethods = supportedClientAuthenticationMethods;
   }
 
-  public Collection<EwpServerAuthenticationConfiguration>
-  getSupportedServerAuthenticationMethods() {
+  public Collection<EwpServerAuthenticationConfiguration> getSupportedServerAuthenticationMethods() {
     return supportedServerAuthenticationMethods;
   }
 

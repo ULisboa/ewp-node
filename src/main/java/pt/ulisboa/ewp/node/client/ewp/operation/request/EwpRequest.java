@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.filter.ForwardEwpApiRequestFilter;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
@@ -138,7 +137,7 @@ public class EwpRequest implements Serializable {
       HttpParams queryParams,
       EwpRequestBody body) {
     EwpRequest request = new EwpRequest(method, urlWithoutQueryParams);
-    request.authenticationMethod(EwpApiUtils.getBestSupportedApiAuthenticationMethod(api));
+    request.authenticationMethod(api.getBestSupportedAuthenticationMethod());
     request.queryParams(queryParams);
     request.body(body);
     return request;
