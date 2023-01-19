@@ -4,10 +4,8 @@ import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
@@ -16,13 +14,15 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpNotFoundException;
+import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
 
 @Component
 public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolver {
 
-  @Autowired private Jaxb2Marshaller jaxb2Marshaller;
+  private Jaxb2HttpMessageConverter jaxb2HttpMessageConverter;
 
-  public EwpApiRequestExceptionHandler() {
+  public EwpApiRequestExceptionHandler(Jaxb2HttpMessageConverter jaxb2HttpMessageConverter) {
+    this.jaxb2HttpMessageConverter = jaxb2HttpMessageConverter;
     setOrder(Integer.MIN_VALUE);
   }
 
@@ -89,7 +89,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
 
   private void fillModelAndViewWithException(ModelAndView modelAndView, Exception ex) {
     MarshallingView marshallingView = new MarshallingView();
-    marshallingView.setMarshaller(jaxb2Marshaller);
+    marshallingView.setMarshaller(jaxb2HttpMessageConverter);
     modelAndView.setView(marshallingView);
 
     modelAndView.addObject(createErrorResponse(ex));

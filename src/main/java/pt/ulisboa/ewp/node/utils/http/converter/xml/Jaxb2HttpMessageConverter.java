@@ -3,10 +3,10 @@ package pt.ulisboa.ewp.node.utils.http.converter.xml;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -18,11 +18,14 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.MarshallingFailureException;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.util.ClassUtils;
 
-public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConverter {
+public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConverter implements
+    Marshaller {
 
   private String[] packagesToScan;
 
@@ -43,10 +46,28 @@ public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConver
     this.namespacePrefixMapper = namespacePrefixMapper;
   }
 
+
+  @Override
+  public boolean supports(Class<?> clazz) {
+    return canWrite(clazz, MediaType.APPLICATION_XML);
+  }
+
   @Override
   public boolean canWrite(Class<?> clazz, MediaType mediaType) {
     return (AnnotationUtils.findAnnotation(clazz, XmlRootElement.class) != null) || (
         this.supportJaxbElementClass && JAXBElement.class.isAssignableFrom(clazz));
+  }
+
+  @Override
+  public void marshal(Object object, Result result) throws XmlMappingException {
+    try {
+      HttpHeaders headers = new HttpHeaders();
+      headers.put(HttpHeaders.CONTENT_TYPE,
+          Collections.singletonList(MediaType.APPLICATION_XML_VALUE));
+      writeToResult(object, headers, result);
+    } catch (TransformerException e) {
+      throw new MarshallingFailureException("Failed to write XML result", e);
+    }
   }
 
   @Override
@@ -96,7 +117,7 @@ public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConver
     marshaller.setSupportJaxbElementClass(this.supportJaxbElementClass);
 
     Map<String, Object> jaxbProperties = new HashMap<>();
-    jaxbProperties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+    jaxbProperties.put(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
     if (this.namespacePrefixMapper != null) {
       jaxbProperties.put("com.sun.xml.bind.namespacePrefixMapper", this.namespacePrefixMapper);
     }
@@ -105,4 +126,5 @@ public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConver
 
     return marshaller;
   }
+
 }
