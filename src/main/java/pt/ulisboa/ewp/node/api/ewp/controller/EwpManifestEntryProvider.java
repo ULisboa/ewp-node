@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 /**
@@ -23,9 +24,12 @@ public abstract class EwpManifestEntryProvider {
   private final Map<Class<? extends HostProvider>, HostProviderToManifestEntryConverter<?>> hostProviderToManifestEntryConverters = new HashMap<>();
 
   private final HostPluginManager hostPluginManager;
+  private final ManifestProperties manifestProperties;
 
-  public EwpManifestEntryProvider(HostPluginManager hostPluginManager) {
+  public EwpManifestEntryProvider(HostPluginManager hostPluginManager,
+      ManifestProperties manifestProperties) {
     this.hostPluginManager = hostPluginManager;
+    this.manifestProperties = manifestProperties;
   }
 
   public final Collection<ManifestApiEntryBaseV1> getManifestEntries(String heiId,
@@ -46,28 +50,40 @@ public abstract class EwpManifestEntryProvider {
     Collection<ManifestApiEntryBaseV1> manifestEntries = new ArrayList<>();
 
     Set<Class<? extends HostProvider>> knownHostProviderClasses = this.hostProviderToManifestEntryConverters.keySet();
-    Map<Class<?>, Collection<HostProvider>> classToHostProvidersMap = buildClassToHostProvidersMap(
+    Map<Class<? extends HostProvider>, Collection<HostProvider>> classToHostProvidersMap = buildClassToHostProvidersMap(
         heiId, knownHostProviderClasses);
 
     classToHostProvidersMap.forEach((classType, hostProviders) -> {
-      Optional<ManifestApiEntryBaseV1> manifestEntryOptional = this
-          .toManifestEntry(heiId, baseUrl, hostProviders);
-      if (manifestEntryOptional.isPresent()) {
-        manifestEntries.add(manifestEntryOptional.get());
+      boolean createManifestEntry = true;
+      if (this.manifestProperties.getEntries().mustExcludeIfNoPrimaryProviderAvailable()) {
+        Optional<?> primaryProviderOptional = this.hostPluginManager.getPrimaryProvider(heiId,
+            classType);
+        if (primaryProviderOptional.isEmpty()) {
+          createManifestEntry = false;
+        }
+      }
+
+      if (createManifestEntry) {
+        Optional<ManifestApiEntryBaseV1> manifestEntryOptional = this
+            .toManifestEntry(heiId, baseUrl, hostProviders);
+        if (manifestEntryOptional.isPresent()) {
+          manifestEntries.add(manifestEntryOptional.get());
+        }
       }
     });
 
     return manifestEntries;
   }
 
-  private Map<Class<?>, Collection<HostProvider>> buildClassToHostProvidersMap(String heiId,
+  private Map<Class<? extends HostProvider>, Collection<HostProvider>> buildClassToHostProvidersMap(
+      String heiId,
       Set<Class<? extends HostProvider>> knownHostProviderClasses) {
-    Map<Class<?>, Collection<HostProvider>> classToHostProvidersMap = new HashMap<>();
+    Map<Class<? extends HostProvider>, Collection<HostProvider>> classToHostProvidersMap = new HashMap<>();
     hostPluginManager.getAllProviders(heiId).forEach(hostProvider -> {
-      Optional<Class<?>> hostProviderClassOptional = this.getHostProviderClassFromKnownClasses(
+      Optional<Class<? extends HostProvider>> hostProviderClassOptional = this.getHostProviderClassFromKnownClasses(
           hostProvider, knownHostProviderClasses);
       if (hostProviderClassOptional.isPresent()) {
-        Class<?> hostProviderClass = hostProviderClassOptional.get();
+        Class<? extends HostProvider> hostProviderClass = hostProviderClassOptional.get();
         classToHostProvidersMap.computeIfAbsent(hostProviderClass, k -> new ArrayList<>());
         classToHostProvidersMap.get(hostProviderClass).add(hostProvider);
       }
@@ -79,14 +95,19 @@ public abstract class EwpManifestEntryProvider {
    * Given a host provider, returns the lowest superclass that belongs to the provided set of known
    * classes.
    */
-  private Optional<Class<?>> getHostProviderClassFromKnownClasses(HostProvider hostProvider,
+  private Optional<Class<? extends HostProvider>> getHostProviderClassFromKnownClasses(
+      HostProvider hostProvider,
       Set<Class<? extends HostProvider>> knownHostProviderClasses) {
     Class<?> currentClass = hostProvider.getClass();
     while (currentClass != null && !knownHostProviderClasses.contains(currentClass)) {
       currentClass = currentClass.getSuperclass();
     }
 
-    return Optional.ofNullable(currentClass);
+    if (currentClass != null && HostProvider.class.isAssignableFrom(currentClass)) {
+      return Optional.of((Class<? extends HostProvider>) currentClass);
+    } else {
+      return Optional.empty();
+    }
   }
 
   /**

@@ -7,13 +7,15 @@ import java.util.Collection;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.CoursesV0HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @Service
 public class EwpApiCoursesManifestEntryProvider extends EwpManifestEntryProvider {
 
-  public EwpApiCoursesManifestEntryProvider(HostPluginManager hostPluginManager) {
-    super(hostPluginManager);
+  public EwpApiCoursesManifestEntryProvider(HostPluginManager hostPluginManager,
+      ManifestProperties manifestProperties) {
+    super(hostPluginManager, manifestProperties);
 
     super.registerHostProviderToManifestEntryConverter(CoursesV0HostProvider.class,
         this::getManifestEntryForV0);

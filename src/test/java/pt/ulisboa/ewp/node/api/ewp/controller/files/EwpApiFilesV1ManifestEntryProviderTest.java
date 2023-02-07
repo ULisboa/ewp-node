@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.files.MockFilesV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
+import pt.ulisboa.ewp.node.config.manifest.ManifestEntriesProperties;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 public class EwpApiFilesV1ManifestEntryProviderTest {
@@ -24,8 +26,10 @@ public class EwpApiFilesV1ManifestEntryProviderTest {
 
     HostPluginManager hostPluginManager = new HostPluginManager("/" + UUID.randomUUID().toString(),
         null);
+    ManifestProperties manifestProperties = ManifestProperties.create(
+        ManifestEntriesProperties.create(false));
     EwpApiFilesManifestEntryProvider manifestEntryProvider = new EwpApiFilesManifestEntryProvider(
-        hostPluginManager);
+        hostPluginManager, manifestProperties);
 
     Collection<ManifestApiEntryBaseV1> manifestEntries = manifestEntryProvider.getManifestEntries(
         heiId, baseUrl);
@@ -39,8 +43,10 @@ public class EwpApiFilesV1ManifestEntryProviderTest {
     String heiId = UUID.randomUUID().toString();
 
     HostPluginManager hostPluginManager = Mockito.mock(HostPluginManager.class);
+    ManifestProperties manifestProperties = ManifestProperties.create(
+        ManifestEntriesProperties.create(false));
     EwpApiFilesManifestEntryProvider manifestEntryProvider = new EwpApiFilesManifestEntryProvider(
-        hostPluginManager);
+        hostPluginManager, manifestProperties);
 
     MockFilesV1HostProvider provider1 = new MockFilesV1HostProvider();
     MockFilesV1HostProvider provider2 = new MockFilesV1HostProvider();

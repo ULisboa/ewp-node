@@ -7,6 +7,7 @@ import java.util.Collection;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.cnr.OutgoingMobilityCnrV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @Component
@@ -14,8 +15,8 @@ public class EwpApiOutgoingMobilityCnrManifestEntryProvider
     extends EwpManifestEntryProvider {
 
   public EwpApiOutgoingMobilityCnrManifestEntryProvider(
-      HostPluginManager hostPluginManager) {
-    super(hostPluginManager);
+      HostPluginManager hostPluginManager, ManifestProperties manifestProperties) {
+    super(hostPluginManager, manifestProperties);
 
     super.registerHostProviderToManifestEntryConverter(OutgoingMobilityCnrV1HostProvider.class,
         this::getManifestEntryForV1);

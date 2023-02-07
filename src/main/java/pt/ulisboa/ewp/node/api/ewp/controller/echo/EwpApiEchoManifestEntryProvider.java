@@ -7,14 +7,15 @@ import java.util.Collections;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @Component
 public class EwpApiEchoManifestEntryProvider extends EwpManifestEntryProvider {
 
   public EwpApiEchoManifestEntryProvider(
-      HostPluginManager hostPluginManager) {
-    super(hostPluginManager);
+      HostPluginManager hostPluginManager, ManifestProperties manifestProperties) {
+    super(hostPluginManager, manifestProperties);
   }
 
   @Override

@@ -13,6 +13,8 @@ import org.mockito.Mockito;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.MockOutgoingMobilitiesV1HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV1HostProvider;
+import pt.ulisboa.ewp.node.config.manifest.ManifestEntriesProperties;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
@@ -21,8 +23,10 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
   void testGetManifestEntries_NoRegisteredProviders_NoManifestEntriesReturned() {
     // Arrange
     HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    ManifestProperties manifestProperties = ManifestProperties.create(
+        ManifestEntriesProperties.create(false));
     EwpApiOutgoingMobilitiesManifestEntryProvider manifestEntryProvider = new EwpApiOutgoingMobilitiesManifestEntryProvider(
-        hostPluginManager);
+        hostPluginManager, manifestProperties);
     String heiId = "abc";
     String baseUrl = "http://example.com";
 
@@ -41,8 +45,10 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
   void testGetManifestEntries_OneRegisteredV1Provider_ManifestEntryReturned() {
     // Arrange
     HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    ManifestProperties manifestProperties = ManifestProperties.create(
+        ManifestEntriesProperties.create(false));
     EwpApiOutgoingMobilitiesManifestEntryProvider manifestEntryProvider = new EwpApiOutgoingMobilitiesManifestEntryProvider(
-        hostPluginManager);
+        hostPluginManager, manifestProperties);
     String heiId = "abc";
     String baseUrl = "http://example.com";
 
@@ -73,8 +79,10 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
   void testGetManifestEntries_TwoRegisteredV1Provider_ManifestEntryReturned() {
     // Arrange
     HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    ManifestProperties manifestProperties = ManifestProperties.create(
+        ManifestEntriesProperties.create(false));
     EwpApiOutgoingMobilitiesManifestEntryProvider manifestEntryProvider = new EwpApiOutgoingMobilitiesManifestEntryProvider(
-        hostPluginManager);
+        hostPluginManager, manifestProperties);
     String heiId = "abc";
     String baseUrl = "http://example.com";
 

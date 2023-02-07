@@ -7,14 +7,16 @@ import java.util.Collection;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.ounits.OrganizationalUnitsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @Component
 public class EwpApiOrganizationalUnitsManifestEntryProvider
     extends EwpManifestEntryProvider {
 
-  public EwpApiOrganizationalUnitsManifestEntryProvider(HostPluginManager hostPluginManager) {
-    super(hostPluginManager);
+  public EwpApiOrganizationalUnitsManifestEntryProvider(HostPluginManager hostPluginManager,
+      ManifestProperties manifestProperties) {
+    super(hostPluginManager, manifestProperties);
 
     super.registerHostProviderToManifestEntryConverter(OrganizationalUnitsV2HostProvider.class,
         this::getManifestEntryForV2);

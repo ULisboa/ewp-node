@@ -27,6 +27,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import pt.ulisboa.ewp.node.config.bootstrap.BootstrapProperties;
 import pt.ulisboa.ewp.node.config.cnr.CnrProperties;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.config.sync.SyncProperties;
@@ -40,6 +41,7 @@ import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
     value = {
         DatabaseProperties.class,
         BootstrapProperties.class,
+        ManifestProperties.class,
         RegistryProperties.class,
         SecurityProperties.class,
         CnrProperties.class,

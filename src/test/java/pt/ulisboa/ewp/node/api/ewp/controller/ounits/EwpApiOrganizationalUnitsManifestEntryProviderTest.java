@@ -12,6 +12,8 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.ounits.OrganizationalUnitsV2HostProvider;
+import pt.ulisboa.ewp.node.config.manifest.ManifestEntriesProperties;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 class EwpApiOrganizationalUnitsManifestEntryProviderTest {
@@ -19,8 +21,10 @@ class EwpApiOrganizationalUnitsManifestEntryProviderTest {
   @Test
   public void testGetManifestEntries_TwoApplicableHostProvidersWithSameVersion_OnlyOneManifestEntry() {
     HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    ManifestProperties manifestProperties = ManifestProperties.create(
+        ManifestEntriesProperties.create(false));
     EwpApiOrganizationalUnitsManifestEntryProvider manifestEntryProvider = new EwpApiOrganizationalUnitsManifestEntryProvider(
-        hostPluginManager);
+        hostPluginManager, manifestProperties);
 
     OrganizationalUnitsV2HostProvider provider1 = new OrganizationalUnitsV2HostProvider() {
       @Override

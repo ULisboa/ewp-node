@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @Component
@@ -15,8 +16,8 @@ public class EwpApiInterInstitutionalAgreementsManifestEntryProvider
     extends EwpManifestEntryProvider {
 
   public EwpApiInterInstitutionalAgreementsManifestEntryProvider(
-      HostPluginManager hostPluginManager) {
-    super(hostPluginManager);
+      HostPluginManager hostPluginManager, ManifestProperties manifestProperties) {
+    super(hostPluginManager, manifestProperties);
 
     super.registerHostProviderToManifestEntryConverter(
         InterInstitutionalAgreementsV6HostProvider.class,

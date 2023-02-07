@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.imobilities.tors.IncomingMobilityToRsV1HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.imobilities.tors.IncomingMobilityToRsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @Component
@@ -15,8 +16,8 @@ public class EwpApiIncomingMobilityToRsManifestEntryProvider
     extends EwpManifestEntryProvider {
 
   public EwpApiIncomingMobilityToRsManifestEntryProvider(
-      HostPluginManager hostPluginManager) {
-    super(hostPluginManager);
+      HostPluginManager hostPluginManager, ManifestProperties manifestProperties) {
+    super(hostPluginManager, manifestProperties);
 
     super.registerHostProviderToManifestEntryConverter(
         IncomingMobilityToRsV1HostProvider.class,

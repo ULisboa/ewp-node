@@ -8,14 +8,15 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.factsheets.FactSheetsV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @Component
 public class EwpApiFactSheetsManifestEntryProvider extends EwpManifestEntryProvider {
 
   public EwpApiFactSheetsManifestEntryProvider(
-      HostPluginManager hostPluginManager) {
-    super(hostPluginManager);
+      HostPluginManager hostPluginManager, ManifestProperties manifestProperties) {
+    super(hostPluginManager, manifestProperties);
 
     super.registerHostProviderToManifestEntryConverter(FactSheetsV1HostProvider.class,
         this::getManifestEntry);

@@ -11,6 +11,8 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.MockCoursesV0HostProvider;
+import pt.ulisboa.ewp.node.config.manifest.ManifestEntriesProperties;
+import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 public class EwpApiCoursesV0ManifestEntryProviderTest {
@@ -22,8 +24,10 @@ public class EwpApiCoursesV0ManifestEntryProviderTest {
 
     HostPluginManager hostPluginManager = new HostPluginManager("/" + UUID.randomUUID(),
         null);
+    ManifestProperties manifestProperties = ManifestProperties.create(
+        ManifestEntriesProperties.create(false));
     EwpApiCoursesManifestEntryProvider manifestEntryProvider = new EwpApiCoursesManifestEntryProvider(
-        hostPluginManager);
+        hostPluginManager, manifestProperties);
 
     Collection<ManifestApiEntryBaseV1> manifestEntries = manifestEntryProvider.getManifestEntries(
         heiId, baseUrl);
@@ -36,8 +40,10 @@ public class EwpApiCoursesV0ManifestEntryProviderTest {
     String heiId = UUID.randomUUID().toString();
 
     HostPluginManager hostPluginManager = Mockito.mock(HostPluginManager.class);
+    ManifestProperties manifestProperties = ManifestProperties.create(
+        ManifestEntriesProperties.create(false));
     EwpApiCoursesManifestEntryProvider manifestEntryProvider = new EwpApiCoursesManifestEntryProvider(
-        hostPluginManager);
+        hostPluginManager, manifestProperties);
 
     MockCoursesV0HostProvider provider1 = new MockCoursesV0HostProvider(5, 2);
     MockCoursesV0HostProvider provider2 = new MockCoursesV0HostProvider(3, 5);

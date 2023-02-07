@@ -58,6 +58,15 @@ bootstrap:
             - type: erasmus-charter
               value: 269558-EPP-1-2015-1-PT-EPPKA3-ECHE
 
+manifest:
+  entries:
+    # If true, for each HEI ID/API pair, exclude providers when the primary host plugin (for that HEI ID) does not implement that API.
+    # For instance, if this setting is true and for IIAs API, for a given HEI ID, there is only one host provider
+    # available and that one is not from a host plugin marked as primary for that HEI ID, then the IIAs API will
+    # not be marked as available in the manifest.
+    # For development it is recommended this setting to be false in order to test non-primary host plugins.
+    excludeIfNoPrimaryProviderAvailable: false
+
 plugins:
   # Set the path to the plugins directory
   path: /plugins/
