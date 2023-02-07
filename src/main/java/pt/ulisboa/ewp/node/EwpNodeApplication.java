@@ -10,13 +10,13 @@ import javax.xml.bind.Marshaller;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -29,6 +29,7 @@ import pt.ulisboa.ewp.node.config.bootstrap.BootstrapProperties;
 import pt.ulisboa.ewp.node.config.cnr.CnrProperties;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
+import pt.ulisboa.ewp.node.config.scheduling.SchedulingProperties;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
 import pt.ulisboa.ewp.node.config.sync.SyncProperties;
 import pt.ulisboa.ewp.node.domain.utils.DatabaseProperties;
@@ -44,6 +45,7 @@ import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
         ManifestProperties.class,
         RegistryProperties.class,
         SecurityProperties.class,
+        SchedulingProperties.class,
         CnrProperties.class,
         SyncProperties.class
     })
@@ -151,7 +153,7 @@ public class EwpNodeApplication {
   }
 
   @Bean
-  @Profile("!" + FeatureFlags.FEATURE_FLAG_NO_SCHEDULERS)
+  @ConditionalOnProperty(name = "scheduling.enabled", havingValue = "true")
   public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
     ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
     threadPoolTaskScheduler.setPoolSize(5);

@@ -19,7 +19,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import pt.ulisboa.ewp.node.AbstractIntegrationTest;
-import pt.ulisboa.ewp.node.FeatureFlags;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -34,11 +33,11 @@ import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificatio
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpOutgoingMobilityLearningAgreementChangeNotificationHandler;
 
 @ContextConfiguration(classes = Config.class)
-@ActiveProfiles(profiles = {"dev", "test",
-    FeatureFlags.FEATURE_FLAG_WITH_SCHEDULERS}, inheritProfiles = false)
+@ActiveProfiles(profiles = {"dev", "test"}, inheritProfiles = false)
 @TestPropertySource(properties = {
     "cnr.intervalInMilliseconds=1000",
-    "cnr.maxNumberAttempts=3"
+    "cnr.maxNumberAttempts=3",
+    "scheduling.enabled=true"
 })
 class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 

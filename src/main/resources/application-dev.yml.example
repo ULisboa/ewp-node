@@ -67,6 +67,11 @@ manifest:
     # For development it is recommended this setting to be false in order to test non-primary host plugins.
     excludeIfNoPrimaryProviderAvailable: false
 
+scheduling:
+  # If true, scheduling services, such as Notification Daemon (to deliver CNR messages) and mapping synchronization,
+  # are enabled.
+  enabled: true
+
 plugins:
   # Set the path to the plugins directory
   path: /plugins/
