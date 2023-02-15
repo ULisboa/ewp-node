@@ -1,7 +1,8 @@
 package pt.ulisboa.ewp.node.service.ewp.iia.hash;
 
+import eu.erasmuswithoutpaper.api.iias.v3.endpoints.IiasGetResponseV3;
+import eu.erasmuswithoutpaper.api.iias.v4.endpoints.IiasGetResponseV4;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6;
-import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,14 +48,67 @@ public class IiaHashService {
   }
 
   /**
-   * Calculates the cooperation conditions hash for each interinstitutional agreement provided.
+   * Calculates the cooperation conditions hash for each interinstitutional agreement V3 provided.
    *
    * @param iias             The interinstitutional agreements to process
    * @param iiasNamespaceUrl The namespace URL of the IIAs Get Response
    * @return A list of hashes for all agreements provided.
    * @throws HashCalculationException when hash failed to be calculated for some reason.
    */
-  public List<HashCalculationResult> calculateCooperationConditionsHash(List<Iia> iias,
+  public List<HashCalculationResult> calculateCooperationConditionsHashesForV3(
+      List<IiasGetResponseV3.Iia> iias, String iiasNamespaceUrl) throws HashCalculationException {
+    try {
+      IiasGetResponseV3 iiasGetResponse = new IiasGetResponseV3();
+      iiasGetResponse.getIia().addAll(iias);
+
+      ByteArrayOutputStream iiasGetResponseOutputStream = new ByteArrayOutputStream();
+      StreamResult iiasGetResponseStreamResult = new StreamResult(iiasGetResponseOutputStream);
+      this.jaxb2HttpMessageConverter.marshal(iiasGetResponse, iiasGetResponseStreamResult);
+
+      return calculateCooperationConditionsHashes(iiasNamespaceUrl,
+          iiasGetResponseOutputStream.toByteArray());
+
+    } catch (HashCalculationException e) {
+      throw new HashCalculationException(e);
+    }
+  }
+
+  /**
+   * Calculates the cooperation conditions hash for each interinstitutional agreement V4 provided.
+   *
+   * @param iias             The interinstitutional agreements to process
+   * @param iiasNamespaceUrl The namespace URL of the IIAs Get Response
+   * @return A list of hashes for all agreements provided.
+   * @throws HashCalculationException when hash failed to be calculated for some reason.
+   */
+  public List<HashCalculationResult> calculateCooperationConditionsHashesForV4(
+      List<IiasGetResponseV4.Iia> iias, String iiasNamespaceUrl) throws HashCalculationException {
+    try {
+      IiasGetResponseV4 iiasGetResponse = new IiasGetResponseV4();
+      iiasGetResponse.getIia().addAll(iias);
+
+      ByteArrayOutputStream iiasGetResponseOutputStream = new ByteArrayOutputStream();
+      StreamResult iiasGetResponseStreamResult = new StreamResult(iiasGetResponseOutputStream);
+      this.jaxb2HttpMessageConverter.marshal(iiasGetResponse, iiasGetResponseStreamResult);
+
+      return calculateCooperationConditionsHashes(iiasNamespaceUrl,
+          iiasGetResponseOutputStream.toByteArray());
+
+    } catch (HashCalculationException e) {
+      throw new HashCalculationException(e);
+    }
+  }
+
+  /**
+   * Calculates the cooperation conditions hash for each interinstitutional agreement V6 provided.
+   *
+   * @param iias             The interinstitutional agreements to process
+   * @param iiasNamespaceUrl The namespace URL of the IIAs Get Response
+   * @return A list of hashes for all agreements provided.
+   * @throws HashCalculationException when hash failed to be calculated for some reason.
+   */
+  public List<HashCalculationResult> calculateCooperationConditionsHashesForV6(
+      List<IiasGetResponseV6.Iia> iias,
       String iiasNamespaceUrl) throws HashCalculationException {
     try {
       IiasGetResponseV6 iiasGetResponse = new IiasGetResponseV6();
@@ -64,11 +118,23 @@ public class IiaHashService {
       StreamResult iiasGetResponseStreamResult = new StreamResult(iiasGetResponseOutputStream);
       this.jaxb2HttpMessageConverter.marshal(iiasGetResponse, iiasGetResponseStreamResult);
 
+      return calculateCooperationConditionsHashes(iiasNamespaceUrl,
+          iiasGetResponseOutputStream.toByteArray());
+
+    } catch (HashCalculationException e) {
+      throw new HashCalculationException(e);
+    }
+  }
+
+  private List<HashCalculationResult> calculateCooperationConditionsHashes(String iiasNamespaceUrl,
+      byte[] iiasGetResponseBytes)
+      throws HashCalculationException {
+    try {
       XPath xPath = createXPath(iiasNamespaceUrl);
       XPathExpression xpathIiasExpr = xPath.compile("/iia:iias-get-response/iia:iia");
 
       InputSource iiaXmlInputSource = new InputSource(
-          new ByteArrayInputStream(iiasGetResponseOutputStream.toByteArray()));
+          new ByteArrayInputStream(iiasGetResponseBytes));
       Document document = getDocument(iiaXmlInputSource);
 
       NodeList iiasNodes = (NodeList) xpathIiasExpr.evaluate(document, XPathConstants.NODESET);
@@ -141,6 +207,10 @@ public class IiaHashService {
   }
 
   private void removeContacts(Node cooperationConditions, String iiasNamespaceUrl) {
+    if (cooperationConditions == null) {
+      return;
+    }
+
     NodeList mobilitySpecs = cooperationConditions.getChildNodes();
     for (int i = 0; i < mobilitySpecs.getLength(); i++) {
       Node node = mobilitySpecs.item(i);

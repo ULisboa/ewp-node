@@ -31,13 +31,13 @@ class IiaHashServiceIntegrationTest extends AbstractIntegrationTest {
   }
 
   @Test
-  public void testCalculateCooperationConditionsHash_OneIia_ReturnCorrectHash()
+  public void testCalculateCooperationConditionsHashesForV6_OneIia_ReturnCorrectHash()
       throws HashCalculationException {
     // Given
     Iia iia = createSampleIia1();
 
     // When
-    List<HashCalculationResult> result = this.iiaHashService.calculateCooperationConditionsHash(
+    List<HashCalculationResult> result = this.iiaHashService.calculateCooperationConditionsHashesForV6(
         List.of(iia),
         EwpApiNamespaces.IIAS_V6_GET_RESPONSE.getNamespaceUrl());
 
@@ -48,13 +48,13 @@ class IiaHashServiceIntegrationTest extends AbstractIntegrationTest {
   }
 
   @Test
-  public void testCalculateCooperationConditionsHash_OneIiaTwice_ReturnSameCorrectHashTwice()
+  public void testCalculateCooperationConditionsHashesForV6_OneIiaTwice_ReturnSameCorrectHashTwice()
       throws HashCalculationException {
     // Given
     Iia iia = createSampleIia1();
 
     // When
-    List<HashCalculationResult> result = this.iiaHashService.calculateCooperationConditionsHash(
+    List<HashCalculationResult> result = this.iiaHashService.calculateCooperationConditionsHashesForV6(
         List.of(iia, iia),
         EwpApiNamespaces.IIAS_V6_GET_RESPONSE.getNamespaceUrl());
 
