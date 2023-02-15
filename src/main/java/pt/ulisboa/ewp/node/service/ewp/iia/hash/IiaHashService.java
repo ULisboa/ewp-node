@@ -31,6 +31,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import pt.ulisboa.ewp.node.exception.ewp.hash.ElementHashException;
+import pt.ulisboa.ewp.node.exception.ewp.hash.HashCalculationException;
+import pt.ulisboa.ewp.node.exception.ewp.hash.HashComparisonException;
 import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
 
 @Service
@@ -39,35 +41,47 @@ public class IiaHashService {
   private final Jaxb2HttpMessageConverter jaxb2HttpMessageConverter;
   private final XPathFactory xpathFactory;
 
-  IiaHashService(Jaxb2HttpMessageConverter jaxb2HttpMessageConverter)
-      throws XPathExpressionException {
+  IiaHashService(Jaxb2HttpMessageConverter jaxb2HttpMessageConverter) {
     this.jaxb2HttpMessageConverter = jaxb2HttpMessageConverter;
     this.xpathFactory = XPathFactory.newInstance();
   }
 
+  /**
+   * Calculates the cooperation conditions hash for each interinstitutional agreement provided.
+   *
+   * @param iias             The interinstitutional agreements to process
+   * @param iiasNamespaceUrl The namespace URL of the IIAs Get Response
+   * @return A list of hashes for all agreements provided.
+   * @throws HashCalculationException when hash failed to be calculated for some reason.
+   */
   public List<HashCalculationResult> calculateCooperationConditionsHash(List<Iia> iias,
-      String iiasNamespaceUrl)
-      throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, ElementHashException {
-    IiasGetResponseV6 iiasGetResponse = new IiasGetResponseV6();
-    iiasGetResponse.getIia().addAll(iias);
+      String iiasNamespaceUrl) throws HashCalculationException {
+    try {
+      IiasGetResponseV6 iiasGetResponse = new IiasGetResponseV6();
+      iiasGetResponse.getIia().addAll(iias);
 
-    ByteArrayOutputStream iiasGetResponseOutputStream = new ByteArrayOutputStream();
-    StreamResult iiasGetResponseStreamResult = new StreamResult(iiasGetResponseOutputStream);
-    this.jaxb2HttpMessageConverter.marshal(iiasGetResponse, iiasGetResponseStreamResult);
+      ByteArrayOutputStream iiasGetResponseOutputStream = new ByteArrayOutputStream();
+      StreamResult iiasGetResponseStreamResult = new StreamResult(iiasGetResponseOutputStream);
+      this.jaxb2HttpMessageConverter.marshal(iiasGetResponse, iiasGetResponseStreamResult);
 
-    XPath xPath = createXPath(iiasNamespaceUrl);
-    XPathExpression xpathIiasExpr = xPath.compile("/iia:iias-get-response/iia:iia");
+      XPath xPath = createXPath(iiasNamespaceUrl);
+      XPathExpression xpathIiasExpr = xPath.compile("/iia:iias-get-response/iia:iia");
 
-    InputSource iiaXmlInputSource = new InputSource(
-        new ByteArrayInputStream(iiasGetResponseOutputStream.toByteArray()));
-    Document document = getDocument(iiaXmlInputSource);
+      InputSource iiaXmlInputSource = new InputSource(
+          new ByteArrayInputStream(iiasGetResponseOutputStream.toByteArray()));
+      Document document = getDocument(iiaXmlInputSource);
 
-    NodeList iiasNodes = (NodeList) xpathIiasExpr.evaluate(document, XPathConstants.NODESET);
-    List<HashCalculationResult> hashCalculationResults = new ArrayList<>(iiasNodes.getLength());
-    for (int i = 0; i < iiasNodes.getLength(); i++) {
-      hashCalculationResults.add(calculateHash(iiasNodes.item(i), iiasNamespaceUrl, xPath));
+      NodeList iiasNodes = (NodeList) xpathIiasExpr.evaluate(document, XPathConstants.NODESET);
+      List<HashCalculationResult> hashCalculationResults = new ArrayList<>(iiasNodes.getLength());
+      for (int i = 0; i < iiasNodes.getLength(); i++) {
+        hashCalculationResults.add(calculateHash(iiasNodes.item(i), iiasNamespaceUrl, xPath));
+      }
+      return hashCalculationResults;
+
+    } catch (IOException | XPathExpressionException | ElementHashException |
+             ParserConfigurationException | SAXException e) {
+      throw new HashCalculationException(e);
     }
-    return hashCalculationResults;
   }
 
   /**
@@ -75,23 +89,28 @@ public class IiaHashService {
    *
    * @param iiaXmlInputSource XML containing IIA get response
    * @return list of cooperation conditions hash comparison results (one for every IIA)
-   * @throws ElementHashException when hash cannot be calculated
+   * @throws HashComparisonException when hash comparison failed for some reason
    */
   public List<HashComparisonResult> checkCooperationConditionsHash(InputSource iiaXmlInputSource,
-      String iiasNamespaceUrl)
-      throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, ElementHashException {
+      String iiasNamespaceUrl) throws HashComparisonException {
 
-    XPath xPath = createXPath(iiasNamespaceUrl);
-    XPathExpression xpathIiasExpr = xPath.compile("/iia:iias-get-response/iia:iia");
+    try {
+      XPath xPath = createXPath(iiasNamespaceUrl);
+      XPathExpression xpathIiasExpr = xPath.compile("/iia:iias-get-response/iia:iia");
 
-    Document document = getDocument(iiaXmlInputSource);
+      Document document = getDocument(iiaXmlInputSource);
 
-    NodeList iias = (NodeList) xpathIiasExpr.evaluate(document, XPathConstants.NODESET);
-    List<HashComparisonResult> hashComparisonResults = new ArrayList<>(iias.getLength());
-    for (int i = 0; i < iias.getLength(); i++) {
-      hashComparisonResults.add(getHashComparisonResult(iias.item(i), iiasNamespaceUrl, xPath));
+      NodeList iias = (NodeList) xpathIiasExpr.evaluate(document, XPathConstants.NODESET);
+      List<HashComparisonResult> hashComparisonResults = new ArrayList<>(iias.getLength());
+      for (int i = 0; i < iias.getLength(); i++) {
+        hashComparisonResults.add(getHashComparisonResult(iias.item(i), iiasNamespaceUrl, xPath));
+      }
+      return hashComparisonResults;
+
+    } catch (IOException | XPathExpressionException | ElementHashException |
+             ParserConfigurationException | SAXException e) {
+      throw new HashComparisonException(e);
     }
-    return hashComparisonResults;
   }
 
   private HashComparisonResult getHashComparisonResult(Node iiaNode, String iiasNamespaceUrl,

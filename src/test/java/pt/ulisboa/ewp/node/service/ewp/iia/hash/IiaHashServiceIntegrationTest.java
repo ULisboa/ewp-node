@@ -14,14 +14,12 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import pt.ulisboa.ewp.node.AbstractIntegrationTest;
-import pt.ulisboa.ewp.node.exception.ewp.hash.ElementHashException;
+import pt.ulisboa.ewp.node.exception.ewp.hash.HashCalculationException;
+import pt.ulisboa.ewp.node.exception.ewp.hash.HashComparisonException;
 import pt.ulisboa.ewp.node.utils.EwpApiNamespaces;
 
 class IiaHashServiceIntegrationTest extends AbstractIntegrationTest {
@@ -34,7 +32,7 @@ class IiaHashServiceIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   public void testCalculateCooperationConditionsHash_OneIia_ReturnCorrectHash()
-      throws XPathExpressionException, ElementHashException, ParserConfigurationException, IOException, SAXException {
+      throws HashCalculationException {
     // Given
     Iia iia = createSampleIia1();
 
@@ -51,7 +49,7 @@ class IiaHashServiceIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   public void testCalculateCooperationConditionsHash_OneIiaTwice_ReturnSameCorrectHashTwice()
-      throws XPathExpressionException, ElementHashException, ParserConfigurationException, IOException, SAXException {
+      throws HashCalculationException {
     // Given
     Iia iia = createSampleIia1();
 
@@ -70,7 +68,7 @@ class IiaHashServiceIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   public void testCheckCooperationConditionsHash_ValidIiaCooperationConditionsHash_ReturnCorrectResult()
-      throws XPathExpressionException, ElementHashException, ParserConfigurationException, IOException, SAXException {
+      throws HashComparisonException, IOException {
     // Given
     InputStream iiasInputStream = getClass().getClassLoader()
         .getResource("samples/iias/iias-get-response-example.1.xml").openStream();
