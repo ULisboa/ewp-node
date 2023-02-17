@@ -34,7 +34,6 @@ import pt.ulisboa.ewp.node.exception.ewp.hash.HashCalculationException;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashCalculationResult;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.IiaHashService;
 import pt.ulisboa.ewp.node.utils.EwpApi;
-import pt.ulisboa.ewp.node.utils.EwpApiNamespaces;
 
 @RestController
 @ForwardEwpApi(EwpApi.INTERINSTITUTIONAL_AGREEMENTS)
@@ -108,7 +107,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV3Controller
       @Valid @RequestBody ForwardEwpApiIiaHashesCalculationV3RequestDTO requestData)
       throws HashCalculationException {
     List<HashCalculationResult> hashCalculationResults = this.hashService.calculateCooperationConditionsHashesForV3(
-        requestData.getIias(), EwpApiNamespaces.IIAS_V3_GET_RESPONSE.getNamespaceUrl());
+        requestData.getIias());
     ForwardEwpApiIiaHashesCalculationResponseDTO response = new ForwardEwpApiIiaHashesCalculationResponseDTO(
         hashCalculationResults.stream().map(
             HashCalculationResult::getHash).collect(

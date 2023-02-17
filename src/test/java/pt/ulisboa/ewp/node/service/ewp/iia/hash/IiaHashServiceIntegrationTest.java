@@ -38,8 +38,7 @@ class IiaHashServiceIntegrationTest extends AbstractIntegrationTest {
 
     // When
     List<HashCalculationResult> result = this.iiaHashService.calculateCooperationConditionsHashesForV6(
-        List.of(iia),
-        EwpApiNamespaces.IIAS_V6_GET_RESPONSE.getNamespaceUrl());
+        List.of(iia));
 
     // Then
     assertThat(result).hasSize(1);
@@ -55,8 +54,7 @@ class IiaHashServiceIntegrationTest extends AbstractIntegrationTest {
 
     // When
     List<HashCalculationResult> result = this.iiaHashService.calculateCooperationConditionsHashesForV6(
-        List.of(iia, iia),
-        EwpApiNamespaces.IIAS_V6_GET_RESPONSE.getNamespaceUrl());
+        List.of(iia, iia));
 
     // Then
     assertThat(result).hasSize(2);
