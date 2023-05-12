@@ -195,15 +195,18 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
     Map<String, AcademicYearLaStats> receivingAcademicYearToLaStatsMap = new HashMap<>();
     for (OutgoingMobilityLearningAgreementsV1HostProvider provider : providers) {
       LasOutgoingStatsResponseV1 stats = provider.getStats(heiId);
-      for (AcademicYearLaStats currentProviderLaStats : stats.getAcademicYearLaStats()) {
-        String receivingAcademicYearId = currentProviderLaStats.getReceivingAcademicYearId();
-        receivingAcademicYearToLaStatsMap.computeIfAbsent(
-            receivingAcademicYearId,
-            EwpApiOutgoingMobilityLearningAgreementsV1Controller::createEmptyAcademicYearLaStats);
+      if (stats != null) {
+        for (AcademicYearLaStats currentProviderLaStats : stats.getAcademicYearLaStats()) {
+          String receivingAcademicYearId = currentProviderLaStats.getReceivingAcademicYearId();
+          receivingAcademicYearToLaStatsMap.computeIfAbsent(
+              receivingAcademicYearId,
+              EwpApiOutgoingMobilityLearningAgreementsV1Controller::createEmptyAcademicYearLaStats);
 
-        receivingAcademicYearToLaStatsMap.put(receivingAcademicYearId,
-            mergeAcademicYearLaStats(receivingAcademicYearToLaStatsMap.get(receivingAcademicYearId),
-                currentProviderLaStats));
+          receivingAcademicYearToLaStatsMap.put(receivingAcademicYearId,
+              mergeAcademicYearLaStats(
+                  receivingAcademicYearToLaStatsMap.get(receivingAcademicYearId),
+                  currentProviderLaStats));
+        }
       }
     }
 
