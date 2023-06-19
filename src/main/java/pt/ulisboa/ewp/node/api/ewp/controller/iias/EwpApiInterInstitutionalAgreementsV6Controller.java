@@ -290,6 +290,10 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
   private static IiasStatsResponseV6 mergeStatsResponses(IiasStatsResponseV6 first,
       IiasStatsResponseV6 second) {
 
+    if (second == null) {
+      return first;
+    }
+
     IiasStatsResponseV6 result = new IiasStatsResponseV6();
 
     result.setIiaFetchable(BigInteger.ZERO);
