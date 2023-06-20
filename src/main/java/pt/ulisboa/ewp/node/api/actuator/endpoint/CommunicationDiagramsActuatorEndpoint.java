@@ -34,7 +34,7 @@ public class CommunicationDiagramsActuatorEndpoint {
   private static final String PUPPETEER_CONFIG_FILE = "/opt/puppeteer-config.json";
 
   private static final String DIAGRAM_OUTPUT_FORMAT = "svg";
-  private static final int MAXIMUM_MESSAGE_LINE_LENGTH = 60;
+  private static final int MAXIMUM_MESSAGE_LINE_LENGTH = 120;
 
   private final HttpCommunicationLogRepository repository;
 
