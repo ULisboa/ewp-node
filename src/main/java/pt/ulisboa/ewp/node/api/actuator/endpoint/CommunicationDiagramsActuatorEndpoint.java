@@ -1,14 +1,7 @@
 package pt.ulisboa.ewp.node.api.actuator.endpoint;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
@@ -20,6 +13,15 @@ import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.http.log.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.domain.repository.http.log.HttpCommunicationLogRepository;
+
+import javax.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RestControllerEndpoint(id = "communications")
@@ -130,6 +132,11 @@ public class CommunicationDiagramsActuatorEndpoint {
           participantToAliasMap);
     }
 
+    if (!StringUtils.isBlank(communicationLog.getObservations())) {
+      registerNote(diagramBuilder, receiverAlias, pt.ulisboa.ewp.node.utils.StringUtils.breakTextWithLineLengthLimit(communicationLog.getObservations(),
+              System.lineSeparator(), MAXIMUM_MESSAGE_LINE_LENGTH));
+    }
+
     HttpResponseLog response = communicationLog.getResponse();
     registerCommunication(diagramBuilder, receiverAlias, requesterAlias, "-->>",
         response.toRawString(MAXIMUM_MESSAGE_LINE_LENGTH));
@@ -171,5 +178,14 @@ public class CommunicationDiagramsActuatorEndpoint {
         .append(": ")
         .append(sanitizedMessage)
         .append(System.lineSeparator());
+  }
+
+  private void registerNote(StringBuilder diagramBuilder, String placeAtRightOfAlias, String message) {
+    // NOTE: the generation of the diagram fails if a line ends in whitespace (e.g. <br>), therefore a blank character (#8203;) is used.
+    String sanitizedMessage = message.replace(";", "#59;").replace(System.lineSeparator(), "<br>#8203;");
+
+    diagramBuilder.append("\t").append("Note right of ").append(placeAtRightOfAlias).append(": ")
+            .append(sanitizedMessage)
+            .append(System.lineSeparator());
   }
 }
