@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.api.actuator.endpoint;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -79,7 +80,11 @@ public class CommunicationDiagramsActuatorEndpoint {
         throw new IllegalStateException("Diagram generation failed: \"" + error + "\"");
       }
 
-      return FileUtils.readFileToByteArray(outputTempFile);
+      String resultString = FileUtils.readFileToString(outputTempFile, "UTF-8");
+      // NOTE: on the resulting diagram file the blank character #8203; is converted into ​, so remove those characters
+      resultString = resultString.replace("​", "");
+
+      return resultString.getBytes(StandardCharsets.UTF_8);
 
     } catch (IOException | InterruptedException | IllegalStateException e) {
       LOG.error("Failed to generate diagram", e);
@@ -158,7 +163,8 @@ public class CommunicationDiagramsActuatorEndpoint {
 
   private void registerCommunication(StringBuilder diagramBuilder, String requesterAlias,
       String receiverAlias, String arrowType, String message) {
-    String sanitizedMessage = message.replace(";", "#59;").replace(System.lineSeparator(), "<br>");
+    // NOTE: the generation of the diagram fails if a line ends in whitespace (e.g. <br>), therefore a blank character (#8203;) is used.
+    String sanitizedMessage = message.replace(";", "#59;").replace(System.lineSeparator(), "<br>#8203;");
 
     diagramBuilder.append("\t").append(requesterAlias).append(" ").append(arrowType).append(" ")
         .append(receiverAlias)
