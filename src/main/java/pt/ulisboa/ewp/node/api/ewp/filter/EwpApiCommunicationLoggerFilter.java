@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import pt.ulisboa.ewp.node.api.ewp.EwpCommunicationContextHolder;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
@@ -61,11 +62,13 @@ public class EwpApiCommunicationLoggerFilter extends OncePerRequestFilter {
 
     ZonedDateTime endProcessingDateTime = ZonedDateTime.now();
 
+    String observation = EwpCommunicationContextHolder.getInstance(request).getObservation();
+
     ewpCommunicationLogService.logCommunicationFromEwpNode(
         ewpRequest,
         contentCachingResponseWrapper,
         startProcessingDateTime,
         endProcessingDateTime,
-        "", null);
+        observation, null);
   }
 }

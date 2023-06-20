@@ -32,7 +32,7 @@ public class HttpResponseLog {
   protected HttpResponseLog(int statusCode, Collection<HttpHeader> headers, String body) {
     this.statusCode = statusCode;
     this.headers = headers;
-    this.body = StringUtils.truncateWithSuffix(body, MAX_BODY_LENGTH, "====TRUNCATED====");
+    this.body = StringUtils.truncateWithSuffix(body, MAX_BODY_LENGTH - "====TRUNCATED====".length(), "====TRUNCATED====");
   }
 
   @Id

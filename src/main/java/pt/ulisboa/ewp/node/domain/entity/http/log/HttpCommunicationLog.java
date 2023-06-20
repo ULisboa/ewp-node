@@ -26,12 +26,15 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.utils.StringUtils;
 
 @Entity
 @Table(name = "HTTP_COMMUNICATION_LOG")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "communication_type", discriminatorType = DiscriminatorType.STRING)
 public class HttpCommunicationLog {
+
+  private static final int MAX_OBSERVATIONS_LENGTH = 10000;
 
   private long id;
   private HttpRequestLog request;
@@ -56,7 +59,8 @@ public class HttpCommunicationLog {
     this.response = response;
     this.startProcessingDateTime = startProcessingDateTime;
     this.endProcessingDateTime = endProcessingDateTime;
-    this.observations = observations;
+    this.observations = StringUtils.truncateWithSuffix(observations, MAX_OBSERVATIONS_LENGTH - "====TRUNCATED====".length(),
+            "====TRUNCATED====");
     this.parentCommunication = parentCommunication;
   }
 

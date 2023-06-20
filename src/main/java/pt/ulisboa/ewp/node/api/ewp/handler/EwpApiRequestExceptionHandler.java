@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.servlet.view.xml.MarshallingView;
+import pt.ulisboa.ewp.node.api.ewp.EwpCommunicationContextHolder;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
@@ -30,6 +31,8 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
   protected ModelAndView doResolveException(
       HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
     if (request.getRequestURI().startsWith(EwpApiConstants.API_BASE_URI)) {
+      EwpCommunicationContextHolder.getInstance(request).registerException(ex);
+
       HttpServletResponseWithCustomSendError responseWithCustomSendError =
           new HttpServletResponseWithCustomSendError(response);
 
