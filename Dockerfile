@@ -1,5 +1,5 @@
 # Build and package
-FROM maven:3.6.3-openjdk-11-slim as builder
+FROM maven:3-openjdk-11-slim as builder
 
 WORKDIR /build
 
@@ -8,7 +8,7 @@ COPY . .
 RUN mvn -B package
 
 # Deploy
-FROM openjdk:11.0-jre-slim
+FROM bellsoft/liberica-openjre-debian:11
 
 RUN apt-get update && apt-get install -y --no-install-recommends wget
 
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget
 ENV CHROME_BIN="/usr/bin/chromium-browser" \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
 RUN apt-get update && apt-get install -y --no-install-recommends chromium && ln -T /usr/bin/chromium /usr/bin/chromium-browser
-RUN wget -O - https://deb.nodesource.com/setup_16.x | bash -
+RUN wget -O - https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get update && apt-get install -y --no-install-recommends nodejs
 RUN npm install -g @mermaid-js/mermaid-cli
 COPY puppeteer-config.json /opt/puppeteer-config.json
