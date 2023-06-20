@@ -1,7 +1,10 @@
 package pt.ulisboa.ewp.node.domain.entity.http.log;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
@@ -26,6 +29,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.utils.CompressionUtils;
 import pt.ulisboa.ewp.node.utils.StringUtils;
 
 @Entity
@@ -41,7 +45,7 @@ public class HttpCommunicationLog {
   private HttpResponseLog response;
   private ZonedDateTime startProcessingDateTime;
   private ZonedDateTime endProcessingDateTime;
-  private String observations;
+  private byte[] observations;
   private HttpCommunicationLog parentCommunication;
   private Set<HttpCommunicationLog> childrenCommunications;
 
@@ -54,13 +58,12 @@ public class HttpCommunicationLog {
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) {
+      HttpCommunicationLog parentCommunication) throws IOException {
     this.request = request;
     this.response = response;
     this.startProcessingDateTime = startProcessingDateTime;
     this.endProcessingDateTime = endProcessingDateTime;
-    this.observations = StringUtils.truncateWithSuffix(observations, MAX_OBSERVATIONS_LENGTH - "====TRUNCATED====".length(),
-            "====TRUNCATED====");
+    setObservations(observations.getBytes(StandardCharsets.UTF_8), true);
     this.parentCommunication = parentCommunication;
   }
 
@@ -114,12 +117,29 @@ public class HttpCommunicationLog {
   }
 
   @Column(name = "observations", nullable = true, length = 10000)
-  public String getObservations() {
-    return observations;
+  public byte[] getObservations() {
+    return this.observations;
   }
 
-  public void setObservations(String observations) {
-    this.observations = observations;
+  @Transient
+  public String getObservationsAsString() throws IOException {
+    return CompressionUtils.uncompress(this.observations);
+  }
+
+  public void setObservations(byte[] observations) throws IOException {
+    setObservations(observations, false);
+  }
+
+  public void setObservations(byte[] observations, boolean compress) throws IOException {
+    if (compress) {
+      this.observations = CompressionUtils.compress(observations);
+    } else {
+      this.observations = observations;
+    }
+
+    if (this.observations.length > MAX_OBSERVATIONS_LENGTH) {
+      this.observations = Arrays.copyOfRange(this.observations, 0, MAX_OBSERVATIONS_LENGTH);
+    }
   }
 
   @ManyToOne(fetch = FetchType.LAZY)

@@ -105,7 +105,7 @@ public class CommunicationDiagramsActuatorEndpoint {
     }
   }
 
-  private String createSequenceDiagramInMermaidFormat(HttpCommunicationLog communicationLog) {
+  private String createSequenceDiagramInMermaidFormat(HttpCommunicationLog communicationLog) throws IOException {
     StringBuilder diagramBuilder = new StringBuilder();
     diagramBuilder.append("sequenceDiagram").append(System.lineSeparator());
     Map<String, String> participantToAliasMap = new HashMap<>();
@@ -115,7 +115,7 @@ public class CommunicationDiagramsActuatorEndpoint {
   }
 
   private void fillBuilderWithSequenceDiagramInMermaidFormat(StringBuilder diagramBuilder,
-      HttpCommunicationLog communicationLog, Map<String, String> participantToAliasMap) {
+      HttpCommunicationLog communicationLog, Map<String, String> participantToAliasMap) throws IOException {
 
     HttpRequestLog request = communicationLog.getRequest();
     String requesterName = getRequesterName(communicationLog);
@@ -132,8 +132,9 @@ public class CommunicationDiagramsActuatorEndpoint {
           participantToAliasMap);
     }
 
-    if (!StringUtils.isBlank(communicationLog.getObservations())) {
-      registerNote(diagramBuilder, receiverAlias, pt.ulisboa.ewp.node.utils.StringUtils.breakTextWithLineLengthLimit(communicationLog.getObservations(),
+    String observations = communicationLog.getObservationsAsString();
+    if (!StringUtils.isBlank(observations)) {
+      registerNote(diagramBuilder, receiverAlias, pt.ulisboa.ewp.node.utils.StringUtils.breakTextWithLineLengthLimit(observations,
               System.lineSeparator(), MAXIMUM_MESSAGE_LINE_LENGTH));
     }
 

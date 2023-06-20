@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.domain.entity.http.log.ewp;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -27,7 +28,7 @@ public abstract class EwpHttpCommunicationLog extends HttpCommunicationLog {
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) {
+      HttpCommunicationLog parentCommunication) throws IOException {
     super(request, response, startProcessingDateTime, endProcessingDateTime, observations,
         parentCommunication);
     this.authenticationMethod = authenticationMethod;

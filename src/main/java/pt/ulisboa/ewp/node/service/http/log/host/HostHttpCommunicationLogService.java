@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.service.http.log.host;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class HostHttpCommunicationLogService extends HttpCommunicationLogService
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) throws DomainException {
+      HttpCommunicationLog parentCommunication) throws DomainException, IOException {
     HttpRequestLog requestLog = toHttpRequestLog(request);
     HttpResponseLog responseLog = toHttpResponseLog(response);
 

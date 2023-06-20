@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.domain.repository.http.log.host;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import javax.transaction.Transactional;
 import org.hibernate.SessionFactory;
@@ -35,7 +36,7 @@ public class HttpCommunicationToHostLogRepository
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) {
+      HttpCommunicationLog parentCommunication) throws IOException {
     HttpCommunicationToHostLog communicationToHostLog =
         new HttpCommunicationToHostLog(
             host,

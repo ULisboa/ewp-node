@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.service.http.log.ewp;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -39,7 +40,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) {
+      HttpCommunicationLog parentCommunication) throws IOException {
 
     // NOTE: Requests for manifest are not logged to avoid using too much log space
     if (isRequestForManifest(request) && response.getStatus() == HttpStatus.OK.value()) {
@@ -72,7 +73,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       EwpSuccessOperationResult<T> successOperationResult,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      HttpCommunicationLog parentCommunication) {
+      HttpCommunicationLog parentCommunication) throws IOException {
     logCommunicationToEwpNode(successOperationResult.getRequest(),
         successOperationResult.getResponse(),
         startProcessingDateTime, endProcessingDateTime, "", parentCommunication);
@@ -82,7 +83,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       EwpClientErrorException clientErrorException,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      HttpCommunicationLog parentCommunication) {
+      HttpCommunicationLog parentCommunication) throws IOException {
     logCommunicationToEwpNode(clientErrorException.getRequest(), clientErrorException.getResponse(),
         startProcessingDateTime, endProcessingDateTime, clientErrorException.getDetailedMessage(),
         parentCommunication);
@@ -94,7 +95,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) {
+      HttpCommunicationLog parentCommunication) throws IOException {
     HttpRequestLog requestLog = toHttpRequestLog(request);
     HttpResponseLog responseLog = toHttpResponseLog(response);
     httpCommunicationToEwpNodeLogRepository.create(

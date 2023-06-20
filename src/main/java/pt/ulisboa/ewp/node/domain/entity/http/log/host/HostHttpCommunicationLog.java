@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.domain.entity.http.log.host;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -26,7 +27,7 @@ public abstract class HostHttpCommunicationLog extends HttpCommunicationLog {
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) {
+      HttpCommunicationLog parentCommunication) throws IOException {
     super(request, response, startProcessingDateTime, endProcessingDateTime, observations,
         parentCommunication);
     this.host = host;

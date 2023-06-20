@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.domain.repository.http.log.ewp;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -38,7 +39,7 @@ public class HttpCommunicationFromEwpNodeLogRepository
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) {
+      HttpCommunicationLog parentCommunication) throws IOException {
     HttpCommunicationFromEwpNodeLog communicationFromEwpNodeLog =
         new HttpCommunicationFromEwpNodeLog(
             authenticationMethod,

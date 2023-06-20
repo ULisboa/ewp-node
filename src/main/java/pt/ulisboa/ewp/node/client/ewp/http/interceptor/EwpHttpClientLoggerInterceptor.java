@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.client.ewp.http.interceptor;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.WeakHashMap;
 import javax.transaction.Transactional;
@@ -50,8 +51,12 @@ public class EwpHttpClientLoggerInterceptor implements EwpHttpClientInterceptor 
     HttpCommunicationLog parentCommunication = this.httpCommunicationLogRepository.findById(
         request.getParentCommunicationId()).orElse(null);
 
-    ewpHttpCommunicationLogService.logCommunicationToEwpNode(successOperationResult,
-        communicationContext.startProcessingDateTime, ZonedDateTime.now(), parentCommunication);
+    try {
+      ewpHttpCommunicationLogService.logCommunicationToEwpNode(successOperationResult,
+          communicationContext.startProcessingDateTime, ZonedDateTime.now(), parentCommunication);
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   @Override
@@ -66,9 +71,13 @@ public class EwpHttpClientLoggerInterceptor implements EwpHttpClientInterceptor 
     HttpCommunicationLog parentCommunication = this.httpCommunicationLogRepository.findById(
         request.getParentCommunicationId()).orElse(null);
 
-    this.ewpHttpCommunicationLogService.logCommunicationToEwpNode(e,
-        communicationContext.startProcessingDateTime,
-        ZonedDateTime.now(), parentCommunication);
+    try {
+      this.ewpHttpCommunicationLogService.logCommunicationToEwpNode(e,
+          communicationContext.startProcessingDateTime,
+          ZonedDateTime.now(), parentCommunication);
+    } catch (IOException ex) {
+      throw new IllegalStateException(ex);
+    }
   }
 
   private static class EwpCommunicationContext {
