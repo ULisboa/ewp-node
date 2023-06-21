@@ -21,6 +21,10 @@ public class CompressionUtils {
     }
 
     public static byte[] compress(byte[] data, CompressionAlgorithm algorithm) throws IOException {
+        if (data == null || data.length == 0) {
+            return new byte[0];
+        }
+
         if (algorithm == null) {
             return data;
         }
@@ -40,6 +44,10 @@ public class CompressionUtils {
     }
 
     public static String uncompress(byte[] compressedBytes) throws IOException {
+        if (compressedBytes == null || compressedBytes.length == 0) {
+            return "";
+        }
+
         CompressionAlgorithm compressionAlgorithm = getAlgorithmFromCompressedData(compressedBytes);
         byte[] compressedBytesWithoutAlgorithm = getCompressedDataWithoutAlgorithmPrefix(compressedBytes);
         if (compressionAlgorithm == CompressionAlgorithm.GZIP) {
