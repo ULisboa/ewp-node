@@ -32,6 +32,11 @@ original HEI ID then a local mapping is created, if it is new, based on the info
 When the EWP Node receives a request to forward a CNR notification to a target institution,
 the EWP Node uses the information of the request to store the mapping.
 
+## Forward EWP APIs
+
+When the EWP Node makes a call to obtain some outgoing mobility (learning agreement), 
+it uses the obtained information to store the respective mappings.
+
 ## Sync Service
 
 Periodically, the node makes a call to the Index of the Outgoing Mobility EWP API 
