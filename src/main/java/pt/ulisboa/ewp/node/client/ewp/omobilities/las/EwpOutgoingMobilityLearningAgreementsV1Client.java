@@ -18,6 +18,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestSerializa
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilityLearningAgreementsApiConfiguration;
+import pt.ulisboa.ewp.node.service.ewp.mapping.cache.EwpMobilityMappingCacheService;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.OutgoingMobilityLearningAgreements;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
@@ -26,11 +27,13 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client {
 
   private final RegistryClient registryClient;
   private final EwpHttpClient ewpHttpClient;
+  private final EwpMobilityMappingCacheService mobilityMappingCacheService;
 
   public EwpOutgoingMobilityLearningAgreementsV1Client(RegistryClient registryClient,
-      EwpHttpClient ewpHttpClient) {
+                                                       EwpHttpClient ewpHttpClient, EwpMobilityMappingCacheService mobilityMappingCacheService) {
     this.registryClient = registryClient;
     this.ewpHttpClient = ewpHttpClient;
+    this.mobilityMappingCacheService = mobilityMappingCacheService;
   }
 
   public ForwardEwpApiOutgoingMobilityLearningAgreementsApiSpecificationResponseDTO getApiSpecification(
@@ -76,7 +79,11 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client {
 
     EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpHttpClient.execute(request, OmobilityLasGetResponseV1.class);
+    EwpSuccessOperationResult<OmobilityLasGetResponseV1> result = ewpHttpClient.execute(request, OmobilityLasGetResponseV1.class);
+
+    this.mobilityMappingCacheService.cacheMappingsFrom(result.getResponseBody());
+
+    return result;
   }
 
   public EwpSuccessOperationResult<OmobilityLasUpdateResponseV1> updateOutgoingMobilityLearningAgreement(
