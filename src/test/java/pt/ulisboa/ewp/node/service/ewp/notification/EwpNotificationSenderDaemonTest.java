@@ -29,7 +29,6 @@ import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearnin
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
 import pt.ulisboa.ewp.node.service.ewp.notification.EwpNotificationSenderDaemonTest.Config;
 import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
-import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificationHandlerCollection;
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.omobilities.las.EwpOutgoingMobilityLearningAgreementChangeNotificationHandler;
 
 @ContextConfiguration(classes = Config.class)
@@ -58,9 +57,10 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
     @Bean
     @Primary
-    public EwpChangeNotificationHandlerCollection changeNotificationHandlerCollection() {
-      return new EwpChangeNotificationHandlerCollection(
-          Collections.singletonList(outgoingMobilityLearningAgreementChangeNotificationHandler()));
+    public EwpNotificationSenderDaemon notificationSenderDaemon(CnrProperties cnrProperties,
+                                                                   EwpChangeNotificationRepository changeNotificationRepository) {
+      return new EwpNotificationSenderDaemon(cnrProperties, changeNotificationRepository,
+              Collections.singletonList(outgoingMobilityLearningAgreementChangeNotificationHandler()));
     }
 
     @Bean
