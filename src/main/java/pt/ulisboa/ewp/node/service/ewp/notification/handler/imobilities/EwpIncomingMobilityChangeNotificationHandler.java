@@ -1,33 +1,34 @@
-package pt.ulisboa.ewp.node.service.ewp.notification.handler;
+package pt.ulisboa.ewp.node.service.ewp.notification.handler.imobilities;
 
 import java.util.Collections;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.imobilities.tors.cnr.EwpIncomingMobilityToRCnrV1Client;
+import pt.ulisboa.ewp.node.client.ewp.imobilities.cnr.EwpIncomingMobilityCnrV1Client;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
-import pt.ulisboa.ewp.node.domain.entity.notification.EwpIncomingMobilityToRChangeNotification;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpIncomingMobilityChangeNotification;
 import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificationHandler;
 import pt.ulisboa.ewp.node.utils.EwpApi;
 
 @Service
-public class EwpIncomingMobilityToRChangeNotificationHandler extends
-    EwpChangeNotificationHandler {
+public class EwpIncomingMobilityChangeNotificationHandler extends
+        EwpChangeNotificationHandler {
 
-  private final EwpIncomingMobilityToRCnrV1Client incomingMobilityToRCnrV1Client;
+  private final EwpIncomingMobilityCnrV1Client incomingMobilityCnrV1Client;
 
-  public EwpIncomingMobilityToRChangeNotificationHandler(
+  public EwpIncomingMobilityChangeNotificationHandler(
       RegistryClient registryClient,
-      EwpIncomingMobilityToRCnrV1Client incomingMobilityToRCnrV1Client) {
+      EwpIncomingMobilityCnrV1Client incomingMobilityCnrV1Client) {
     super(registryClient);
-    this.incomingMobilityToRCnrV1Client = incomingMobilityToRCnrV1Client;
+    this.incomingMobilityCnrV1Client = incomingMobilityCnrV1Client;
   }
 
   @Override
   public Class<?> getSupportedChangeNotificationClassType() {
-    return EwpIncomingMobilityToRChangeNotification.class;
+    return EwpIncomingMobilityChangeNotification.class;
   }
 
   @Override
@@ -35,28 +36,28 @@ public class EwpIncomingMobilityToRChangeNotificationHandler extends
       EwpChangeNotification changeNotification)
       throws EwpClientErrorException, NoEwpCnrAPIException {
 
-    if (!(changeNotification instanceof EwpIncomingMobilityToRChangeNotification)) {
+    if (!(changeNotification instanceof EwpIncomingMobilityChangeNotification)) {
       throw new IllegalArgumentException("Invalid change notification type: " + changeNotification);
     }
 
-    EwpIncomingMobilityToRChangeNotification incomingMobilityToRChangeNotification = (EwpIncomingMobilityToRChangeNotification) changeNotification;
+    EwpIncomingMobilityChangeNotification incomingMobilityChangeNotification = (EwpIncomingMobilityChangeNotification) changeNotification;
 
-    String targetHeiId = incomingMobilityToRChangeNotification.getSendingHeiId();
+    String targetHeiId = incomingMobilityChangeNotification.getSendingHeiId();
     List<Integer> supportedMajorVersions = EwpApiUtils.getSupportedMajorVersions(
-        getRegistryClient(), targetHeiId, EwpApi.INCOMING_MOBILITY_TOR_CNR);
+        getRegistryClient(), targetHeiId, EwpApi.INCOMING_MOBILITY_CNR);
 
     if (supportedMajorVersions.contains(1)) {
-      sendChangeNotificationVersion1(incomingMobilityToRChangeNotification);
+      sendChangeNotificationVersion1(incomingMobilityChangeNotification);
     } else {
       throw new NoEwpCnrAPIException(changeNotification);
     }
   }
 
   private void sendChangeNotificationVersion1(
-      EwpIncomingMobilityToRChangeNotification changeNotification)
+      EwpIncomingMobilityChangeNotification changeNotification)
       throws EwpClientErrorException {
 
-    incomingMobilityToRCnrV1Client.sendChangeNotification(
+    incomingMobilityCnrV1Client.sendChangeNotification(
         changeNotification.getSendingHeiId(),
         changeNotification.getReceivingHeiId(),
         Collections.singletonList(changeNotification.getOutgoingMobilityId()));

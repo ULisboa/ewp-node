@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.service.ewp.notification.handler;
+package pt.ulisboa.ewp.node.service.ewp.notification.handler.omobilities.las;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,11 +10,12 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpOutgoingMobilityLearningAgreementChangeNotification;
 import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificationHandler;
 import pt.ulisboa.ewp.node.utils.EwpApi;
 
 @Service
 public class EwpOutgoingMobilityLearningAgreementChangeNotificationHandler extends
-    EwpChangeNotificationHandler {
+        EwpChangeNotificationHandler {
 
   private final EwpOutgoingMobilityLearningAgreementCnrV1Client outgoingMobilityLearningAgreementCnrV1Client;
 

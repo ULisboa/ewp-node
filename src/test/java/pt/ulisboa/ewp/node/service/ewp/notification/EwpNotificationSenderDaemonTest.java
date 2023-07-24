@@ -30,7 +30,7 @@ import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationR
 import pt.ulisboa.ewp.node.service.ewp.notification.EwpNotificationSenderDaemonTest.Config;
 import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificationHandlerCollection;
-import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpOutgoingMobilityLearningAgreementChangeNotificationHandler;
+import pt.ulisboa.ewp.node.service.ewp.notification.handler.omobilities.las.EwpOutgoingMobilityLearningAgreementChangeNotificationHandler;
 
 @ContextConfiguration(classes = Config.class)
 @ActiveProfiles(profiles = {"dev", "test"}, inheritProfiles = false)
