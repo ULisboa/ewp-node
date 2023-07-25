@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.config.bootstrap.BootstrapProperties;
@@ -25,10 +26,9 @@ import pt.ulisboa.ewp.node.domain.repository.HostRepository;
 
 @Service
 @Transactional
-public class BootstrapService {
+public class HostsBootstrapService {
 
-  @Autowired
-  private Logger log;
+  private static final Logger LOG = LoggerFactory.getLogger(HostsBootstrapService.class);
 
   @Autowired
   private BootstrapProperties bootstrapProperties;
@@ -38,11 +38,7 @@ public class BootstrapService {
 
 
   public void bootstrap() {
-    bootstrapEwpHosts();
-  }
-
-  private void bootstrapEwpHosts() {
-    log.info("Bootstrapping EWP hosts");
+    LOG.info("Bootstrapping hosts");
     for (HostBootstrapProperties hostProperties : bootstrapProperties.getHosts()) {
       createOrUpdateHost(hostProperties);
     }
