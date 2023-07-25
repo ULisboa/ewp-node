@@ -1,13 +1,11 @@
 package pt.ulisboa.ewp.node.service.ewp.notification;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.TriggerContext;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.config.cnr.CnrProperties;
@@ -114,7 +112,11 @@ public class EwpNotificationSenderDaemon implements Runnable {
         this.classTypeToSenderHandlerMap.put(classType, sendHandler);
     }
 
-    public long getTaskIntervalInMilliseconds() {
-        return this.cnrProperties.getIntervalInMilliseconds();
+    public Date getNextExecutionTime(TriggerContext context) {
+        Optional<Date> lastCompletionTime =
+                Optional.ofNullable(context.lastCompletionTime());
+        Instant nextExecutionTime = lastCompletionTime.orElseGet(Date::new).toInstant()
+                .plusMillis(this.cnrProperties.getIntervalInMilliseconds());
+        return Date.from(nextExecutionTime);
     }
 }

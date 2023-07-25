@@ -2,10 +2,9 @@ package pt.ulisboa.ewp.node.service.ewp.mapping.sync;
 
 import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.StudentMobilityForStudiesV1;
 import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.StudentMobilityV2;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.time.Instant;
+import java.util.*;
+import org.springframework.scheduling.TriggerContext;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV1HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV2HostProvider;
@@ -115,8 +114,11 @@ public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncServ
         outgoingMobility.getOmobilityId());
   }
 
-  @Override
-  public long getTaskIntervalInMilliseconds() {
-    return syncProperties.getMappings().getIntervalInMilliseconds();
+  public Date getNextExecutionTime(TriggerContext context) {
+    Optional<Date> lastCompletionTime =
+            Optional.ofNullable(context.lastCompletionTime());
+    Instant nextExecutionTime = lastCompletionTime.orElseGet(Date::new).toInstant()
+            .plusMillis(syncProperties.getMappings().getIntervalInMilliseconds());
+    return Date.from(nextExecutionTime);
   }
 }

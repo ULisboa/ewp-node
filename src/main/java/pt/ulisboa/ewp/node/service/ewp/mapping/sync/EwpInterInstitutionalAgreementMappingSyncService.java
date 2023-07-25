@@ -2,10 +2,9 @@ package pt.ulisboa.ewp.node.service.ewp.mapping.sync;
 
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia.Partner;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.time.Instant;
+import java.util.*;
+import org.springframework.scheduling.TriggerContext;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
 import pt.ulisboa.ewp.node.config.sync.SyncProperties;
@@ -69,17 +68,24 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
   private void registerMapping(String heiId, Iia iia) {
     Partner partner = getPartnerByHeiId(heiId, iia);
     assert partner != null;
-    this.mappingService.registerMapping(heiId, partner.getOunitId(), partner.getIiaId(),
-        partner.getIiaCode());
+    this.mappingService.registerMapping(
+        heiId, partner.getOunitId(), partner.getIiaId(), partner.getIiaCode());
   }
 
   private Partner getPartnerByHeiId(String heiId, Iia iia) {
-    return iia.getPartner().stream().filter(p -> heiId.equals(p.getHeiId())).findFirst()
+    return iia.getPartner().stream()
+        .filter(p -> heiId.equals(p.getHeiId()))
+        .findFirst()
         .orElse(null);
   }
 
-  @Override
-  public long getTaskIntervalInMilliseconds() {
-    return syncProperties.getMappings().getIntervalInMilliseconds();
+  public Date getNextExecutionTime(TriggerContext context) {
+    Optional<Date> lastCompletionTime = Optional.ofNullable(context.lastCompletionTime());
+    Instant nextExecutionTime =
+        lastCompletionTime
+            .orElseGet(Date::new)
+            .toInstant()
+            .plusMillis(syncProperties.getMappings().getIntervalInMilliseconds());
+    return Date.from(nextExecutionTime);
   }
 }
