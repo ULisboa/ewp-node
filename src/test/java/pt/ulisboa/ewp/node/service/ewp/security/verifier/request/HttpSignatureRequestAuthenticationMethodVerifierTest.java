@@ -23,10 +23,7 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.tomitribe.auth.signatures.Algorithm;
-import org.tomitribe.auth.signatures.Base64;
-import org.tomitribe.auth.signatures.Signature;
-import org.tomitribe.auth.signatures.Signer;
+import org.tomitribe.auth.signatures.*;
 import pt.ulisboa.ewp.node.AbstractTest;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiAuthenticateMethodResponse;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
@@ -75,8 +72,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 
     Signer signer =
-        new Signer(createKeyPair().getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA512, null, Collections.emptyList()));
+        new Signer(
+            createKeyPair().getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA512,
+                null,
+                null,
+                Collections.emptyList()));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.DATE, DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
     Signature signature = signer.sign("", "", headers);
@@ -104,8 +108,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 
     Signer signer =
-        new Signer(createKeyPair().getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null, Collections.emptyList()));
+        new Signer(
+            createKeyPair().getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Collections.emptyList()));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.DATE, DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
     Signature signature = signer.sign("", "", headers);
@@ -133,8 +144,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 
     Signer signer =
-        new Signer(createKeyPair().getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null, Collections.singletonList("(request-target)")));
+        new Signer(
+            createKeyPair().getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Collections.singletonList("(request-target)")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.DATE, DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
     Signature signature = signer.sign("", "", headers);
@@ -162,8 +180,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 
     Signer signer =
-        new Signer(createKeyPair().getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null, Arrays.asList("(request-target)", "host")));
+        new Signer(
+            createKeyPair().getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Arrays.asList("(request-target)", "host")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.HOST, "example.com");
     headers.put(HttpHeaders.DATE, DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
@@ -192,8 +217,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 
     Signer signer =
-        new Signer(createKeyPair().getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null, Arrays.asList("(request-target)", "host", "date")));
+        new Signer(
+            createKeyPair().getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Arrays.asList("(request-target)", "host", "date")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.HOST, "example.com");
     headers.put(HttpHeaders.DATE, DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
@@ -222,9 +254,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 
     Signer signer =
-        new Signer(createKeyPair().getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null,
-            Arrays.asList("(request-target)", "host", "date", "digest")));
+        new Signer(
+            createKeyPair().getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Arrays.asList("(request-target)", "host", "date", "digest")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.HOST, "example.com");
     headers.put(HttpHeaders.DATE, DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
@@ -254,9 +292,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 
     Signer signer =
-        new Signer(createKeyPair().getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null,
-            Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
+        new Signer(
+            createKeyPair().getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.HOST, "example.com");
     headers.put(HttpHeaders.DATE, DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
@@ -287,9 +331,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
     mockHttpServletRequest.setServerName("example.com");
 
     Signer signer =
-        new Signer(createKeyPair().getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null,
-            Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
+        new Signer(
+            createKeyPair().getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.HOST, "example.com");
     headers.put(HttpHeaders.DATE, DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
@@ -325,9 +375,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
 
     KeyPair keyPair = createKeyPair();
     Signer signer =
-        new Signer(keyPair.getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null,
-            Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
+        new Signer(
+            keyPair.getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.HOST, "example.com");
     headers.put(HttpHeaders.DATE,
@@ -365,9 +421,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
 
     KeyPair keyPair = createKeyPair();
     Signer signer =
-        new Signer(keyPair.getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null,
-            Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
+        new Signer(
+            keyPair.getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.HOST, "example.com");
     headers.put(HttpHeaders.DATE,
@@ -405,9 +467,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
 
     KeyPair keyPair = createKeyPair();
     Signer signer =
-        new Signer(keyPair.getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null,
-            Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
+        new Signer(
+            keyPair.getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.HOST, "example.com");
     headers.put(HttpHeaders.DATE,
@@ -446,9 +514,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
 
     KeyPair keyPair = createKeyPair();
     Signer signer =
-        new Signer(keyPair.getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null,
-            Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
+        new Signer(
+            keyPair.getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.HOST, "example.com");
     headers.put(HttpHeaders.DATE,
@@ -493,9 +567,15 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
 
     KeyPair keyPair = createKeyPair();
     Signer signer =
-        new Signer(keyPair.getPrivate(), new Signature(UUID.randomUUID().toString(),
-            Algorithm.RSA_SHA256, null,
-            Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
+        new Signer(
+            keyPair.getPrivate(),
+            new Signature(
+                UUID.randomUUID().toString(),
+                null,
+                Algorithm.RSA_SHA256,
+                null,
+                null,
+                Arrays.asList("(request-target)", "host", "date", "digest", "x-request-id")));
     Map<String, String> headers = new HashMap<>();
     headers.put(HttpHeaders.HOST, "example.com");
     headers.put(HttpHeaders.DATE,

@@ -452,7 +452,7 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
       Map<String, String> headers,
       KeyPair keyPair) {
     Signer signer =
-        new Signer(keyPair.getPrivate(), new Signature(keyId, algorithm, null, signatureHeaders));
+        new Signer(keyPair.getPrivate(), new Signature(keyId, null, algorithm, null, null, List.of(signatureHeaders)));
     try {
       String queryParams = request.getQueryString();
       String requestString = request.getPathInfo() + (queryParams == null ? "" : "?" + queryParams);
@@ -460,7 +460,7 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
       if (signatureParameter == null) {
         signature = signer.sign(request.getMethod().toLowerCase(), requestString, headers);
       } else {
-        signature = new Signature(keyId, algorithm, signatureParameter, signatureHeaders);
+        signature = new Signature(keyId, null, algorithm, null, signatureParameter, List.of(signatureHeaders));
       }
 
       request.addHeader("Authorization", signature);

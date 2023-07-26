@@ -17,14 +17,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -345,7 +341,9 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
       HttpHeaders headers,
       KeyPair keyPair) {
     Signer signer =
-        new Signer(keyPair.getPrivate(), new Signature(keyId, algorithm, null, signatureHeaders));
+        new Signer(
+            keyPair.getPrivate(),
+            new Signature(keyId, null, algorithm, null, null, List.of(signatureHeaders)));
     try {
       String queryParams = request.getQueryString();
       String requestString = request.getPathInfo() + (queryParams == null ? "" : "?" + queryParams);
@@ -355,7 +353,9 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
             signer.sign(
                 request.getMethod().toLowerCase(), requestString, HttpUtils.toHeadersMap(headers));
       } else {
-        signature = new Signature(keyId, algorithm, signatureParameter, signatureHeaders);
+        signature =
+            new Signature(
+                keyId, null, algorithm, null, signatureParameter, List.of(signatureHeaders));
       }
 
       request.addHeader("Authorization", signature);
@@ -368,7 +368,7 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
       String keyId,
       Algorithm algorithm, String[] signatureHeaders) {
     Signer signer =
-        new Signer(keyPair.getPrivate(), new Signature(keyId, algorithm, null, signatureHeaders));
+        new Signer(keyPair.getPrivate(), new Signature(keyId, null, algorithm, null, null, List.of(signatureHeaders)));
 
     String queryParams = request.getQueryString();
     String requestString = request.getPathInfo() + (queryParams == null ? "" : "?" + queryParams);
@@ -389,7 +389,7 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
     }
   }
 
-  private String getDigest(MockHttpServletRequest httpServletRequest)
+  private String getDigest(@NotNull MockHttpServletRequest httpServletRequest)
       throws IOException, NoSuchAlgorithmException {
     String body = "";
     switch (httpServletRequest.getMethod()) {
