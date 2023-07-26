@@ -84,15 +84,15 @@ class EwpApiInterInstitutionalAgreementsApprovalV1ControllerTest extends
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
     doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(approvingHeiId, ounitIds.get(0),
+        .getSingleProvider(approvingHeiId, ounitIds.get(0),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
     doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(approvingHeiId, ounitIds.get(1),
+        .getSingleProvider(approvingHeiId, ounitIds.get(1),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
     doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(approvingHeiId, ounitIds.get(2),
+        .getSingleProvider(approvingHeiId, ounitIds.get(2),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();

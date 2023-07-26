@@ -15,14 +15,15 @@ import pt.ulisboa.ewp.host.plugin.skeleton.HostPlugin;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
 import pt.ulisboa.ewp.node.config.manifest.ManifestEntriesProperties;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
-import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
+import pt.ulisboa.ewp.node.plugin.manager.host.AbstractHostPluginManager;
+import pt.ulisboa.ewp.node.plugin.manager.host.MockHostPluginManager;
 
 class EwpManifestEntryProviderUnitTest {
 
   @Test
   public void testGetManifestEntriesSupportedByHost_OneNonPrimaryProviderAndExclusionSettingEnabled_NoManifestEntryReturned() {
     // Given
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    AbstractHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(true));
     EwpManifestEntryProvider manifestEntryProvider = new EwpManifestEntryProvider(
@@ -61,7 +62,7 @@ class EwpManifestEntryProviderUnitTest {
   @Test
   public void testGetManifestEntriesSupportedByHost_OneNonPrimaryProviderAndExclusionSettingNotEnabled_ManifestEntryReturned() {
     // Given
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    AbstractHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(false));
     EwpManifestEntryProvider manifestEntryProvider = new EwpManifestEntryProvider(
@@ -103,7 +104,7 @@ class EwpManifestEntryProviderUnitTest {
   @Test
   public void testGetManifestEntriesSupportedByHost_OnePrimaryProviderAndExclusionSettingNotEnabled_ManifestEntryReturned() {
     // Given
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    AbstractHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(false));
     EwpManifestEntryProvider manifestEntryProvider = new EwpManifestEntryProvider(
@@ -145,7 +146,7 @@ class EwpManifestEntryProviderUnitTest {
   @Test
   public void testGetManifestEntriesSupportedByHost_OnePrimaryProviderAndExclusionSettingEnabled_ManifestEntryReturned() {
     // Given
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    AbstractHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(true));
     EwpManifestEntryProvider manifestEntryProvider = new EwpManifestEntryProvider(

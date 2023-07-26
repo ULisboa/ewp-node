@@ -16,13 +16,14 @@ import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobiliti
 import pt.ulisboa.ewp.node.config.manifest.ManifestEntriesProperties;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
+import pt.ulisboa.ewp.node.plugin.manager.host.MockHostPluginManager;
 
 class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
 
   @Test
   void testGetManifestEntries_NoRegisteredProviders_NoManifestEntriesReturned() {
     // Arrange
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    HostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(false));
     EwpApiOutgoingMobilitiesManifestEntryProvider manifestEntryProvider = new EwpApiOutgoingMobilitiesManifestEntryProvider(
@@ -44,7 +45,7 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
   @Test
   void testGetManifestEntries_OneRegisteredV1Provider_ManifestEntryReturned() {
     // Arrange
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    HostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(false));
     EwpApiOutgoingMobilitiesManifestEntryProvider manifestEntryProvider = new EwpApiOutgoingMobilitiesManifestEntryProvider(
@@ -78,7 +79,7 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
   @Test
   void testGetManifestEntries_TwoRegisteredV1Provider_ManifestEntryReturned() {
     // Arrange
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
+    HostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(false));
     EwpApiOutgoingMobilitiesManifestEntryProvider manifestEntryProvider = new EwpApiOutgoingMobilitiesManifestEntryProvider(

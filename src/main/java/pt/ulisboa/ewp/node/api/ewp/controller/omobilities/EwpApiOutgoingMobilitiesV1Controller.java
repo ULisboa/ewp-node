@@ -136,7 +136,7 @@ public class EwpApiOutgoingMobilitiesV1Controller {
       if (mappingOptional.isPresent()) {
         EwpOutgoingMobilityMapping mapping = mappingOptional.get();
 
-        Optional<OutgoingMobilitiesV1HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
+        Optional<OutgoingMobilitiesV1HostProvider> providerOptional = hostPluginManager.getSingleProvider(
             heiId, mapping.getOunitId(), OutgoingMobilitiesV1HostProvider.class);
         if (providerOptional.isPresent()) {
           OutgoingMobilitiesV1HostProvider provider = providerOptional.get();

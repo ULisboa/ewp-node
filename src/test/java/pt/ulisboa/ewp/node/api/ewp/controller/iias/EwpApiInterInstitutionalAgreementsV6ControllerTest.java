@@ -180,13 +180,13 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
 
     doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(0),
+        .getSingleProvider(heiId, ounitIds.get(0),
             InterInstitutionalAgreementsV6HostProvider.class);
     doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(1),
+        .getSingleProvider(heiId, ounitIds.get(1),
             InterInstitutionalAgreementsV6HostProvider.class);
     doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(2),
+        .getSingleProvider(heiId, ounitIds.get(2),
             InterInstitutionalAgreementsV6HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
@@ -251,10 +251,10 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
 
     doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(0),
+        .getSingleProvider(heiId, ounitIds.get(0),
             InterInstitutionalAgreementsV6HostProvider.class);
     doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(1),
+        .getSingleProvider(heiId, ounitIds.get(1),
             InterInstitutionalAgreementsV6HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
@@ -321,13 +321,13 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
 
     doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(0),
+        .getSingleProvider(heiId, ounitIds.get(0),
             InterInstitutionalAgreementsV6HostProvider.class);
     doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(1),
+        .getSingleProvider(heiId, ounitIds.get(1),
             InterInstitutionalAgreementsV6HostProvider.class);
     doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(2),
+        .getSingleProvider(heiId, ounitIds.get(2),
             InterInstitutionalAgreementsV6HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
@@ -392,10 +392,10 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
 
     doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(0),
+        .getSingleProvider(heiId, ounitIds.get(0),
             InterInstitutionalAgreementsV6HostProvider.class);
     doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(heiId, ounitIds.get(1),
+        .getSingleProvider(heiId, ounitIds.get(1),
             InterInstitutionalAgreementsV6HostProvider.class);
 
     HttpParams queryParams = new HttpParams();

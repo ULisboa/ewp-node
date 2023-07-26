@@ -237,7 +237,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
       if (mappingOptional.isPresent()) {
         EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
 
-        Optional<InterInstitutionalAgreementsV6HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
+        Optional<InterInstitutionalAgreementsV6HostProvider> providerOptional = hostPluginManager.getSingleProvider(
             heiId, mapping.getOunitId(),
             InterInstitutionalAgreementsV6HostProvider.class);
         if (providerOptional.isPresent()) {
@@ -265,7 +265,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
       if (mappingOptional.isPresent()) {
         EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
 
-        Optional<InterInstitutionalAgreementsV6HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
+        Optional<InterInstitutionalAgreementsV6HostProvider> providerOptional = hostPluginManager.getSingleProvider(
             heiId, mapping.getOunitId(),
             InterInstitutionalAgreementsV6HostProvider.class);
         if (providerOptional.isPresent()) {

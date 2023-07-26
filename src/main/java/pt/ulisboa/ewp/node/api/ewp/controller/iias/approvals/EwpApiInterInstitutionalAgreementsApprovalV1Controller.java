@@ -81,7 +81,7 @@ public class EwpApiInterInstitutionalAgreementsApprovalV1Controller {
       if (mappingOptional.isPresent()) {
         EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
 
-        Optional<InterInstitutionalAgreementsApprovalV1HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
+        Optional<InterInstitutionalAgreementsApprovalV1HostProvider> providerOptional = hostPluginManager.getSingleProvider(
             heiId, mapping.getOunitId(),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
         if (providerOptional.isPresent()) {

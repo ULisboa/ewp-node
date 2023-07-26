@@ -171,13 +171,13 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
             OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(0),
+        .getSingleProvider(sendingHeiId, ounitIds.get(0),
             OutgoingMobilityLearningAgreementsV1HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(1),
+        .getSingleProvider(sendingHeiId, ounitIds.get(1),
             OutgoingMobilityLearningAgreementsV1HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(2),
+        .getSingleProvider(sendingHeiId, ounitIds.get(2),
             OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
@@ -252,13 +252,13 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
             OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(0),
+        .getSingleProvider(sendingHeiId, ounitIds.get(0),
             OutgoingMobilityLearningAgreementsV1HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(1),
+        .getSingleProvider(sendingHeiId, ounitIds.get(1),
             OutgoingMobilityLearningAgreementsV1HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(2),
+        .getSingleProvider(sendingHeiId, ounitIds.get(2),
             OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();

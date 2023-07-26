@@ -15,6 +15,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.config.manifest.ManifestEntriesProperties;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
+import pt.ulisboa.ewp.node.plugin.manager.host.MockHostPluginManager;
 
 public class EwpApiFilesV1ManifestEntryProviderTest {
 
@@ -24,8 +25,7 @@ public class EwpApiFilesV1ManifestEntryProviderTest {
     String baseUrl = "https://www.example.org/";
     String heiId = UUID.randomUUID().toString();
 
-    HostPluginManager hostPluginManager = new HostPluginManager("/" + UUID.randomUUID().toString(),
-        null);
+    HostPluginManager hostPluginManager = new MockHostPluginManager();
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(false));
     EwpApiFilesManifestEntryProvider manifestEntryProvider = new EwpApiFilesManifestEntryProvider(

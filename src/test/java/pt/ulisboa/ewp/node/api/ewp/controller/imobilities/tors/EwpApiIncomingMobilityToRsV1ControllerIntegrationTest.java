@@ -155,13 +155,13 @@ class EwpApiIncomingMobilityToRsV1ControllerIntegrationTest extends
             IncomingMobilityToRsV1HostProvider.class);
 
     doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(0),
+        .getSingleProvider(receivingHeiId, ounitIds.get(0),
             IncomingMobilityToRsV1HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(1),
+        .getSingleProvider(receivingHeiId, ounitIds.get(1),
             IncomingMobilityToRsV1HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(2),
+        .getSingleProvider(receivingHeiId, ounitIds.get(2),
             IncomingMobilityToRsV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
@@ -236,13 +236,13 @@ class EwpApiIncomingMobilityToRsV1ControllerIntegrationTest extends
             IncomingMobilityToRsV1HostProvider.class);
 
     doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(0),
+        .getSingleProvider(receivingHeiId, ounitIds.get(0),
             IncomingMobilityToRsV1HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(1),
+        .getSingleProvider(receivingHeiId, ounitIds.get(1),
             IncomingMobilityToRsV1HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(receivingHeiId, ounitIds.get(2),
+        .getSingleProvider(receivingHeiId, ounitIds.get(2),
             IncomingMobilityToRsV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();

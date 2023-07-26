@@ -6,8 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.OmobilitiesGetResponseV2;
 import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.OmobilitiesIndexResponseV2;
-import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.StudentMobilityV2.SendingHei;
 import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.StudentMobilityV2;
+import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.StudentMobilityV2.SendingHei;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -150,13 +150,13 @@ class EwpApiOutgoingMobilitiesV2ControllerIntegrationTest extends
         .getAllProvidersOfType(sendingHeiId, OutgoingMobilitiesV2HostProvider.class);
 
     doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(0),
+        .getSingleProvider(sendingHeiId, ounitIds.get(0),
             OutgoingMobilitiesV2HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(1),
+        .getSingleProvider(sendingHeiId, ounitIds.get(1),
             OutgoingMobilitiesV2HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(2),
+        .getSingleProvider(sendingHeiId, ounitIds.get(2),
             OutgoingMobilitiesV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
@@ -228,13 +228,13 @@ class EwpApiOutgoingMobilitiesV2ControllerIntegrationTest extends
         .getAllProvidersOfType(sendingHeiId, OutgoingMobilitiesV2HostProvider.class);
 
     doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(0),
+        .getSingleProvider(sendingHeiId, ounitIds.get(0),
             OutgoingMobilitiesV2HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(1),
+        .getSingleProvider(sendingHeiId, ounitIds.get(1),
             OutgoingMobilitiesV2HostProvider.class);
     doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProviderByHeiIdAndOunitId(sendingHeiId, ounitIds.get(2),
+        .getSingleProvider(sendingHeiId, ounitIds.get(2),
             OutgoingMobilitiesV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();

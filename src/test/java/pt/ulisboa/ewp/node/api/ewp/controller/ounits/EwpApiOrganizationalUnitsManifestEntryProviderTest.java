@@ -15,14 +15,15 @@ import pt.ulisboa.ewp.host.plugin.skeleton.provider.ounits.OrganizationalUnitsV2
 import pt.ulisboa.ewp.node.config.manifest.ManifestEntriesProperties;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
+import pt.ulisboa.ewp.node.plugin.manager.host.MockHostPluginManager;
 
 class EwpApiOrganizationalUnitsManifestEntryProviderTest {
 
   @Test
   public void testGetManifestEntries_TwoApplicableHostProvidersWithSameVersion_OnlyOneManifestEntry() {
-    HostPluginManager hostPluginManager = Mockito.spy(new HostPluginManager("", null));
-    ManifestProperties manifestProperties = ManifestProperties.create(
-        ManifestEntriesProperties.create(false));
+    HostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
+    ManifestProperties manifestProperties =
+        ManifestProperties.create(ManifestEntriesProperties.create(false));
     EwpApiOrganizationalUnitsManifestEntryProvider manifestEntryProvider = new EwpApiOrganizationalUnitsManifestEntryProvider(
         hostPluginManager, manifestProperties);
 

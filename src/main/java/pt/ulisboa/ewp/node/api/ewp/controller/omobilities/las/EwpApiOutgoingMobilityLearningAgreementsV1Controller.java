@@ -333,7 +333,7 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
       if (mappingOptional.isPresent()) {
         EwpOutgoingMobilityMapping mapping = mappingOptional.get();
 
-        Optional<OutgoingMobilityLearningAgreementsV1HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
+        Optional<OutgoingMobilityLearningAgreementsV1HostProvider> providerOptional = hostPluginManager.getSingleProvider(
             heiId, mapping.getOunitId(), OutgoingMobilityLearningAgreementsV1HostProvider.class);
         if (providerOptional.isPresent()) {
           OutgoingMobilityLearningAgreementsV1HostProvider provider = providerOptional.get();

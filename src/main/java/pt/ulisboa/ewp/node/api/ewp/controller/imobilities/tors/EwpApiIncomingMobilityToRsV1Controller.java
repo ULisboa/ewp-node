@@ -136,7 +136,7 @@ public class EwpApiIncomingMobilityToRsV1Controller {
       if (mappingOptional.isPresent()) {
         EwpOutgoingMobilityMapping mapping = mappingOptional.get();
 
-        Optional<IncomingMobilityToRsV1HostProvider> providerOptional = hostPluginManager.getSingleProviderByHeiIdAndOunitId(
+        Optional<IncomingMobilityToRsV1HostProvider> providerOptional = hostPluginManager.getSingleProvider(
             heiId, mapping.getOunitId(), IncomingMobilityToRsV1HostProvider.class);
         if (providerOptional.isPresent()) {
           IncomingMobilityToRsV1HostProvider provider = providerOptional.get();

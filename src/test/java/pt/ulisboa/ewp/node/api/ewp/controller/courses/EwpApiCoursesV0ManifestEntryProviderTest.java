@@ -14,6 +14,7 @@ import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.MockCoursesV0HostPro
 import pt.ulisboa.ewp.node.config.manifest.ManifestEntriesProperties;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
+import pt.ulisboa.ewp.node.plugin.manager.host.MockHostPluginManager;
 
 public class EwpApiCoursesV0ManifestEntryProviderTest {
 
@@ -22,8 +23,7 @@ public class EwpApiCoursesV0ManifestEntryProviderTest {
     String baseUrl = "https://www.example.org/";
     String heiId = UUID.randomUUID().toString();
 
-    HostPluginManager hostPluginManager = new HostPluginManager("/" + UUID.randomUUID(),
-        null);
+    HostPluginManager hostPluginManager = new MockHostPluginManager();
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(false));
     EwpApiCoursesManifestEntryProvider manifestEntryProvider = new EwpApiCoursesManifestEntryProvider(
