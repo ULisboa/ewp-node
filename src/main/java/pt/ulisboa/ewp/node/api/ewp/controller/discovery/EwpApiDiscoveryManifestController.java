@@ -134,7 +134,6 @@ public class EwpApiDiscoveryManifestController {
     String certificate = decodedCertificateAndKey.getFormattedCertificate();
     if (certificate != null) {
       clientCredentialsInUse = new HostV6.ClientCredentialsInUse();
-      clientCredentialsInUse.getCertificate().add(certificate);
 
       String formattedRsaPublicKey = decodedCertificateAndKey.getFormattedRsaPublicKey();
       clientCredentialsInUse.getRsaPublicKey().add(formattedRsaPublicKey);
