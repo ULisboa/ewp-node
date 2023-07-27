@@ -6,7 +6,9 @@ public enum EwpApiNamespaces {
   IIAS_V4_GET_RESPONSE(
       "https://github.com/erasmus-without-paper/ewp-specs-api-iias/blob/stable-v4/endpoints/get-response.xsd"),
   IIAS_V6_GET_RESPONSE(
-      "https://github.com/erasmus-without-paper/ewp-specs-api-iias/blob/stable-v6/endpoints/get-response.xsd");
+      "https://github.com/erasmus-without-paper/ewp-specs-api-iias/blob/stable-v6/endpoints/get-response.xsd"),
+  IIAS_V7_GET_RESPONSE(
+      "https://github.com/erasmus-without-paper/ewp-specs-api-iias/blob/stable-v7/endpoints/get-response.xsd");
 
   private final String namespaceUrl;
 

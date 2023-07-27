@@ -3,6 +3,7 @@ package pt.ulisboa.ewp.node.service.ewp.iia.hash;
 import eu.erasmuswithoutpaper.api.iias.v3.endpoints.IiasGetResponseV3;
 import eu.erasmuswithoutpaper.api.iias.v4.endpoints.IiasGetResponseV4;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6;
+import eu.erasmuswithoutpaper.api.iias.v7.endpoints.IiasGetResponseV7;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -119,6 +120,32 @@ public class IiaHashService {
 
       return calculateCooperationConditionsHashes(
           EwpApiNamespaces.IIAS_V6_GET_RESPONSE.getNamespaceUrl(),
+          iiasGetResponseOutputStream.toByteArray());
+
+    } catch (HashCalculationException e) {
+      throw new HashCalculationException(e);
+    }
+  }
+
+  /**
+   * Calculates the cooperation conditions hash for each interinstitutional agreement V7 provided.
+   *
+   * @param iias The interinstitutional agreements to process
+   * @return A list of hashes for all agreements provided.
+   * @throws HashCalculationException when hash failed to be calculated for some reason.
+   */
+  public List<HashCalculationResult> calculateCooperationConditionsHashesForV7(
+      List<IiasGetResponseV7.Iia> iias) throws HashCalculationException {
+    try {
+      IiasGetResponseV7 iiasGetResponse = new IiasGetResponseV7();
+      iiasGetResponse.getIia().addAll(iias);
+
+      ByteArrayOutputStream iiasGetResponseOutputStream = new ByteArrayOutputStream();
+      StreamResult iiasGetResponseStreamResult = new StreamResult(iiasGetResponseOutputStream);
+      this.jaxb2HttpMessageConverter.marshal(iiasGetResponse, iiasGetResponseStreamResult);
+
+      return calculateCooperationConditionsHashes(
+          EwpApiNamespaces.IIAS_V7_GET_RESPONSE.getNamespaceUrl(),
           iiasGetResponseOutputStream.toByteArray());
 
     } catch (HashCalculationException e) {
