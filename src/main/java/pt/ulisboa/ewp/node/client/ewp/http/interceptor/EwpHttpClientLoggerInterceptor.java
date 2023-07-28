@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
-import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
-import pt.ulisboa.ewp.node.domain.repository.http.log.HttpCommunicationLogRepository;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.repository.communication.log.http.HttpCommunicationLogRepository;
 import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
 
 @Component

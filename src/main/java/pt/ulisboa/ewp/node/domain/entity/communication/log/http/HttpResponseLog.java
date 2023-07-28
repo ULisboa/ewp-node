@@ -1,11 +1,9 @@
-package pt.ulisboa.ewp.node.domain.entity.http;
+package pt.ulisboa.ewp.node.domain.entity.communication.log.http;
 
 import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,30 +11,27 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
+import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.utils.StringUtils;
 
 @Entity
-@Table(name = "HTTP_REQUEST_LOG")
-public class HttpRequestLog {
+@Table(name = "HTTP_RESPONSE_LOG")
+public class HttpResponseLog {
 
   private static final int MAX_BODY_LENGTH = (int) Math.pow(2, 15);
 
   private long id;
   private HttpCommunicationLog communication;
-  private HttpMethod method;
-  private String url;
-  private Collection<HttpHeader> headers;
+  private int statusCode;
+  private Collection<HttpHeaderLog> headers;
   private String body;
 
-  protected HttpRequestLog() {}
+  protected HttpResponseLog() {}
 
-  protected HttpRequestLog(
-      HttpMethod method, String url, Collection<HttpHeader> headers, String body) {
-    this.method = method;
-    this.url = url;
+  protected HttpResponseLog(int statusCode, Collection<HttpHeaderLog> headers, String body) {
+    this.statusCode = statusCode;
     this.headers = headers;
-    this.body = StringUtils.truncateWithSuffix(body, MAX_BODY_LENGTH, "====TRUNCATED====");
+    this.body = StringUtils.truncateWithSuffix(body, MAX_BODY_LENGTH - "====TRUNCATED====".length(), "====TRUNCATED====");
   }
 
   @Id
@@ -50,7 +45,7 @@ public class HttpRequestLog {
     this.id = id;
   }
 
-  @OneToOne(fetch = FetchType.LAZY, mappedBy = "request")
+  @OneToOne(fetch = FetchType.LAZY, mappedBy = "response")
   public HttpCommunicationLog getCommunication() {
     return communication;
   }
@@ -59,32 +54,23 @@ public class HttpRequestLog {
     this.communication = communication;
   }
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "method", nullable = false)
-  public HttpMethod getMethod() {
-    return method;
+  @Column(name = "status_code", nullable = false)
+  public int getStatusCode() {
+    return statusCode;
   }
 
-  public void setMethod(HttpMethod method) {
-    this.method = method;
+  public void setStatusCode(int statusCode) {
+    this.statusCode = statusCode;
   }
 
-  @Column(name = "url", nullable = false, length = 2048)
-  public String getUrl() {
-    return url;
+  public static HttpResponseLog create(
+      int statusCode, Collection<HttpHeaderLog> headers, String body) {
+    return new HttpResponseLog(statusCode, headers, body);
   }
 
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "requestLog", cascade = CascadeType.ALL)
-  public Collection<HttpHeader> getHeaders() {
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "responseLog", cascade = CascadeType.ALL)
+  public Collection<HttpHeaderLog> getHeaders() {
     return headers;
-  }
-
-  public void setHeaders(Collection<HttpHeader> headers) {
-    this.headers = headers;
   }
 
   @Column(name = "body", nullable = true, columnDefinition = "TEXT")
@@ -96,16 +82,17 @@ public class HttpRequestLog {
     this.body = body;
   }
 
-  public static HttpRequestLog create(
-      HttpMethod method, String url, Collection<HttpHeader> headers, String body) {
-    return new HttpRequestLog(method, url, headers, body);
+  public void setHeaders(Collection<HttpHeaderLog> headers) {
+    this.headers = headers;
   }
 
   public String toRawString(int maximumBodyLineLength) {
     StringBuilder result = new StringBuilder();
-    result.append(getMethod().toString()).append(" ").append(getUrl())
-        .append(" HTTP/1.1").append(System.lineSeparator());
-    for (HttpHeader header : getHeaders()) {
+    HttpStatus httpStatus = HttpStatus.resolve(getStatusCode());
+    result.append("HTTP/1.1 ").append(getStatusCode()).append(" ")
+        .append(httpStatus != null ? httpStatus.getReasonPhrase() : "Unknown")
+        .append(System.lineSeparator());
+    for (HttpHeaderLog header : getHeaders()) {
       String headerLine = header.getName() + ": " + header.getValue();
       result.append(StringUtils.breakTextWithLineLengthLimit(headerLine, System.lineSeparator(),
           maximumBodyLineLength)).append(System.lineSeparator());

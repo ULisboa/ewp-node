@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.domain.repository.http.log.ewp;
+package pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
-import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
-import pt.ulisboa.ewp.node.domain.entity.http.log.ewp.HttpCommunicationToEwpNodeLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;

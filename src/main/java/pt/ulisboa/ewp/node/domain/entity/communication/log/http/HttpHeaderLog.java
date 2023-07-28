@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.domain.entity.http;
+package pt.ulisboa.ewp.node.domain.entity.communication.log.http;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "HTTP_HEADER")
-public class HttpHeader {
+public class HttpHeaderLog {
 
   private long id;
   private HttpRequestLog requestLog;
@@ -20,9 +20,9 @@ public class HttpHeader {
   private String name;
   private String value;
 
-  protected HttpHeader() {}
+  protected HttpHeaderLog() {}
 
-  protected HttpHeader(String name, String value) {
+  protected HttpHeaderLog(String name, String value) {
     this.name = name;
     this.value = value;
   }
@@ -76,7 +76,7 @@ public class HttpHeader {
     this.value = value;
   }
 
-  public static HttpHeader create(String key, String value) {
-    return new HttpHeader(key, value);
+  public static HttpHeaderLog create(String key, String value) {
+    return new HttpHeaderLog(key, value);
   }
 }

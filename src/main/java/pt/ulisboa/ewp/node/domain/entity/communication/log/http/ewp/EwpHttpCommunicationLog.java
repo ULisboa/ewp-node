@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.domain.entity.http.log.ewp;
+package pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -8,9 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
-import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
 
 @Entity
 @DiscriminatorValue("EWP")

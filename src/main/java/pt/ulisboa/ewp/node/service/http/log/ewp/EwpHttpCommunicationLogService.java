@@ -16,12 +16,12 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpMethod;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
-import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
-import pt.ulisboa.ewp.node.domain.repository.http.log.ewp.HttpCommunicationFromEwpNodeLogRepository;
-import pt.ulisboa.ewp.node.domain.repository.http.log.ewp.HttpCommunicationToEwpNodeLogRepository;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpMethodLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp.HttpCommunicationFromEwpNodeLogRepository;
+import pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp.HttpCommunicationToEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.service.http.log.HttpCommunicationLogService;
 
 @Service
@@ -40,7 +40,8 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) throws IOException {
+      HttpCommunicationLog parentCommunication)
+      throws IOException {
 
     // NOTE: Requests for manifest are not logged to avoid using too much log space
     if (isRequestForManifest(request) && response.getStatus() == HttpStatus.OK.value()) {
@@ -73,19 +74,29 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       EwpSuccessOperationResult<T> successOperationResult,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      HttpCommunicationLog parentCommunication) throws IOException {
-    logCommunicationToEwpNode(successOperationResult.getRequest(),
+      HttpCommunicationLog parentCommunication)
+      throws IOException {
+    logCommunicationToEwpNode(
+        successOperationResult.getRequest(),
         successOperationResult.getResponse(),
-        startProcessingDateTime, endProcessingDateTime, "", parentCommunication);
+        startProcessingDateTime,
+        endProcessingDateTime,
+        "",
+        parentCommunication);
   }
 
   public void logCommunicationToEwpNode(
       EwpClientErrorException clientErrorException,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      HttpCommunicationLog parentCommunication) throws IOException {
-    logCommunicationToEwpNode(clientErrorException.getRequest(), clientErrorException.getResponse(),
-        startProcessingDateTime, endProcessingDateTime, clientErrorException.getDetailedMessage(),
+      HttpCommunicationLog parentCommunication)
+      throws IOException {
+    logCommunicationToEwpNode(
+        clientErrorException.getRequest(),
+        clientErrorException.getResponse(),
+        startProcessingDateTime,
+        endProcessingDateTime,
+        clientErrorException.getDetailedMessage(),
         parentCommunication);
   }
 
@@ -95,7 +106,8 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) throws IOException {
+      HttpCommunicationLog parentCommunication)
+      throws IOException {
     HttpRequestLog requestLog = toHttpRequestLog(request);
     HttpResponseLog responseLog = toHttpResponseLog(response);
     httpCommunicationToEwpNodeLogRepository.create(
@@ -115,7 +127,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
     }
     HttpRequestLog requestLog =
         HttpRequestLog.create(
-            HttpMethod.fromString(request.getMethod()),
+            HttpMethodLog.fromString(request.getMethod()),
             url.toString(),
             toHttpHeaderCollection(request),
             request.getBody());
@@ -126,7 +138,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
   private HttpRequestLog toHttpRequestLog(EwpRequest request) {
     HttpRequestLog requestLog =
         HttpRequestLog.create(
-            HttpMethod.fromString(request.getMethod().name()),
+            HttpMethodLog.fromString(request.getMethod().name()),
             request.getUrl(),
             toHttpHeaderCollection(request.getHeaders()),
             request.getBody().serialize());

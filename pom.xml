@@ -326,6 +326,13 @@
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
           <release>11</release>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.hibernate</groupId>
+              <artifactId>hibernate-jpamodelgen</artifactId>
+              <version>5.6.15.Final</version>
+            </path>
+          </annotationProcessorPaths>
           <compilerArguments>
             <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
           </compilerArguments>

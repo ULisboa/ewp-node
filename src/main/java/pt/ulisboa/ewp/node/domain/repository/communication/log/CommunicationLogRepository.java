@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.domain.repository.http.log;
+package pt.ulisboa.ewp.node.domain.repository.communication.log;
 
 import java.util.Optional;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -9,53 +9,43 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
-import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
-import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog_;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog_;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
 
 @Repository
 @Transactional
-public class HttpCommunicationLogRepository
-    extends AbstractRepository<HttpCommunicationLog> {
+public class CommunicationLogRepository
+    extends AbstractRepository<CommunicationLog> {
 
   @Autowired
   @Lazy
   private MessageResolver messages;
 
-  protected HttpCommunicationLogRepository(SessionFactory sessionFactory) {
-    super(HttpCommunicationLog.class, sessionFactory);
+  protected CommunicationLogRepository(SessionFactory sessionFactory) {
+    super(CommunicationLog.class, sessionFactory);
   }
 
-  public Optional<HttpCommunicationLog> findById(Long id) {
+  public Optional<CommunicationLog> findById(Long id) {
     return runInSession(
         session -> {
           CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-          CriteriaQuery<HttpCommunicationLog> query = criteriaBuilder.createQuery(
-              HttpCommunicationLog.class);
-          Root<HttpCommunicationLog> selection = query.from(HttpCommunicationLog.class);
+          CriteriaQuery<CommunicationLog> query = criteriaBuilder.createQuery(
+                  CommunicationLog.class);
+          Root<CommunicationLog> selection = query.from(CommunicationLog.class);
           return session
               .createQuery(
-                  query.where(criteriaBuilder.equal(selection.get(HttpCommunicationLog_.id), id)))
+                  query.where(criteriaBuilder.equal(selection.get(CommunicationLog_.id), id)))
               .stream()
               .findFirst();
         });
   }
 
   @Override
-  protected boolean checkDomainConstraints(HttpCommunicationLog entity)
+  protected boolean checkDomainConstraints(CommunicationLog entity)
       throws DomainException {
-    if (entity.getRequest() == null) {
-      throw new DomainException(
-          messages.get("error.http.communication.log.request.must.be.defined"));
-    }
-
-    if (entity.getResponse() == null) {
-      throw new DomainException(
-          messages.get("error.http.communication.log.response.must.be.defined"));
-    }
-
     if (entity.getStartProcessingDateTime() == null) {
       throw new DomainException(
           messages.get(

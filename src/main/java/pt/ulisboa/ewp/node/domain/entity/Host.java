@@ -18,7 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.HostForwardEwpApi;
-import pt.ulisboa.ewp.node.domain.entity.http.log.host.HostHttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HostHttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.listener.EntityAuditListener;
 
 @Entity

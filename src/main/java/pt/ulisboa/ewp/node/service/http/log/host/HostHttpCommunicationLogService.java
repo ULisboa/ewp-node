@@ -9,11 +9,11 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
-import pt.ulisboa.ewp.node.domain.entity.http.log.HttpCommunicationLog;
-import pt.ulisboa.ewp.node.domain.entity.http.log.host.HttpCommunicationFromHostLog;
-import pt.ulisboa.ewp.node.domain.repository.http.log.host.HttpCommunicationFromHostLogRepository;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HttpCommunicationFromHostLog;
+import pt.ulisboa.ewp.node.domain.repository.communication.log.http.host.HttpCommunicationFromHostLogRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.service.http.log.HttpCommunicationLogService;
 

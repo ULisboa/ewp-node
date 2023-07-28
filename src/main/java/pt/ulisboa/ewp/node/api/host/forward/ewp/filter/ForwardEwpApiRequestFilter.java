@@ -16,7 +16,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.filter.ForwardEwpApiJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
-import pt.ulisboa.ewp.node.domain.entity.http.log.host.HttpCommunicationFromHostLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.service.http.log.host.HostHttpCommunicationLogService;
 

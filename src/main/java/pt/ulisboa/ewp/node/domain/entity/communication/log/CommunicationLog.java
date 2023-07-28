@@ -1,9 +1,8 @@
-package pt.ulisboa.ewp.node.domain.entity.http.log;
+package pt.ulisboa.ewp.node.domain.entity.communication.log;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -23,47 +22,39 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import javax.persistence.Transient;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpRequestLog;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.utils.CompressionUtils;
-import pt.ulisboa.ewp.node.utils.StringUtils;
 
 @Entity
-@Table(name = "HTTP_COMMUNICATION_LOG")
+@Table(name = "COMMUNICATION_LOG")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "communication_type", discriminatorType = DiscriminatorType.STRING)
-public class HttpCommunicationLog {
+public class CommunicationLog {
 
   private static final int MAX_OBSERVATIONS_LENGTH = 10000;
 
   private long id;
-  private HttpRequestLog request;
-  private HttpResponseLog response;
   private ZonedDateTime startProcessingDateTime;
   private ZonedDateTime endProcessingDateTime;
   private byte[] observations;
-  private HttpCommunicationLog parentCommunication;
-  private Set<HttpCommunicationLog> childrenCommunications;
+  private CommunicationLog parentCommunication;
+  private Set<CommunicationLog> childrenCommunications;
 
-  protected HttpCommunicationLog() {
-  }
+  protected CommunicationLog() {}
 
-  protected HttpCommunicationLog(
-      HttpRequestLog request,
-      HttpResponseLog response,
+  protected CommunicationLog(
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) throws IOException {
-    this.request = request;
-    this.response = response;
+      CommunicationLog parentCommunication) {
     this.startProcessingDateTime = startProcessingDateTime;
     this.endProcessingDateTime = endProcessingDateTime;
-    setObservations(observations.getBytes(StandardCharsets.UTF_8), true);
+    try {
+      setObservations(observations.getBytes(StandardCharsets.UTF_8), true);
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
     this.parentCommunication = parentCommunication;
   }
 
@@ -76,26 +67,6 @@ public class HttpCommunicationLog {
 
   public void setId(long id) {
     this.id = id;
-  }
-
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "request_log")
-  public HttpRequestLog getRequest() {
-    return request;
-  }
-
-  public void setRequest(HttpRequestLog request) {
-    this.request = request;
-  }
-
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "response_log")
-  public HttpResponseLog getResponse() {
-    return response;
-  }
-
-  public void setResponse(HttpResponseLog response) {
-    this.response = response;
   }
 
   @Column(name = "start_processing_date_time", nullable = false)
@@ -121,13 +92,13 @@ public class HttpCommunicationLog {
     return this.observations;
   }
 
+  public void setObservations(byte[] observations) throws IOException {
+    setObservations(observations, false);
+  }
+
   @Transient
   public String getObservationsAsString() throws IOException {
     return CompressionUtils.uncompress(this.observations);
-  }
-
-  public void setObservations(byte[] observations) throws IOException {
-    setObservations(observations, false);
   }
 
   public void setObservations(byte[] observations, boolean compress) throws IOException {
@@ -144,29 +115,27 @@ public class HttpCommunicationLog {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_communication_id")
-  public HttpCommunicationLog getParentCommunication() {
+  public CommunicationLog getParentCommunication() {
     return parentCommunication;
   }
 
-  public void setParentCommunication(
-      HttpCommunicationLog parentCommunication) {
+  public void setParentCommunication(CommunicationLog parentCommunication) {
     this.parentCommunication = parentCommunication;
   }
 
   @Transient
-  public Collection<HttpCommunicationLog> getSortedChildrenCommunications() {
+  public Collection<CommunicationLog> getSortedChildrenCommunications() {
     return getChildrenCommunications().stream()
-        .sorted(Comparator.comparing(HttpCommunicationLog::getStartProcessingDateTime))
+        .sorted(Comparator.comparing(CommunicationLog::getStartProcessingDateTime))
         .collect(Collectors.toList());
   }
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCommunication", cascade = CascadeType.ALL)
-  public Set<HttpCommunicationLog> getChildrenCommunications() {
+  public Set<CommunicationLog> getChildrenCommunications() {
     return childrenCommunications;
   }
 
-  public void setChildrenCommunications(
-      Set<HttpCommunicationLog> childrenCommunications) {
+  public void setChildrenCommunications(Set<CommunicationLog> childrenCommunications) {
     this.childrenCommunications = childrenCommunications;
   }
 }
