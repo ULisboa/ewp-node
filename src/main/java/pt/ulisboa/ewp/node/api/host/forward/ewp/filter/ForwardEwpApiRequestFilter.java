@@ -18,7 +18,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
-import pt.ulisboa.ewp.node.service.http.log.host.HostHttpCommunicationLogService;
+import pt.ulisboa.ewp.node.service.communication.log.http.host.HostHttpCommunicationLogService;
 
 /**
  * Filter that wraps Forward EWP API requests around a wrapper, that is able to cache the request

@@ -21,7 +21,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCo
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
-import pt.ulisboa.ewp.node.service.http.log.host.HostHttpCommunicationLogService;
+import pt.ulisboa.ewp.node.service.communication.log.http.host.HostHttpCommunicationLogService;
 
 public class ForwardEwpApiAuthenticationControllerIntegrationTest extends
     AbstractResourceIntegrationTest {

@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.service.http.log;
+package pt.ulisboa.ewp.node.service.communication.log.http;
 
 import java.util.ArrayList;
 import java.util.Collection;

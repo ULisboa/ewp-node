@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.service.http.log.host;
+package pt.ulisboa.ewp.node.service.communication.log.http.host;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -15,7 +15,7 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.host.HttpCommunicationFromHostLogRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
-import pt.ulisboa.ewp.node.service.http.log.HttpCommunicationLogService;
+import pt.ulisboa.ewp.node.service.communication.log.http.HttpCommunicationLogService;
 
 @Service
 @Transactional

@@ -12,7 +12,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.HttpCommunicationLogRepository;
-import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
+import pt.ulisboa.ewp.node.service.communication.log.http.ewp.EwpHttpCommunicationLogService;
 
 @Component
 @Transactional

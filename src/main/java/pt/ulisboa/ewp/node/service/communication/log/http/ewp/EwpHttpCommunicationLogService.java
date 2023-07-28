@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.service.http.log.ewp;
+package pt.ulisboa.ewp.node.service.communication.log.http.ewp;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -22,7 +22,7 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp.HttpCommunicationFromEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp.HttpCommunicationToEwpNodeLogRepository;
-import pt.ulisboa.ewp.node.service.http.log.HttpCommunicationLogService;
+import pt.ulisboa.ewp.node.service.communication.log.http.HttpCommunicationLogService;
 
 @Service
 @Transactional

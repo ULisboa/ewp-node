@@ -13,7 +13,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import pt.ulisboa.ewp.node.api.ewp.EwpCommunicationContextHolder;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
-import pt.ulisboa.ewp.node.service.http.log.ewp.EwpHttpCommunicationLogService;
+import pt.ulisboa.ewp.node.service.communication.log.http.ewp.EwpHttpCommunicationLogService;
 
 /**
  * Filter that logs an EWP request from some node of the EWP network.
