@@ -18,6 +18,8 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
+import pt.ulisboa.ewp.node.service.communication.context.CommunicationContext;
+import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
 import pt.ulisboa.ewp.node.service.communication.log.http.host.HostHttpCommunicationLogService;
 
 /**
@@ -30,10 +32,6 @@ import pt.ulisboa.ewp.node.service.communication.log.http.host.HostHttpCommunica
 @Configuration
 @Order(Integer.MIN_VALUE)
 public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
-
-  public static final String REQUEST_ATTRIBUTE_COMMUNICATION_ID_NAME =
-      ForwardEwpApiRequestFilter.class.getPackage().getName()
-          + ".COMMUNICATION_ID";
 
   private static final Logger LOG = LoggerFactory.getLogger(ForwardEwpApiRequestFilter.class);
 
@@ -61,9 +59,7 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
 
     HttpCommunicationFromHostLog newCommunicationLog = createCommunicationLog(
         startProcessingDateTime, requestWrapper);
-
-    requestWrapper.setAttribute(REQUEST_ATTRIBUTE_COMMUNICATION_ID_NAME,
-        newCommunicationLog.getId());
+    CommunicationContextHolder.setContext(new CommunicationContext(newCommunicationLog));
 
     filterChain.doFilter(requestWrapper, responseWrapper);
 
@@ -72,6 +68,7 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
             ForwardEwpApiJwtTokenAuthenticationFilter.REQUEST_ATTRIBUTE_HOST_FORWARD_EWP_API_CLIENT_NAME);
     updateCommunicationLogWithHostForwardEwpApiClientAndResponse(newCommunicationLog,
         hostForwardEwpApiClient, responseWrapper);
+    CommunicationContextHolder.clearContext();
 
     responseWrapper.copyBodyToResponse();
   }

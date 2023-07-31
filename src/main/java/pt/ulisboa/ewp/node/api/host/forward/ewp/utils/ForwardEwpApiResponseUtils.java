@@ -7,13 +7,12 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.filter.ForwardEwpApiRequestFilter;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.service.communication.context.CommunicationContext;
+import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.messaging.Message;
@@ -95,7 +94,7 @@ public class ForwardEwpApiResponseUtils {
 
   public static <T> ForwardEwpApiResponseWithData<T> createResponseWithMessagesAndData(
       T data) {
-    Long communicationId = getCommunicationIdFromCurrentRequest();
+    Long communicationId = getCurrentCommunicationId();
     ForwardEwpApiResponseWithData<T> response = new ForwardEwpApiResponseWithData<>(
         communicationId);
     decorateResponseWithOtherMessages(response);
@@ -104,20 +103,18 @@ public class ForwardEwpApiResponseUtils {
   }
 
   public static ForwardEwpApiResponse createResponseWithMessages() {
-    Long communicationId = getCommunicationIdFromCurrentRequest();
+    Long communicationId = getCurrentCommunicationId();
     ForwardEwpApiResponse response = new ForwardEwpApiResponse(communicationId);
     decorateResponseWithOtherMessages(response);
     return response;
   }
 
-  private static Long getCommunicationIdFromCurrentRequest() {
-    RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-    if (requestAttributes == null) {
+  private static Long getCurrentCommunicationId() {
+    CommunicationContext context = CommunicationContextHolder.getContext();
+    if (context.getCurrentCommunicationLog() == null) {
       return null;
     }
-    return (Long) requestAttributes.getAttribute(
-        ForwardEwpApiRequestFilter.REQUEST_ATTRIBUTE_COMMUNICATION_ID_NAME,
-        RequestAttributes.SCOPE_REQUEST);
+    return context.getCurrentCommunicationLog().getId();
   }
 
   public static void decorateResponseWithOtherMessages(ForwardEwpApiResponse response) {
