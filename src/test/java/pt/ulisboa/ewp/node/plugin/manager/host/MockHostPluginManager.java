@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import pt.ulisboa.ewp.host.plugin.skeleton.HostPlugin;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
+import pt.ulisboa.ewp.node.config.plugins.PluginsAspectsProperties;
+import pt.ulisboa.ewp.node.config.plugins.PluginsProperties;
 
 public class MockHostPluginManager extends AbstractHostPluginManager {
 
@@ -14,9 +15,18 @@ public class MockHostPluginManager extends AbstractHostPluginManager {
   private final Map<HostPlugin, Collection<HostProvider>> hostProvidersPerPluginMap = new HashMap<>();
 
   public MockHostPluginManager() {
-    super(plugin -> {});
+    super(createPluginsProperties(), plugin -> {});
   }
-  
+
+  private static PluginsProperties createPluginsProperties() {
+    PluginsAspectsProperties pluginsAspectsProperties = new PluginsAspectsProperties();
+    pluginsAspectsProperties.setEnabled(false);
+
+    PluginsProperties pluginsProperties = new PluginsProperties();
+    pluginsProperties.setAspects(pluginsAspectsProperties);
+    return pluginsProperties;
+  }
+
   public void registerPlugin(HostPlugin plugin, Collection<HostProvider> hostProviders) {
     this.plugins.add(plugin);
     this.hostProvidersPerPluginMap.put(plugin, hostProviders);
@@ -32,11 +42,7 @@ public class MockHostPluginManager extends AbstractHostPluginManager {
   }
 
   @Override
-  protected <T extends HostProvider> Collection<T> getProvidersOfPlugin(
-      HostPlugin hostPlugin, Class<T> providerType) {
-    return this.hostProvidersPerPluginMap.getOrDefault(hostPlugin, new ArrayList<>()).stream()
-        .filter(p -> providerType.isAssignableFrom(p.getClass()))
-        .map(p -> (T) p)
-        .collect(Collectors.toList());
+  protected Collection<HostProvider> getAllProvidersOfPlugin(HostPlugin hostPlugin) {
+    return this.hostProvidersPerPluginMap.get(hostPlugin);
   }
 }

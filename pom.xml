@@ -12,7 +12,7 @@
 
   <groupId>pt.ulisboa</groupId>
   <artifactId>ewp-node</artifactId>
-  <version>0.16.0</version>
+  <version>0.17.0</version>
   <packaging>jar</packaging>
 
   <name>EWP Node</name>
@@ -54,6 +54,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-oxm</artifactId>
     </dependency>
@@ -71,7 +76,7 @@
     <dependency>
       <groupId>pt.ulisboa</groupId>
       <artifactId>ewp-host-plugin-skeleton</artifactId>
-      <version>0.17.2</version>
+      <version>0.17.4</version>
     </dependency>
 
     <dependency>

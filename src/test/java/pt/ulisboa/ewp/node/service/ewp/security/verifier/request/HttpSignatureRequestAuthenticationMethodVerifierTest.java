@@ -30,7 +30,7 @@ import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
-import pt.ulisboa.ewp.node.domain.entity.http.HttpMethod;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpMethodLog;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 
 class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest {
@@ -509,7 +509,7 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
         registryClient);
 
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-    mockHttpServletRequest.setMethod(HttpMethod.POST.name());
+    mockHttpServletRequest.setMethod(HttpMethodLog.POST.name());
     mockHttpServletRequest.setServerName("example.com");
 
     KeyPair keyPair = createKeyPair();
@@ -562,7 +562,7 @@ class HttpSignatureRequestAuthenticationMethodVerifierTest extends AbstractTest 
         registryClient);
 
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-    mockHttpServletRequest.setMethod(HttpMethod.POST.name());
+    mockHttpServletRequest.setMethod(HttpMethodLog.POST.name());
     mockHttpServletRequest.setServerName("example.com");
 
     KeyPair keyPair = createKeyPair();

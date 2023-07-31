@@ -76,6 +76,10 @@ plugins:
   # Set the path to the plugins directory
   path: /plugins/
 
+  # Manages the use of aspects (e.g. logging function calls) around plugins
+  aspects:
+    enabled: true
+
   # Variables may be defined per host plugin
   # For instance, in the example below, a property example.key belonging to a plugin with ID
   # ewp-host-plugin-demo is defined.

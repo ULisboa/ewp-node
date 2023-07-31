@@ -1,21 +1,19 @@
 package pt.ulisboa.ewp.node.api.ewp.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringV1;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pt.ulisboa.ewp.host.plugin.skeleton.HostPlugin;
+import pt.ulisboa.ewp.host.plugin.skeleton.MockHostPlugin;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
 import pt.ulisboa.ewp.node.config.manifest.ManifestEntriesProperties;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
-import pt.ulisboa.ewp.node.plugin.manager.host.AbstractHostPluginManager;
 import pt.ulisboa.ewp.node.plugin.manager.host.MockHostPluginManager;
 
 class EwpManifestEntryProviderUnitTest {
@@ -23,7 +21,7 @@ class EwpManifestEntryProviderUnitTest {
   @Test
   public void testGetManifestEntriesSupportedByHost_OneNonPrimaryProviderAndExclusionSettingEnabled_NoManifestEntryReturned() {
     // Given
-    AbstractHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
+    MockHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(true));
     EwpManifestEntryProvider manifestEntryProvider = new EwpManifestEntryProvider(
@@ -33,14 +31,10 @@ class EwpManifestEntryProviderUnitTest {
     String heiId = UUID.randomUUID().toString();
     String baseUrl = "https://example.com";
 
-    HostPlugin hostPlugin = Mockito.mock(HostPlugin.class);
+    MockHostPlugin hostPlugin = new MockHostPlugin.Builder().heiIdOnWhichIsPrimary(heiId).build();
     HostProvider hostProvider = new HostProvider() {
     };
-    hostPluginManager.registerPlugin(hostPlugin);
-
-    when(hostPluginManager.getAllProviders(heiId)).thenReturn(List.of(hostProvider));
-    when(hostPluginManager.getPrimaryProvider(heiId, HostProvider.class)).thenReturn(
-        Optional.empty());
+    hostPluginManager.registerPlugin(hostPlugin, List.of(hostProvider));
 
     manifestEntryProvider.registerHostProviderToManifestEntryConverter(HostProvider.class,
         (ignored1, ignored2, ignored3) -> {
@@ -62,7 +56,7 @@ class EwpManifestEntryProviderUnitTest {
   @Test
   public void testGetManifestEntriesSupportedByHost_OneNonPrimaryProviderAndExclusionSettingNotEnabled_ManifestEntryReturned() {
     // Given
-    AbstractHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
+    MockHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(false));
     EwpManifestEntryProvider manifestEntryProvider = new EwpManifestEntryProvider(
@@ -72,14 +66,10 @@ class EwpManifestEntryProviderUnitTest {
     String heiId = UUID.randomUUID().toString();
     String baseUrl = "https://example.com";
 
-    HostPlugin hostPlugin = Mockito.mock(HostPlugin.class);
+    HostPlugin hostPlugin = new MockHostPlugin.Builder().coveredHeiId(heiId).build();
     HostProvider hostProvider = new HostProvider() {
     };
-    hostPluginManager.registerPlugin(hostPlugin);
-
-    when(hostPluginManager.getAllProviders(heiId)).thenReturn(List.of(hostProvider));
-    when(hostPluginManager.getPrimaryProvider(heiId, HostProvider.class)).thenReturn(
-        Optional.empty());
+    hostPluginManager.registerPlugin(hostPlugin, List.of(hostProvider));
 
     manifestEntryProvider.registerHostProviderToManifestEntryConverter(HostProvider.class,
         (ignored1, ignored2, ignored3) -> {
@@ -104,7 +94,7 @@ class EwpManifestEntryProviderUnitTest {
   @Test
   public void testGetManifestEntriesSupportedByHost_OnePrimaryProviderAndExclusionSettingNotEnabled_ManifestEntryReturned() {
     // Given
-    AbstractHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
+    MockHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(false));
     EwpManifestEntryProvider manifestEntryProvider = new EwpManifestEntryProvider(
@@ -114,14 +104,10 @@ class EwpManifestEntryProviderUnitTest {
     String heiId = UUID.randomUUID().toString();
     String baseUrl = "https://example.com";
 
-    HostPlugin hostPlugin = Mockito.mock(HostPlugin.class);
+    MockHostPlugin hostPlugin = new MockHostPlugin.Builder().coveredHeiId(heiId).heiIdOnWhichIsPrimary(heiId).build();
     HostProvider hostProvider = new HostProvider() {
     };
-    hostPluginManager.registerPlugin(hostPlugin);
-
-    when(hostPluginManager.getAllProviders(heiId)).thenReturn(List.of(hostProvider));
-    when(hostPluginManager.getPrimaryProvider(heiId, HostProvider.class)).thenReturn(
-        Optional.of(hostProvider));
+    hostPluginManager.registerPlugin(hostPlugin, List.of(hostProvider));
 
     manifestEntryProvider.registerHostProviderToManifestEntryConverter(HostProvider.class,
         (ignored1, ignored2, ignored3) -> {
@@ -146,7 +132,7 @@ class EwpManifestEntryProviderUnitTest {
   @Test
   public void testGetManifestEntriesSupportedByHost_OnePrimaryProviderAndExclusionSettingEnabled_ManifestEntryReturned() {
     // Given
-    AbstractHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
+    MockHostPluginManager hostPluginManager = Mockito.spy(new MockHostPluginManager());
     ManifestProperties manifestProperties = ManifestProperties.create(
         ManifestEntriesProperties.create(true));
     EwpManifestEntryProvider manifestEntryProvider = new EwpManifestEntryProvider(
@@ -156,14 +142,10 @@ class EwpManifestEntryProviderUnitTest {
     String heiId = UUID.randomUUID().toString();
     String baseUrl = "https://example.com";
 
-    HostPlugin hostPlugin = Mockito.mock(HostPlugin.class);
+    HostPlugin hostPlugin = new MockHostPlugin.Builder().coveredHeiId(heiId).heiIdOnWhichIsPrimary(heiId).build();
     HostProvider hostProvider = new HostProvider() {
     };
-    hostPluginManager.registerPlugin(hostPlugin);
-
-    when(hostPluginManager.getAllProviders(heiId)).thenReturn(List.of(hostProvider));
-    when(hostPluginManager.getPrimaryProvider(heiId, HostProvider.class)).thenReturn(
-        Optional.of(hostProvider));
+    hostPluginManager.registerPlugin(hostPlugin, List.of(hostProvider));
 
     manifestEntryProvider.registerHostProviderToManifestEntryConverter(HostProvider.class,
         (ignored1, ignored2, ignored3) -> {

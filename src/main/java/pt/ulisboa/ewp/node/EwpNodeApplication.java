@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import pt.ulisboa.ewp.node.config.bootstrap.BootstrapProperties;
 import pt.ulisboa.ewp.node.config.cnr.CnrProperties;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
+import pt.ulisboa.ewp.node.config.plugins.PluginsProperties;
 import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 import pt.ulisboa.ewp.node.config.scheduling.SchedulingProperties;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
@@ -40,18 +42,20 @@ import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
 @SpringBootApplication(scanBasePackages = {"pt.ulisboa.ewp.node"})
 @EnableConfigurationProperties(
     value = {
-        DatabaseProperties.class,
-        BootstrapProperties.class,
-        ManifestProperties.class,
-        RegistryProperties.class,
-        SecurityProperties.class,
-        SchedulingProperties.class,
-        CnrProperties.class,
-        SyncProperties.class
+      DatabaseProperties.class,
+      BootstrapProperties.class,
+      ManifestProperties.class,
+      PluginsProperties.class,
+      RegistryProperties.class,
+      SecurityProperties.class,
+      SchedulingProperties.class,
+      CnrProperties.class,
+      SyncProperties.class
     })
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 @EnableCaching(proxyTargetClass = true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @Import(ValidationAutoConfiguration.class)
 public class EwpNodeApplication {
 
@@ -59,9 +63,7 @@ public class EwpNodeApplication {
     SpringApplication.run(EwpNodeApplication.class);
   }
 
-  /**
-   * Returns a message source for internationalization (i18n).
-   */
+  /** Returns a message source for internationalization (i18n). */
   @Bean
   public MessageSource messageSource() {
     ReloadableResourceBundleMessageSource messageSource =
@@ -103,8 +105,8 @@ public class EwpNodeApplication {
   }
 
   /**
-   * Custom {@link BeanPostProcessor} for adding {@link ParamNameProcessor} into the first of
-   * {@link RequestMappingHandlerAdapter#argumentResolvers}.
+   * Custom {@link BeanPostProcessor} for adding {@link ParamNameProcessor} into the first of {@link
+   * RequestMappingHandlerAdapter#argumentResolvers}.
    *
    * @return BeanPostProcessor
    */
@@ -157,8 +159,7 @@ public class EwpNodeApplication {
   public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
     ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
     threadPoolTaskScheduler.setPoolSize(5);
-    threadPoolTaskScheduler.setThreadNamePrefix(
-        "ThreadPoolTaskScheduler");
+    threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
     threadPoolTaskScheduler.setWaitForTasksToCompleteOnShutdown(true);
     threadPoolTaskScheduler.setAwaitTerminationSeconds(30);
     threadPoolTaskScheduler.setRejectedExecutionHandler(new AbortPolicy());
