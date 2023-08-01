@@ -26,7 +26,7 @@ public class CommunicationLogService {
     if (CommunicationContextHolder.getContext().getCurrentCommunicationLog() != null) {
       this.registerException(CommunicationContextHolder.getContext().getCurrentCommunicationLog(), exception);
     } else {
-      throw new IllegalStateException("No current communication found");
+      LOG.warn("No current communication found, ignoring exception...");
     }
   }
 
