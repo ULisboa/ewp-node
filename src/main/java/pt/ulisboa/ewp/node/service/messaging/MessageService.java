@@ -3,29 +3,28 @@ package pt.ulisboa.ewp.node.service.messaging;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
-
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.springframework.web.context.WebApplicationContext;
-
+import org.slf4j.LoggerFactory;
 import pt.ulisboa.ewp.node.utils.messaging.Message;
 import pt.ulisboa.ewp.node.utils.messaging.Severity;
-import pt.ulisboa.ewp.node.utils.provider.ApplicationContextProvider;
 
-/** Represents a container of messages scoped to the current request. */
-@Service
-@Scope(WebApplicationContext.SCOPE_REQUEST)
+/** Represents a container of messages scoped to the current thread. */
 public class MessageService {
 
-  @Autowired private Logger logger;
+  private static final Logger LOG = LoggerFactory.getLogger(MessageService.class);
 
-  private Collection<Message> queue = new HashSet<>();
+  private static final ThreadLocal<MessageService> instanceHolder = new ThreadLocal<>();
+
+  private final Collection<Message> queue = new HashSet<>();
 
   public static MessageService getInstance() {
-    return ApplicationContextProvider.getApplicationContext().getBean(MessageService.class);
+    MessageService instance = instanceHolder.get();
+    if (instance == null) {
+      instance = new MessageService();
+      instanceHolder.set(instance);
+    }
+    return instance;
   }
 
   public void add(String code) {
@@ -41,8 +40,12 @@ public class MessageService {
   }
 
   public void add(Message message) {
-    if (Strings.isNotEmpty(message.getSummary())) this.queue.add(message);
-    else logger.warn("Message discarded: empty summary");
+    if (Strings.isNotEmpty(message.getSummary())) {
+      this.queue.add(message);
+    }
+    else {
+      LOG.warn("Message discarded: empty summary");
+    }
   }
 
   public boolean hasMessages() {
