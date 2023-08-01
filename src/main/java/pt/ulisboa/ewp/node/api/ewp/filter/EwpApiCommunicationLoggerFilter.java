@@ -71,10 +71,8 @@ public class EwpApiCommunicationLoggerFilter extends OncePerRequestFilter {
 
     filterChain.doFilter(request, response);
 
-    String observations = CommunicationContextHolder.getContext().getObservations();
-
     updateCommunicationLogWithResponseAndObservation(
-        newCommunicationLog, contentCachingResponseWrapper, observations);
+        newCommunicationLog, contentCachingResponseWrapper, "");
 
     CommunicationContextHolder.clearContext();
   }

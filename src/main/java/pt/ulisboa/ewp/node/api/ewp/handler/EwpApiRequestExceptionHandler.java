@@ -15,14 +15,19 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpNotFoundException;
 import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
+import pt.ulisboa.ewp.node.service.communication.log.CommunicationLogService;
 import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
 
 @Component
 public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolver {
 
-  private Jaxb2HttpMessageConverter jaxb2HttpMessageConverter;
+  private final CommunicationLogService communicationLogService;
+  private final Jaxb2HttpMessageConverter jaxb2HttpMessageConverter;
 
-  public EwpApiRequestExceptionHandler(Jaxb2HttpMessageConverter jaxb2HttpMessageConverter) {
+  public EwpApiRequestExceptionHandler(
+      CommunicationLogService communicationLogService,
+      Jaxb2HttpMessageConverter jaxb2HttpMessageConverter) {
+    this.communicationLogService = communicationLogService;
     this.jaxb2HttpMessageConverter = jaxb2HttpMessageConverter;
     setOrder(Integer.MIN_VALUE);
   }
@@ -31,7 +36,8 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
   protected ModelAndView doResolveException(
       HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
     if (request.getRequestURI().startsWith(EwpApiConstants.API_BASE_URI)) {
-      CommunicationContextHolder.getContext().registerException(ex);
+      this.communicationLogService.registerException(
+          CommunicationContextHolder.getContext().getCurrentCommunicationLog(), ex);
 
       HttpServletResponseWithCustomSendError responseWithCustomSendError =
           new HttpServletResponseWithCustomSendError(response);
@@ -40,8 +46,9 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
           super.doResolveException(request, responseWithCustomSendError, handler, ex);
 
       if (ex instanceof HttpMessageNotReadableException) {
-        modelAndView = handleHttpMessageNotReadableExceptionException(
-            (HttpMessageNotReadableException) ex, response);
+        modelAndView =
+            handleHttpMessageNotReadableExceptionException(
+                (HttpMessageNotReadableException) ex, response);
 
       } else if (modelAndView == null) {
         if (ex instanceof EwpBadRequestException) {

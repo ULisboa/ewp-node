@@ -33,6 +33,7 @@ public class CommunicationLog {
   private long id;
   private ZonedDateTime startProcessingDateTime;
   private ZonedDateTime endProcessingDateTime;
+  private String exceptionStacktrace;
   private String observations;
   private CommunicationLog parentCommunication;
   private Set<CommunicationLog> childrenCommunications;
@@ -77,6 +78,15 @@ public class CommunicationLog {
 
   public void setEndProcessingDateTime(ZonedDateTime endProcessingDateTime) {
     this.endProcessingDateTime = endProcessingDateTime;
+  }
+
+  @Column(name = "exception_stacktrace", columnDefinition = "TEXT")
+  public String getExceptionStacktrace() {
+    return exceptionStacktrace;
+  }
+
+  public void setExceptionStacktrace(String exceptionStacktrace) {
+    this.exceptionStacktrace = exceptionStacktrace;
   }
 
   @Column(name = "observations", nullable = true, columnDefinition = "TEXT")
