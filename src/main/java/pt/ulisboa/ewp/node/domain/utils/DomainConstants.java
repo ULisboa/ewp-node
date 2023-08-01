@@ -4,8 +4,5 @@ public class DomainConstants {
 
   private DomainConstants() {}
 
-  public static final String QUERY_USER_PROFILE_FIND_BY_USERNAME =
-      "userProfile-findByUsername-query";
-
-  public static final String PARAM_USERNAME = "username";
+  public static final int MAX_TEXT_COLUMN_TEXT_LENGTH = 65535;
 }

@@ -150,7 +150,7 @@ public class CommunicationDiagramsActuatorEndpoint {
             diagramBuilder, childCommunicationLog, participantToAliasMap);
       }
 
-      String observations = communicationLog.getObservationsAsString();
+      String observations = communicationLog.getObservations();
       if (!StringUtils.isBlank(observations)) {
         registerNote(
             diagramBuilder,

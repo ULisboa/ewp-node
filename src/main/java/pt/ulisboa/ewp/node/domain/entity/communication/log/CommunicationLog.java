@@ -1,9 +1,6 @@
 package pt.ulisboa.ewp.node.domain.entity.communication.log;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
@@ -24,7 +21,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import pt.ulisboa.ewp.node.utils.CompressionUtils;
+import pt.ulisboa.ewp.node.domain.utils.DomainConstants;
+import pt.ulisboa.ewp.node.utils.StringUtils;
 
 @Entity
 @Table(name = "COMMUNICATION_LOG")
@@ -32,12 +30,10 @@ import pt.ulisboa.ewp.node.utils.CompressionUtils;
 @DiscriminatorColumn(name = "communication_type", discriminatorType = DiscriminatorType.STRING)
 public class CommunicationLog {
 
-  private static final int MAX_OBSERVATIONS_LENGTH = 10000;
-
   private long id;
   private ZonedDateTime startProcessingDateTime;
   private ZonedDateTime endProcessingDateTime;
-  private byte[] observations;
+  private String observations;
   private CommunicationLog parentCommunication;
   private Set<CommunicationLog> childrenCommunications;
 
@@ -50,11 +46,7 @@ public class CommunicationLog {
       CommunicationLog parentCommunication) {
     this.startProcessingDateTime = startProcessingDateTime;
     this.endProcessingDateTime = endProcessingDateTime;
-    try {
-      setObservations(observations.getBytes(StandardCharsets.UTF_8), true);
-    } catch (IOException e) {
-      throw new IllegalStateException(e);
-    }
+    setObservations(observations);
     this.parentCommunication = parentCommunication;
   }
 
@@ -87,30 +79,15 @@ public class CommunicationLog {
     this.endProcessingDateTime = endProcessingDateTime;
   }
 
-  @Column(name = "observations", nullable = true, length = 10000)
-  public byte[] getObservations() {
+  @Column(name = "observations", nullable = true, columnDefinition = "TEXT")
+  public String getObservations() {
     return this.observations;
   }
 
-  public void setObservations(byte[] observations) throws IOException {
-    setObservations(observations, false);
-  }
-
-  @Transient
-  public String getObservationsAsString() throws IOException {
-    return CompressionUtils.uncompress(this.observations);
-  }
-
-  public void setObservations(byte[] observations, boolean compress) throws IOException {
-    if (compress) {
-      this.observations = CompressionUtils.compress(observations);
-    } else {
-      this.observations = observations;
-    }
-
-    if (this.observations.length > MAX_OBSERVATIONS_LENGTH) {
-      this.observations = Arrays.copyOfRange(this.observations, 0, MAX_OBSERVATIONS_LENGTH);
-    }
+  public void setObservations(String observations) {
+    this.observations =
+        StringUtils.truncateWithSuffix(
+            observations, DomainConstants.MAX_TEXT_COLUMN_TEXT_LENGTH, "====TRUNCATED====");
   }
 
   @ManyToOne(fetch = FetchType.LAZY)

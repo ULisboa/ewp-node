@@ -12,13 +12,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.springframework.http.HttpStatus;
+import pt.ulisboa.ewp.node.domain.utils.DomainConstants;
 import pt.ulisboa.ewp.node.utils.StringUtils;
 
 @Entity
 @Table(name = "HTTP_RESPONSE_LOG")
 public class HttpResponseLog {
-
-  private static final int MAX_BODY_LENGTH = (int) Math.pow(2, 15);
 
   private long id;
   private HttpCommunicationLog communication;
@@ -31,7 +30,7 @@ public class HttpResponseLog {
   protected HttpResponseLog(int statusCode, Collection<HttpHeaderLog> headers, String body) {
     this.statusCode = statusCode;
     this.headers = headers;
-    this.body = StringUtils.truncateWithSuffix(body, MAX_BODY_LENGTH - "====TRUNCATED====".length(), "====TRUNCATED====");
+    setBody(body);
   }
 
   @Id
@@ -79,7 +78,9 @@ public class HttpResponseLog {
   }
 
   public void setBody(String body) {
-    this.body = body;
+    this.body =
+            StringUtils.truncateWithSuffix(
+                    body, DomainConstants.MAX_TEXT_COLUMN_TEXT_LENGTH, "====TRUNCATED====");
   }
 
   public void setHeaders(Collection<HttpHeaderLog> headers) {

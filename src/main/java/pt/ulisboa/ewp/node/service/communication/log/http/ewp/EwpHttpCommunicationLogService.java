@@ -2,7 +2,6 @@ package pt.ulisboa.ewp.node.service.communication.log.http.ewp;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -81,7 +80,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
 
     communicationLog.setResponse(toHttpResponseLog(response));
     communicationLog.setEndProcessingDateTime(endProcessingDateTime);
-    communicationLog.setObservations(observations.getBytes(StandardCharsets.UTF_8), true);
+    communicationLog.setObservations(observations);
     return httpCommunicationFromEwpNodeLogRepository.persist(communicationLog);
   }
 
