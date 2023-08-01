@@ -28,7 +28,7 @@ public class HttpCommunicationFromEwpNodeLogRepository
     super(HttpCommunicationFromEwpNodeLog.class, sessionFactory);
   }
 
-  public boolean create(
+  public HttpCommunicationFromEwpNodeLog create(
       EwpAuthenticationMethod authenticationMethod,
       Collection<String> coveredHeiIds,
       HttpRequestLog request,
@@ -36,7 +36,8 @@ public class HttpCommunicationFromEwpNodeLogRepository
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) throws IOException {
+      HttpCommunicationLog parentCommunication)
+      throws IOException, DomainException {
     HttpCommunicationFromEwpNodeLog communicationFromEwpNodeLog =
         new HttpCommunicationFromEwpNodeLog(
             authenticationMethod,
@@ -46,7 +47,12 @@ public class HttpCommunicationFromEwpNodeLogRepository
             startProcessingDateTime,
             endProcessingDateTime,
             observations, parentCommunication);
-    return persist(communicationFromEwpNodeLog);
+
+    if (persist(communicationFromEwpNodeLog)) {
+      return communicationFromEwpNodeLog;
+    } else {
+      throw new DomainException("Failed to create communication log");
+    }
   }
 
   @Override
@@ -57,19 +63,9 @@ public class HttpCommunicationFromEwpNodeLogRepository
           messages.get("error.http.communication.from.ewp.node.log.request.must.be.defined"));
     }
 
-    if (entity.getResponse() == null) {
-      throw new DomainException(
-          messages.get("error.http.communication.from.ewp.node.log.response.must.be.defined"));
-    }
-
     if (entity.getStartProcessingDateTime() == null) {
       throw new DomainException(
           messages.get("error.http.communication.from.ewp.node.log.start.processing.date.time.must.be.defined"));
-    }
-
-    if (entity.getEndProcessingDateTime() == null) {
-      throw new DomainException(
-          messages.get("error.http.communication.from.ewp.node.log.end.processing.date.time.must.be.defined"));
     }
 
     return true;

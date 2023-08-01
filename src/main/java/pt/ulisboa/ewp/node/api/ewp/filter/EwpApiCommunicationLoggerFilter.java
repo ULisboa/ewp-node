@@ -13,12 +13,16 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import pt.ulisboa.ewp.node.api.ewp.EwpCommunicationContextHolder;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationFromEwpNodeLog;
+import pt.ulisboa.ewp.node.exception.domain.DomainException;
+import pt.ulisboa.ewp.node.service.communication.context.CommunicationContext;
+import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
 import pt.ulisboa.ewp.node.service.communication.log.http.ewp.EwpHttpCommunicationLogService;
 
 /**
  * Filter that logs an EWP request from some node of the EWP network.
- * <p>
- * It is run after EwpApiRequestAndResponseWrapperFilter, as it needs wrapper classes on
+ *
+ * <p>It is run after EwpApiRequestAndResponseWrapperFilter, as it needs wrapper classes on
  * request/response.
  */
 @Configuration
@@ -45,8 +49,6 @@ public class EwpApiCommunicationLoggerFilter extends OncePerRequestFilter {
 
     ZonedDateTime startProcessingDateTime = ZonedDateTime.now();
 
-    filterChain.doFilter(request, response);
-
     if (!(request instanceof EwpApiHttpRequestWrapper)) {
       throw new IllegalStateException(
           "Expected request as EwpApiHttpRequestWrapper but got: " + request.getClass().getName());
@@ -55,20 +57,51 @@ public class EwpApiCommunicationLoggerFilter extends OncePerRequestFilter {
 
     if (!(response instanceof ContentCachingResponseWrapper)) {
       throw new IllegalStateException(
-          "Expected response as ContentCachingResponseWrapper but got: " + response.getClass()
-              .getName());
+          "Expected response as ContentCachingResponseWrapper but got: "
+              + response.getClass().getName());
     }
-    ContentCachingResponseWrapper contentCachingResponseWrapper = (ContentCachingResponseWrapper) response;
+    ContentCachingResponseWrapper contentCachingResponseWrapper =
+        (ContentCachingResponseWrapper) response;
 
-    ZonedDateTime endProcessingDateTime = ZonedDateTime.now();
+    HttpCommunicationFromEwpNodeLog newCommunicationLog =
+        createCommunicationLog(startProcessingDateTime, ewpRequest);
+    if (newCommunicationLog == null) {
+      throw new IllegalStateException("Could not build context");
+    }
+    CommunicationContextHolder.setContext(new CommunicationContext(newCommunicationLog));
 
-    String observation = EwpCommunicationContextHolder.getInstance(request).getObservation();
+    filterChain.doFilter(request, response);
 
-    ewpCommunicationLogService.logCommunicationFromEwpNode(
-        ewpRequest,
-        contentCachingResponseWrapper,
-        startProcessingDateTime,
-        endProcessingDateTime,
-        observation, null);
+    String observations = EwpCommunicationContextHolder.getInstance(request).getObservation();
+
+    updateCommunicationLogWithResponseAndObservation(
+        newCommunicationLog, contentCachingResponseWrapper, observations);
+
+    CommunicationContextHolder.clearContext();
+  }
+
+  private HttpCommunicationFromEwpNodeLog createCommunicationLog(
+      ZonedDateTime startProcessingDateTime, EwpApiHttpRequestWrapper ewpRequest) {
+    HttpCommunicationFromEwpNodeLog newCommunicationLog;
+    try {
+      newCommunicationLog =
+          ewpCommunicationLogService.logCommunicationFromEwpNodeBeforeExecution(
+              ewpRequest, startProcessingDateTime, "", null);
+    } catch (DomainException | IOException e) {
+      throw new IllegalStateException(e);
+    }
+    return newCommunicationLog;
+  }
+
+  private void updateCommunicationLogWithResponseAndObservation(
+      HttpCommunicationFromEwpNodeLog communicationLog,
+      ContentCachingResponseWrapper response,
+      String observations)
+      throws IOException {
+    if (!ewpCommunicationLogService.updateCommunicationFromEwpNodeAfterExecution(
+        communicationLog, response, ZonedDateTime.now(), observations)) {
+      throw new IllegalStateException(
+          "Failed to update communication log #" + communicationLog.getId() + "with response data");
+    }
   }
 }

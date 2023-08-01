@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.service.communication.log.http.ewp;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,8 +21,10 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicatio
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpMethodLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationFromEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp.HttpCommunicationFromEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp.HttpCommunicationToEwpNodeLogRepository;
+import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.service.communication.log.http.HttpCommunicationLogService;
 
 @Service
@@ -34,22 +37,14 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
   @Autowired
   private HttpCommunicationToEwpNodeLogRepository httpCommunicationToEwpNodeLogRepository;
 
-  public void logCommunicationFromEwpNode(
+  public HttpCommunicationFromEwpNodeLog logCommunicationFromEwpNodeBeforeExecution(
       EwpApiHttpRequestWrapper request,
-      ContentCachingResponseWrapper response,
       ZonedDateTime startProcessingDateTime,
-      ZonedDateTime endProcessingDateTime,
       String observations,
       HttpCommunicationLog parentCommunication)
-      throws IOException {
-
-    // NOTE: Requests for manifest are not logged to avoid using too much log space
-    if (isRequestForManifest(request) && response.getStatus() == HttpStatus.OK.value()) {
-      return;
-    }
+      throws IOException, DomainException {
 
     HttpRequestLog requestLog = toHttpRequestLog(request);
-    HttpResponseLog responseLog = toHttpResponseLog(response);
 
     EwpAuthenticationMethod authenticationMethod =
         request.getAuthenticationToken() != null
@@ -59,15 +54,35 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         request.getAuthenticationToken() != null
             ? request.getAuthenticationToken().getPrincipal().getHeiIdsCoveredByClient()
             : Collections.emptyList();
-    httpCommunicationFromEwpNodeLogRepository.create(
+    return httpCommunicationFromEwpNodeLogRepository.create(
         authenticationMethod,
         heiIdsCoveredByClient,
         requestLog,
-        responseLog,
+        null,
         startProcessingDateTime,
-        endProcessingDateTime,
+        null,
         observations,
         parentCommunication);
+  }
+
+  public boolean updateCommunicationFromEwpNodeAfterExecution(
+          HttpCommunicationFromEwpNodeLog communicationLog,
+          ContentCachingResponseWrapper response,
+          ZonedDateTime endProcessingDateTime,
+          String observations)
+          throws IOException {
+
+    // NOTE: Requests for manifest are not logged to avoid using too much log space
+    // Therefore, maintain only failure communications, deleting the success ones
+    if (isRequestForManifest(communicationLog.getRequest()) && response.getStatus() == HttpStatus.OK.value()) {
+      httpCommunicationFromEwpNodeLogRepository.delete(communicationLog);
+      return true;
+    }
+
+    communicationLog.setResponse(toHttpResponseLog(response));
+    communicationLog.setEndProcessingDateTime(endProcessingDateTime);
+    communicationLog.setObservations(observations.getBytes(StandardCharsets.UTF_8), true);
+    return httpCommunicationFromEwpNodeLogRepository.persist(communicationLog);
   }
 
   public <T extends Serializable> void logCommunicationToEwpNode(
@@ -160,7 +175,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
     return responseLog;
   }
 
-  private boolean isRequestForManifest(EwpApiHttpRequestWrapper request) {
-    return request.getRequestURI().endsWith("/manifest");
+  private boolean isRequestForManifest(HttpRequestLog request) {
+    return request.getUrl().endsWith("/manifest");
   }
 }

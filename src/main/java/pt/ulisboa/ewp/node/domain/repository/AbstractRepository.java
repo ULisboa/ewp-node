@@ -52,7 +52,7 @@ public abstract class AbstractRepository<T> {
         });
   }
 
-  protected boolean delete(T entity) {
+  public boolean delete(T entity) {
     return runInSession(
         session -> {
           session.delete(entity);
