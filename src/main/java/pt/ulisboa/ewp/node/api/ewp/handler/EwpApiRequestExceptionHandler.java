@@ -14,7 +14,6 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpNotFoundException;
-import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
 import pt.ulisboa.ewp.node.service.communication.log.CommunicationLogService;
 import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
 
@@ -36,8 +35,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
   protected ModelAndView doResolveException(
       HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
     if (request.getRequestURI().startsWith(EwpApiConstants.API_BASE_URI)) {
-      this.communicationLogService.registerException(
-          CommunicationContextHolder.getContext().getCurrentCommunicationLog(), ex);
+      this.communicationLogService.registerExceptionInCurrentCommunication(ex);
 
       HttpServletResponseWithCustomSendError responseWithCustomSendError =
           new HttpServletResponseWithCustomSendError(response);
