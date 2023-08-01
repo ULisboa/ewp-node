@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-import pt.ulisboa.ewp.node.api.ewp.EwpCommunicationContextHolder;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationFromEwpNodeLog;
@@ -72,7 +71,7 @@ public class EwpApiCommunicationLoggerFilter extends OncePerRequestFilter {
 
     filterChain.doFilter(request, response);
 
-    String observations = EwpCommunicationContextHolder.getInstance(request).getObservation();
+    String observations = CommunicationContextHolder.getContext().getObservations();
 
     updateCommunicationLogWithResponseAndObservation(
         newCommunicationLog, contentCachingResponseWrapper, observations);
