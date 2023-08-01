@@ -5,7 +5,7 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,6 +24,7 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdException;
+import pt.ulisboa.ewp.node.service.communication.log.CommunicationLogService;
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
 import pt.ulisboa.ewp.node.utils.PojoUtils;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
@@ -32,9 +33,17 @@ import pt.ulisboa.ewp.node.utils.messaging.Severity;
 @ControllerAdvice(annotations = ForwardEwpApi.class)
 public class ForwardEwpApiClientExceptionHandler {
 
-  @Autowired private Logger log;
+  private static final Logger LOG =
+      LoggerFactory.getLogger(ForwardEwpApiClientExceptionHandler.class);
 
-  @Autowired private MessageResolver messages;
+  private final CommunicationLogService communicationLogService;
+  private final MessageResolver messages;
+
+  public ForwardEwpApiClientExceptionHandler(
+      CommunicationLogService communicationLogService, MessageResolver messages) {
+    this.communicationLogService = communicationLogService;
+    this.messages = messages;
+  }
 
   @ExceptionHandler({ConstraintViolationException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -116,7 +125,7 @@ public class ForwardEwpApiClientExceptionHandler {
   @ResponseStatus(HttpStatus.FORBIDDEN)
   public ResponseEntity<ForwardEwpApiResponse> handleAccessDeniedException(
       AccessDeniedException exception) {
-    log.warn("Blocked access to protected resource");
+    LOG.warn("Blocked access to protected resource");
     MessageService.getInstance().add(Severity.ERROR, messages.get("error.auth.accessDenied"));
     return ResponseEntity.status(HttpStatus.FORBIDDEN)
         .body(ForwardEwpApiResponseUtils.createResponseWithMessages());
@@ -125,12 +134,15 @@ public class ForwardEwpApiClientExceptionHandler {
   @ExceptionHandler({Exception.class})
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ResponseEntity<ForwardEwpApiResponse> handleException(Exception exception) {
-    log.error("Wrapping exception", exception);
+    LOG.error("Wrapping exception", exception);
     if (exception.getMessage() == null) {
       MessageService.getInstance().add(Severity.ERROR, "Internal server error");
     } else {
       MessageService.getInstance().add(Severity.ERROR, exception.getMessage());
     }
+
+    this.communicationLogService.registerExceptionInCurrentCommunication(exception);
+
     return ForwardEwpApiResponseUtils.toInternalErrorResponseEntity();
   }
 }
