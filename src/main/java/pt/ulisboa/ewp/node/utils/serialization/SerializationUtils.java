@@ -22,7 +22,10 @@ public class SerializationUtils {
   private SerializationUtils() {}
 
   public static TypeAndString convertToTypeAndString(Object object) {
-    if (object instanceof String) {
+    if (object == null) {
+      return new TypeAndString("Object", "null");
+      
+    } else if (object instanceof String) {
       return new TypeAndString("String", "\"" + object + "\"");
 
     } else if (object instanceof Number) {
