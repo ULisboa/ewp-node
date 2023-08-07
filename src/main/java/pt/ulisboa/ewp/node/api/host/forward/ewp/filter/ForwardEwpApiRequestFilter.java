@@ -59,7 +59,7 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
 
     HttpCommunicationFromHostLog newCommunicationLog = createCommunicationLog(
         startProcessingDateTime, requestWrapper);
-    CommunicationContextHolder.setContext(new CommunicationContext(newCommunicationLog));
+    CommunicationContextHolder.setContext(new CommunicationContext(null, newCommunicationLog));
 
     filterChain.doFilter(requestWrapper, responseWrapper);
 

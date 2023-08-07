@@ -67,7 +67,7 @@ public class EwpApiCommunicationLoggerFilter extends OncePerRequestFilter {
     if (newCommunicationLog == null) {
       throw new IllegalStateException("Could not build context");
     }
-    CommunicationContextHolder.setContext(new CommunicationContext(newCommunicationLog));
+    CommunicationContextHolder.setContext(new CommunicationContext(null, newCommunicationLog));
 
     filterChain.doFilter(request, response);
 

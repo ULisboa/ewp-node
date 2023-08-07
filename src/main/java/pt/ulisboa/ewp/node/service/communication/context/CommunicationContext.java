@@ -5,14 +5,20 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 public class CommunicationContext implements Serializable {
 
+  private final CommunicationContext parentContext;
   private CommunicationLog currentCommunicationLog;
 
   public CommunicationContext() {
-    this(null);
+    this(null, null);
   }
 
-  public CommunicationContext(CommunicationLog currentCommunicationLog) {
+  public CommunicationContext(CommunicationContext parentContext, CommunicationLog currentCommunicationLog) {
+    this.parentContext = parentContext;
     this.currentCommunicationLog = currentCommunicationLog;
+  }
+
+  public CommunicationContext getParentContext() {
+    return parentContext;
   }
 
   public CommunicationLog getCurrentCommunicationLog() {

@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.service.communication.context;
 
+import java.util.function.Function;
 import org.springframework.util.Assert;
 
 public class CommunicationContextHolder {
@@ -10,6 +11,20 @@ public class CommunicationContextHolder {
 
   public static void clearContext() {
     contextHolder.remove();
+  }
+
+  public static <T> T runInNestedContext(Function<CommunicationContext, T> callable) throws Exception {
+    CommunicationContext originalContext = getContext();
+
+    CommunicationContext nestedContext = new CommunicationContext(originalContext, null);
+    contextHolder.set(nestedContext);
+
+    try {
+      return callable.apply(contextHolder.get());
+
+    } finally {
+      contextHolder.set(originalContext);
+    }
   }
 
   public static CommunicationContext getContext() {
