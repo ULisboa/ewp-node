@@ -18,14 +18,16 @@ import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
 import pt.ulisboa.ewp.node.config.plugins.PluginsProperties;
 import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownHeiIdException;
 import pt.ulisboa.ewp.node.plugin.initializer.HostPluginInitializer;
-import pt.ulisboa.ewp.node.service.communication.log.aspect.HostPluginProviderCallLoggingAspect;
+import pt.ulisboa.ewp.node.service.communication.log.aspect.host.plugin.provider.HostPluginProviderAspect;
 
 public abstract class AbstractHostPluginManager implements HostPluginManager {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractHostPluginManager.class);
 
-  private final HostPluginInitializer initializer;
   private final PluginsProperties pluginsProperties;
+  private final HostPluginInitializer initializer;
+
+  private final Collection<HostPluginProviderAspect> hostPluginProviderAspects;
 
   private final Map<String, Collection<HostPlugin>> heiIdToPluginsMap = new HashMap<>();
   private final Map<String, HostPlugin> heiIdToPrimaryPluginMap = new HashMap<>();
@@ -34,9 +36,12 @@ public abstract class AbstractHostPluginManager implements HostPluginManager {
       new HashMap<>();
 
   protected AbstractHostPluginManager(
-      PluginsProperties pluginsProperties, HostPluginInitializer initializer) {
+      PluginsProperties pluginsProperties,
+      HostPluginInitializer initializer,
+      Collection<HostPluginProviderAspect> hostPluginProviderAspects) {
     this.pluginsProperties = pluginsProperties;
     this.initializer = initializer;
+    this.hostPluginProviderAspects = hostPluginProviderAspects;
   }
 
   @PostConstruct
@@ -87,18 +92,27 @@ public abstract class AbstractHostPluginManager implements HostPluginManager {
     for (HostProvider provider : providers) {
       this.pluginToHostProvidersMap.computeIfAbsent(plugin, p -> new ArrayList<>());
 
+      HostProvider providerToAdd;
       if (this.pluginsProperties.getAspects().isEnabled()) {
         AspectJProxyFactory proxyFactory = new AspectJProxyFactory(provider);
         proxyFactory.setProxyTargetClass(true);
-        proxyFactory.addAspect(HostPluginProviderCallLoggingAspect.class);
-        HostProvider providerWithProxy = proxyFactory.getProxy();
+        for (HostPluginProviderAspect aspect : this.hostPluginProviderAspects) {
+          proxyFactory.addAspect(aspect);
+        }
 
-        this.pluginToHostProvidersMap.get(plugin).add(providerWithProxy);
+        providerToAdd = proxyFactory.getProxy();
 
       } else {
-        this.pluginToHostProvidersMap.get(plugin).add(provider);
+        providerToAdd = provider;
       }
+
+      processAwareInterfaces(plugin, providerToAdd);
+      this.pluginToHostProvidersMap.get(plugin).add(providerToAdd);
     }
+  }
+
+  private void processAwareInterfaces(HostPlugin hostPlugin, HostProvider hostProvider) {
+    hostProvider.setPlugin(hostPlugin);
   }
 
   public <T extends HostProvider> boolean hasHostProvider(
@@ -217,6 +231,28 @@ public abstract class AbstractHostPluginManager implements HostPluginManager {
     T provider = providers.iterator().next();
 
     return Optional.ofNullable(provider);
+  }
+
+  @Override
+  public Optional<HostPlugin> getSingleHostPluginByProvider(Class<?> providerClassType) {
+    List<HostPlugin> validHostPlugins =
+        this.pluginToHostProvidersMap.entrySet().stream()
+            .filter(
+                e ->
+                    e.getValue().stream()
+                        .anyMatch(p -> providerClassType.isAssignableFrom(p.getClass())))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
+    if (validHostPlugins.isEmpty()) {
+      return Optional.empty();
+    }
+    if (validHostPlugins.size() > 1) {
+      LOG.warn(
+          "There are several valid plugins with the given provider class type ("
+              + providerClassType.getSimpleName()
+              + "), returning one...");
+    }
+    return Optional.of(validHostPlugins.iterator().next());
   }
 
   private <T extends HostProvider> Collection<T> getAllProviders(

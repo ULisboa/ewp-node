@@ -3,6 +3,7 @@ package pt.ulisboa.ewp.node.plugin.manager.host;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import pt.ulisboa.ewp.host.plugin.skeleton.HostPlugin;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
 
 public interface HostPluginManager {
@@ -29,4 +30,6 @@ public interface HostPluginManager {
 
   <T extends HostProvider> Map<T, Collection<String>> getOunitCodesCoveredPerProviderOfHeiId(
       String heiId, Collection<String> ounitCodes, Class<T> providerClassType);
+
+  Optional<HostPlugin> getSingleHostPluginByProvider(Class<?> providerClassType);
 }

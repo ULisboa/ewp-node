@@ -1,9 +1,6 @@
 package pt.ulisboa.ewp.node.plugin.manager.host;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import pt.ulisboa.ewp.host.plugin.skeleton.HostPlugin;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
 import pt.ulisboa.ewp.node.config.plugins.PluginsAspectsProperties;
@@ -15,7 +12,7 @@ public class MockHostPluginManager extends AbstractHostPluginManager {
   private final Map<HostPlugin, Collection<HostProvider>> hostProvidersPerPluginMap = new HashMap<>();
 
   public MockHostPluginManager() {
-    super(createPluginsProperties(), plugin -> {});
+    super(createPluginsProperties(), plugin -> {}, List.of());
   }
 
   private static PluginsProperties createPluginsProperties() {

@@ -12,6 +12,7 @@ import pt.ulisboa.ewp.host.plugin.skeleton.HostPlugin;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
 import pt.ulisboa.ewp.node.config.plugins.PluginsProperties;
 import pt.ulisboa.ewp.node.plugin.initializer.HostPluginInitializer;
+import pt.ulisboa.ewp.node.service.communication.log.aspect.host.plugin.provider.HostPluginProviderAspect;
 
 public class Pf4jHostPluginManager extends AbstractHostPluginManager {
 
@@ -21,9 +22,10 @@ public class Pf4jHostPluginManager extends AbstractHostPluginManager {
 
   public Pf4jHostPluginManager(
           PluginsProperties pluginsProperties,
-      HostPluginInitializer hostPluginInitializer,
-      CustomDefaultPluginManager customDefaultPluginManager) {
-    super(pluginsProperties, hostPluginInitializer);
+          HostPluginInitializer hostPluginInitializer,
+          CustomDefaultPluginManager customDefaultPluginManager,
+          Collection<HostPluginProviderAspect> hostPluginProviderAspects) {
+    super(pluginsProperties, hostPluginInitializer, hostPluginProviderAspects);
     this.pf4jPluginManager = customDefaultPluginManager;
   }
 
