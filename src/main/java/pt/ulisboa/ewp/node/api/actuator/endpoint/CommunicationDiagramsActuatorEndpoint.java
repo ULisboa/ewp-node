@@ -17,9 +17,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.function.call.FunctionCallArgumentLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.host.plugin.HostPluginFunctionCallCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
-import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
-import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationFromEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.CommunicationLogRepository;
 
@@ -128,72 +129,119 @@ public class CommunicationDiagramsActuatorEndpoint {
       Map<String, String> participantToAliasMap)
       throws IOException {
 
-    if (communicationLog instanceof HttpCommunicationLog) {
-      HttpCommunicationLog httpCommunicationLog = (HttpCommunicationLog) communicationLog;
-      HttpRequestLog request = httpCommunicationLog.getRequest();
-      String requesterName = getRequesterName(httpCommunicationLog);
-      registerParticipantIfMissing(diagramBuilder, participantToAliasMap, requesterName);
-      String requesterAlias = participantToAliasMap.get(requesterName);
-      String receiverName = request.getUrl();
-      registerParticipantIfMissing(diagramBuilder, participantToAliasMap, receiverName);
-      String receiverAlias = participantToAliasMap.get(receiverName);
-      registerCommunication(
-          diagramBuilder,
-          requesterAlias,
-          receiverAlias,
-          "->>",
-          request.toRawString(MAXIMUM_MESSAGE_LINE_LENGTH));
+    String requesterName = getRequesterName(communicationLog);
+    registerParticipantIfMissing(diagramBuilder, participantToAliasMap, requesterName);
+    String requesterAlias = participantToAliasMap.get(requesterName);
+    String receiverName = getEntityName(communicationLog);
+    registerParticipantIfMissing(diagramBuilder, participantToAliasMap, receiverName);
+    String receiverAlias = participantToAliasMap.get(receiverName);
 
-      for (CommunicationLog childCommunicationLog :
-          communicationLog.getSortedChildrenCommunications()) {
-        fillBuilderWithSequenceDiagramInMermaidFormat(
-            diagramBuilder, childCommunicationLog, participantToAliasMap);
-      }
+    registerCommunication(
+            diagramBuilder,
+            requesterAlias,
+            receiverAlias,
+            "->>",
+            getRequestAsString(communicationLog));
 
-      String observations = communicationLog.getObservations();
-      if (!StringUtils.isBlank(observations)) {
-        registerNote(
+    for (CommunicationLog childCommunicationLog :
+            communicationLog.getSortedChildrenCommunications()) {
+      fillBuilderWithSequenceDiagramInMermaidFormat(
+              diagramBuilder, childCommunicationLog, participantToAliasMap);
+    }
+
+    String observations = communicationLog.getObservations();
+    if (!StringUtils.isBlank(observations)) {
+      registerNote(
+              diagramBuilder,
+              receiverAlias,
+              pt.ulisboa.ewp.node.utils.StringUtils.breakTextWithLineLengthLimit(
+                      observations, System.lineSeparator(), MAXIMUM_MESSAGE_LINE_LENGTH));
+    }
+
+    String exceptionStacktrace = communicationLog.getExceptionStacktrace();
+    if (!StringUtils.isBlank(exceptionStacktrace)) {
+      registerExceptionStacktrace(
+              diagramBuilder,
+              receiverAlias,
+              pt.ulisboa.ewp.node.utils.StringUtils.breakTextWithLineLengthLimit(
+                      exceptionStacktrace, System.lineSeparator(), MAXIMUM_MESSAGE_LINE_LENGTH));
+    }
+
+    registerCommunication(
             diagramBuilder,
             receiverAlias,
-            pt.ulisboa.ewp.node.utils.StringUtils.breakTextWithLineLengthLimit(
-                observations, System.lineSeparator(), MAXIMUM_MESSAGE_LINE_LENGTH));
-      }
+            requesterAlias,
+            "-->>",
+            getResponseAsString(communicationLog));
+  }
 
-      HttpResponseLog response = httpCommunicationLog.getResponse();
-      registerCommunication(
-          diagramBuilder,
-          receiverAlias,
-          requesterAlias,
-          "-->>",
-          response.toRawString(MAXIMUM_MESSAGE_LINE_LENGTH));
+  private String getRequestAsString(CommunicationLog communicationLog) {
+    if (communicationLog instanceof HostPluginFunctionCallCommunicationLog) {
+      return getRequestAsString((HostPluginFunctionCallCommunicationLog) communicationLog);
+
+    } else if (communicationLog instanceof HttpCommunicationLog) {
+      return ((HttpCommunicationLog) communicationLog).getRequest().toRawString(MAXIMUM_MESSAGE_LINE_LENGTH);
 
     } else {
       throw new IllegalArgumentException(
-          "Unsupported communication log type: " + communicationLog.getClass().getSimpleName());
+              "Unsupported communication log type: " + communicationLog.getClass().getSimpleName());
     }
   }
 
-  private String getRequesterName(HttpCommunicationLog communicationLog) {
+  private String getRequestAsString(HostPluginFunctionCallCommunicationLog hostPluginFunctionCallCommunicationLog) {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append(hostPluginFunctionCallCommunicationLog.getClassName());
+    stringBuilder.append(".");
+    stringBuilder.append(hostPluginFunctionCallCommunicationLog.getMethod());
+    stringBuilder.append("(");
+    stringBuilder.append(hostPluginFunctionCallCommunicationLog.getSortedArguments().stream()
+            .map(FunctionCallArgumentLog::getValue).collect(Collectors.joining(", ")));
+    stringBuilder.append(")");
+    return stringBuilder.toString();
+  }
+
+  private String getResponseAsString(CommunicationLog communicationLog) {
+    if (communicationLog instanceof HostPluginFunctionCallCommunicationLog) {
+      return ((HostPluginFunctionCallCommunicationLog) communicationLog).getResult();
+
+    } else if (communicationLog instanceof HttpCommunicationLog) {
+      return ((HttpCommunicationLog) communicationLog).getResponse().toRawString(MAXIMUM_MESSAGE_LINE_LENGTH);
+
+    } else {
+      throw new IllegalArgumentException(
+              "Unsupported communication log type: " + communicationLog.getClass().getSimpleName());
+    }
+  }
+
+  private String getRequesterName(CommunicationLog communicationLog) {
     if (communicationLog.getParentCommunication() != null) {
-      if (communicationLog.getParentCommunication() instanceof HttpCommunicationLog) {
-        HttpCommunicationLog parentHttpCommunicationLog =
-            (HttpCommunicationLog) communicationLog.getParentCommunication();
-        return parentHttpCommunicationLog.getRequest().getUrl();
-      } else {
-        throw new IllegalArgumentException(
-            "Unsupported communication log type: " + communicationLog.getClass().getSimpleName());
-      }
+      return getEntityName(communicationLog.getParentCommunication());
     }
 
-    if (communicationLog instanceof HttpCommunicationFromHostLog) {
-      HttpCommunicationFromHostLog communicationFromHostLog =
-          (HttpCommunicationFromHostLog) communicationLog;
-      if (communicationFromHostLog.getHostForwardEwpApiClient() != null) {
-        return communicationFromHostLog.getHostForwardEwpApiClient().getId();
-      }
+    if (communicationLog instanceof HttpCommunicationFromEwpNodeLog) {
+      HttpCommunicationFromEwpNodeLog httpCommunicationFromEwpNodeLog = (HttpCommunicationFromEwpNodeLog) communicationLog;
+      return String.join(", ", httpCommunicationFromEwpNodeLog.getHeiIdsCoveredByClient());
     }
 
     return "Requester";
+  }
+
+  private String getEntityName(CommunicationLog communicationLog) {
+    if (communicationLog instanceof HostPluginFunctionCallCommunicationLog) {
+      HostPluginFunctionCallCommunicationLog hostPluginFunctionCallCommunicationLog = (HostPluginFunctionCallCommunicationLog) communicationLog;
+      return hostPluginFunctionCallCommunicationLog.getHostPluginId();
+
+    } else if (communicationLog instanceof HttpCommunicationFromHostLog) {
+      HttpCommunicationFromHostLog httpCommunicationFromHostLog = (HttpCommunicationFromHostLog) communicationLog;
+      return httpCommunicationFromHostLog.getHostForwardEwpApiClient().getId();
+
+    } else if (communicationLog instanceof HttpCommunicationLog) {
+      HttpCommunicationLog httpCommunicationLog = (HttpCommunicationLog) communicationLog;
+      return httpCommunicationLog.getRequest().getUrl();
+
+    } else {
+      throw new IllegalArgumentException("Unknown communication log type: " + communicationLog.getClass().getSimpleName());
+    }
   }
 
   private void registerParticipantIfMissing(
@@ -216,6 +264,11 @@ public class CommunicationDiagramsActuatorEndpoint {
       String receiverAlias,
       String arrowType,
       String message) {
+    
+    if (message == null) {
+      message = "";
+    }
+
     // NOTE: the generation of the diagram fails if a line ends in whitespace (e.g. <br>), therefore
     // a blank character (#8203;) is used.
     String sanitizedMessage =
@@ -247,5 +300,21 @@ public class CommunicationDiagramsActuatorEndpoint {
         .append(": ")
         .append(sanitizedMessage)
         .append(System.lineSeparator());
+  }
+
+  private void registerExceptionStacktrace(
+          StringBuilder diagramBuilder, String placeAtRightOfAlias, String exceptionStacktrace) {
+    // NOTE: the generation of the diagram fails if a line ends in whitespace (e.g. <br>), therefore
+    // a blank character (#8203;) is used.
+    String sanitizedMessage =
+            exceptionStacktrace.replace(";", "#59;").replace(System.lineSeparator(), "<br>#8203;");
+
+    diagramBuilder
+            .append("\t")
+            .append("Note right of ")
+            .append(placeAtRightOfAlias)
+            .append(": ")
+            .append(sanitizedMessage)
+            .append(System.lineSeparator());
   }
 }
