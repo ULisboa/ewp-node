@@ -47,12 +47,12 @@ import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiCommunicationLoggerFilter;
 import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestAndResponseWrapperFilter;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.service.communication.log.http.ewp.EwpHttpCommunicationLogService;
-import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.XmlValidator;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.http.HttpSignatureUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
+import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 public abstract class AbstractEwpControllerIntegrationTest extends AbstractResourceIntegrationTest {
 

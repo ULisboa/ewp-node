@@ -38,8 +38,8 @@ import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult.Builder;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInstitutionApiConfiguration;
-import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
+import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 @AutoConfigureMockMvc
 public class ForwardEwpApiInstitutionsV2ControllerIntegrationTest extends

@@ -1,7 +1,7 @@
 package pt.ulisboa.ewp.node.client.ewp.operation.request.body;
 
 import java.io.Serializable;
-import pt.ulisboa.ewp.node.utils.XmlUtils;
+import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 public class EwpRequestSerializableBody extends EwpRequestBody {
 

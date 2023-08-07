@@ -30,8 +30,8 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping;
 import pt.ulisboa.ewp.node.domain.repository.mapping.EwpOutgoingMobilityMappingRepository;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
-import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 class EwpApiOutgoingMobilitiesV2ControllerIntegrationTest extends
     AbstractEwpControllerIntegrationTest {

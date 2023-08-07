@@ -1,8 +1,8 @@
-package pt.ulisboa.ewp.node.utils;
+package pt.ulisboa.ewp.node.utils.xml;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import javax.xml.transform.Result;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.springframework.oxm.UnmarshallingFailureException;
@@ -12,7 +12,38 @@ import pt.ulisboa.ewp.node.utils.provider.ApplicationContextProvider;
 
 public class XmlUtils {
 
-  private XmlUtils() {
+  private XmlUtils() {}
+
+  /**
+   * Converts an object to XML. This XML is optimized. For instance, unused namespaces are removed.
+   */
+  public static <T> String marshallAndOptimize(T object) {
+    try {
+      TransformerFactory tf = TransformerFactory.newInstance();
+      StreamSource xslt =
+          new StreamSource(
+              XmlUtils.class
+                  .getClassLoader()
+                  .getResourceAsStream("xsl/remove-unused-namespaces.xsl"));
+      Transformer transformer = tf.newTransformer(xslt);
+
+      String xmlString = marshall(object);
+
+      // NOTE: Marshall object to XML
+      ByteArrayOutputStream intermediaryOutputStream = new ByteArrayOutputStream();
+      intermediaryOutputStream.write(xmlString.getBytes(StandardCharsets.UTF_8));
+
+      // NOTE: Use XSLT to remove unused namespaces
+      ByteArrayInputStream finalInputStream =
+          new ByteArrayInputStream(intermediaryOutputStream.toByteArray());
+      StringWriter stringWriter = new StringWriter();
+      Result result = new StreamResult(stringWriter);
+      transformer.transform(new StreamSource(finalInputStream), result);
+      return stringWriter.toString();
+
+    } catch (IOException | TransformerException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static <T> String marshall(T object) {

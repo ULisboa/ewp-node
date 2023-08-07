@@ -41,8 +41,8 @@ import pt.ulisboa.ewp.node.domain.entity.mapping.EwpInterInstitutionalAgreementM
 import pt.ulisboa.ewp.node.domain.repository.mapping.EwpInterInstitutionalAgreementMappingRepository;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.IiaHashService;
-import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 @TestPropertySource(properties = {
     "stats.portal.heiId=test123",

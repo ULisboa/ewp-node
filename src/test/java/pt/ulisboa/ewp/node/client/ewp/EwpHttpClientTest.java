@@ -48,9 +48,9 @@ import pt.ulisboa.ewp.node.service.ewp.security.signer.request.RequestAuthentica
 import pt.ulisboa.ewp.node.service.ewp.security.verifier.EwpAuthenticationResult;
 import pt.ulisboa.ewp.node.service.ewp.security.verifier.response.ResponseAuthenticationVerifier;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
-import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.keystore.KeyStoreGenerator;
+import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 @ExtendWith(MockServerExtension.class)
 class EwpHttpClientTest extends AbstractTest {

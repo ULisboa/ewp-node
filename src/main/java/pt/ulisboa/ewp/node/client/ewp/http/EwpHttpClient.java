@@ -44,9 +44,9 @@ import pt.ulisboa.ewp.node.service.ewp.security.verifier.EwpAuthenticationResult
 import pt.ulisboa.ewp.node.service.ewp.security.verifier.response.ResponseAuthenticationVerifier;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.utils.SecurityUtils;
-import pt.ulisboa.ewp.node.utils.XmlUtils;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedKeystore;
+import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
