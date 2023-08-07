@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -44,6 +46,8 @@ import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 @RequestMapping(
     EwpApiConstants.API_BASE_URI + EwpApiOutgoingMobilityLearningAgreementsV1Controller.BASE_PATH)
 public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
+
+  private static final Logger LOG = LoggerFactory.getLogger(EwpApiOutgoingMobilityLearningAgreementsV1Controller.class);
 
   public static final String BASE_PATH = "omobilities/las/v1";
 
@@ -158,13 +162,16 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
 
     Optional<EwpOutgoingMobilityMapping> mappingOptional = mappingRepository.findByHeiIdAndOmobilityId(
         sendingHeiId, omobilityId);
-    if (mappingOptional.isEmpty()) {
-      throw new EwpBadRequestException(
-          "Unknown learning agreement with omobility_id: " + omobilityId);
+    String ounitIdCoveringAgreement;
+    if (mappingOptional.isPresent()) {
+      ounitIdCoveringAgreement = mappingOptional.get().getOunitId();
+    } else {
+      LOG.warn("Unknown learning agreement with omobility_id '" + omobilityId + "', forwarding to primary plugin");
+      ounitIdCoveringAgreement = null;
     }
 
     Optional<OutgoingMobilityLearningAgreementsV1HostProvider> providerOptional = hostPluginManager.getSingleProvider(
-        sendingHeiId, mappingOptional.get().getOunitId(),
+        sendingHeiId, ounitIdCoveringAgreement,
         OutgoingMobilityLearningAgreementsV1HostProvider.class);
     if (providerOptional.isEmpty()) {
       throw new EwpBadRequestException("Unknown HEI ID: " + sendingHeiId);
