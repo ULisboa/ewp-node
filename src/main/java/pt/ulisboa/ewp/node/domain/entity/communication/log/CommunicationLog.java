@@ -3,6 +3,7 @@ package pt.ulisboa.ewp.node.domain.entity.communication.log;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
@@ -36,7 +37,7 @@ public class CommunicationLog {
   private String exceptionStacktrace;
   private String observations;
   private CommunicationLog parentCommunication;
-  private Set<CommunicationLog> childrenCommunications;
+  private Set<CommunicationLog> childrenCommunications = new HashSet<>();
 
   protected CommunicationLog() {}
 
@@ -48,7 +49,7 @@ public class CommunicationLog {
     this.startProcessingDateTime = startProcessingDateTime;
     this.endProcessingDateTime = endProcessingDateTime;
     setObservations(observations);
-    this.parentCommunication = parentCommunication;
+    setParentCommunication(parentCommunication);
   }
 
   @Id
@@ -108,6 +109,9 @@ public class CommunicationLog {
 
   public void setParentCommunication(CommunicationLog parentCommunication) {
     this.parentCommunication = parentCommunication;
+    if (this.parentCommunication != null) {
+      this.parentCommunication.getChildrenCommunications().add(this);
+    }
   }
 
   @Transient
