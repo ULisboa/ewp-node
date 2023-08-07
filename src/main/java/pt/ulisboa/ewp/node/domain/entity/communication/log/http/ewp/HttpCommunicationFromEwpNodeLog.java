@@ -7,6 +7,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
@@ -48,5 +49,10 @@ public class HttpCommunicationFromEwpNodeLog extends EwpHttpCommunicationLog {
 
   public void setHeiIdsCoveredByClient(Collection<String> heiIdsCoveredByClient) {
     this.heiIdsCoveredByClient = heiIdsCoveredByClient;
+  }
+
+  public void updateAuthenticationData(EwpApiHostAuthenticationToken authenticationToken) {
+    this.setAuthenticationMethod(authenticationToken.getAuthenticationMethod());
+    this.heiIdsCoveredByClient = authenticationToken.getPrincipal().getHeiIdsCoveredByClient();
   }
 }

@@ -22,6 +22,7 @@ import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiResponseSignerFilter;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.config.security.SecurityProperties;
+import pt.ulisboa.ewp.node.service.communication.log.http.ewp.EwpHttpCommunicationLogService;
 import pt.ulisboa.ewp.node.service.ewp.security.signer.response.ResponseAuthenticationSigner;
 import pt.ulisboa.ewp.node.service.ewp.security.verifier.request.AbstractRequestAuthenticationMethodVerifier;
 import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
@@ -44,6 +45,9 @@ public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
   private Jaxb2HttpMessageConverter jaxb2HttpMessageConverter;
+
+  @Autowired
+  private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -70,7 +74,7 @@ public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
     http.addFilterBefore(
         new EwpApiPreAuthenticationFilter(jaxb2HttpMessageConverter),
         BasicAuthenticationFilter.class);
-    http.addFilterAfter(new EwpApiAuthenticationFilter(requestAuthenticationMethodVerifiers),
+    http.addFilterAfter(new EwpApiAuthenticationFilter(requestAuthenticationMethodVerifiers, ewpHttpCommunicationLogService),
         EwpApiPreAuthenticationFilter.class);
 
     http.addFilterAfter(new MDCAuthenticationFilter(), SessionManagementFilter.class);

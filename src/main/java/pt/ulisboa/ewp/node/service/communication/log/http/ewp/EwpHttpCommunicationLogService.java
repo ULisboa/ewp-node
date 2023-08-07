@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
@@ -62,6 +63,15 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         null,
         observations,
         parentCommunication);
+  }
+
+  public boolean updateCommunicationFromEwpNodeAuthenticationData(HttpCommunicationFromEwpNodeLog communicationLog,
+                                                                      EwpApiHostAuthenticationToken authenticationToken) {
+    if (authenticationToken != null) {
+      communicationLog.updateAuthenticationData(authenticationToken);
+      return httpCommunicationFromEwpNodeLogRepository.persist(communicationLog);
+    }
+    return true;
   }
 
   public boolean updateCommunicationFromEwpNodeAfterExecution(
