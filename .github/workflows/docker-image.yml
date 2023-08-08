@@ -14,5 +14,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build the Backend Docker image
-      run: docker build backend/ --file backend/Dockerfile --tag ewp-node:$(date +%s)
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ewp-node:$(date +%s)
