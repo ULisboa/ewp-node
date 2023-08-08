@@ -57,7 +57,7 @@
                     <executable>true</executable>
                     <layout>JAR</layout>
                     <skip>false</skip>
-                    <finalName>ewp-node-${project.version}</finalName>
+                    <finalName>ewp-node-${project.version}-full</finalName>
                 </configuration>
             </plugin>
         </plugins>

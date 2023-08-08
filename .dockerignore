@@ -4,6 +4,7 @@
 **/.git
 .gitignore
 .gitmodules
+.github
 
 ### STS ###
 .apt_generated
@@ -27,6 +28,10 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### Node.js ###
+**/node_modules/
+**/dist/
 
 ### Maven ###
 /target
