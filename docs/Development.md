@@ -10,9 +10,9 @@ These steps must be run inside the root folder of the EWP Node project.
 1. Edit the file docker/registry/dev/data/manifest-sources.xml to use a correct HEI regular expression that 
 matches the target HEI ID;
 
-2. Copy the file src/main/resources/application-dev.yml.example to src/main/resources/application-dev.yml;
+2. Copy the file backend/src/main/resources/application-dev.yml.example to backend/src/main/resources/application-dev.yml;
 
-3. Edit the file src/main/resources/application-dev.yml (only the sections of it mentioning that can be edited);
+3. Edit the file backend/src/main/resources/application-dev.yml (only the sections of it mentioning that can be edited);
    
 4. Build local EWP Node Docker image:
     ```
@@ -23,14 +23,14 @@ matches the target HEI ID;
 
 These steps must be run inside the root folder of the EWP Node project.
 
-1. Launch the EWP Node by running:
+1. Launch the EWP Node by running (this considers that there is a local folder plugins/):
     ```
-     docker run --rm --name ewp-node -v ${PWD}/src/main/resources/application-dev.yml:/config/application.yml -v ${PWD}/plugins:/plugins --net=host ewp-node:dev 
+     docker run --rm --name ewp-node -v ${PWD}/backend/src/main/resources/application-dev.yml:/config/application.yml -v ${PWD}/plugins:/plugins --net=host ewp-node:dev 
     ```
 
 2. Launch the EWP Registry by running:
     ```
-    docker run --rm -it --name ewp-registry --net=host -v ${PWD}/docker/registry/dev/data:/root -v ${PWD}/src/main/resources/keystore/localhost.p12:/opt/keystore.p12 --entrypoint /root/entrypoint.sh docker.pkg.github.com/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
+    docker run --rm -it --name ewp-registry --net=host -v ${PWD}/docker/registry/dev/data:/root -v ${PWD}/backend/src/main/resources/keystore/localhost.p12:/opt/keystore.p12 --entrypoint /root/entrypoint.sh docker.pkg.github.com/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
     ```
 
 Once both Docker containers have started, the EWP Node is available on port 8443, and the EWP Registry on port 8000.

@@ -89,12 +89,13 @@ git clone --recursive https://github.com/ULisboa/ewp-node
 ```
 Note the ```--recursive``` flag that is needed so the external dependencies configured as submodules are also cloned.
 
-## Building and Running with Maven
+## Building and Running with an IDE
 
-Run the command line:
-```
-mvn spring-boot:run
-```
+1. Import the project backend on an IDE (e.g. Intellij IDEA);
+
+2. Execute the class pt.ulisboa.ewp.node.EwpNodeApplication
+
+  - Recommended: To use a development profile, pass a VM argument: ```-Dspring.profiles.active=dev```
 
 ## Building and Running with Docker
 
@@ -162,6 +163,7 @@ from the host's IP on port 80 outside the container.
 | Parameter | Function |
 | :----: | --- |
 | `-p 8080` | Port used by the server |
+| `-p 8443` | Port used by the server (if SSL is enabled) |
 | `-v /config` | Path from where the server will read the configuration when starting. Namely, it expects a file application.yml with the same structure as [src/main/resources/application.yml](src/main/resources/application.yml) (check this file for an example as well documentation on it). |
 | `-v /logs` | Path where the server will store the logs. |
 
