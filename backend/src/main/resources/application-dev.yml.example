@@ -99,4 +99,13 @@ actuator:
     username: actuator
     # "actuator" (without quotes) in bcrypt format
     # "{bcrypt}" specifies the password storage format (see https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html)
-    password: "{bcrypt}$2a$12$LhR/y3dZkZgtGhztW7lJQeHntPjGOIuawW7urzwA5hh4qAOjvcA4K"
+    # e.g. test123
+    password: "{bcrypt}$2a$10$DEPYoOhC9r9FA3ca2e8LYeQcS7bYVXymqwBvKY8cAy4baT3MhP/Z6"
+
+admin:
+  security:
+    username: admin
+    # "actuator" (without quotes) in bcrypt format
+    # "{bcrypt}" specifies the password storage format (see https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html)
+    # e.g. test123
+    password: "{bcrypt}$2a$10$DEPYoOhC9r9FA3ca2e8LYeQcS7bYVXymqwBvKY8cAy4baT3MhP/Z6"

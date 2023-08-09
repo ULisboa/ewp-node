@@ -173,3 +173,11 @@ plugins:
 #    # "actuator" (without quotes) in bcrypt format
 #    # "{bcrypt}" specifies the password storage format (see https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html)
 #    password: "{bcrypt}$2a$12$LhR/y3dZkZgtGhztW7lJQeHntPjGOIuawW7urzwA5hh4qAOjvcA4K"
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+      timeout: 1h
