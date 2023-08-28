@@ -18,6 +18,7 @@ public class AdminApiAuthenticationSuccessHandler implements AuthenticationSucce
       HttpServletRequest request, HttpServletResponse response, Authentication authentication)
       throws IOException {
     Map<String, Object> data = new HashMap<>();
+    data.put("username", authentication.getName());
     AdminApiResponseUtils.writeResponseBody(response, data);
   }
 }

@@ -1,0 +1,28 @@
+<div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <div class="flex flex-column align-items-center justify-content-center">
+        <div style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+            <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius:53px">
+                <div class="text-center mb-5">
+                    <div class="text-900 text-3xl font-medium mb-3">Welcome!</div>
+                    <span class="text-600 font-medium">Sign in to continue</span>
+                </div>
+
+                <p-messages [(value)]="messages" [enableService]="false"></p-messages>
+
+                <form [formGroup]="form" (submit)="login()">
+                    <label for="username" class="block text-900 text-xl font-medium mb-2">Username</label>
+                    <input id="username" type="text" [formControl]="form.controls.username" placeholder="Username" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem">
+
+                    <label for="password" class="block text-900 font-medium text-xl mb-2">Password</label>
+                    <p-password id="password" [formControl]="form.controls.password" placeholder="Password" [toggleMask]="true" styleClass="mb-5" inputStyleClass="w-full p-3 md:w-30rem"></p-password>
+
+                    <div class="flex align-items-center justify-content-between mb-5 gap-5">
+                        <div class="flex align-items-center">
+                        </div>
+                    </div>
+                    <input type="submit" [disabled]="pendingResult" pButton pRipple label="Sign In" class="w-full p-3 text-xl">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -180,4 +180,5 @@ server:
       cookie:
         http-only: true
         secure: true
+        same-site: Strict
       timeout: 1h

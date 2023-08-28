@@ -25,9 +25,9 @@ public class AdminApiAuthController {
 
   @GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
   @Operation(
-      summary = "Get currently authenticated user data",
+      summary = "Returns current user authentication data.",
       tags = {"Admin"})
-  public ResponseEntity<AdminApiResponseWithDataDto<AdminApiUserDto>> getCommunicationLogs(
+  public ResponseEntity<AdminApiResponseWithDataDto<AdminApiUserDto>> getAuthUser(
       Authentication authentication) {
     return AdminApiResponseUtils.toOkResponseEntity(
         new AdminApiUserDto(authentication.isAuthenticated(), authentication.getName()));
