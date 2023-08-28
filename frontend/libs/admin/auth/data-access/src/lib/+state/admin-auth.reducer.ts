@@ -2,7 +2,7 @@ import { User } from "@ewp-node-frontend/admin/shared/api-interfaces";
 import { createFeature, createReducer, on } from "@ngrx/store";
 import { adminAuthActions } from "./admin-auth.actions";
 
-export interface AuthState {
+export interface AdminAuthState {
     authenticated: boolean;
     user: User;
     status: Status;
@@ -13,7 +13,7 @@ export enum Status {
     IN_PROGRESS = 'IN_PROGRESS',
 }
 
-export const authInitialState: AuthState = {
+export const authInitialState: AdminAuthState = {
     authenticated: false,
     status: Status.INITIALIZED,
     user: {
@@ -36,7 +36,7 @@ export const adminAuthFeature = createFeature({
             status: Status.INITIALIZED,
             user: action.user,
           })),
-        on(adminAuthActions.loginFailure, adminAuthActions.getUserFailure, adminAuthActions.logout, () => authInitialState),
+        on(adminAuthActions.loginFailure, adminAuthActions.getUserFailure, adminAuthActions.logoutSuccess, () => authInitialState),
         on(adminAuthActions.login, (state) => ({
             ...state,
             status: Status.IN_PROGRESS,

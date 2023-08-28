@@ -31,6 +31,20 @@
         }
     }
 
+    .layout-topbar-text {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        color: var(--text-color-secondary);
+        height: 3rem;
+
+        i {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+    }
+
     .layout-topbar-button {
         display: inline-flex;
         justify-content: center;

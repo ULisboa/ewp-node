@@ -64,3 +64,30 @@ export const loginSuccess$ = createEffect(
     },
     { functional: true, dispatch: false },
 );
+
+export const logout$ = createEffect(
+    (actions$ = inject(Actions), adminAuthService = inject(AdminAuthService)) => {
+        return actions$.pipe(
+            ofType(adminAuthActions.logout),
+            switchMap(_ =>
+                adminAuthService.logout().pipe(
+                    map(_ => adminAuthActions.logoutSuccess()),
+                    catchError((error) => of(adminAuthActions.logoutFailure({ messages: error.messages as Message[] })))
+                ),
+            )
+        );
+    },
+    { functional: true },
+);
+
+export const logoutSuccess$ = createEffect(
+    (actions$ = inject(Actions), router = inject(Router)) => {
+        return actions$.pipe(
+            ofType(adminAuthActions.logoutSuccess),
+            tap(_ => {
+                router.navigateByUrl('/admin/auth');
+            }),
+        );
+    },
+    { functional: true, dispatch: false },
+);

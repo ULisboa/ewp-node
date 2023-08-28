@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { AdminApiResponseWithObjectData, User } from '@ewp-node-frontend/admin/shared/api-interfaces';
+import { AdminApiResponse, AdminApiResponseWithObjectData, User } from '@ewp-node-frontend/admin/shared/api-interfaces';
 
 export interface Credentials {
     username: string;
@@ -31,6 +31,16 @@ export class AdminAuthService {
     getUser(): Observable<AdminApiResponseWithObjectData<User>> {
         return this.http
             .get<AdminApiResponseWithObjectData<User>>('/api/admin/auth/user')
+            .pipe(
+                catchError((errorResponse: HttpErrorResponse) => {
+                    return this.throwErrorFromErrorResponse(errorResponse);
+                })
+            );
+    }
+
+    logout(): Observable<AdminApiResponse> {
+        return this.http
+            .post<AdminApiResponse>('/api/admin/auth/logout', null)
             .pipe(
                 catchError((errorResponse: HttpErrorResponse) => {
                     return this.throwErrorFromErrorResponse(errorResponse);

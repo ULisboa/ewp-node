@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import pt.ulisboa.ewp.node.api.admin.security.handler.AdminApiAuthenticationFailureHandler;
 import pt.ulisboa.ewp.node.api.admin.security.handler.AdminApiAuthenticationSuccessHandler;
+import pt.ulisboa.ewp.node.api.admin.security.handler.AdminApiLogoutSuccessHandler;
 import pt.ulisboa.ewp.node.api.admin.utils.AdminApiConstants;
 
 @Configuration
@@ -33,16 +34,19 @@ public class AdminApiSecurityConfig extends WebSecurityConfigurerAdapter {
   private final String password;
   private final AdminApiAuthenticationSuccessHandler authenticationSuccessHandler;
   private final AdminApiAuthenticationFailureHandler authenticationFailureHandler;
+  private final AdminApiLogoutSuccessHandler logoutSuccessHandler;
 
   public AdminApiSecurityConfig(
       @Value("${admin.security.username}") String username,
       @Value("${admin.security.password}") String password,
       AdminApiAuthenticationSuccessHandler authenticationSuccessHandler,
-      AdminApiAuthenticationFailureHandler authenticationFailureHandler) {
+      AdminApiAuthenticationFailureHandler authenticationFailureHandler,
+      AdminApiLogoutSuccessHandler logoutSuccessHandler) {
     this.username = username;
     this.password = password;
     this.authenticationSuccessHandler = authenticationSuccessHandler;
     this.authenticationFailureHandler = authenticationFailureHandler;
+    this.logoutSuccessHandler = logoutSuccessHandler;
   }
 
   @Override
@@ -64,6 +68,13 @@ public class AdminApiSecurityConfig extends WebSecurityConfigurerAdapter {
                     .loginProcessingUrl(AdminApiConstants.API_BASE_URI + "auth/login")
                     .successHandler(authenticationSuccessHandler)
                     .failureHandler(authenticationFailureHandler))
+        .logout(
+            logout ->
+                logout
+                    .logoutUrl(AdminApiConstants.API_BASE_URI + "auth/logout")
+                    .logoutSuccessHandler(logoutSuccessHandler)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID"))
         .exceptionHandling(
             exceptionHandling ->
                 exceptionHandling.authenticationEntryPoint(
