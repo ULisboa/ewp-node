@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ import pt.ulisboa.ewp.node.api.admin.security.AdminApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.admin.utils.AdminApiConstants;
 import pt.ulisboa.ewp.node.api.admin.utils.AdminApiResponseUtils;
 import pt.ulisboa.ewp.node.domain.deserializer.filter.FilterDtoDeserializer;
+import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogSummaryDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 import pt.ulisboa.ewp.node.service.communication.log.CommunicationLogService;
@@ -40,17 +43,27 @@ public class AdminApiCommunicationLogController {
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @Operation(
-      summary = "Retrieves communication logs",
+      summary = "Retrieves communication logs in summary format.",
       tags = {"Admin"})
-  public ResponseEntity<AdminApiResponseWithDataDto<GetCommunicationLogsResponseDto>>
+  public ResponseEntity<AdminApiResponseWithDataDto<GetCommunicationLogsSummaryResponseDto>>
       getCommunicationLogs(@Valid @RequestBody GetCommunicationLogsRequestDto requestDto) {
     Collection<CommunicationLogSummaryDto> communicationLogDtos =
         this.communicationLogService.findByFilter(
             requestDto.getFilter(), requestDto.getOffset(), requestDto.getLimit());
     long totalResults = this.communicationLogService.countByFilter(requestDto.getFilter());
-    GetCommunicationLogsResponseDto responseDto = new GetCommunicationLogsResponseDto(
+    GetCommunicationLogsSummaryResponseDto responseDto = new GetCommunicationLogsSummaryResponseDto(
         communicationLogDtos, totalResults);
     return AdminApiResponseUtils.toOkResponseEntity(responseDto);
+  }
+
+  @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @Operation(
+      summary = "Retrieves a communication log in detail.",
+      tags = {"Admin"})
+  public ResponseEntity<AdminApiResponseWithDataDto<CommunicationLogDetailDto>>
+  getCommunicationLogs(@Min(1) @PathVariable(name = "id") long id) {
+    CommunicationLogDetailDto communicationLogDetailDto = this.communicationLogService.findById(id);
+    return AdminApiResponseUtils.toOkResponseEntity(communicationLogDetailDto);
   }
 
   private static class GetCommunicationLogsRequestDto implements Serializable {
@@ -90,12 +103,12 @@ public class AdminApiCommunicationLogController {
     }
   }
 
-  private static class GetCommunicationLogsResponseDto implements Serializable {
+  private static class GetCommunicationLogsSummaryResponseDto implements Serializable {
 
     private final Collection<CommunicationLogSummaryDto> communicationLogs;
     private final long totalResults;
 
-    private GetCommunicationLogsResponseDto(
+    private GetCommunicationLogsSummaryResponseDto(
         Collection<CommunicationLogSummaryDto> communicationLogs, long totalResults) {
       this.communicationLogs = communicationLogs;
       this.totalResults = totalResults;

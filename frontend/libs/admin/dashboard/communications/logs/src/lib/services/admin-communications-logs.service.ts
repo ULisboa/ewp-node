@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpParams, HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { AdminApiResponseWithObjectData, CommunicationLogSummary } from "@ewp-node-frontend/admin/shared/api-interfaces";
+import { AdminApiResponseWithObjectData, CommunicationLogDetail, CommunicationLogSummary } from "@ewp-node-frontend/admin/shared/api-interfaces";
 import { Type } from "class-transformer";
 import { Observable, catchError, throwError } from "rxjs";
 
@@ -27,14 +27,14 @@ export class AdminCommunicationsLogsService {
             );
     }
 
-    createHttpParams(obj: object) {
-        let params = new HttpParams();
-        if (obj) {
-            for (const [key, value] of Object.entries(obj)) {
-                params = params.set(key, value != null ? value : '');
-            }
-        }
-        return params;
+    getCommunicationsLogInDetail(id: number): Observable<AdminApiResponseWithObjectData<CommunicationLogDetail>> {
+        return this.http
+            .get<AdminApiResponseWithObjectData<CommunicationLogDetail>>(`/api/admin/communications/logs/${id}`)
+            .pipe(
+                catchError((errorResponse: HttpErrorResponse) => {
+                    return this.throwErrorFromErrorResponse(errorResponse);
+                })
+            );
     }
 
     throwErrorFromErrorResponse(errorResponse: HttpErrorResponse) {

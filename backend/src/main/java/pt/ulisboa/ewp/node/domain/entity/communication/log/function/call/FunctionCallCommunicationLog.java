@@ -81,6 +81,7 @@ public class FunctionCallCommunicationLog extends CommunicationLog {
   public void editResult(String resultType, String result) {
     setResultType(resultType);
     setResult(result);
+    this.markAsSuccess();
   }
 
   @Column(name = "result_type", columnDefinition = "TEXT")
@@ -99,6 +100,5 @@ public class FunctionCallCommunicationLog extends CommunicationLog {
 
   public void setResult(String result) {
     this.result = result;
-    this.markAsSuccess();
   }
 }

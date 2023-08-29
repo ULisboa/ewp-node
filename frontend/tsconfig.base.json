@@ -21,6 +21,9 @@
       "@ewp-node-frontend/admin/auth/feature-login": [
         "libs/admin/auth/feature-login/src/index.ts"
       ],
+      "@ewp-node-frontend/admin/dashboard/communications/logs": [
+        "libs/admin/dashboard/communications/logs/src/index.ts"
+      ],
       "@ewp-node-frontend/admin/dashboard/home": [
         "libs/admin/dashboard/home/src/index.ts"
       ],
@@ -32,9 +35,6 @@
       ],
       "@ewp-node-frontend/shared/data-access-shared": [
         "libs/shared/data-access-shared/src/index.ts"
-      ],
-      "@ewp-node-frontend/admin/dashboard/communications/logs": [
-        "libs/admin/dashboard/communications/logs/src/index.ts"
       ]
     }
   },

@@ -1,0 +1,27 @@
+<ng-container *ngIf="!loading">
+    <p-messages [(value)]="messages" [enableService]="false"></p-messages>
+    <ng-container *ngIf="communicationLog">
+        <p-accordion [style]="{ 'width': '100%' }">
+            <p-accordionTab header="Exception Stacktrace" hea *ngIf="communicationLog.exceptionStacktrace">
+                <div>{{ communicationLog.exceptionStacktrace }}</div>
+            </p-accordionTab>
+            <p-accordionTab header="Observations" *ngIf="communicationLog.observations">
+                <div>{{ communicationLog.observations }}</div>
+            </p-accordionTab>
+        </p-accordion>
+
+        <ng-container *ngIf="communicationLog.sortedChildrenCommunications && communicationLog.sortedChildrenCommunications.length > 0">
+            <p-accordion [activeIndex]="0">
+                <p-accordionTab header="Children Communications">
+                    <lib-admin-dashboard-communications-logs-nested-table [communicationLogs]="communicationLog.sortedChildrenCommunications"></lib-admin-dashboard-communications-logs-nested-table>
+                </p-accordionTab>
+            </p-accordion>
+        </ng-container>
+    </ng-container>
+</ng-container>
+
+<ng-container *ngIf="loading">
+    <div class="row">
+        <p-progressSpinner [style]="{ 'width': '100%' }" class="align-items-center"></p-progressSpinner>
+    </div>
+</ng-container>

@@ -1,11 +1,13 @@
 package pt.ulisboa.ewp.node.service.communication.log;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogSummaryDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
@@ -27,6 +29,15 @@ public class CommunicationLogService {
 
   public CommunicationLogService(CommunicationLogRepository repository) {
     this.repository = repository;
+  }
+
+  public CommunicationLogDetailDto findById(long id) {
+    CommunicationLogMapper mapper = CommunicationLogMapper.INSTANCE;
+    Optional<CommunicationLog> communicationLogOptional = this.repository.findById(id);
+    if (communicationLogOptional.isEmpty()) {
+      throw new IllegalArgumentException("There is no communication log with ID: " + id);
+    }
+    return mapper.communicationLogToCommunicationLogDetailDto(communicationLogOptional.get());
   }
 
   public Collection<CommunicationLogSummaryDto> findByFilter(FilterDto filter, int offset, int limit) {
