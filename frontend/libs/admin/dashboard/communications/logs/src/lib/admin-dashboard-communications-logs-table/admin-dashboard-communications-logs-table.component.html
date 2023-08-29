@@ -47,18 +47,18 @@
     </ng-template>
     <ng-template pTemplate="body" let-communicationLog let-expanded="expanded">
         <tr>
-            <td>
+            <td class="cell">
                 <button type="button" pButton pRipple [pRowToggler]="communicationLog" 
                     class="p-button-text p-button-rounded p-button-plain" 
                     [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
             </td>
-            <td>{{ communicationLog.id }}</td>
-            <td>{{ communicationLog.type }}</td>
-            <td>{{ communicationLog.source }}</td>
-            <td>{{ communicationLog.target }}</td>
-            <td>{{ communicationLog.startProcessingDateTime.toLocaleString() }}</td>
-            <td>{{ communicationLog.endProcessingDateTime ? communicationLog.endProcessingDateTime.toLocaleString() : '' }}</td>
-            <td [ngClass]="{'cell-success': communicationLog.status === 'SUCCESS', 'cell-failure': communicationLog.status === 'FAILURE', 'cell-incomplete': communicationLog.status === 'INCOMPLETE'}">
+            <td class="cell">{{ communicationLog.id }}</td>
+            <td class="cell">{{ communicationLog.type }}</td>
+            <td class="cell">{{ communicationLog.source }}</td>
+            <td class="cell">{{ communicationLog.target }}</td>
+            <td class="cell">{{ communicationLog.startProcessingDateTime.toLocaleString() }}</td>
+            <td class="cell">{{ communicationLog.endProcessingDateTime ? communicationLog.endProcessingDateTime.toLocaleString() : '' }}</td>
+            <td class="cell" [ngClass]="{'cell-success': communicationLog.status === 'SUCCESS', 'cell-failure': communicationLog.status === 'FAILURE', 'cell-incomplete': communicationLog.status === 'INCOMPLETE'}">
                 <b>{{ communicationLog.status }}</b>
             </td>
         </tr>

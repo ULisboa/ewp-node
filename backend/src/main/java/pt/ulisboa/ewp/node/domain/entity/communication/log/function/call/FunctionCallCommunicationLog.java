@@ -101,4 +101,10 @@ public class FunctionCallCommunicationLog extends CommunicationLog {
   public void setResult(String result) {
     this.result = result;
   }
+
+  @Override
+  @Transient
+  public String getTarget() {
+    return getClassName() + "." + getMethod();
+  }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.function.call.FunctionCallCommunicationLog;
 
@@ -45,4 +46,9 @@ public class HostPluginFunctionCallCommunicationLog extends FunctionCallCommunic
     this.hostPluginId = hostPluginId;
   }
 
+  @Override
+  @Transient
+  public String getTarget() {
+    return getHostPluginId() + ": " + super.getTarget();
+  }
 }
