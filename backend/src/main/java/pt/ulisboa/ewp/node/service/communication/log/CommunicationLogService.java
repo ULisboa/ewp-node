@@ -1,10 +1,15 @@
 package pt.ulisboa.ewp.node.service.communication.log;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogSummaryDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
+import pt.ulisboa.ewp.node.domain.mapper.communication.log.CommunicationLogMapper;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.CommunicationLogRepository;
 import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
@@ -22,6 +27,17 @@ public class CommunicationLogService {
 
   public CommunicationLogService(CommunicationLogRepository repository) {
     this.repository = repository;
+  }
+
+  public Collection<CommunicationLogSummaryDto> findByFilter(FilterDto filter, int offset, int limit) {
+    CommunicationLogMapper mapper = CommunicationLogMapper.INSTANCE;
+    return this.repository.findByFilter(filter, offset, limit).stream()
+        .map(mapper::communicationLogToCommunicationLogSummaryDto)
+        .collect(Collectors.toList());
+  }
+
+  public long countByFilter(FilterDto filter) {
+    return this.repository.countByFilter(filter);
   }
 
   public static <T extends CommunicationLog> void registerException(

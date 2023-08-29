@@ -30,7 +30,7 @@ export const xsrfInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>
           return next(request);
         }
       }
-      return throwError(() => new Error(err));
+      return throwError(() => err);
     })
   )
 }

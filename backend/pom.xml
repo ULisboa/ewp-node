@@ -12,19 +12,82 @@
 
   <artifactId>ewp-node-backend</artifactId>
 
-  <properties>
-    <java.version>1.11</java.version>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <version>3.9.1.2184</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
 
-    <junit-jupiter.version>5.8.2</junit-jupiter.version>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <artifactId>hibernate-jpamodelgen</artifactId>
+              <groupId>org.hibernate</groupId>
+              <version>5.6.15.Final</version>
+            </path>
+            <path>
+              <artifactId>mapstruct-processor</artifactId>
+              <groupId>org.mapstruct</groupId>
+              <version>${org.mapstruct.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArguments>
+            <processor>
+              org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor,org.mapstruct.ap.MappingProcessor
+            </processor>
+          </compilerArguments>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <release>11</release>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.11.0</version>
+      </plugin>
 
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <plugin>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <id>prepare-agent</id>
+          </execution>
+          <execution>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <id>jacoco-site</id>
+            <phase>test</phase>
+          </execution>
+        </executions>
+        <groupId>org.jacoco</groupId>
+        <version>${jacoco.version}</version>
+      </plugin>
 
-    <!-- Sonar-JaCoCo properties -->
-    <jacoco.version>0.8.10</jacoco.version>
-    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-    <sonar.language>java</sonar.language>
-  </properties>
+      <plugin>
+        <artifactId>dependency-check-maven</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <groupId>org.owasp</groupId>
+        <version>8.3.1</version>
+      </plugin>
+    </plugins>
+
+    <testSourceDirectory>src/test/java</testSourceDirectory>
+  </build>
 
   <dependencies>
     <dependency>
@@ -200,12 +263,12 @@
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
-      <version>1.5.5.Final</version>
+      <version>${org.mapstruct.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct-processor</artifactId>
-      <version>1.5.5.Final</version>
+      <version>${org.mapstruct.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -315,74 +378,20 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <testSourceDirectory>src/test/java</testSourceDirectory>
+  <properties>
+    <jacoco.version>0.8.10</jacoco.version>
 
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
-        <configuration>
-          <encoding>${project.build.sourceEncoding}</encoding>
-          <release>11</release>
-          <annotationProcessorPaths>
-            <path>
-              <groupId>org.hibernate</groupId>
-              <artifactId>hibernate-jpamodelgen</artifactId>
-              <version>5.6.15.Final</version>
-            </path>
-          </annotationProcessorPaths>
-          <compilerArguments>
-            <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-          </compilerArguments>
-        </configuration>
-      </plugin>
+    <java.version>1.11</java.version>
 
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco.version}</version>
-        <executions>
-          <execution>
-            <id>prepare-agent</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>jacoco-site</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+    <junit-jupiter.version>5.8.2</junit-jupiter.version>
 
-      <plugin>
-        <groupId>org.owasp</groupId>
-        <artifactId>dependency-check-maven</artifactId>
-        <version>8.3.1</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+    <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.sonarsource.scanner.maven</groupId>
-          <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.9.1.2184</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+    <!-- Sonar-JaCoCo properties -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.language>java</sonar.language>
+  </properties>
 
 </project>

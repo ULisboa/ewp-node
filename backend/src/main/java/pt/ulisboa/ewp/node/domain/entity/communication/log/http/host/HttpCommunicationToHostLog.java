@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
@@ -30,5 +31,11 @@ public class HttpCommunicationToHostLog extends HostHttpCommunicationLog {
         startProcessingDateTime,
         endProcessingDateTime,
         observations, parentCommunication);
+  }
+
+  @Override
+  @Transient
+  public String getTarget() {
+    return getHost().getCode();
   }
 }

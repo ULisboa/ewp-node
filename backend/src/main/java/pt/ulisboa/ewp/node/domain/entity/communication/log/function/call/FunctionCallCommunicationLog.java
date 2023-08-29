@@ -99,5 +99,6 @@ public class FunctionCallCommunicationLog extends CommunicationLog {
 
   public void setResult(String result) {
     this.result = result;
+    this.markAsSuccess();
   }
 }

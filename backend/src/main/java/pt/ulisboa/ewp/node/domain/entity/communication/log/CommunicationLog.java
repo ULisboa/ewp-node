@@ -4,12 +4,14 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -32,6 +34,7 @@ import pt.ulisboa.ewp.node.utils.StringUtils;
 public class CommunicationLog {
 
   private long id;
+  private Status status;
   private ZonedDateTime startProcessingDateTime;
   private ZonedDateTime endProcessingDateTime;
   private String exceptionStacktrace;
@@ -46,6 +49,7 @@ public class CommunicationLog {
       ZonedDateTime endProcessingDateTime,
       String observations,
       CommunicationLog parentCommunication) {
+    this.status = Status.INCOMPLETE;
     this.startProcessingDateTime = startProcessingDateTime;
     this.endProcessingDateTime = endProcessingDateTime;
     setObservations(observations);
@@ -61,6 +65,15 @@ public class CommunicationLog {
 
   public void setId(long id) {
     this.id = id;
+  }
+
+  @Column(name = "status", nullable = false)
+  public Status getStatus() {
+    return status;
+  }
+
+  public void setStatus(Status status) {
+    this.status = status;
   }
 
   @Column(name = "start_processing_date_time", nullable = false)
@@ -88,6 +101,7 @@ public class CommunicationLog {
 
   public void setExceptionStacktrace(String exceptionStacktrace) {
     this.exceptionStacktrace = exceptionStacktrace;
+    this.markAsFailure();
   }
 
   @Column(name = "observations", nullable = true, columnDefinition = "TEXT")
@@ -128,5 +142,43 @@ public class CommunicationLog {
 
   public void setChildrenCommunications(Set<CommunicationLog> childrenCommunications) {
     this.childrenCommunications = childrenCommunications;
+  }
+
+  public void markAsSuccess() {
+    this.updateStatus(Status.SUCCESS);
+  }
+
+  public void markAsFailure() {
+    this.updateStatus(Status.FAILURE);
+  }
+
+  public void updateStatus(Status status) {
+    Objects.requireNonNull(status);
+    this.status = status;
+  }
+
+  @Transient
+  public final String getType() {
+    DiscriminatorValue discriminatorValue = this.getClass().getAnnotation(DiscriminatorValue.class);
+    return discriminatorValue != null ? discriminatorValue.value() : null;
+  }
+
+  @Transient
+  public String getSource() {
+    if (this.parentCommunication == null) {
+      return "Unknown";
+    }
+    return this.parentCommunication.getTarget();
+  }
+
+  @Transient
+  public String getTarget() {
+    return "Unknown";
+  }
+
+  public enum Status {
+    INCOMPLETE,
+    SUCCESS,
+    FAILURE
   }
 }

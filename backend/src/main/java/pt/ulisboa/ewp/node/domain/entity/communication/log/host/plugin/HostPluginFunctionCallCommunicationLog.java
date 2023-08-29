@@ -44,4 +44,5 @@ public class HostPluginFunctionCallCommunicationLog extends FunctionCallCommunic
   public void setHostPluginId(String hostPluginId) {
     this.hostPluginId = hostPluginId;
   }
+
 }

@@ -3,6 +3,7 @@ package pt.ulisboa.ewp.node.domain.entity.communication.log.http;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import javax.persistence.*;
+import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 @Entity
@@ -44,5 +45,24 @@ public abstract class HttpCommunicationLog extends CommunicationLog {
 
   public void setResponse(HttpResponseLog response) {
     this.response = response;
+    if (this.response != null) {
+      if (HttpStatus.valueOf(this.response.getStatusCode()).isError()) {
+        this.markAsFailure();
+      } else {
+        this.markAsSuccess();
+      }
+    }
+  }
+
+  @Override
+  @Transient
+  public String getSource() {
+    return "Unknown";
+  }
+
+  @Override
+  @Transient
+  public String getTarget() {
+    return request.getUrl();
   }
 }

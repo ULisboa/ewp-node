@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
@@ -53,4 +54,9 @@ public class HttpCommunicationFromHostLog extends HostHttpCommunicationLog {
     this.hostForwardEwpApiClient = hostForwardEwpApiClient;
   }
 
+  @Override
+  @Transient
+  public String getSource() {
+    return getHost().getCode();
+  }
 }

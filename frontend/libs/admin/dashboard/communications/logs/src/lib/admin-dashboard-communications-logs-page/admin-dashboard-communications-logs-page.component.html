@@ -1,0 +1,60 @@
+<p-messages [(value)]="messages" [enableService]="false"></p-messages>
+
+<p-table 
+    [lazy]="true"
+    (onLazyLoad)="loadCommunicationsLogs($event)"
+    dataKey="id"
+    [loading]="loading"
+    [rows]="10"
+    [totalRecords]="totalResults"
+    [paginator]="true"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [value]="communicationLogs"
+    [globalFilterFields]="['id', 'type', 'status']"
+    [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>
+                <div class="flex align-items-center">
+                    ID
+                    <p-columnFilter field="id" type="numeric" display="menu" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
+                </div>
+            </th>
+            <th>Type</th>
+            <th>Source</th>
+            <th>Target</th>
+            <th>Start Processing Time</th>
+            <th>End Processing Time</th>
+            <th>
+                <div class="flex align-items-center">
+                    Status
+                    <p-columnFilter field="status" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-multiSelect [options]="statusOptions" [(ngModel)]="selectedStatuses" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" optionValue="value">
+                                <ng-template let-option pTemplate="item">
+                                    <div class="inline-block vertical-align-middle">
+                                        <span class="ml-1 mt-1">{{ option.name }}</span>
+                                    </div>
+                                </ng-template>
+                            </p-multiSelect>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-communicationLog>
+        <tr>
+            <td>{{ communicationLog.id }}</td>
+            <td>{{ communicationLog.type }}</td>
+            <td>{{ communicationLog.source }}</td>
+            <td>{{ communicationLog.target }}</td>
+            <td>{{ communicationLog.startProcessingDateTime.toLocaleString() }}</td>
+            <td>{{ communicationLog.endProcessingDateTime ? communicationLog.endProcessingDateTime.toLocaleString() : '' }}</td>
+            <td [ngClass]="{'cell-success': communicationLog.status === 'SUCCESS', 'cell-failure': communicationLog.status === 'FAILURE', 'cell-incomplete': communicationLog.status === 'INCOMPLETE'}">
+                <b>{{ communicationLog.status }}</b>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

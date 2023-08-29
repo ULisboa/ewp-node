@@ -17,7 +17,7 @@ export const appRoutes: Route[] = [
                 path: '',
                 pathMatch: 'full',
                 component: AppLayoutComponent,
-                loadChildren: () => import("@ewp-node-frontend/admin/dashboard/home").then(m => m.AdminDashboardHomeModule),
+                loadChildren: () => import("@ewp-node-frontend/admin/dashboard/communications/logs").then(m => m.AdminDashboardCommunicationsLogsModule),
                 canMatch: [adminAuthCanMatchGuard]
             }, 
             {
