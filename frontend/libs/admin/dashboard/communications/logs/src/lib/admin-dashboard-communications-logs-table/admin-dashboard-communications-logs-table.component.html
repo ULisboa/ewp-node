@@ -56,8 +56,8 @@
             <td class="cell">{{ communicationLog.type }}</td>
             <td class="cell">{{ communicationLog.source }}</td>
             <td class="cell">{{ communicationLog.target }}</td>
-            <td class="cell">{{ communicationLog.startProcessingDateTime.toLocaleString() }}</td>
-            <td class="cell">{{ communicationLog.endProcessingDateTime ? communicationLog.endProcessingDateTime.toLocaleString() : '' }}</td>
+            <td class="cell">{{ communicationLog.startProcessingDateTime | date:'medium' }}</td>
+            <td class="cell">{{ communicationLog.endProcessingDateTime ? (communicationLog.endProcessingDateTime | date:'medium') : '' }}</td>
             <td class="cell" [ngClass]="{'cell-success': communicationLog.status === 'SUCCESS', 'cell-failure': communicationLog.status === 'FAILURE', 'cell-incomplete': communicationLog.status === 'INCOMPLETE'}">
                 <b>{{ communicationLog.status }}</b>
             </td>
