@@ -16,6 +16,12 @@ export const appRoutes: Route[] = [
             {
                 path: '',
                 pathMatch: 'full',
+                redirectTo: '/admin/communications/logs',
+                canMatch: [adminAuthCanMatchGuard]
+            }, 
+            {
+                path: 'communications/logs',
+                pathMatch: 'full',
                 component: AppLayoutComponent,
                 loadChildren: () => import("@ewp-node-frontend/admin/dashboard/communications/logs").then(m => m.AdminDashboardCommunicationsLogsModule),
                 canMatch: [adminAuthCanMatchGuard]
