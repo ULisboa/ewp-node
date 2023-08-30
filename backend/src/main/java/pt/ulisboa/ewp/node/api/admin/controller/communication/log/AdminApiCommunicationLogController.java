@@ -7,6 +7,8 @@ import java.util.Collection;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -25,7 +27,10 @@ import pt.ulisboa.ewp.node.api.admin.utils.AdminApiResponseUtils;
 import pt.ulisboa.ewp.node.domain.deserializer.filter.FilterDtoDeserializer;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogSummaryDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.ConjunctionFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeCoveredHeiIdsContainsFilterDto;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.service.communication.log.CommunicationLogService;
 
 @AdminApi
@@ -47,10 +52,20 @@ public class AdminApiCommunicationLogController {
       tags = {"Admin"})
   public ResponseEntity<AdminApiResponseWithDataDto<GetCommunicationLogsSummaryResponseDto>>
       getCommunicationLogs(@Valid @RequestBody GetCommunicationLogsRequestDto requestDto) {
+
+    FilterDto<CommunicationLog> filter = requestDto.getFilter();
+    if (!StringUtils.isEmpty(requestDto.getRequesterHeiId())) {
+      filter =
+          new ConjunctionFilterDto<>(
+              filter,
+              new HttpCommunicationFromEwpNodeCoveredHeiIdsContainsFilterDto(
+                  requestDto.getRequesterHeiId()));
+    }
+
     Collection<CommunicationLogSummaryDto> communicationLogDtos =
         this.communicationLogService.findByFilter(
-            requestDto.getFilter(), requestDto.getOffset(), requestDto.getLimit());
-    long totalResults = this.communicationLogService.countByFilter(requestDto.getFilter());
+            filter, requestDto.getOffset(), requestDto.getLimit());
+    long totalResults = this.communicationLogService.countByFilter(filter);
     GetCommunicationLogsSummaryResponseDto responseDto = new GetCommunicationLogsSummaryResponseDto(
         communicationLogDtos, totalResults);
     return AdminApiResponseUtils.toOkResponseEntity(responseDto);
@@ -69,7 +84,10 @@ public class AdminApiCommunicationLogController {
   private static class GetCommunicationLogsRequestDto implements Serializable {
 
     @JsonDeserialize(using = FilterDtoDeserializer.class)
-    private FilterDto filter;
+    private FilterDto<CommunicationLog> filter;
+
+    @Size(max = 255)
+    private String requesterHeiId;
 
     @Min(0)
     private int offset;
@@ -78,12 +96,20 @@ public class AdminApiCommunicationLogController {
     @Max(50)
     private int limit;
 
-    public FilterDto getFilter() {
+    public FilterDto<CommunicationLog> getFilter() {
       return filter;
     }
 
-    public void setFilter(FilterDto filter) {
+    public void setFilter(FilterDto<CommunicationLog> filter) {
       this.filter = filter;
+    }
+
+    public String getRequesterHeiId() {
+      return requesterHeiId;
+    }
+
+    public void setRequesterHeiId(String requesterHeiId) {
+      this.requesterHeiId = requesterHeiId;
     }
 
     public int getOffset() {

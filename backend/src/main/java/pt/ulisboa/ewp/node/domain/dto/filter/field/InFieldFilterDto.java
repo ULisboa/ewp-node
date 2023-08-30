@@ -7,7 +7,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import pt.ulisboa.ewp.node.domain.dto.filter.DisjunctionFilterDto;
 
-public class InFieldFilterDto extends FieldFilterDto {
+public class InFieldFilterDto<T> extends FieldFilterDto<T> {
 
   private final List<Object> values;
 
@@ -21,11 +21,11 @@ public class InFieldFilterDto extends FieldFilterDto {
   }
 
   @Override
-  public Predicate createPredicate(CriteriaBuilder criteriaBuilder, Root<?> selection) {
-    DisjunctionFilterDto disjunctionFilter =
-        new DisjunctionFilterDto(
+  public Predicate createPredicate(CriteriaBuilder criteriaBuilder, Root<T> selection) {
+    DisjunctionFilterDto<T> disjunctionFilter =
+        new DisjunctionFilterDto<>(
             values.stream()
-                .map(v -> new EqualsFieldFilterDto(getField(), v))
+                .map(v -> new EqualsFieldFilterDto<T>(getField(), v))
                 .collect(Collectors.toList()));
     return disjunctionFilter.createPredicate(criteriaBuilder, selection);
   }

@@ -28,7 +28,7 @@ public class CommunicationLogRepository extends AbstractRepository<Communication
     super(CommunicationLog.class, sessionFactory);
   }
 
-  public Collection<CommunicationLog> findByFilter(FilterDto filter, int offset, int limit) {
+  public Collection<CommunicationLog> findByFilter(FilterDto<CommunicationLog> filter, int offset, int limit) {
     return runInSession(
         session -> {
           CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -44,7 +44,7 @@ public class CommunicationLogRepository extends AbstractRepository<Communication
         });
   }
 
-  public long countByFilter(FilterDto filter) {
+  public long countByFilter(FilterDto<CommunicationLog> filter) {
     return runInSession(
         session -> {
           CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();

@@ -2,7 +2,7 @@ package pt.ulisboa.ewp.node.domain.dto.filter.field;
 
 import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 
-public abstract class FieldFilterDto extends FilterDto {
+public abstract class FieldFilterDto<T> extends FilterDto<T> {
 
   private final String field;
 

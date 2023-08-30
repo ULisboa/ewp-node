@@ -6,7 +6,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-public class EqualsFieldFilterDto extends FieldFilterDto {
+public class EqualsFieldFilterDto<T> extends FieldFilterDto<T> {
 
   private final Object value;
 
@@ -22,7 +22,7 @@ public class EqualsFieldFilterDto extends FieldFilterDto {
 
   @SuppressWarnings("unchecked")
   @Override
-  public Predicate createPredicate(CriteriaBuilder criteriaBuilder, Root<?> selection) {
+  public Predicate createPredicate(CriteriaBuilder criteriaBuilder, Root<T> selection) {
     Path<?> fieldPath = selection.get(getField());
     Class<?> fieldJavaType = fieldPath.getJavaType();
     Object resolvedValue = value;

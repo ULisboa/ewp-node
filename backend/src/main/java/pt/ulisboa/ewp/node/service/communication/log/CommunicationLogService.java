@@ -40,14 +40,14 @@ public class CommunicationLogService {
     return mapper.communicationLogToCommunicationLogDetailDto(communicationLogOptional.get());
   }
 
-  public Collection<CommunicationLogSummaryDto> findByFilter(FilterDto filter, int offset, int limit) {
+  public Collection<CommunicationLogSummaryDto> findByFilter(FilterDto<CommunicationLog> filter, int offset, int limit) {
     CommunicationLogMapper mapper = CommunicationLogMapper.INSTANCE;
     return this.repository.findByFilter(filter, offset, limit).stream()
         .map(mapper::communicationLogToCommunicationLogSummaryDto)
         .collect(Collectors.toList());
   }
 
-  public long countByFilter(FilterDto filter) {
+  public long countByFilter(FilterDto<CommunicationLog> filter) {
     return this.repository.countByFilter(filter);
   }
 

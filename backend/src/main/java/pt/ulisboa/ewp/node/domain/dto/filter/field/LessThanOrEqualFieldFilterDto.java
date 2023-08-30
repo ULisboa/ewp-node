@@ -5,7 +5,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-public class LessThanOrEqualFieldFilterDto extends FieldFilterDto {
+public class LessThanOrEqualFieldFilterDto<T> extends FieldFilterDto<T> {
 
   private final Number value;
 
@@ -20,7 +20,7 @@ public class LessThanOrEqualFieldFilterDto extends FieldFilterDto {
   }
 
   @Override
-  public Predicate createPredicate(CriteriaBuilder criteriaBuilder, Root<?> selection) {
+  public Predicate createPredicate(CriteriaBuilder criteriaBuilder, Root<T> selection) {
     return criteriaBuilder.le(selection.get(getField()), value);
   }
 }
