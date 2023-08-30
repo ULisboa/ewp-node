@@ -11,10 +11,16 @@ import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogSummaryD
 import pt.ulisboa.ewp.node.domain.dto.communication.log.function.call.FunctionCallCommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.host.plugin.HostPluginFunctionCallCommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.http.HttpCommunicationLogDetailDto;
+import pt.ulisboa.ewp.node.domain.dto.communication.log.http.ewp.EwpHttpCommunicationLogDetailDto;
+import pt.ulisboa.ewp.node.domain.dto.communication.log.http.ewp.HttpCommunicationFromEwpNodeLogDetailDto;
+import pt.ulisboa.ewp.node.domain.dto.communication.log.http.host.HostHttpCommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.function.call.FunctionCallCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.host.plugin.HostPluginFunctionCallCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.EwpHttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationFromEwpNodeLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HostHttpCommunicationLog;
 
 @Mapper
 public interface CommunicationLogMapper {
@@ -33,6 +39,15 @@ public interface CommunicationLogMapper {
         source = FunctionCallCommunicationLog.class,
         target = FunctionCallCommunicationLogDetailDto.class),
     @SubclassMapping(
+        source = HttpCommunicationFromEwpNodeLog.class,
+        target = HttpCommunicationFromEwpNodeLogDetailDto.class),
+    @SubclassMapping(
+        source = EwpHttpCommunicationLog.class,
+        target = EwpHttpCommunicationLogDetailDto.class),
+    @SubclassMapping(
+        source = HostHttpCommunicationLog.class,
+        target = HostHttpCommunicationLogDetailDto.class),
+    @SubclassMapping(
         source = HttpCommunicationLog.class,
         target = HttpCommunicationLogDetailDto.class),
   })
@@ -42,4 +57,8 @@ public interface CommunicationLogMapper {
       qualifiedByName = "convertToSummaryDto")
   CommunicationLogDetailDto communicationLogToCommunicationLogDetailDto(
       CommunicationLog communicationLog);
+
+  @Mapping(source = "host.code", target = "hostCode")
+  HostHttpCommunicationLogDetailDto communicationLogToCommunicationLogSummaryDto(
+      HostHttpCommunicationLog communicationLog);
 }

@@ -2,6 +2,17 @@
     <p-messages [(value)]="messages" [enableService]="false"></p-messages>
     <ng-container *ngIf="communicationLog">
         <p-accordion [multiple]="true">
+
+            <ng-container *ngIf="communicationLog | instanceof: EwpHttpCommunicationLogDetail as ewpHttpCommunicationLogDetail">
+                <!-- EWP HTTP Communication -->
+                <p-accordionTab header="EWP Communication">
+                    <p>Authentication Method: {{ ewpHttpCommunicationLogDetail.authenticationMethod }}</p>
+                    <ng-container *ngIf="ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationFromEwpNodeLogDetail as httpCommunicationFromEwpNodeLogDetail">
+                        <p>HEI IDs covered by requester: {{ httpCommunicationFromEwpNodeLogDetail.heiIdsCoveredByClient }}</p>
+                    </ng-container>
+                </p-accordionTab>
+            </ng-container>
+
             <ng-container *ngIf="communicationLog | instanceof: HttpCommunicationLogDetail as httpCommunicationLog">
                 <!-- HTTP Request -->
                 <p-accordionTab header="HTTP Request" *ngIf="httpCommunicationLog.request">

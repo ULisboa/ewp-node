@@ -10,3 +10,5 @@ export * from './lib/communication/log/communication-log-detail-wrapper';
 export * from './lib/communication/log/function/call/function-call-communication-log-detail';
 export * from './lib/communication/log/host/plugin/host-plugin-function-call-communication-log-detail';
 export * from './lib/communication/log/http/http-communication-log-detail';
+export * from './lib/communication/log/http/ewp/ewp-http-communication-log-detail';
+export * from './lib/communication/log/http/ewp/http-communication-from-ewp-node-log-detail';
