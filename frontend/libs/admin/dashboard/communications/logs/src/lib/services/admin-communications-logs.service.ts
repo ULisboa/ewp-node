@@ -1,8 +1,8 @@
 import { HttpErrorResponse, HttpParams, HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { AdminApiResponseWithObjectData, CommunicationLogDetail, CommunicationLogSummary } from "@ewp-node-frontend/admin/shared/api-interfaces";
-import { Type } from "class-transformer";
-import { Observable, catchError, throwError } from "rxjs";
+import { AdminApiResponseWithObjectData, CommunicationLogDetail, CommunicationLogDetailWrapper, CommunicationLogSummary, HostPluginFunctionCallCommunicationLogDetail } from "@ewp-node-frontend/admin/shared/api-interfaces";
+import { Type, plainToClass, plainToClassFromExist, plainToInstance } from "class-transformer";
+import { Observable, catchError, map, throwError } from "rxjs";
 
 export class GetCommunicationsLogsResponse {
     @Type(() => CommunicationLogSummary)
@@ -27,10 +27,13 @@ export class AdminCommunicationsLogsService {
             );
     }
 
-    getCommunicationsLogInDetail(id: number): Observable<AdminApiResponseWithObjectData<CommunicationLogDetail>> {
+    getCommunicationsLogInDetail(id: number): Observable<CommunicationLogDetailWrapper> {
         return this.http
             .get<AdminApiResponseWithObjectData<CommunicationLogDetail>>(`/api/admin/communications/logs/${id}`)
             .pipe(
+                map(response => {
+                    return plainToClassFromExist(new CommunicationLogDetailWrapper(), { data: response.data });
+                }),
                 catchError((errorResponse: HttpErrorResponse) => {
                     return this.throwErrorFromErrorResponse(errorResponse);
                 })

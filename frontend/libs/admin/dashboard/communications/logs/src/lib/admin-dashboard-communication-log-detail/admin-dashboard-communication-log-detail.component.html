@@ -1,7 +1,65 @@
 <ng-container *ngIf="!loading">
     <p-messages [(value)]="messages" [enableService]="false"></p-messages>
     <ng-container *ngIf="communicationLog">
-        <p-accordion [style]="{ 'width': '100%' }">
+        <p-accordion [multiple]="true">
+            <ng-container *ngIf="communicationLog | instanceof: HttpCommunicationLogDetail as httpCommunicationLog">
+                <!-- HTTP Request -->
+                <p-accordionTab header="HTTP Request" *ngIf="httpCommunicationLog.request">
+                    <p-card header="URL">{{httpCommunicationLog.request.url}}</p-card>
+                    <p-card header="Method">{{httpCommunicationLog.request.method}}</p-card>
+                    <p-card header="Headers">
+                        <p-table [resizableColumns]="true" [value]="httpCommunicationLog.request.headers">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th pResizableColumn>Name</th>
+                                    <th pResizableColumn>Value</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-headerRow>
+                                <tr>
+                                    <td>{{ headerRow.name }}</td>
+                                    <td>{{ headerRow.value }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-card>
+                    <p-card header="Body">
+                        {{httpCommunicationLog.request.body}}
+                    </p-card>
+                </p-accordionTab>
+
+                <!-- HTTP Response -->
+                <p-accordionTab header="HTTP Response" *ngIf="httpCommunicationLog.response">
+                    <p-card header="Headers">
+                        <p-table [value]="httpCommunicationLog.response.headers">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Value</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-headerRow>
+                                <tr>
+                                    <td>{{ headerRow.name }}</td>
+                                    <td>{{ headerRow.value }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-card>
+                    <p-card header="Body">
+                        {{httpCommunicationLog.response.body}}
+                    </p-card>
+                </p-accordionTab>
+            </ng-container>
+
+            <ng-container *ngIf="communicationLog | instanceof: HostPluginFunctionCallCommunicationLogDetail as hostPluginFunctionCallCommunicationLog">
+                <!-- Host Plugin Function Call -->
+                <p-accordionTab header="Host Plugin Function Call">
+                    <p>Host Plugin ID: {{ hostPluginFunctionCallCommunicationLog.hostPluginId }}</p>
+                    <p>Invocation: {{ hostPluginFunctionCallCommunicationLog.invocation }}</p>
+                </p-accordionTab>
+            </ng-container>
+
             <p-accordionTab header="Exception Stacktrace" hea *ngIf="communicationLog.exceptionStacktrace">
                 <div>{{ communicationLog.exceptionStacktrace }}</div>
             </p-accordionTab>
@@ -12,7 +70,7 @@
 
         <ng-container *ngIf="communicationLog.sortedChildrenCommunications && communicationLog.sortedChildrenCommunications.length > 0">
             <p-accordion [activeIndex]="0">
-                <p-accordionTab header="Children Communications">
+                <p-accordionTab header="Nested Communications">
                     <lib-admin-dashboard-communications-logs-nested-table [communicationLogs]="communicationLog.sortedChildrenCommunications"></lib-admin-dashboard-communications-logs-nested-table>
                 </p-accordionTab>
             </p-accordion>

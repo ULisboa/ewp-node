@@ -12,22 +12,23 @@
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [value]="communicationLogs"
     [resizableColumns]="true"
+    styleClass="p-datatable-gridlines"
     [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="header">
         <tr>
             <th style="width: 3rem"></th>
-            <th>
+            <th pResizableColumn>
                 <div class="flex align-items-center">
                     ID
                     <p-columnFilter field="id" type="numeric" display="menu" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
                 </div>
             </th>
-            <th>Type</th>
-            <th>Source</th>
-            <th>Target</th>
-            <th>Start Processing Time</th>
-            <th>End Processing Time</th>
-            <th>
+            <th pResizableColumn>Type</th>
+            <th pResizableColumn>Source</th>
+            <th pResizableColumn>Target</th>
+            <th pResizableColumn>Start Processing Time</th>
+            <th pResizableColumn>End Processing Time</th>
+            <th pResizableColumn>
                 <div class="flex align-items-center">
                     Status
                     <p-columnFilter field="status" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
