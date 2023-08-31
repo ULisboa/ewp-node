@@ -30,6 +30,7 @@ public class HttpCommunicationToEwpNodeLogRepository
   }
 
   public boolean create(
+      String targetHeiId,
       EwpAuthenticationMethod authenticationMethod,
       HttpRequestLog request,
       HttpResponseLog response,
@@ -39,6 +40,7 @@ public class HttpCommunicationToEwpNodeLogRepository
       HttpCommunicationLog parentCommunication) throws IOException {
     HttpCommunicationToEwpNodeLog communicationToEwpNodeLog =
         new HttpCommunicationToEwpNodeLog(
+            targetHeiId,
             authenticationMethod,
             request,
             response,
