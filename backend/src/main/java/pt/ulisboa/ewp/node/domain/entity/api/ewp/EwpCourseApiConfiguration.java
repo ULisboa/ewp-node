@@ -16,12 +16,13 @@ public class EwpCourseApiConfiguration extends EwpApiConfiguration {
   private BigInteger maxLosCodes;
 
   public EwpCourseApiConfiguration(
+      String heiId,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxLosIds,
       BigInteger maxLosCodes) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.url = url;
     this.maxLosIds = maxLosIds;
     this.maxLosCodes = maxLosCodes;
@@ -64,8 +65,9 @@ public class EwpCourseApiConfiguration extends EwpApiConfiguration {
         + '}';
   }
 
-  public static EwpCourseApiConfiguration create(CoursesV0 apiElement) {
+  public static EwpCourseApiConfiguration create(String heiId, CoursesV0 apiElement) {
     return new EwpCourseApiConfiguration(
+        heiId,
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

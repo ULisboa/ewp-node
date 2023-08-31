@@ -23,7 +23,6 @@ import eu.erasmuswithoutpaper.api.omobilities.las.v1.OmobilityLasV1;
 import eu.erasmuswithoutpaper.api.omobilities.v1.OmobilitiesV1;
 import eu.erasmuswithoutpaper.api.omobilities.v2.OmobilitiesV2;
 import eu.erasmuswithoutpaper.api.ounits.v2.OrganizationalUnitsV2;
-import java.util.function.Function;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
@@ -265,30 +264,37 @@ public final class EwpApiSpecification {
 
   }
 
+  @FunctionalInterface
+  public interface SpecificationElementToConfigurationConverter<
+      E extends ManifestApiEntryBaseV1, C extends EwpApiConfiguration> {
+
+    C convert(String heiId, E manifestEntry);
+  }
+
   public static class EwpApiVersionSpecification<
       E extends ManifestApiEntryBaseV1, C extends EwpApiConfiguration> {
 
     private final EwpApi api;
     private final int majorVersion;
     private final Class<E> specificationElementClassType;
-    private final Function<E, C> specificationElementToConfigurationTransformer;
+    private final SpecificationElementToConfigurationConverter<E, C> specificationElementToConfigurationConverter;
 
     private EwpApiVersionSpecification(
         EwpApi api,
         int majorVersion,
         Class<E> specificationElementClassType,
-        Function<E, C> specificationElementToConfigurationTransformer) {
+        SpecificationElementToConfigurationConverter<E, C> specificationElementToConfigurationConverter) {
       this.api = api;
       this.majorVersion = majorVersion;
       this.specificationElementClassType = specificationElementClassType;
-      this.specificationElementToConfigurationTransformer =
-          specificationElementToConfigurationTransformer;
+      this.specificationElementToConfigurationConverter =
+          specificationElementToConfigurationConverter;
     }
 
     public C getConfigurationForHeiId(RegistryClient registryClient, String heiId) {
       return EwpApiUtils.getApiConfiguration(registryClient, heiId, api.getLocalName(),
           majorVersion, specificationElementClassType,
-          specificationElementToConfigurationTransformer);
+          specificationElementToConfigurationConverter);
     }
   }
 }

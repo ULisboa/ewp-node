@@ -14,11 +14,12 @@ public class EwpSimpleCourseReplicationApiConfiguration extends EwpApiConfigurat
   private boolean modifiedSinceSupported;
 
   public EwpSimpleCourseReplicationApiConfiguration(
+      String heiId,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       boolean modifiedSinceSupported) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.url = url;
     this.modifiedSinceSupported = modifiedSinceSupported;
   }
@@ -40,8 +41,9 @@ public class EwpSimpleCourseReplicationApiConfiguration extends EwpApiConfigurat
   }
 
   public static EwpSimpleCourseReplicationApiConfiguration create(
-      SimpleCourseReplicationV1 apiElement) {
+      String heiId, SimpleCourseReplicationV1 apiElement) {
     return new EwpSimpleCourseReplicationApiConfiguration(
+        heiId,
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

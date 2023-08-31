@@ -17,13 +17,14 @@ public class EwpOutgoingMobilityLearningAgreementsApiConfiguration extends EwpAp
   private final BigInteger maxOmobilityIds;
 
   public EwpOutgoingMobilityLearningAgreementsApiConfiguration(
+      String heiId,
       String indexUrl,
       String getUrl,
       String updateUrl,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxOmobilityIds) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.indexUrl = indexUrl;
     this.getUrl = getUrl;
     this.updateUrl = updateUrl;
@@ -47,8 +48,9 @@ public class EwpOutgoingMobilityLearningAgreementsApiConfiguration extends EwpAp
   }
 
   public static EwpOutgoingMobilityLearningAgreementsApiConfiguration create(
-      OmobilityLasV1 apiElement) {
+      String heiId, OmobilityLasV1 apiElement) {
     return new EwpOutgoingMobilityLearningAgreementsApiConfiguration(
+        heiId,
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         apiElement.getUpdateUrl(),

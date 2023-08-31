@@ -15,11 +15,12 @@ public class EwpIncomingMobilityCnrApiConfiguration extends EwpApiConfiguration 
   private final BigInteger maxOmobilityIds;
 
   public EwpIncomingMobilityCnrApiConfiguration(
+      String heiId,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxOmobilityIds) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.url = url;
     this.maxOmobilityIds = maxOmobilityIds;
   }
@@ -33,8 +34,9 @@ public class EwpIncomingMobilityCnrApiConfiguration extends EwpApiConfiguration 
   }
 
   public static EwpIncomingMobilityCnrApiConfiguration create(
-      ImobilityCnrV1 apiElement) {
+      String heiId, ImobilityCnrV1 apiElement) {
     return new EwpIncomingMobilityCnrApiConfiguration(
+        heiId,
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

@@ -13,10 +13,11 @@ public class EwpFilesApiConfiguration extends EwpApiConfiguration {
   private String url;
 
   public EwpFilesApiConfiguration(
+      String heiId,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.url = url;
   }
 
@@ -28,8 +29,9 @@ public class EwpFilesApiConfiguration extends EwpApiConfiguration {
     this.url = url;
   }
 
-  public static EwpFilesApiConfiguration create(FileV1 apiElement) {
+  public static EwpFilesApiConfiguration create(String heiId, FileV1 apiElement) {
     return new EwpFilesApiConfiguration(
+        heiId,
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()));

@@ -15,11 +15,12 @@ public class EwpInstitutionApiConfiguration extends EwpApiConfiguration {
   private BigInteger maxHeiIds;
 
   public EwpInstitutionApiConfiguration(
+      String heiId,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxHeiIds) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.url = url;
     this.maxHeiIds = maxHeiIds;
   }
@@ -40,8 +41,9 @@ public class EwpInstitutionApiConfiguration extends EwpApiConfiguration {
     this.maxHeiIds = maxHeiIds;
   }
 
-  public static EwpInstitutionApiConfiguration create(InstitutionsV2 apiElement) {
+  public static EwpInstitutionApiConfiguration create(String heiId, InstitutionsV2 apiElement) {
     return new EwpInstitutionApiConfiguration(
+        heiId,
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

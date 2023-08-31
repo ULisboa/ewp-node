@@ -13,10 +13,11 @@ public class EwpInterInstitutionalAgreementApprovalCnrApiConfiguration extends E
   private final String url;
 
   public EwpInterInstitutionalAgreementApprovalCnrApiConfiguration(
+      String heiId,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.url = url;
   }
 
@@ -25,8 +26,9 @@ public class EwpInterInstitutionalAgreementApprovalCnrApiConfiguration extends E
   }
 
   public static EwpInterInstitutionalAgreementApprovalCnrApiConfiguration create(
-      IiaApprovalCnrV1 apiElement) {
+      String heiId, IiaApprovalCnrV1 apiElement) {
     return new EwpInterInstitutionalAgreementApprovalCnrApiConfiguration(
+        heiId,
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()));

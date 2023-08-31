@@ -16,12 +16,13 @@ public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
   private BigInteger maxOunitCodes;
 
   public EwpOrganizationalUnitApiConfiguration(
+      String heiId,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxOunitIds,
       BigInteger maxOunitCodes) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.url = url;
     this.maxOunitIds = maxOunitIds;
     this.maxOunitCodes = maxOunitCodes;
@@ -51,8 +52,9 @@ public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
     this.maxOunitCodes = maxOunitCodes;
   }
 
-  public static EwpOrganizationalUnitApiConfiguration create(OrganizationalUnitsV2 apiElement) {
+  public static EwpOrganizationalUnitApiConfiguration create(String heiId, OrganizationalUnitsV2 apiElement) {
     return new EwpOrganizationalUnitApiConfiguration(
+        heiId,
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

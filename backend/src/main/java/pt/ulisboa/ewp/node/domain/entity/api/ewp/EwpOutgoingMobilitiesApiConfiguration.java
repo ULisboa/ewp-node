@@ -18,13 +18,14 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
   private boolean sendsNotifications;
 
   public EwpOutgoingMobilitiesApiConfiguration(
+      String heiId,
       String indexUrl,
       String getUrl,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxOmobilityIds,
       boolean sendsNotifications) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.indexUrl = indexUrl;
     this.getUrl = getUrl;
     this.maxOmobilityIds = maxOmobilityIds;
@@ -63,8 +64,9 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
     this.sendsNotifications = sendsNotifications;
   }
 
-  public static EwpOutgoingMobilitiesApiConfiguration create(OmobilitiesV1 apiElement) {
+  public static EwpOutgoingMobilitiesApiConfiguration create(String heiId, OmobilitiesV1 apiElement) {
     return new EwpOutgoingMobilitiesApiConfiguration(
+        heiId,
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -73,8 +75,9 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
         apiElement.getSendsNotifications() != null);
   }
 
-  public static EwpOutgoingMobilitiesApiConfiguration create(OmobilitiesV2 apiElement) {
+  public static EwpOutgoingMobilitiesApiConfiguration create(String heiId, OmobilitiesV2 apiElement) {
     return new EwpOutgoingMobilitiesApiConfiguration(
+        heiId,
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),

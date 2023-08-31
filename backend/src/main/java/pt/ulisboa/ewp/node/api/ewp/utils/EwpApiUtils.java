@@ -3,6 +3,7 @@ package pt.ulisboa.ewp.node.api.ewp.utils;
 import static org.joox.JOOX.$;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
+import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringV1;
 import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
 import eu.erasmuswithoutpaper.registryclient.ApiSearchConditions;
@@ -12,15 +13,16 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import org.w3c.dom.Element;
 import pt.ulisboa.ewp.node.client.ewp.exception.NoEwpApiForHeiIdAndMajorVersionException;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfigurationFactory;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfigurationFactory;
 import pt.ulisboa.ewp.node.utils.EwpApi;
+import pt.ulisboa.ewp.node.utils.EwpApiSpecification.SpecificationElementToConfigurationConverter;
 import pt.ulisboa.ewp.node.utils.SemanticVersion;
 
 public class EwpApiUtils {
@@ -28,13 +30,13 @@ public class EwpApiUtils {
   private EwpApiUtils() {
   }
 
-  public static <T, C> C getApiConfiguration(
+  public static <T extends ManifestApiEntryBaseV1, C extends EwpApiConfiguration> C getApiConfiguration(
       RegistryClient registryClient,
       String heiId,
       String apiLocalName,
       int wantedMajorVersion,
       Class<T> apiConfigurationElementClassType,
-      Function<T, C> apiConfigurationTransformer)
+      SpecificationElementToConfigurationConverter<T, C> apiConfigurationConverter)
       throws NoEwpApiForHeiIdAndMajorVersionException {
     Optional<T> apiElementOptional =
         getApiElement(
@@ -46,7 +48,7 @@ public class EwpApiUtils {
     if (apiElementOptional.isEmpty()) {
       throw new NoEwpApiForHeiIdAndMajorVersionException(heiId, apiLocalName, wantedMajorVersion);
     }
-    return apiConfigurationTransformer.apply(apiElementOptional.get());
+    return apiConfigurationConverter.convert(heiId, apiElementOptional.get());
   }
 
   public static <T> Optional<T> getApiElement(

@@ -20,6 +20,7 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
   private boolean sendsNotifications;
 
   public EwpInterInstitutionalAgreementApiConfiguration(
+      String heiId,
       String indexUrl,
       String getUrl,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
@@ -27,7 +28,7 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
       BigInteger maxIiaIds,
       BigInteger maxIiaCodes,
       boolean sendsNotifications) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.indexUrl = indexUrl;
     this.getUrl = getUrl;
     this.maxIiaIds = maxIiaIds;
@@ -75,8 +76,9 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
     this.sendsNotifications = sendsNotifications;
   }
 
-  public static EwpInterInstitutionalAgreementApiConfiguration create(IiasV3 apiElement) {
+  public static EwpInterInstitutionalAgreementApiConfiguration create(String heiId, IiasV3 apiElement) {
     return new EwpInterInstitutionalAgreementApiConfiguration(
+        heiId,
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -86,8 +88,9 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
         apiElement.getSendsNotifications() != null);
   }
 
-  public static EwpInterInstitutionalAgreementApiConfiguration create(IiasV4 apiElement) {
+  public static EwpInterInstitutionalAgreementApiConfiguration create(String heiId, IiasV4 apiElement) {
     return new EwpInterInstitutionalAgreementApiConfiguration(
+        heiId,
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -97,8 +100,9 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
         apiElement.getSendsNotifications() != null);
   }
 
-  public static EwpInterInstitutionalAgreementApiConfiguration create(IiasV6 apiElement) {
+  public static EwpInterInstitutionalAgreementApiConfiguration create(String heiId, IiasV6 apiElement) {
     return new EwpInterInstitutionalAgreementApiConfiguration(
+        heiId,
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),

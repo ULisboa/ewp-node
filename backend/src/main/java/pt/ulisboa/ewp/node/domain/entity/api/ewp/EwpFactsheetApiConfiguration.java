@@ -15,11 +15,12 @@ public class EwpFactsheetApiConfiguration extends EwpApiConfiguration {
   private BigInteger maxHeiIds;
 
   public EwpFactsheetApiConfiguration(
+      String heiId,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxHeiIds) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.url = url;
     this.maxHeiIds = maxHeiIds;
   }
@@ -40,8 +41,9 @@ public class EwpFactsheetApiConfiguration extends EwpApiConfiguration {
     this.maxHeiIds = maxHeiIds;
   }
 
-  public static EwpFactsheetApiConfiguration create(FactsheetV1 apiElement) {
+  public static EwpFactsheetApiConfiguration create(String heiId, FactsheetV1 apiElement) {
     return new EwpFactsheetApiConfiguration(
+        heiId,
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

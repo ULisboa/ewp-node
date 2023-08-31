@@ -19,6 +19,7 @@ import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 public class EwpRequest implements Serializable {
 
   private String id = UUID.randomUUID().toString();
+  private String targetHeiId;
   private HttpMethod method;
   private String urlWithoutQueryParams;
   private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
@@ -27,7 +28,8 @@ public class EwpRequest implements Serializable {
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.HTTP_SIGNATURE;
   private Long parentCommunicationId;
 
-  public EwpRequest(HttpMethod method, @NotNull String urlWithoutQueryParams) {
+  public EwpRequest(String targetHeiId, HttpMethod method, @NotNull String urlWithoutQueryParams) {
+    this.targetHeiId = targetHeiId;
     this.method = method;
     this.urlWithoutQueryParams = urlWithoutQueryParams;
 
@@ -39,6 +41,19 @@ public class EwpRequest implements Serializable {
 
   public String getId() {
     return id;
+  }
+
+  public static EwpRequest create(
+      EwpApiConfiguration api,
+      HttpMethod method,
+      @NotNull String urlWithoutQueryParams,
+      HttpParams queryParams,
+      EwpRequestBody body) {
+    EwpRequest request = new EwpRequest(api.getHeiId(), method, urlWithoutQueryParams);
+    request.authenticationMethod(api.getBestSupportedAuthenticationMethod());
+    request.queryParams(queryParams);
+    request.body(body);
+    return request;
   }
 
   public HttpMethod getMethod() {
@@ -127,16 +142,7 @@ public class EwpRequest implements Serializable {
     return create(api, HttpMethod.POST, urlWithoutQueryParams, null, body);
   }
 
-  public static EwpRequest create(
-      EwpApiConfiguration api,
-      HttpMethod method,
-      @NotNull String urlWithoutQueryParams,
-      HttpParams queryParams,
-      EwpRequestBody body) {
-    EwpRequest request = new EwpRequest(method, urlWithoutQueryParams);
-    request.authenticationMethod(api.getBestSupportedAuthenticationMethod());
-    request.queryParams(queryParams);
-    request.body(body);
-    return request;
+  public String getTargetHeiId() {
+    return targetHeiId;
   }
 }

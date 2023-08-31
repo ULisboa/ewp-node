@@ -18,13 +18,14 @@ public class EwpIncomingMobilityToRApiConfiguration extends EwpApiConfiguration 
   private boolean sendsNotifications;
 
   public EwpIncomingMobilityToRApiConfiguration(
+      String heiId,
       String getUrl,
       String indexUrl,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxOmobilityIds,
       boolean sendsNotifications) {
-    super(supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.getUrl = getUrl;
     this.indexUrl = indexUrl;
     this.maxOmobilityIds = maxOmobilityIds;
@@ -63,8 +64,9 @@ public class EwpIncomingMobilityToRApiConfiguration extends EwpApiConfiguration 
     this.sendsNotifications = sendsNotifications;
   }
 
-  public static EwpIncomingMobilityToRApiConfiguration create(ImobilityTorsV1 apiElement) {
+  public static EwpIncomingMobilityToRApiConfiguration create(String heiId, ImobilityTorsV1 apiElement) {
     return new EwpIncomingMobilityToRApiConfiguration(
+        heiId,
         apiElement.getGetUrl(),
         apiElement.getIndexUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -73,8 +75,9 @@ public class EwpIncomingMobilityToRApiConfiguration extends EwpApiConfiguration 
         apiElement.getSendsNotifications() != null);
   }
 
-  public static EwpIncomingMobilityToRApiConfiguration create(ImobilityTorsV2 apiElement) {
+  public static EwpIncomingMobilityToRApiConfiguration create(String heiId, ImobilityTorsV2 apiElement) {
     return new EwpIncomingMobilityToRApiConfiguration(
+        heiId,
         apiElement.getGetUrl(),
         apiElement.getIndexUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
