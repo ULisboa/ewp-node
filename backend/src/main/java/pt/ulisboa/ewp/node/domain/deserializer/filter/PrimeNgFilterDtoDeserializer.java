@@ -12,6 +12,7 @@ import pt.ulisboa.ewp.node.domain.dto.filter.ConjunctionFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.DisjunctionFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.NotFilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.EqualsFieldFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.GreaterThanFieldFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.GreaterThanOrEqualFieldFilterDto;
@@ -24,14 +25,14 @@ public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deser
   public static final String FORMAT = "primeng";
 
   @Override
-  public FilterDto deserialize(JsonNode filtersNode) {
+  public FilterDto<?> deserialize(JsonNode filtersNode) {
     Iterator<String> fieldNamesIterator = filtersNode.fieldNames();
-    List<FilterDto> allFilters = new ArrayList<>();
+    List<FilterDto<?>> allFilters = new ArrayList<>();
     while (fieldNamesIterator.hasNext()) {
       String fieldName = fieldNamesIterator.next();
       JsonNode fieldFiltersNode = filtersNode.get(fieldName);
       int numberFieldFilters = fieldFiltersNode.size();
-      List<FilterDto> currentFieldFilters = new ArrayList<>();
+      List<FilterDto<?>> currentFieldFilters = new ArrayList<>();
       boolean conjunction = true;
       for (int i = 0; i < numberFieldFilters; i++) {
         JsonNode fieldFilterNode = fieldFiltersNode.get(i);
@@ -45,50 +46,45 @@ public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deser
           case "equals":
             value = deserializeValue(fieldFilterNode.get("value"));
             if (value != null) {
-              currentFieldFilters.add(new EqualsFieldFilterDto(fieldName, value));
+              currentFieldFilters.add(new EqualsFieldFilterDto<>(fieldName, value));
             }
             break;
 
           case "notEquals":
             value = deserializeValue(fieldFilterNode.get("value"));
             if (value != null) {
-              currentFieldFilters.add(new NotFilterDto(new EqualsFieldFilterDto(fieldName, value)));
+              currentFieldFilters.add(
+                  new NotFilterDto<>(new EqualsFieldFilterDto<>(fieldName, value)));
             }
             break;
 
           case "lt":
             numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
             if (numberValue != null) {
-              currentFieldFilters.add(new LessThanFieldFilterDto(fieldName, numberValue));
+              currentFieldFilters.add(new LessThanFieldFilterDto<>(fieldName, numberValue));
             }
             break;
 
           case "lte":
             numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
             if (numberValue != null) {
-              currentFieldFilters.add(new LessThanOrEqualFieldFilterDto(fieldName, numberValue));
+              currentFieldFilters.add(new LessThanOrEqualFieldFilterDto<>(fieldName, numberValue));
             }
             break;
 
           case "gt":
             numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
             if (numberValue != null) {
-              currentFieldFilters.add(new GreaterThanFieldFilterDto(fieldName, numberValue));
+              currentFieldFilters.add(new GreaterThanFieldFilterDto<>(fieldName, numberValue));
             }
             break;
 
           case "gte":
             numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
             if (numberValue != null) {
-              currentFieldFilters.add(new GreaterThanOrEqualFieldFilterDto(fieldName, numberValue));
+              currentFieldFilters.add(
+                  new GreaterThanOrEqualFieldFilterDto<>(fieldName, numberValue));
             }
-            break;
-
-          case "dateAfter":
-            numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
-//            if (numberValue != null) {
-//              currentFieldFilters.add(new DateAfterFieldFilterDto(fieldName, numberValue));
-//            }
             break;
 
           case "in":
@@ -104,8 +100,16 @@ public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deser
               }
 
               if (!possibleValues.isEmpty()) {
-                currentFieldFilters.add(new InFieldFilterDto(fieldName, possibleValues));
+                currentFieldFilters.add(new InFieldFilterDto<>(fieldName, possibleValues));
               }
+            }
+            break;
+
+          case "communicationFromHeiId":
+            value = deserializeValue(fieldFilterNode.get("value"));
+            if (value != null) {
+              currentFieldFilters.add(
+                  new HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto(value.toString()));
             }
             break;
 

@@ -29,7 +29,7 @@ import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogDetailDt
 import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogSummaryDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.ConjunctionFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
-import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeCoveredHeiIdsContainsFilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.service.communication.log.CommunicationLogService;
 
@@ -58,7 +58,7 @@ public class AdminApiCommunicationLogController {
       filter =
           new ConjunctionFilterDto<>(
               filter,
-              new HttpCommunicationFromEwpNodeCoveredHeiIdsContainsFilterDto(
+              new HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto(
                   requestDto.getRequesterHeiId()));
     }
 

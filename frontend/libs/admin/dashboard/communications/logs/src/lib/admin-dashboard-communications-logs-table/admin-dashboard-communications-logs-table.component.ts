@@ -1,19 +1,24 @@
-import { Component, Input, inject } from '@angular/core';
-import { CommunicationLogSummary } from '@ewp-node-frontend/admin/shared/api-interfaces';
-import { Message } from 'primeng/api';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommunicationLogSummary, HttpCommunicationFromEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
+import { FilterService, Message, SelectItem } from 'primeng/api';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { take } from 'rxjs';
 import { AdminCommunicationsLogsService } from '../services/admin-communications-logs.service';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
+
+const CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME = 'communicationFromHeiId';
 
 @Component({
   selector: 'lib-admin-dashboard-communications-logs-table',
   templateUrl: './admin-dashboard-communications-logs-table.component.html',
   styleUrls: ['./admin-dashboard-communications-logs-table.component.scss'],
 })
-export class AdminDashboardCommunicationsLogsTableComponent {
+export class AdminDashboardCommunicationsLogsTableComponent implements OnInit {
 
   adminCommunicationsLogsService = inject(AdminCommunicationsLogsService);
+  filterService = inject(FilterService);
+
+  sourceMatchModeOptions: SelectItem[];
 
   statusOptions = [
     { name: 'SUCCESS', value: 'SUCCESS' },
@@ -28,6 +33,30 @@ export class AdminDashboardCommunicationsLogsTableComponent {
 
   loading = true;
   messages: Message[] = [];
+
+  constructor() {
+    this.sourceMatchModeOptions = [
+      { label: 'Communication from HEI ID', value: CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME }
+    ];
+  }
+
+  ngOnInit() {
+      this.filterService.register(CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME, (value: object, filter: string): boolean => {
+        if (filter === undefined || filter === null || filter.trim() === '') {
+          return true;
+        }
+
+        if (value === undefined || value === null) {
+          return false;
+        }
+
+        if (!(value instanceof HttpCommunicationFromEwpNodeLogDetail)) {
+          return false;
+        }
+
+        return value.heiIdsCoveredByClient.includes(filter);
+      });
+  }
 
   loadCommunicationsLogs(event: TableLazyLoadEvent) {
     this.loading = true;

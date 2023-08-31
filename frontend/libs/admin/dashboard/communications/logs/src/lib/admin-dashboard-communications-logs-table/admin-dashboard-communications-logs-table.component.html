@@ -24,7 +24,12 @@
                 </div>
             </th>
             <th pResizableColumn>Type</th>
-            <th pResizableColumn>Source</th>
+            <th pResizableColumn>
+                <div class="flex align-items-center">
+                    Source
+                    <p-columnFilter field="id" type="text" display="menu" [matchModeOptions]="sourceMatchModeOptions" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
+                </div>
+            </th>
             <th pResizableColumn>Target</th>
             <th pResizableColumn>Start Processing Time</th>
             <th pResizableColumn>End Processing Time</th>
