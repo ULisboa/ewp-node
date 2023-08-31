@@ -17,7 +17,6 @@ export const appRoutes: Route[] = [
                 path: '',
                 pathMatch: 'full',
                 redirectTo: '/admin/communications/logs',
-                canMatch: [adminAuthCanMatchGuard]
             }, 
             {
                 path: 'communications/logs',
