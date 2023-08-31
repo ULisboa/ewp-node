@@ -43,11 +43,13 @@ public class HostPluginFunctionCallCommunicationLogService {
   public boolean updateCommunicationAfterExecution(
       HostPluginFunctionCallCommunicationLog communicationLog, String resultType, String result) {
     communicationLog.editResult(resultType, result);
+    communicationLog.setEndProcessingDateTime(ZonedDateTime.now());
     return this.repository.persist(communicationLog);
   }
 
   public void registerException(
       HostPluginFunctionCallCommunicationLog communicationLog, Throwable throwable) {
+    communicationLog.setEndProcessingDateTime(ZonedDateTime.now());
     CommunicationLogService.registerException(repository, communicationLog, throwable);
   }
 }
