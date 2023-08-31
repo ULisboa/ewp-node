@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
@@ -45,5 +46,11 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
 
   public void setTargetHeiId(String targetHeiId) {
     this.targetHeiId = targetHeiId;
+  }
+
+  @Override
+  @Transient
+  public String getTarget() {
+    return getTargetHeiId() + ": " + super.getTarget();
   }
 }
