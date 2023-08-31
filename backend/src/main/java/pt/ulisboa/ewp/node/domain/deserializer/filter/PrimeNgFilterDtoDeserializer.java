@@ -13,6 +13,7 @@ import pt.ulisboa.ewp.node.domain.dto.filter.DisjunctionFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.NotFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationToEwpNodeIsToHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.EqualsFieldFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.GreaterThanFieldFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.GreaterThanOrEqualFieldFilterDto;
@@ -110,6 +111,14 @@ public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deser
             if (value != null) {
               currentFieldFilters.add(
                   new HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto(value.toString()));
+            }
+            break;
+
+          case "communicationToHeiId":
+            value = deserializeValue(fieldFilterNode.get("value"));
+            if (value != null) {
+              currentFieldFilters.add(
+                  new HttpCommunicationToEwpNodeIsToHeiIdFilterDto(value.toString()));
             }
             break;
 

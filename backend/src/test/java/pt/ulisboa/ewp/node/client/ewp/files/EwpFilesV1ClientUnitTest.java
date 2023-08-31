@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.files.FileResponse;
-import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.operation.response.EwpResponse;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult.Builder;
@@ -33,6 +33,7 @@ class EwpFilesV1ClientUnitTest {
     byte[] data = "PDF_TEST_CONTENT".getBytes(StandardCharsets.UTF_8);
 
     EwpFilesApiConfiguration apiConfiguration = new EwpFilesApiConfiguration(
+        "example.org",
         "https://www.example.org",
         List.of(new EwpClientAuthenticationHttpSignatureConfiguration()),
         List.of(new EwpServerAuthenticationHttpSignatureConfiguration()));

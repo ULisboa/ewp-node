@@ -7,6 +7,7 @@ import { AdminCommunicationsLogsService } from '../services/admin-communications
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
 
 const CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME = 'communicationFromHeiId';
+const CUSTOM_FILTER_COMMUNICATION_TO_HEI_ID_NAME = 'communicationToHeiId';
 
 @Component({
   selector: 'lib-admin-dashboard-communications-logs-table',
@@ -19,6 +20,7 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit {
   filterService = inject(FilterService);
 
   sourceMatchModeOptions: SelectItem[];
+  targetMatchModeOptions: SelectItem[];
 
   statusOptions = [
     { name: 'SUCCESS', value: 'SUCCESS' },
@@ -38,10 +40,30 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit {
     this.sourceMatchModeOptions = [
       { label: 'Communication from HEI ID', value: CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME }
     ];
+
+    this.targetMatchModeOptions = [
+      { label: 'Communication to HEI ID', value: CUSTOM_FILTER_COMMUNICATION_TO_HEI_ID_NAME }
+    ];
   }
 
   ngOnInit() {
       this.filterService.register(CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME, (value: object, filter: string): boolean => {
+        if (filter === undefined || filter === null || filter.trim() === '') {
+          return true;
+        }
+
+        if (value === undefined || value === null) {
+          return false;
+        }
+
+        if (!(value instanceof HttpCommunicationFromEwpNodeLogDetail)) {
+          return false;
+        }
+
+        return value.heiIdsCoveredByClient.includes(filter);
+      });
+
+      this.filterService.register(CUSTOM_FILTER_COMMUNICATION_TO_HEI_ID_NAME, (value: object, filter: string): boolean => {
         if (filter === undefined || filter === null || filter.trim() === '') {
           return true;
         }

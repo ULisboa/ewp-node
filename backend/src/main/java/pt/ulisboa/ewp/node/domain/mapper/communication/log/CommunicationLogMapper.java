@@ -13,6 +13,7 @@ import pt.ulisboa.ewp.node.domain.dto.communication.log.host.plugin.HostPluginFu
 import pt.ulisboa.ewp.node.domain.dto.communication.log.http.HttpCommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.http.ewp.EwpHttpCommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.http.ewp.HttpCommunicationFromEwpNodeLogDetailDto;
+import pt.ulisboa.ewp.node.domain.dto.communication.log.http.ewp.HttpCommunicationToEwpNodeLogDetailDto;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.http.host.HostHttpCommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.function.call.FunctionCallCommunicationLog;
@@ -20,6 +21,7 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.host.plugin.HostPlugi
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.EwpHttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationFromEwpNodeLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HostHttpCommunicationLog;
 
 @Mapper
@@ -41,6 +43,9 @@ public interface CommunicationLogMapper {
     @SubclassMapping(
         source = HttpCommunicationFromEwpNodeLog.class,
         target = HttpCommunicationFromEwpNodeLogDetailDto.class),
+      @SubclassMapping(
+          source = HttpCommunicationToEwpNodeLog.class,
+          target = HttpCommunicationToEwpNodeLogDetailDto.class),
     @SubclassMapping(
         source = EwpHttpCommunicationLog.class,
         target = EwpHttpCommunicationLogDetailDto.class),

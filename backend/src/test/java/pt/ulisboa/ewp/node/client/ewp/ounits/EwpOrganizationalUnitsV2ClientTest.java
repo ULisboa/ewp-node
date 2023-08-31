@@ -24,6 +24,7 @@ public class EwpOrganizationalUnitsV2ClientTest extends AbstractTest {
 
     EwpOrganizationalUnitApiConfiguration apiConfiguration =
         new EwpOrganizationalUnitApiConfiguration(
+            "example.com",
             "http://example.com",
             Collections.emptyList(),
             Collections.emptyList(),

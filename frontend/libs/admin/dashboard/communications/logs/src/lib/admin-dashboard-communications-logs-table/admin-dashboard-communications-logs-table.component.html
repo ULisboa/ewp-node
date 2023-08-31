@@ -30,7 +30,12 @@
                     <p-columnFilter field="source" type="text" display="menu" [matchModeOptions]="sourceMatchModeOptions" matchMode="communicationFromHeiId" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
                 </div>
             </th>
-            <th pResizableColumn>Target</th>
+            <th pResizableColumn>
+                <div class="flex align-items-center">
+                    Target
+                    <p-columnFilter field="target" type="text" display="menu" [matchModeOptions]="targetMatchModeOptions" matchMode="communicationToHeiId" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
+                </div>
+            </th>
             <th pResizableColumn>Start Processing Time</th>
             <th pResizableColumn>End Processing Time</th>
             <th pResizableColumn>
