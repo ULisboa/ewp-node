@@ -1,15 +1,9 @@
 import { Route } from '@angular/router';
 import { AppLayoutComponent } from './layout/app.layout.component';
-import { NxWelcomeComponent } from './nx-welcome.component';
 import { adminAuthCanMatchGuard } from '@ewp-node-frontend/admin/auth/data-access';
+import { NotFoundComponent } from '@ewp-node-frontend/not-found';
 
 export const appRoutes: Route[] = [
-    {
-        path: '', component: AppLayoutComponent,
-        children: [
-            { path: '', component: NxWelcomeComponent }
-        ]
-    },
     {
         path: 'admin',
         children: [
@@ -35,5 +29,9 @@ export const appRoutes: Route[] = [
                 redirectTo: '/admin/auth'
             }
         ]
+    },
+    {
+        path: '**',
+        component: NotFoundComponent
     }
 ];
