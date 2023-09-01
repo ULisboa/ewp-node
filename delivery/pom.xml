@@ -14,6 +14,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <frontend-bundle-dir>${project.parent.basedir}/frontend/dist/ewp-node-frontend/</frontend-bundle-dir>
     </properties>
 
     <dependencies>
@@ -30,6 +31,26 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- Gather the "dist" directory from frontend project -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals><goal>copy-resources</goal></goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/public/</outputDirectory >
+                            <resources>
+                                <resource>
+                                    <directory>${frontend-bundle-dir}</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
