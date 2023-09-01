@@ -52,7 +52,7 @@ Dockerfile.dev
 .dockerignore
 
 ### Others ###
-**/logs
+backend/logs
 README.md
 .directory
 /plugins
