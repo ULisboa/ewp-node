@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
+import org.apache.commons.lang3.StringUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
@@ -20,6 +21,7 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
   private String targetHeiId;
   private String apiName;
   private String apiVersion;
+  private String endpointName;
 
   public HttpCommunicationToEwpNodeLog() {}
 
@@ -27,7 +29,7 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
       String targetHeiId,
       String apiName,
       String apiVersion,
-      EwpAuthenticationMethod authenticationMethod,
+      String endpointName, EwpAuthenticationMethod authenticationMethod,
       HttpRequestLog request,
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
@@ -45,6 +47,7 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
     this.targetHeiId = targetHeiId;
     this.apiName = apiName;
     this.apiVersion = apiVersion;
+    this.endpointName = endpointName;
   }
   
   @Column(name = "target_hei_id")
@@ -74,9 +77,23 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
     this.apiVersion = apiVersion;
   }
 
+  @Column(name = "endpoint_name")
+  public String getEndpointName() {
+    return endpointName;
+  }
+
+  public void setEndpointName(String endpointName) {
+    this.endpointName = endpointName;
+  }
+
   @Override
   @Transient
   public String getTarget() {
-    return getTargetHeiId() + ": " + super.getTarget();
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append(getTargetHeiId()).append(":").append(getApiName()).append("[").append(getApiVersion()).append("]");
+    if (!StringUtils.isEmpty(getEndpointName())) {
+      stringBuilder.append(":").append(getEndpointName());
+    }
+    return stringBuilder.toString();
   }
 }

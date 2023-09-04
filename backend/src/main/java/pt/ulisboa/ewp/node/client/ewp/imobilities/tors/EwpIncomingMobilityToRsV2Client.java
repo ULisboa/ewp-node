@@ -7,8 +7,8 @@ import java.util.Collection;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.imobilities.tors.ForwardEwpApiIncomingMobilityToRsApiSpecificationResponseDTO;
-import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -47,8 +47,9 @@ public class EwpIncomingMobilityToRsV2Client {
     bodyParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiIds);
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
-        new EwpRequestFormDataUrlEncodedBody(bodyParams));
+    EwpRequest request =
+        EwpRequest.createPost(
+            api, "index", api.getIndexUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, ImobilityTorsIndexResponseV2.class);
   }
 
@@ -62,8 +63,9 @@ public class EwpIncomingMobilityToRsV2Client {
     bodyParams.param(EwpApiParamConstants.RECEIVING_HEI_ID, receivingHeiId);
     bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, outgoingMobilityIds);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
-        new EwpRequestFormDataUrlEncodedBody(bodyParams));
+    EwpRequest request =
+        EwpRequest.createPost(
+            api, "get", api.getGetUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, ImobilityTorsGetResponseV2.class);
   }
 

@@ -3,8 +3,8 @@ package pt.ulisboa.ewp.node.client.ewp.iias.approval.cnr;
 import eu.erasmuswithoutpaper.api.iias.approval.cnr.v1.IiaApprovalCnrResponseV1;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -36,8 +36,9 @@ public class EwpInterInstitutionalAgreementApprovalCnrV1Client {
     bodyParams.param(EwpApiParamConstants.OWNER_HEI_ID, ownerHerId);
     bodyParams.param(EwpApiParamConstants.IIA_ID, iiaId);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getUrl(),
-        new EwpRequestFormDataUrlEncodedBody(bodyParams));
+    EwpRequest request =
+        EwpRequest.createPost(
+            api, "", api.getUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, IiaApprovalCnrResponseV1.class);
   }
 

@@ -10,8 +10,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.las.ForwardEwpApiOutgoingMobilityLearningAgreementsApiSpecificationResponseDTO;
-import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestSerializableBody;
@@ -63,7 +63,7 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client {
     bodyParams.param(EwpApiParamConstants.MOBILITY_TYPE, mobilityType);
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
+    EwpRequest request = EwpRequest.createPost(api, "index", api.getIndexUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, OmobilityLasIndexResponseV1.class);
   }
@@ -77,7 +77,7 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client {
     bodyParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
     bodyParams.param(EwpApiParamConstants.OMOBILITY_ID, outgoingMobilityIds);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
+    EwpRequest request = EwpRequest.createPost(api, "get", api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
     EwpSuccessOperationResult<OmobilityLasGetResponseV1> result = ewpHttpClient.execute(request, OmobilityLasGetResponseV1.class);
 
@@ -91,7 +91,7 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client {
     EwpOutgoingMobilityLearningAgreementsApiConfiguration api = getApiConfigurationForHeiId(
         updateData.getSendingHeiId());
 
-    EwpRequest request = EwpRequest.createPost(api, api.getUpdateUrl(),
+    EwpRequest request = EwpRequest.createPost(api, "update", api.getUpdateUrl(),
         new EwpRequestSerializableBody(updateData));
     return ewpHttpClient.execute(request, OmobilityLasUpdateResponseV1.class);
   }

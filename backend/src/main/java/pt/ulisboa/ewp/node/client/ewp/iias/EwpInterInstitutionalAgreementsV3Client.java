@@ -8,8 +8,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO;
-import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -53,8 +53,9 @@ public class EwpInterInstitutionalAgreementsV3Client {
     bodyParams.param(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearIds);
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getIndexUrl(),
-        new EwpRequestFormDataUrlEncodedBody(bodyParams));
+    EwpRequest request =
+        EwpRequest.createPost(
+            api, "index", api.getIndexUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, IiasIndexResponseV3.class);
   }
 
@@ -68,8 +69,9 @@ public class EwpInterInstitutionalAgreementsV3Client {
     bodyParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
     bodyParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
-        new EwpRequestFormDataUrlEncodedBody(bodyParams));
+    EwpRequest request =
+        EwpRequest.createPost(
+            api, "get", api.getGetUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, IiasGetResponseV3.class);
   }
 
@@ -83,7 +85,7 @@ public class EwpInterInstitutionalAgreementsV3Client {
     bodyParams.param(EwpApiParamConstants.IIA_CODE, iiaCodes);
     bodyParams.param(EwpApiParamConstants.SEND_PDF, sendPdf);
 
-    EwpRequest request = EwpRequest.createPost(api, api.getGetUrl(),
+    EwpRequest request = EwpRequest.createPost(api, "get", api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, IiasGetResponseV3.class);
   }

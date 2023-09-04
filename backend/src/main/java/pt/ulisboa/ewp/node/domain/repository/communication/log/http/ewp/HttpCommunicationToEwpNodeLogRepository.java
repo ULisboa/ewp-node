@@ -33,24 +33,28 @@ public class HttpCommunicationToEwpNodeLogRepository
       String targetHeiId,
       String apiName,
       String apiVersion,
+      String endpointName,
       EwpAuthenticationMethod authenticationMethod,
       HttpRequestLog request,
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) throws IOException {
+      HttpCommunicationLog parentCommunication)
+      throws IOException {
     HttpCommunicationToEwpNodeLog communicationToEwpNodeLog =
         new HttpCommunicationToEwpNodeLog(
             targetHeiId,
             apiName,
             apiVersion,
+            endpointName,
             authenticationMethod,
             request,
             response,
             startProcessingDateTime,
             endProcessingDateTime,
-            observations, parentCommunication);
+            observations,
+            parentCommunication);
     return persist(communicationToEwpNodeLog);
   }
 

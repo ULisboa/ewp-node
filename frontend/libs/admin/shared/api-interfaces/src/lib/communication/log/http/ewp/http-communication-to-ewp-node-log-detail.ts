@@ -4,4 +4,5 @@ export class HttpCommunicationToEwpNodeLogDetail extends EwpHttpCommunicationLog
     targetHeiId!: string;
     apiName!: string;
     apiVersion!: string;
+    endpointName!: string;
 }

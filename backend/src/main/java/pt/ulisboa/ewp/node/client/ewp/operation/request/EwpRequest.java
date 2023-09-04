@@ -26,13 +26,13 @@ public class EwpRequest implements Serializable {
   private EwpRequestBody body = new EwpRequestFormDataUrlEncodedBody(new HttpParams());
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.HTTP_SIGNATURE;
   private Long parentCommunicationId;
-  private final EwpApiInformation apiInformation;
+  private final EwpEndpointInformation endpointInformation;
 
   public EwpRequest(
-      HttpMethod method, @NotNull String urlWithoutQueryParams, EwpApiInformation apiInformation) {
+      HttpMethod method, @NotNull String urlWithoutQueryParams, EwpEndpointInformation endpointInformation) {
     this.method = method;
     this.urlWithoutQueryParams = urlWithoutQueryParams;
-    this.apiInformation = apiInformation;
+    this.endpointInformation = endpointInformation;
 
     CommunicationContext context = CommunicationContextHolder.getContext();
     if (context.getCurrentCommunicationLog() != null) {
@@ -46,14 +46,15 @@ public class EwpRequest implements Serializable {
 
   public static EwpRequest create(
       EwpApiConfiguration api,
+      String endpointName,
       HttpMethod method,
       @NotNull String urlWithoutQueryParams,
       HttpParams queryParams,
       EwpRequestBody body) {
     EwpRequest request =
         new EwpRequest(
-            method, urlWithoutQueryParams, new EwpApiInformation(api.getHeiId(), api.getApiName(),
-            api.getVersion()));
+            method, urlWithoutQueryParams, new EwpEndpointInformation(api.getHeiId(), api.getApiName(),
+            api.getVersion(), endpointName));
     request.authenticationMethod(api.getBestSupportedAuthenticationMethod());
     request.queryParams(queryParams);
     request.body(body);
@@ -136,30 +137,33 @@ public class EwpRequest implements Serializable {
     return parentCommunicationId;
   }
 
-  public EwpApiInformation getApiInformation() {
-    return apiInformation;
-  }
-
   public static EwpRequest createGet(
-      EwpApiConfiguration api, @NotNull String urlWithoutQueryParams, HttpParams queryParams) {
-    return create(api, HttpMethod.GET, urlWithoutQueryParams, queryParams, null);
+      EwpApiConfiguration api, String endpointName, @NotNull String urlWithoutQueryParams, HttpParams queryParams) {
+    return create(api, endpointName, HttpMethod.GET, urlWithoutQueryParams, queryParams, null);
   }
 
   public static EwpRequest createPost(
-      EwpApiConfiguration api, @NotNull String urlWithoutQueryParams, EwpRequestBody body) {
-    return create(api, HttpMethod.POST, urlWithoutQueryParams, null, body);
+      EwpApiConfiguration api, String endpointName, @NotNull String urlWithoutQueryParams, EwpRequestBody body) {
+    return create(api, endpointName, HttpMethod.POST, urlWithoutQueryParams, null, body);
   }
 
-  public static class EwpApiInformation {
+  public EwpEndpointInformation getEndpointInformation() {
+    return endpointInformation;
+  }
+
+  public static class EwpEndpointInformation {
 
     private final String heiId;
     private final String apiName;
-    private final String version;
+    private final String apiVersion;
+    private final String endpointName;
 
-    public EwpApiInformation(String heiId, String apiName, String version) {
+    public EwpEndpointInformation(String heiId, String apiName, String apiVersion,
+        String endpointName) {
       this.heiId = heiId;
       this.apiName = apiName;
-      this.version = version;
+      this.apiVersion = apiVersion;
+      this.endpointName = endpointName;
     }
 
     public String getHeiId() {
@@ -170,8 +174,12 @@ public class EwpRequest implements Serializable {
       return apiName;
     }
 
-    public String getVersion() {
-      return version;
+    public String getApiVersion() {
+      return apiVersion;
+    }
+
+    public String getEndpointName() {
+      return endpointName;
     }
   }
 }
