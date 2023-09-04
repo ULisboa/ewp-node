@@ -1,16 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { CommunicationLogSummary } from '@ewp-node-frontend/admin/shared/api-interfaces';
-import { LazyLoadEvent, Message } from 'primeng/api';
+import { Message } from 'primeng/api';
 import { AdminCommunicationsLogsService } from '../services/admin-communications-logs.service';
 import { take } from 'rxjs';
 import { TableLazyLoadEvent } from 'primeng/table';
-import { MultiSelectChangeEvent } from 'primeng/multiselect';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
 
 @Component({
   selector: 'lib-admin-dashboard-communications-logs-page',
-  templateUrl: './admin-dashboard-communications-logs-page.component.html',
-  styleUrls: ['./admin-dashboard-communications-logs-page.component.scss'],
+  templateUrl: './communications-logs-page.component.html',
+  styleUrls: ['./communications-logs-page.component.scss'],
 })
 export class AdminDashboardCommunicationsLogsPageComponent {
   adminCommunicationsLogsService = inject(AdminCommunicationsLogsService);

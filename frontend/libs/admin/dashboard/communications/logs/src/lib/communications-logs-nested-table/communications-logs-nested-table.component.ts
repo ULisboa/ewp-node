@@ -9,9 +9,9 @@ import { Message } from 'primeng/api';
 @Component({
   selector: 'lib-admin-dashboard-communications-logs-nested-table',
   templateUrl:
-    './admin-dashboard-communications-logs-nested-table.component.html',
+    './communications-logs-nested-table.component.html',
   styleUrls: [
-    './admin-dashboard-communications-logs-nested-table.component.scss',
+    './communications-logs-nested-table.component.scss',
   ],
 })
 export class AdminDashboardCommunicationsLogsNestedTableComponent {

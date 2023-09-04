@@ -12,8 +12,8 @@ const CUSTOM_FILTER_COMMUNICATION_TO_HEI_ID_NAME = 'communicationToHeiId';
 
 @Component({
   selector: 'lib-admin-dashboard-communications-logs-table',
-  templateUrl: './admin-dashboard-communications-logs-table.component.html',
-  styleUrls: ['./admin-dashboard-communications-logs-table.component.scss'],
+  templateUrl: './communications-logs-table.component.html',
+  styleUrls: ['./communications-logs-table.component.scss'],
 })
 export class AdminDashboardCommunicationsLogsTableComponent implements OnInit {
 

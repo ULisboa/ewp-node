@@ -6,8 +6,8 @@ import { Message } from 'primeng/api';
 
 @Component({
   selector: 'lib-admin-dashboard-communication-log-detail',
-  templateUrl: './admin-dashboard-communication-log-detail.component.html',
-  styleUrls: ['./admin-dashboard-communication-log-detail.component.scss'],
+  templateUrl: './communication-log-detail.component.html',
+  styleUrls: ['./communication-log-detail.component.scss'],
 })
 export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
   public readonly EwpHttpCommunicationLogDetail = EwpHttpCommunicationLogDetail;

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AdminDashboardCommunicationsLogsNestedTableComponent } from './admin-dashboard-communications-logs-nested-table.component';
+import { AdminDashboardCommunicationsLogsNestedTableComponent } from './communications-logs-nested-table.component';
 
 describe('AdminDashboardCommunicationsLogsNestedTableComponent', () => {
   let component: AdminDashboardCommunicationsLogsNestedTableComponent;

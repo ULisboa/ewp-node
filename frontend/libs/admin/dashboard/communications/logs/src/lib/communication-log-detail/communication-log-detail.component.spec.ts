@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AdminDashboardCommunicationLogDetailComponent } from './admin-dashboard-communication-log-detail.component';
+import { AdminDashboardCommunicationLogDetailComponent } from './communication-log-detail.component';
 
 describe('AdminDashboardCommunicationLogDetailComponent', () => {
   let component: AdminDashboardCommunicationLogDetailComponent;
