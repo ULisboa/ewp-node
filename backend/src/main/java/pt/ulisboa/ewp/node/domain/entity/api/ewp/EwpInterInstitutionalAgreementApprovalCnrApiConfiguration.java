@@ -15,12 +15,14 @@ public class EwpInterInstitutionalAgreementApprovalCnrApiConfiguration extends E
 
   public EwpInterInstitutionalAgreementApprovalCnrApiConfiguration(
       String heiId,
+      String version,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods) {
     super(
         heiId,
         EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL_CNR.getLocalName(),
+        version,
         supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.url = url;
@@ -34,6 +36,7 @@ public class EwpInterInstitutionalAgreementApprovalCnrApiConfiguration extends E
       String heiId, IiaApprovalCnrV1 apiElement) {
     return new EwpInterInstitutionalAgreementApprovalCnrApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()));

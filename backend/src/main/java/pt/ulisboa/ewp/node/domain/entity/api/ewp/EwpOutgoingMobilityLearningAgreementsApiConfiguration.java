@@ -19,6 +19,7 @@ public class EwpOutgoingMobilityLearningAgreementsApiConfiguration extends EwpAp
 
   public EwpOutgoingMobilityLearningAgreementsApiConfiguration(
       String heiId,
+      String version,
       String indexUrl,
       String getUrl,
       String updateUrl,
@@ -28,7 +29,7 @@ public class EwpOutgoingMobilityLearningAgreementsApiConfiguration extends EwpAp
     super(
         heiId,
         EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENTS.getLocalName(),
-        supportedClientAuthenticationMethods,
+        version, supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.indexUrl = indexUrl;
     this.getUrl = getUrl;
@@ -56,6 +57,7 @@ public class EwpOutgoingMobilityLearningAgreementsApiConfiguration extends EwpAp
       String heiId, OmobilityLasV1 apiElement) {
     return new EwpOutgoingMobilityLearningAgreementsApiConfiguration(
         heiId,
+        apiElement.getVersion(), 
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         apiElement.getUpdateUrl(),

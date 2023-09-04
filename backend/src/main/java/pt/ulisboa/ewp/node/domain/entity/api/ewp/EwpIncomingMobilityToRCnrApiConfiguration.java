@@ -17,6 +17,7 @@ public class EwpIncomingMobilityToRCnrApiConfiguration extends EwpApiConfigurati
 
   public EwpIncomingMobilityToRCnrApiConfiguration(
       String heiId,
+      String version,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
@@ -24,7 +25,7 @@ public class EwpIncomingMobilityToRCnrApiConfiguration extends EwpApiConfigurati
     super(
         heiId,
         EwpApi.INCOMING_MOBILITY_TOR_CNR.getLocalName(),
-        supportedClientAuthenticationMethods,
+        version, supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.url = url;
     this.maxOmobilityIds = maxOmobilityIds;
@@ -42,6 +43,7 @@ public class EwpIncomingMobilityToRCnrApiConfiguration extends EwpApiConfigurati
       String heiId, ImobilityTorCnrV1 apiElement) {
     return new EwpIncomingMobilityToRCnrApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

@@ -17,6 +17,7 @@ public class EwpInstitutionApiConfiguration extends EwpApiConfiguration {
 
   public EwpInstitutionApiConfiguration(
       String heiId,
+      String version,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
@@ -24,7 +25,7 @@ public class EwpInstitutionApiConfiguration extends EwpApiConfiguration {
     super(
         heiId,
         EwpApi.INSTITUTIONS.getLocalName(),
-        supportedClientAuthenticationMethods,
+        version, supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.url = url;
     this.maxHeiIds = maxHeiIds;
@@ -49,6 +50,7 @@ public class EwpInstitutionApiConfiguration extends EwpApiConfiguration {
   public static EwpInstitutionApiConfiguration create(String heiId, InstitutionsV2 apiElement) {
     return new EwpInstitutionApiConfiguration(
         heiId,
+        apiElement.getVersion(), 
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

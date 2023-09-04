@@ -18,6 +18,7 @@ public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
 
   public EwpOrganizationalUnitApiConfiguration(
       String heiId,
+      String version,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
@@ -26,7 +27,7 @@ public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
     super(
         heiId,
         EwpApi.ORGANIZATIONAL_UNITS.getLocalName(),
-        supportedClientAuthenticationMethods,
+        version, supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.url = url;
     this.maxOunitIds = maxOunitIds;
@@ -60,6 +61,7 @@ public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
   public static EwpOrganizationalUnitApiConfiguration create(String heiId, OrganizationalUnitsV2 apiElement) {
     return new EwpOrganizationalUnitApiConfiguration(
         heiId,
+        apiElement.getVersion(), 
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

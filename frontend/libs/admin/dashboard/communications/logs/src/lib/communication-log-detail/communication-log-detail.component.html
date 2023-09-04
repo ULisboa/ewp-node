@@ -9,6 +9,7 @@
                     <ng-container *ngIf="ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationToEwpNodeLogDetail as httpCommunicationToEwpNodeLogDetail">
                         <p>Target HEI ID: {{ httpCommunicationToEwpNodeLogDetail.targetHeiId }}</p>
                         <p>API Name: {{ httpCommunicationToEwpNodeLogDetail.apiName }}</p>
+                        <p>Version: {{ httpCommunicationToEwpNodeLogDetail.apiVersion }}</p>
                     </ng-container>
                     <p>Authentication Method: {{ ewpHttpCommunicationLogDetail.authenticationMethod }}</p>
                     <ng-container *ngIf="ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationFromEwpNodeLogDetail as httpCommunicationFromEwpNodeLogDetail">

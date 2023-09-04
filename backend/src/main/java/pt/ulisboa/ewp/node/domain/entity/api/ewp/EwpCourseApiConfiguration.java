@@ -18,6 +18,7 @@ public class EwpCourseApiConfiguration extends EwpApiConfiguration {
 
   public EwpCourseApiConfiguration(
       String heiId,
+      String version,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
@@ -26,7 +27,7 @@ public class EwpCourseApiConfiguration extends EwpApiConfiguration {
     super(
         heiId,
         EwpApi.COURSES.getLocalName(),
-        supportedClientAuthenticationMethods,
+        version, supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.url = url;
     this.maxLosIds = maxLosIds;
@@ -73,6 +74,7 @@ public class EwpCourseApiConfiguration extends EwpApiConfiguration {
   public static EwpCourseApiConfiguration create(String heiId, CoursesV0 apiElement) {
     return new EwpCourseApiConfiguration(
         heiId,
+        apiElement.getVersion(), 
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

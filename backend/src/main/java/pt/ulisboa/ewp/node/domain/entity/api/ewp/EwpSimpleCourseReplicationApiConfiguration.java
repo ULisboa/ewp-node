@@ -16,6 +16,7 @@ public class EwpSimpleCourseReplicationApiConfiguration extends EwpApiConfigurat
 
   public EwpSimpleCourseReplicationApiConfiguration(
       String heiId,
+      String version,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
@@ -23,6 +24,7 @@ public class EwpSimpleCourseReplicationApiConfiguration extends EwpApiConfigurat
     super(
         heiId,
         EwpApi.SIMPLE_COURSE_REPLICATION.getLocalName(),
+        version,
         supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.url = url;
@@ -49,6 +51,7 @@ public class EwpSimpleCourseReplicationApiConfiguration extends EwpApiConfigurat
       String heiId, SimpleCourseReplicationV1 apiElement) {
     return new EwpSimpleCourseReplicationApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

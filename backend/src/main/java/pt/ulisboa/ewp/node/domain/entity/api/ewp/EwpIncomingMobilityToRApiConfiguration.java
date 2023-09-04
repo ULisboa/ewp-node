@@ -20,6 +20,7 @@ public class EwpIncomingMobilityToRApiConfiguration extends EwpApiConfiguration 
 
   public EwpIncomingMobilityToRApiConfiguration(
       String heiId,
+      String version,
       String getUrl,
       String indexUrl,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
@@ -29,6 +30,7 @@ public class EwpIncomingMobilityToRApiConfiguration extends EwpApiConfiguration 
     super(
         heiId,
         EwpApi.INCOMING_MOBILITY_TORS.getLocalName(),
+        version,
         supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.getUrl = getUrl;
@@ -72,6 +74,7 @@ public class EwpIncomingMobilityToRApiConfiguration extends EwpApiConfiguration 
   public static EwpIncomingMobilityToRApiConfiguration create(String heiId, ImobilityTorsV1 apiElement) {
     return new EwpIncomingMobilityToRApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getGetUrl(),
         apiElement.getIndexUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -83,6 +86,7 @@ public class EwpIncomingMobilityToRApiConfiguration extends EwpApiConfiguration 
   public static EwpIncomingMobilityToRApiConfiguration create(String heiId, ImobilityTorsV2 apiElement) {
     return new EwpIncomingMobilityToRApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getGetUrl(),
         apiElement.getIndexUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),

@@ -15,12 +15,14 @@ public class EwpFilesApiConfiguration extends EwpApiConfiguration {
 
   public EwpFilesApiConfiguration(
       String heiId,
+      String version,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods) {
     super(
         heiId,
         EwpApi.FILES.getLocalName(),
+        version,
         supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.url = url;
@@ -37,6 +39,7 @@ public class EwpFilesApiConfiguration extends EwpApiConfiguration {
   public static EwpFilesApiConfiguration create(String heiId, FileV1 apiElement) {
     return new EwpFilesApiConfiguration(
         heiId,
+        apiElement.getVersion(), 
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()));

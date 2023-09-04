@@ -20,6 +20,7 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
 
   public EwpOutgoingMobilitiesApiConfiguration(
       String heiId,
+      String version,
       String indexUrl,
       String getUrl,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
@@ -29,6 +30,7 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
     super(
         heiId,
         EwpApi.OUTGOING_MOBILITIES.getLocalName(),
+        version,
         supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.indexUrl = indexUrl;
@@ -72,6 +74,7 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
   public static EwpOutgoingMobilitiesApiConfiguration create(String heiId, OmobilitiesV1 apiElement) {
     return new EwpOutgoingMobilitiesApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -83,6 +86,7 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
   public static EwpOutgoingMobilitiesApiConfiguration create(String heiId, OmobilitiesV2 apiElement) {
     return new EwpOutgoingMobilitiesApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),

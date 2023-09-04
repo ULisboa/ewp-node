@@ -19,12 +19,14 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
 
   private String targetHeiId;
   private String apiName;
+  private String apiVersion;
 
   public HttpCommunicationToEwpNodeLog() {}
 
   public HttpCommunicationToEwpNodeLog(
       String targetHeiId,
       String apiName,
+      String apiVersion,
       EwpAuthenticationMethod authenticationMethod,
       HttpRequestLog request,
       HttpResponseLog response,
@@ -42,6 +44,7 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
         parentCommunication);
     this.targetHeiId = targetHeiId;
     this.apiName = apiName;
+    this.apiVersion = apiVersion;
   }
   
   @Column(name = "target_hei_id")
@@ -60,6 +63,15 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
 
   public void setApiName(String apiName) {
     this.apiName = apiName;
+  }
+
+  @Column(name = "api_version")
+  public String getApiVersion() {
+    return apiVersion;
+  }
+
+  public void setApiVersion(String apiVersion) {
+    this.apiVersion = apiVersion;
   }
 
   @Override

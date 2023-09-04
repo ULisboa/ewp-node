@@ -17,6 +17,7 @@ public class EwpInterInstitutionalAgreementApprovalApiConfiguration extends EwpA
 
   public EwpInterInstitutionalAgreementApprovalApiConfiguration(
       String heiId,
+      String version,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
@@ -24,6 +25,7 @@ public class EwpInterInstitutionalAgreementApprovalApiConfiguration extends EwpA
     super(
         heiId,
         EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL.getLocalName(),
+        version,
         supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.maxIiaIds = maxIiaIds;
@@ -41,6 +43,7 @@ public class EwpInterInstitutionalAgreementApprovalApiConfiguration extends EwpA
       String heiId, IiasApprovalV1 apiElement) {
     return new EwpInterInstitutionalAgreementApprovalApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

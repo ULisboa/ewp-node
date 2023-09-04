@@ -34,6 +34,7 @@ class EwpFilesV1ClientUnitTest {
 
     EwpFilesApiConfiguration apiConfiguration = new EwpFilesApiConfiguration(
         "example.org",
+        null,
         "https://www.example.org",
         List.of(new EwpClientAuthenticationHttpSignatureConfiguration()),
         List.of(new EwpServerAuthenticationHttpSignatureConfiguration()));

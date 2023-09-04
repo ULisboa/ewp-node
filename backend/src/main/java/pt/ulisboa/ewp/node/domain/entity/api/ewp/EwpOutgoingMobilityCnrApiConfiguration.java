@@ -17,6 +17,7 @@ public class EwpOutgoingMobilityCnrApiConfiguration extends EwpApiConfiguration 
 
   public EwpOutgoingMobilityCnrApiConfiguration(
       String heiId,
+      String version,
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
@@ -24,7 +25,7 @@ public class EwpOutgoingMobilityCnrApiConfiguration extends EwpApiConfiguration 
     super(
         heiId,
         EwpApi.OUTGOING_MOBILITY_CNR.getLocalName(),
-        supportedClientAuthenticationMethods,
+        version, supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.url = url;
     this.maxOmobilityIds = maxOmobilityIds;
@@ -42,6 +43,7 @@ public class EwpOutgoingMobilityCnrApiConfiguration extends EwpApiConfiguration 
       String heiId, OmobilityCnrV1 apiElement) {
     return new EwpOutgoingMobilityCnrApiConfiguration(
         heiId,
+        apiElement.getVersion(), 
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

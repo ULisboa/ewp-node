@@ -18,6 +18,7 @@ public class EwpIncomingMobilitiesApiConfiguration extends EwpApiConfiguration {
 
   public EwpIncomingMobilitiesApiConfiguration(
       String heiId,
+      String version,
       String getUrl,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
@@ -26,7 +27,7 @@ public class EwpIncomingMobilitiesApiConfiguration extends EwpApiConfiguration {
     super(
         heiId,
         EwpApi.INCOMING_MOBILITIES.getLocalName(),
-        supportedClientAuthenticationMethods,
+        version, supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.getUrl = getUrl;
     this.maxOmobilityIds = maxOmobilityIds;
@@ -60,6 +61,7 @@ public class EwpIncomingMobilitiesApiConfiguration extends EwpApiConfiguration {
   public static EwpIncomingMobilitiesApiConfiguration create(String heiId, ImobilitiesV1 apiElement) {
     return new EwpIncomingMobilitiesApiConfiguration(
         heiId,
+        apiElement.getVersion(), 
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

@@ -4,10 +4,13 @@ public class HttpCommunicationToEwpNodeLogDetailDto extends EwpHttpCommunication
 
   private String targetHeiId;
   private String apiName;
+  private String apiVersion;
 
-  public HttpCommunicationToEwpNodeLogDetailDto(String targetHeiId, String apiName) {
+  public HttpCommunicationToEwpNodeLogDetailDto(
+      String targetHeiId, String apiName, String apiVersion) {
     this.targetHeiId = targetHeiId;
     this.apiName = apiName;
+    this.apiVersion = apiVersion;
   }
 
   public String getTargetHeiId() {
@@ -24,5 +27,13 @@ public class HttpCommunicationToEwpNodeLogDetailDto extends EwpHttpCommunication
 
   public void setApiName(String apiName) {
     this.apiName = apiName;
+  }
+
+  public String getApiVersion() {
+    return apiVersion;
+  }
+
+  public void setApiVersion(String apiVersion) {
+    this.apiVersion = apiVersion;
   }
 }

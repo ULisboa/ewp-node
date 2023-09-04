@@ -137,6 +137,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
     httpCommunicationToEwpNodeLogRepository.create(
         request.getApiInformation().getHeiId(),
         request.getApiInformation().getApiName(),
+        request.getApiInformation().getVersion(),
         request.getAuthenticationMethod(),
         requestLog,
         responseLog,

@@ -17,14 +17,14 @@ public class EwpFactsheetApiConfiguration extends EwpApiConfiguration {
 
   public EwpFactsheetApiConfiguration(
       String heiId,
-      String url,
+      String version, String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxHeiIds) {
     super(
         heiId,
         EwpApi.FACTSHEETS.getLocalName(),
-        supportedClientAuthenticationMethods,
+        version, supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
     this.url = url;
     this.maxHeiIds = maxHeiIds;
@@ -49,6 +49,7 @@ public class EwpFactsheetApiConfiguration extends EwpApiConfiguration {
   public static EwpFactsheetApiConfiguration create(String heiId, FactsheetV1 apiElement) {
     return new EwpFactsheetApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),

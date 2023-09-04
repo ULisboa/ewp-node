@@ -22,6 +22,7 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
 
   public EwpInterInstitutionalAgreementApiConfiguration(
       String heiId,
+      String version,
       String indexUrl,
       String getUrl,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
@@ -29,7 +30,8 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
       BigInteger maxIiaIds,
       BigInteger maxIiaCodes,
       boolean sendsNotifications) {
-    super(heiId, EwpApi.INTERINSTITUTIONAL_AGREEMENTS.getLocalName(), supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, EwpApi.INTERINSTITUTIONAL_AGREEMENTS.getLocalName(), version,
+        supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.indexUrl = indexUrl;
     this.getUrl = getUrl;
     this.maxIiaIds = maxIiaIds;
@@ -80,6 +82,7 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
   public static EwpInterInstitutionalAgreementApiConfiguration create(String heiId, IiasV3 apiElement) {
     return new EwpInterInstitutionalAgreementApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -92,6 +95,7 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
   public static EwpInterInstitutionalAgreementApiConfiguration create(String heiId, IiasV4 apiElement) {
     return new EwpInterInstitutionalAgreementApiConfiguration(
         heiId,
+        apiElement.getVersion(),
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
@@ -104,6 +108,7 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
   public static EwpInterInstitutionalAgreementApiConfiguration create(String heiId, IiasV6 apiElement) {
     return new EwpInterInstitutionalAgreementApiConfiguration(
         heiId,
+        apiElement.getVersion(), 
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),

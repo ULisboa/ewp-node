@@ -9,14 +9,16 @@ public class EwpApiConfiguration {
 
   private final String heiId;
   private final String apiName;
+  private final String version;
   private Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods;
   private Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods;
 
   public EwpApiConfiguration(
-      String heiId, String apiName, Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
+      String heiId, String apiName, String version, Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods) {
     this.heiId = heiId;
     this.apiName = apiName;
+    this.version = version;
     this.supportedClientAuthenticationMethods = supportedClientAuthenticationMethods;
     this.supportedServerAuthenticationMethods = supportedServerAuthenticationMethods;
   }
@@ -27,6 +29,10 @@ public class EwpApiConfiguration {
 
   public String getApiName() {
     return apiName;
+  }
+
+  public String getVersion() {
+    return version;
   }
 
   /**

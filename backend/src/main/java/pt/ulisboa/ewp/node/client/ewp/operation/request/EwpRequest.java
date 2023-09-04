@@ -52,7 +52,8 @@ public class EwpRequest implements Serializable {
       EwpRequestBody body) {
     EwpRequest request =
         new EwpRequest(
-            method, urlWithoutQueryParams, new EwpApiInformation(api.getHeiId(), api.getApiName()));
+            method, urlWithoutQueryParams, new EwpApiInformation(api.getHeiId(), api.getApiName(),
+            api.getVersion()));
     request.authenticationMethod(api.getBestSupportedAuthenticationMethod());
     request.queryParams(queryParams);
     request.body(body);
@@ -153,10 +154,12 @@ public class EwpRequest implements Serializable {
 
     private final String heiId;
     private final String apiName;
+    private final String version;
 
-    public EwpApiInformation(String heiId, String apiName) {
+    public EwpApiInformation(String heiId, String apiName, String version) {
       this.heiId = heiId;
       this.apiName = apiName;
+      this.version = version;
     }
 
     public String getHeiId() {
@@ -165,6 +168,10 @@ public class EwpRequest implements Serializable {
 
     public String getApiName() {
       return apiName;
+    }
+
+    public String getVersion() {
+      return version;
     }
   }
 }
