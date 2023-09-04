@@ -17,6 +17,7 @@ import eu.erasmuswithoutpaper.api.imobilities.tors.v1.ImobilityTorsV1;
 import eu.erasmuswithoutpaper.api.imobilities.tors.v2.ImobilityTorsV2;
 import eu.erasmuswithoutpaper.api.imobilities.v1.ImobilitiesV1;
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
+import eu.erasmuswithoutpaper.api.monitoring.v1.MonitoringV1;
 import eu.erasmuswithoutpaper.api.omobilities.cnr.v1.OmobilityCnrV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.OmobilityLaCnrV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.OmobilityLasV1;
@@ -38,6 +39,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementA
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementApprovalApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementApprovalCnrApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpInterInstitutionalAgreementCnrApiConfiguration;
+import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpMonitoringApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilitiesApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOutgoingMobilityCnrApiConfiguration;
@@ -262,6 +264,20 @@ public final class EwpApiSpecification {
         V1 = new EwpApiVersionSpecification<>(EwpApi.INCOMING_MOBILITY_TOR_CNR, 1,
         ImobilityTorCnrV1.class, EwpIncomingMobilityToRCnrApiConfiguration::create);
 
+  }
+
+  public static class Monitoring {
+
+    public static final EwpApiVersionSpecification<
+            MonitoringV1, EwpMonitoringApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.MONITORING,
+                1,
+                MonitoringV1.class,
+                EwpMonitoringApiConfiguration::create);
+
+    private Monitoring() {}
   }
 
   @FunctionalInterface

@@ -22,7 +22,8 @@ public enum EwpApi {
   INCOMING_MOBILITIES("imobilities"),
   INCOMING_MOBILITY_CNR("imobility-cnr"),
   INCOMING_MOBILITY_TORS("imobility-tors"),
-  INCOMING_MOBILITY_TOR_CNR("imobility-tor-cnr");
+  INCOMING_MOBILITY_TOR_CNR("imobility-tor-cnr"),
+  MONITORING("monitoring");
 
   private final String localName;
 

@@ -8,11 +8,15 @@ public class EwpApiParamConstants {
   // It allows to identify which local host the client is interested on.
   public static final String HOST_CODE = "host_code";
 
+  public static final String API_NAME = "api_name";
   public static final String APPROVING_HEI_ID = "approving_hei_id";
+  public static final String CLIENT_MESSAGE = "client_message";
   public static final String ECHO = "echo";
+  public static final String ENDPOINT_NAME = "endpoint_name";
   public static final String FILE_ID = "file_id";
   public static final String GLOBAL_ID = "global_id";
   public static final String HEI_ID = "hei_id";
+  public static final String HTTP_CODE = "http_code";
   public static final String IIA_ID = "iia_id";
   public static final String IIA_CODE = "iia_code";
   public static final String LOS_ID = "los_id";
@@ -34,4 +38,6 @@ public class EwpApiParamConstants {
   public static final String SEND_PDF = "send_pdf";
   public static final String SENDING_HEI_ID = "sending_hei_id";
   public static final String SENDING_OUNIT_ID = "sending_ounit_id";
+  public static final String SERVER_HEI_ID = "server_hei_id";
+  public static final String SERVER_MESSAGE = "server_message";
 }
