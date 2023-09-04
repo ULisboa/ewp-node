@@ -91,8 +91,7 @@ class EwpHttpClientTest extends AbstractTest {
     HttpParams requestParams = new HttpParams();
     requestParams.param("echo", "test_echo");
     EwpRequest request =
-        new EwpRequest(
-                "test", null, HttpMethod.GET, "http://localhost:" + mockServer.getPort() + "/test")
+        new EwpRequest(HttpMethod.GET, "http://localhost:" + mockServer.getPort() + "/test", null)
             .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE)
             .queryParams(requestParams);
 
@@ -129,8 +128,7 @@ class EwpHttpClientTest extends AbstractTest {
     HttpParams requestParams = new HttpParams();
     requestParams.param("echo", "test_echo");
     EwpRequest request =
-        new EwpRequest(
-                "test", null, HttpMethod.POST, "http://localhost:" + mockServer.getPort() + "/test")
+        new EwpRequest(HttpMethod.POST, "http://localhost:" + mockServer.getPort() + "/test", null)
             .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE)
             .body(new EwpRequestFormDataUrlEncodedBody(requestParams));
 
@@ -165,11 +163,8 @@ class EwpHttpClientTest extends AbstractTest {
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
     EwpRequest request =
-        new EwpRequest(
-                "test",
-                null,
-                HttpMethod.GET,
-                "http://localhost:" + mockServer.getLocalPort() + "/test")
+        new EwpRequest(HttpMethod.GET,
+                "http://localhost:" + mockServer.getLocalPort() + "/test", null)
             .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
 
     ResponseV2 expectedResponse = new ResponseV2();
@@ -201,11 +196,8 @@ class EwpHttpClientTest extends AbstractTest {
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
     EwpRequest request =
-        new EwpRequest(
-                "test",
-                null,
-                HttpMethod.GET,
-                "http://localhost:" + mockServer.getLocalPort() + "/test")
+        new EwpRequest(HttpMethod.GET,
+                "http://localhost:" + mockServer.getLocalPort() + "/test", null)
             .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
 
     ErrorResponseV1 errorResponse = new ErrorResponseV1();
@@ -240,11 +232,8 @@ class EwpHttpClientTest extends AbstractTest {
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
     EwpRequest request =
-        new EwpRequest(
-                "test",
-                null,
-                HttpMethod.GET,
-                "http://localhost:" + mockServer.getLocalPort() + "/test")
+        new EwpRequest(HttpMethod.GET,
+                "http://localhost:" + mockServer.getLocalPort() + "/test", null)
             .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
 
     ErrorResponseV1 errorResponse = new ErrorResponseV1();
@@ -279,11 +268,8 @@ class EwpHttpClientTest extends AbstractTest {
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
     EwpRequest request =
-        new EwpRequest(
-                "test",
-                null,
-                HttpMethod.GET,
-                "http://localhost:" + mockServer.getLocalPort() + "/test")
+        new EwpRequest(HttpMethod.GET,
+                "http://localhost:" + mockServer.getLocalPort() + "/test", null)
             .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
 
     mockServer.when(request().withMethod("GET").withPath("/test"))
@@ -309,11 +295,8 @@ class EwpHttpClientTest extends AbstractTest {
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
     EwpRequest request =
-        new EwpRequest(
-                "test",
-                null,
-                HttpMethod.GET,
-                "http://localhost:" + mockServer.getLocalPort() + "/test")
+        new EwpRequest(HttpMethod.GET,
+                "http://localhost:" + mockServer.getLocalPort() + "/test", null)
             .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
 
     mockServer.when(request().withMethod("GET").withPath("/test"))
