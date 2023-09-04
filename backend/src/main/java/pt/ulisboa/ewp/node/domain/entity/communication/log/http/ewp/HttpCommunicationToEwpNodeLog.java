@@ -18,11 +18,13 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
   public static final String TYPE = "EWP_OUT";
 
   private String targetHeiId;
+  private String apiName;
 
   public HttpCommunicationToEwpNodeLog() {}
 
   public HttpCommunicationToEwpNodeLog(
       String targetHeiId,
+      String apiName,
       EwpAuthenticationMethod authenticationMethod,
       HttpRequestLog request,
       HttpResponseLog response,
@@ -39,6 +41,7 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
         observations,
         parentCommunication);
     this.targetHeiId = targetHeiId;
+    this.apiName = apiName;
   }
   
   @Column(name = "target_hei_id")
@@ -48,6 +51,15 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
 
   public void setTargetHeiId(String targetHeiId) {
     this.targetHeiId = targetHeiId;
+  }
+
+  @Column(name = "api_name")
+  public String getApiName() {
+    return apiName;
+  }
+
+  public void setApiName(String apiName) {
+    this.apiName = apiName;
   }
 
   @Override

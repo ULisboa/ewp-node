@@ -6,10 +6,15 @@
             <ng-container *ngIf="communicationLog | instanceof: EwpHttpCommunicationLogDetail as ewpHttpCommunicationLogDetail">
                 <!-- EWP HTTP Communication -->
                 <p-accordionTab header="EWP Communication">
+                    <ng-container *ngIf="ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationToEwpNodeLogDetail as httpCommunicationToEwpNodeLogDetail">
+                        <p>Target HEI ID: {{ httpCommunicationToEwpNodeLogDetail.targetHeiId }}</p>
+                        <p>API Name: {{ httpCommunicationToEwpNodeLogDetail.apiName }}</p>
+                    </ng-container>
                     <p>Authentication Method: {{ ewpHttpCommunicationLogDetail.authenticationMethod }}</p>
                     <ng-container *ngIf="ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationFromEwpNodeLogDetail as httpCommunicationFromEwpNodeLogDetail">
                         <p>HEI IDs covered by requester: {{ httpCommunicationFromEwpNodeLogDetail.heiIdsCoveredByClient }}</p>
                     </ng-container>
+                    
                 </p-accordionTab>
             </ng-container>
 

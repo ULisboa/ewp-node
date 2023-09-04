@@ -6,6 +6,7 @@ import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 
 public class EwpCourseApiConfiguration extends EwpApiConfiguration {
 
@@ -22,7 +23,11 @@ public class EwpCourseApiConfiguration extends EwpApiConfiguration {
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxLosIds,
       BigInteger maxLosCodes) {
-    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(
+        heiId,
+        EwpApi.COURSES.getLocalName(),
+        supportedClientAuthenticationMethods,
+        supportedServerAuthenticationMethods);
     this.url = url;
     this.maxLosIds = maxLosIds;
     this.maxLosCodes = maxLosCodes;

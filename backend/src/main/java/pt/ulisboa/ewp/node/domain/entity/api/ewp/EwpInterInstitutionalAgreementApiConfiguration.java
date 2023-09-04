@@ -8,6 +8,7 @@ import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 
 public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfiguration {
 
@@ -28,7 +29,7 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
       BigInteger maxIiaIds,
       BigInteger maxIiaCodes,
       boolean sendsNotifications) {
-    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(heiId, EwpApi.INTERINSTITUTIONAL_AGREEMENTS.getLocalName(), supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
     this.indexUrl = indexUrl;
     this.getUrl = getUrl;
     this.maxIiaIds = maxIiaIds;

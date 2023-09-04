@@ -31,6 +31,7 @@ public class HttpCommunicationToEwpNodeLogRepository
 
   public boolean create(
       String targetHeiId,
+      String apiName,
       EwpAuthenticationMethod authenticationMethod,
       HttpRequestLog request,
       HttpResponseLog response,
@@ -41,6 +42,7 @@ public class HttpCommunicationToEwpNodeLogRepository
     HttpCommunicationToEwpNodeLog communicationToEwpNodeLog =
         new HttpCommunicationToEwpNodeLog(
             targetHeiId,
+            apiName,
             authenticationMethod,
             request,
             response,

@@ -2,4 +2,5 @@ import { EwpHttpCommunicationLogDetail } from "./ewp-http-communication-log-deta
 
 export class HttpCommunicationToEwpNodeLogDetail extends EwpHttpCommunicationLogDetail {
     targetHeiId!: string;
+    apiName!: string;
 }

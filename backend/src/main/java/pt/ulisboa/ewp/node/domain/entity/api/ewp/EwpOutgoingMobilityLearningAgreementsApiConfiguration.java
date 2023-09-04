@@ -6,6 +6,7 @@ import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 
 public class EwpOutgoingMobilityLearningAgreementsApiConfiguration extends EwpApiConfiguration {
 
@@ -24,7 +25,11 @@ public class EwpOutgoingMobilityLearningAgreementsApiConfiguration extends EwpAp
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxOmobilityIds) {
-    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(
+        heiId,
+        EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENTS.getLocalName(),
+        supportedClientAuthenticationMethods,
+        supportedServerAuthenticationMethods);
     this.indexUrl = indexUrl;
     this.getUrl = getUrl;
     this.updateUrl = updateUrl;

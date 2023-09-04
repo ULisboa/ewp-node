@@ -6,6 +6,7 @@ import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 
 public class EwpInstitutionApiConfiguration extends EwpApiConfiguration {
 
@@ -20,7 +21,11 @@ public class EwpInstitutionApiConfiguration extends EwpApiConfiguration {
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxHeiIds) {
-    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(
+        heiId,
+        EwpApi.INSTITUTIONS.getLocalName(),
+        supportedClientAuthenticationMethods,
+        supportedServerAuthenticationMethods);
     this.url = url;
     this.maxHeiIds = maxHeiIds;
   }

@@ -5,6 +5,7 @@ import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 
 public class EwpInterInstitutionalAgreementCnrApiConfiguration extends EwpApiConfiguration {
 
@@ -17,7 +18,11 @@ public class EwpInterInstitutionalAgreementCnrApiConfiguration extends EwpApiCon
       String url,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods) {
-    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(
+        heiId,
+        EwpApi.INTERINSTITUTIONAL_AGREEMENT_CNR.getLocalName(),
+        supportedClientAuthenticationMethods,
+        supportedServerAuthenticationMethods);
     this.url = url;
   }
 

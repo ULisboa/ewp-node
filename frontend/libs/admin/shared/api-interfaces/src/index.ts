@@ -12,3 +12,4 @@ export * from './lib/communication/log/host/plugin/host-plugin-function-call-com
 export * from './lib/communication/log/http/http-communication-log-detail';
 export * from './lib/communication/log/http/ewp/ewp-http-communication-log-detail';
 export * from './lib/communication/log/http/ewp/http-communication-from-ewp-node-log-detail';
+export * from './lib/communication/log/http/ewp/http-communication-to-ewp-node-log-detail';

@@ -90,10 +90,11 @@ class EwpHttpClientTest extends AbstractTest {
 
     HttpParams requestParams = new HttpParams();
     requestParams.param("echo", "test_echo");
-    EwpRequest request = new EwpRequest("test", HttpMethod.GET,
-        "http://localhost:" + mockServer.getPort() + "/test")
-        .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE)
-        .queryParams(requestParams);
+    EwpRequest request =
+        new EwpRequest(
+                "test", null, HttpMethod.GET, "http://localhost:" + mockServer.getPort() + "/test")
+            .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE)
+            .queryParams(requestParams);
 
     ResponseV2 expectedResponse = new ResponseV2();
     expectedResponse.getHeiId().add("test_heiid");
@@ -127,10 +128,11 @@ class EwpHttpClientTest extends AbstractTest {
 
     HttpParams requestParams = new HttpParams();
     requestParams.param("echo", "test_echo");
-    EwpRequest request = new EwpRequest("test", HttpMethod.POST,
-        "http://localhost:" + mockServer.getPort() + "/test")
-        .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE)
-        .body(new EwpRequestFormDataUrlEncodedBody(requestParams));
+    EwpRequest request =
+        new EwpRequest(
+                "test", null, HttpMethod.POST, "http://localhost:" + mockServer.getPort() + "/test")
+            .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE)
+            .body(new EwpRequestFormDataUrlEncodedBody(requestParams));
 
     ResponseV2 expectedResponse = new ResponseV2();
     expectedResponse.getHeiId().add("test_heiid");
@@ -162,9 +164,13 @@ class EwpHttpClientTest extends AbstractTest {
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    EwpRequest request = new EwpRequest("test", HttpMethod.GET,
-        "http://localhost:" + mockServer.getLocalPort() + "/test")
-        .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
+    EwpRequest request =
+        new EwpRequest(
+                "test",
+                null,
+                HttpMethod.GET,
+                "http://localhost:" + mockServer.getLocalPort() + "/test")
+            .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
 
     ResponseV2 expectedResponse = new ResponseV2();
     expectedResponse.getHeiId().add("test_heiid");
@@ -194,9 +200,13 @@ class EwpHttpClientTest extends AbstractTest {
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    EwpRequest request = new EwpRequest("test", HttpMethod.GET,
-        "http://localhost:" + mockServer.getLocalPort() + "/test")
-        .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
+    EwpRequest request =
+        new EwpRequest(
+                "test",
+                null,
+                HttpMethod.GET,
+                "http://localhost:" + mockServer.getLocalPort() + "/test")
+            .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
 
     ErrorResponseV1 errorResponse = new ErrorResponseV1();
     MultilineStringV1 developerMessage = new MultilineStringV1();
@@ -229,9 +239,13 @@ class EwpHttpClientTest extends AbstractTest {
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    EwpRequest request = new EwpRequest("test", HttpMethod.GET,
-        "http://localhost:" + mockServer.getLocalPort() + "/test")
-        .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
+    EwpRequest request =
+        new EwpRequest(
+                "test",
+                null,
+                HttpMethod.GET,
+                "http://localhost:" + mockServer.getLocalPort() + "/test")
+            .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
 
     ErrorResponseV1 errorResponse = new ErrorResponseV1();
     MultilineStringV1 developerMessage = new MultilineStringV1();
@@ -264,9 +278,13 @@ class EwpHttpClientTest extends AbstractTest {
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    EwpRequest request = new EwpRequest("test", HttpMethod.GET,
-        "http://localhost:" + mockServer.getLocalPort() + "/test")
-        .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
+    EwpRequest request =
+        new EwpRequest(
+                "test",
+                null,
+                HttpMethod.GET,
+                "http://localhost:" + mockServer.getLocalPort() + "/test")
+            .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
 
     mockServer.when(request().withMethod("GET").withPath("/test"))
         .respond(response().withStatusCode(500).withContentType(MediaType.APPLICATION_XML)
@@ -290,9 +308,13 @@ class EwpHttpClientTest extends AbstractTest {
     doReturn(authenticationResult).when(responseVerifier)
         .verifyAgainstMethod(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    EwpRequest request = new EwpRequest("test", HttpMethod.GET,
-        "http://localhost:" + mockServer.getLocalPort() + "/test")
-        .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
+    EwpRequest request =
+        new EwpRequest(
+                "test",
+                null,
+                HttpMethod.GET,
+                "http://localhost:" + mockServer.getLocalPort() + "/test")
+            .authenticationMethod(EwpAuthenticationMethod.HTTP_SIGNATURE);
 
     mockServer.when(request().withMethod("GET").withPath("/test"))
         .respond(response().withStatusCode(600).withContentType(MediaType.APPLICATION_XML)

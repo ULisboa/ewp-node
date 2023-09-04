@@ -6,6 +6,7 @@ import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
+import pt.ulisboa.ewp.node.utils.EwpApi;
 
 public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
 
@@ -22,7 +23,11 @@ public class EwpOrganizationalUnitApiConfiguration extends EwpApiConfiguration {
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxOunitIds,
       BigInteger maxOunitCodes) {
-    super(heiId, supportedClientAuthenticationMethods, supportedServerAuthenticationMethods);
+    super(
+        heiId,
+        EwpApi.ORGANIZATIONAL_UNITS.getLocalName(),
+        supportedClientAuthenticationMethods,
+        supportedServerAuthenticationMethods);
     this.url = url;
     this.maxOunitIds = maxOunitIds;
     this.maxOunitCodes = maxOunitCodes;

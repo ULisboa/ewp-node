@@ -8,19 +8,25 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthentica
 public class EwpApiConfiguration {
 
   private final String heiId;
+  private final String apiName;
   private Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods;
   private Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods;
 
   public EwpApiConfiguration(
-      String heiId, Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
+      String heiId, String apiName, Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods) {
     this.heiId = heiId;
+    this.apiName = apiName;
     this.supportedClientAuthenticationMethods = supportedClientAuthenticationMethods;
     this.supportedServerAuthenticationMethods = supportedServerAuthenticationMethods;
   }
 
   public String getHeiId() {
     return heiId;
+  }
+
+  public String getApiName() {
+    return apiName;
   }
 
   /**

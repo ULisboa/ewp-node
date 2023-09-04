@@ -19,7 +19,6 @@ import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 public class EwpRequest implements Serializable {
 
   private String id = UUID.randomUUID().toString();
-  private String targetHeiId;
   private HttpMethod method;
   private String urlWithoutQueryParams;
   private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
@@ -27,11 +26,13 @@ public class EwpRequest implements Serializable {
   private EwpRequestBody body = new EwpRequestFormDataUrlEncodedBody(new HttpParams());
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.HTTP_SIGNATURE;
   private Long parentCommunicationId;
+  private final EwpApiInformation apiInformation;
 
-  public EwpRequest(String targetHeiId, HttpMethod method, @NotNull String urlWithoutQueryParams) {
-    this.targetHeiId = targetHeiId;
+  public EwpRequest(
+      HttpMethod method, @NotNull String urlWithoutQueryParams, EwpApiInformation apiInformation) {
     this.method = method;
     this.urlWithoutQueryParams = urlWithoutQueryParams;
+    this.apiInformation = apiInformation;
 
     CommunicationContext context = CommunicationContextHolder.getContext();
     if (context.getCurrentCommunicationLog() != null) {
@@ -49,7 +50,9 @@ public class EwpRequest implements Serializable {
       @NotNull String urlWithoutQueryParams,
       HttpParams queryParams,
       EwpRequestBody body) {
-    EwpRequest request = new EwpRequest(api.getHeiId(), method, urlWithoutQueryParams);
+    EwpRequest request =
+        new EwpRequest(
+            method, urlWithoutQueryParams, new EwpApiInformation(api.getHeiId(), api.getApiName()));
     request.authenticationMethod(api.getBestSupportedAuthenticationMethod());
     request.queryParams(queryParams);
     request.body(body);
@@ -132,6 +135,10 @@ public class EwpRequest implements Serializable {
     return parentCommunicationId;
   }
 
+  public EwpApiInformation getApiInformation() {
+    return apiInformation;
+  }
+
   public static EwpRequest createGet(
       EwpApiConfiguration api, @NotNull String urlWithoutQueryParams, HttpParams queryParams) {
     return create(api, HttpMethod.GET, urlWithoutQueryParams, queryParams, null);
@@ -142,7 +149,22 @@ public class EwpRequest implements Serializable {
     return create(api, HttpMethod.POST, urlWithoutQueryParams, null, body);
   }
 
-  public String getTargetHeiId() {
-    return targetHeiId;
+  public static class EwpApiInformation {
+
+    private final String heiId;
+    private final String apiName;
+
+    public EwpApiInformation(String heiId, String apiName) {
+      this.heiId = heiId;
+      this.apiName = apiName;
+    }
+
+    public String getHeiId() {
+      return heiId;
+    }
+
+    public String getApiName() {
+      return apiName;
+    }
   }
 }
