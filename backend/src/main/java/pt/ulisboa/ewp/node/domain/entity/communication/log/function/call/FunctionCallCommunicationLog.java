@@ -10,8 +10,10 @@ import javax.persistence.*;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 @Entity
-@DiscriminatorValue("FUNCTION_CALL")
+@DiscriminatorValue(FunctionCallCommunicationLog.TYPE)
 public class FunctionCallCommunicationLog extends CommunicationLog {
+
+  public static final String TYPE = "FUNCTION_CALL";
 
   private String className;
   private String method;

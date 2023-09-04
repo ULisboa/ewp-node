@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { MessagesModule } from 'primeng/messages';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AdminDashboardCommunicationLogDetailComponent } from './admin-dashboard-communication-log-detail/admin-dashboard-communication-log-detail.component';
 import { AdminDashboardCommunicationsLogsTableComponent } from './admin-dashboard-communications-logs-table/admin-dashboard-communications-logs-table.component';
@@ -21,11 +22,11 @@ import { SharedUtilAngularModule } from '@ewp-node-frontend/shared/util-angular'
     AccordionModule,
     ButtonModule,
     CardModule,
+    DropdownModule,
     MessagesModule,
     MultiSelectModule,
     ProgressSpinnerModule,
     TableModule,
-
     SharedUtilAngularModule,
 
     CommonModule,

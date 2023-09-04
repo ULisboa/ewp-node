@@ -12,8 +12,10 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
 
 @Entity
-@DiscriminatorValue("EWP_OUT")
+@DiscriminatorValue(HttpCommunicationToEwpNodeLog.TYPE)
 public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
+
+  public static final String TYPE = "EWP_OUT";
 
   private String targetHeiId;
 

@@ -12,6 +12,7 @@ import pt.ulisboa.ewp.node.domain.dto.filter.ConjunctionFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.DisjunctionFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.NotFilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogIsOfTypeFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationToEwpNodeIsToHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.EqualsFieldFilterDto;
@@ -20,6 +21,7 @@ import pt.ulisboa.ewp.node.domain.dto.filter.field.GreaterThanOrEqualFieldFilter
 import pt.ulisboa.ewp.node.domain.dto.filter.field.InFieldFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.LessThanFieldFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.LessThanOrEqualFieldFilterDto;
+import pt.ulisboa.ewp.node.domain.utils.FilterConstants;
 
 public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deserializer {
 
@@ -106,7 +108,14 @@ public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deser
             }
             break;
 
-          case "communicationFromHeiId":
+          case FilterConstants.COMMUNICATION_IS_OF_TYPE:
+            value = deserializeValue(fieldFilterNode.get("value"));
+            if (value != null) {
+              currentFieldFilters.add(new CommunicationLogIsOfTypeFilterDto(value.toString()));
+            }
+            break;
+
+          case FilterConstants.COMMUNICATION_FROM_HEI_ID:
             value = deserializeValue(fieldFilterNode.get("value"));
             if (value != null) {
               currentFieldFilters.add(
@@ -114,7 +123,7 @@ public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deser
             }
             break;
 
-          case "communicationToHeiId":
+          case FilterConstants.COMMUNICATION_TO_HEI_ID:
             value = deserializeValue(fieldFilterNode.get("value"));
             if (value != null) {
               currentFieldFilters.add(

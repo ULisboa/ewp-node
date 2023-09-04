@@ -16,8 +16,10 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
 
 @Entity
-@DiscriminatorValue("EWP_IN")
+@DiscriminatorValue(HttpCommunicationFromEwpNodeLog.TYPE)
 public class HttpCommunicationFromEwpNodeLog extends EwpHttpCommunicationLog {
+
+  public static final String TYPE = "EWP_IN";
 
   private Collection<String> heiIdsCoveredByClient;
 

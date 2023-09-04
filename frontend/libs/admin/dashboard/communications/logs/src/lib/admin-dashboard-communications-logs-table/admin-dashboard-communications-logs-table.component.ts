@@ -6,6 +6,7 @@ import { take } from 'rxjs';
 import { AdminCommunicationsLogsService } from '../services/admin-communications-logs.service';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
 
+const CUSTOM_FILTER_COMMUNICATION_IS_OF_TYPE_NAME = 'communicationIsOfType';
 const CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME = 'communicationFromHeiId';
 const CUSTOM_FILTER_COMMUNICATION_TO_HEI_ID_NAME = 'communicationToHeiId';
 
@@ -19,8 +20,17 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit {
   adminCommunicationsLogsService = inject(AdminCommunicationsLogsService);
   filterService = inject(FilterService);
 
+  typeMatchModeOptions: SelectItem[];
   sourceMatchModeOptions: SelectItem[];
   targetMatchModeOptions: SelectItem[];
+
+  typeOptions = [
+    { name: 'EWP_IN', value: 'EWP_IN' },
+    { name: 'EWP_OUT', value: 'EWP_OUT' },
+    { name: 'HOST_IN', value: 'HOST_IN' },
+    { name: 'HOST_OUT', value: 'HOST_OUT' },
+    { name: 'HOST_PLUGIN_FUNCTION_CALL', value: 'HOST_PLUGIN_FUNCTION_CALL' }
+  ]
 
   statusOptions = [
     { name: 'SUCCESS', value: 'SUCCESS' },
@@ -28,6 +38,7 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit {
     { name: 'INCOMPLETE', value: 'INCOMPLETE' }
   ]
 
+  selectedType?: string;
   selectedStatuses: string[] = [];
 
   communicationLogs!: CommunicationLogSummary[];
@@ -37,6 +48,10 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit {
   messages: Message[] = [];
 
   constructor() {
+    this.typeMatchModeOptions = [
+      { label: 'Communication Type', value: CUSTOM_FILTER_COMMUNICATION_IS_OF_TYPE_NAME }
+    ];
+
     this.sourceMatchModeOptions = [
       { label: 'Communication from HEI ID', value: CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME }
     ];
@@ -47,6 +62,22 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit {
   }
 
   ngOnInit() {
+      this.filterService.register(CUSTOM_FILTER_COMMUNICATION_IS_OF_TYPE_NAME, (value: object, filter: string): boolean => {
+        if (filter === undefined || filter === null || filter.trim() === '') {
+          return true;
+        }
+
+        if (value === undefined || value === null) {
+          return false;
+        }
+
+        if (!(value instanceof CommunicationLogSummary)) {
+          return false;
+        }
+
+        return value.type === filter;
+      });
+
       this.filterService.register(CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME, (value: object, filter: string): boolean => {
         if (filter === undefined || filter === null || filter.trim() === '') {
           return true;

@@ -15,8 +15,10 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
 
 @Entity
-@DiscriminatorValue("HOST_IN")
+@DiscriminatorValue(HttpCommunicationFromHostLog.TYPE)
 public class HttpCommunicationFromHostLog extends HostHttpCommunicationLog {
+
+  public static final String TYPE = "HOST_IN";
 
   private HostForwardEwpApiClient hostForwardEwpApiClient;
 

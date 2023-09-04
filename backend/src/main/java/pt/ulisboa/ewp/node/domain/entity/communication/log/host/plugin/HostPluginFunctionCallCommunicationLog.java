@@ -10,8 +10,10 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.function.call.FunctionCallCommunicationLog;
 
 @Entity
-@DiscriminatorValue("HOST_PLUGIN_FUNCTION_CALL")
+@DiscriminatorValue(HostPluginFunctionCallCommunicationLog.TYPE)
 public class HostPluginFunctionCallCommunicationLog extends FunctionCallCommunicationLog {
+
+  public static final String TYPE = "HOST_PLUGIN_FUNCTION_CALL";
 
   private String hostPluginId;
 
