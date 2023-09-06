@@ -59,6 +59,9 @@ public class HttpCommunicationFromHostLog extends HostHttpCommunicationLog {
   @Override
   @Transient
   public String getSource() {
+    if (getHost() == null) {
+      return "Unknown";
+    }
     return getHost().getCode();
   }
 }
