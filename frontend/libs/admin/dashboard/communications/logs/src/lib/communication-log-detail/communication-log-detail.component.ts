@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { AdminCommunicationsLogsService } from '../services/admin-communications-logs.service';
-import { CommunicationLogDetail, EwpHttpCommunicationLogDetail, HostPluginFunctionCallCommunicationLogDetail, HttpCommunicationFromEwpNodeLogDetail, HttpCommunicationLogDetail, HttpCommunicationToEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
+import { CommunicationLogDetail, EwpHttpCommunicationLogDetail, FunctionCallCommunicationLogDetail, HostPluginFunctionCallCommunicationLogDetail, HttpCommunicationFromEwpNodeLogDetail, HttpCommunicationLogDetail, HttpCommunicationToEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
 import { Message } from 'primeng/api';
 
@@ -13,6 +13,7 @@ export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
   public readonly EwpHttpCommunicationLogDetail = EwpHttpCommunicationLogDetail;
   public readonly HttpCommunicationFromEwpNodeLogDetail = HttpCommunicationFromEwpNodeLogDetail;
   public readonly HttpCommunicationToEwpNodeLogDetail = HttpCommunicationToEwpNodeLogDetail;
+  public readonly FunctionCallCommunicationLogDetail = FunctionCallCommunicationLogDetail;
   public readonly HostPluginFunctionCallCommunicationLogDetail = HostPluginFunctionCallCommunicationLogDetail;
   public readonly HttpCommunicationLogDetail = HttpCommunicationLogDetail;
 
