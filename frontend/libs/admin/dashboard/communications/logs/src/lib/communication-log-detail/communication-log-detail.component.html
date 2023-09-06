@@ -10,7 +10,7 @@
                         <p-card header="Target HEI ID">{{ httpCommunicationToEwpNodeLogDetail.targetHeiId }}</p-card>
                         <p-card header="API Name">{{ httpCommunicationToEwpNodeLogDetail.apiName }}</p-card>
                         <p-card header="Version">{{ httpCommunicationToEwpNodeLogDetail.apiVersion }}</p-card>
-                        <p-card header="Endpoint Name">{{ httpCommunicationToEwpNodeLogDetail.endpointName }}</p-card>
+                        <p-card *ngIf="httpCommunicationToEwpNodeLogDetail.endpointName" header="Endpoint Name">{{ httpCommunicationToEwpNodeLogDetail.endpointName }}</p-card>
                     </ng-container>
                     <p-card header="Authentication Method">{{ ewpHttpCommunicationLogDetail.authenticationMethod }}</p-card>
                     <ng-container *ngIf="ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationFromEwpNodeLogDetail as httpCommunicationFromEwpNodeLogDetail">
