@@ -56,12 +56,6 @@ public abstract class HttpCommunicationLog extends CommunicationLog {
 
   @Override
   @Transient
-  public String getSource() {
-    return "Unknown";
-  }
-
-  @Override
-  @Transient
   public String getTarget() {
     return request.getUrl();
   }
