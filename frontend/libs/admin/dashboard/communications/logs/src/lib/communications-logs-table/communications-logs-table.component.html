@@ -1,6 +1,6 @@
 <p-messages [(value)]="messages" [enableService]="false"></p-messages>
 
-<p-table 
+<p-table #table
     [lazy]="true"
     (onLazyLoad)="loadCommunicationsLogs($event)"
     dataKey="id"

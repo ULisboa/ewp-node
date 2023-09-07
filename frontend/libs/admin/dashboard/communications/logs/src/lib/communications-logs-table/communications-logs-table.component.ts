@@ -1,7 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { AfterContentInit, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommunicationLogSummary, HttpCommunicationFromEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
 import { FilterService, Message, SelectItem } from 'primeng/api';
-import { TableLazyLoadEvent } from 'primeng/table';
+import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { take } from 'rxjs';
 import { AdminCommunicationsLogsService } from '../services/admin-communications-logs.service';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
@@ -15,7 +15,10 @@ const CUSTOM_FILTER_COMMUNICATION_TO_HEI_ID_NAME = 'communicationToHeiId';
   templateUrl: './communications-logs-table.component.html',
   styleUrls: ['./communications-logs-table.component.scss'],
 })
-export class AdminDashboardCommunicationsLogsTableComponent implements OnInit {
+export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, AfterContentInit {
+
+  @ViewChild('table', { static: true })
+  table!: Table;
 
   adminCommunicationsLogsService = inject(AdminCommunicationsLogsService);
   filterService = inject(FilterService);
@@ -109,6 +112,15 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit {
 
         return value.heiIdsCoveredByClient.includes(filter);
       });
+  }
+
+  ngAfterContentInit() {
+    this.selectedTypes = ['EWP_IN', 'EWP_OUT', 'HOST_IN'];
+    this.table.filters['type'] = [{
+      value: this.selectedTypes, 
+      matchMode: CUSTOM_FILTER_COMMUNICATION_TYPE_IS_ONE_OF_SET_NAME, 
+      operator: 'and' 
+    }];
   }
 
   loadCommunicationsLogs(event: TableLazyLoadEvent) {
