@@ -26,15 +26,15 @@
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     Type
-                    <p-columnFilter field="type" [matchModeOptions]="typeMatchModeOptions" matchMode="communicationIsOfType" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                    <p-columnFilter field="type" [matchModeOptions]="typeMatchModeOptions" matchMode="communicationTypeIsOneOfSet" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
                         <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                            <p-dropdown [options]="typeOptions" [(ngModel)]="selectedType" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" optionValue="value">
+                            <p-multiSelect [options]="typeOptions" [(ngModel)]="selectedTypes" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" optionValue="value">
                                 <ng-template let-option pTemplate="item">
                                     <div class="inline-block vertical-align-middle">
                                         <span class="ml-1 mt-1">{{ option.name }}</span>
                                     </div>
                                 </ng-template>
-                            </p-dropdown>
+                            </p-multiSelect>
                         </ng-template>
                     </p-columnFilter>
                 </div>

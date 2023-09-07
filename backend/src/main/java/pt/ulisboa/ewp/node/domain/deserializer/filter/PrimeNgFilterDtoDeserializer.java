@@ -6,13 +6,14 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import pt.ulisboa.ewp.node.domain.dto.filter.ConjunctionFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.DisjunctionFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.NotFilterDto;
-import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogIsOfTypeFilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogTypeIsOneOfSetFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationToEwpNodeIsToHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.EqualsFieldFilterDto;
@@ -108,10 +109,11 @@ public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deser
             }
             break;
 
-          case FilterConstants.COMMUNICATION_IS_OF_TYPE:
-            value = deserializeValue(fieldFilterNode.get("value"));
-            if (value != null) {
-              currentFieldFilters.add(new CommunicationLogIsOfTypeFilterDto(value.toString()));
+          case FilterConstants.COMMUNICATION_TYPE_IS_ONE_OF_SET:
+            Collection<String> possibleValues = deserializeStringCollectionValue(fieldFilterNode.get("value"));
+            if (!possibleValues.isEmpty()) {
+              currentFieldFilters.add(
+                  new CommunicationLogTypeIsOneOfSetFilterDto(possibleValues));
             }
             break;
 
@@ -145,6 +147,22 @@ public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deser
     return new ConjunctionFilterDto(allFilters);
   }
 
+  private Collection<String> deserializeStringCollectionValue(JsonNode valuesArrayNode) {
+    if (valuesArrayNode == null) {
+      return new ArrayList<>();
+    }
+
+    int valueNodeSize = valuesArrayNode.size();
+    List<String> possibleValues = new ArrayList<>();
+    for (int j = 0; j < valueNodeSize; j++) {
+      String possibleValue = deserializeStringValue(valuesArrayNode.get(j));
+      if (possibleValue != null) {
+        possibleValues.add(possibleValue);
+      }
+    }
+    return possibleValues;
+  }
+
   private Number deserializeNumberValue(JsonNode jsonNode) {
     Object value = deserializeValue(jsonNode);
     if (value == null) {
@@ -154,6 +172,17 @@ public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deser
       throw new IllegalArgumentException("Expected a number value: " + value);
     }
     return (Number) value;
+  }
+
+  private String deserializeStringValue(JsonNode jsonNode) {
+    Object value = deserializeValue(jsonNode);
+    if (value == null) {
+      return null;
+    }
+    if (!(value instanceof String)) {
+      throw new IllegalArgumentException("Expected a string value: " + value);
+    }
+    return (String) value;
   }
 
   private Object deserializeValue(JsonNode jsonNode) {

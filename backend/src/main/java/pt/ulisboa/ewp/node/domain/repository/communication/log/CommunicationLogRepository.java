@@ -48,13 +48,13 @@ public class CommunicationLogRepository extends AbstractRepository<Communication
     return runInSession(
         session -> {
           CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-          CriteriaQuery<CommunicationLog> query =
-              criteriaBuilder.createQuery(CommunicationLog.class);
+          CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
           Root<CommunicationLog> selection = query.from(CommunicationLog.class);
+          query.select(criteriaBuilder.count(selection));
           if (filter != null) {
             query = query.where(filter.createPredicate(criteriaBuilder, selection));
           }
-          return session.createQuery(query).stream().count();
+          return session.createQuery(query).getSingleResult();
         });
   }
 
