@@ -35,116 +35,131 @@ public class PrimeNgFilterDtoDeserializer implements FilterDtoDeserializer.Deser
     while (fieldNamesIterator.hasNext()) {
       String fieldName = fieldNamesIterator.next();
       JsonNode fieldFiltersNode = filtersNode.get(fieldName);
-      int numberFieldFilters = fieldFiltersNode.size();
-      List<FilterDto<?>> currentFieldFilters = new ArrayList<>();
-      boolean conjunction = true;
-      for (int i = 0; i < numberFieldFilters; i++) {
-        JsonNode fieldFilterNode = fieldFiltersNode.get(i);
-        if (i == 0) {
-          conjunction = "and".equals(fieldFilterNode.get("operator").asText());
-        }
-        String matchMode = fieldFilterNode.get("matchMode").asText();
-        Object value;
-        Number numberValue;
-        switch (matchMode) {
-          case "equals":
-            value = deserializeValue(fieldFilterNode.get("value"));
-            if (value != null) {
-              currentFieldFilters.add(new EqualsFieldFilterDto<>(fieldName, value));
-            }
-            break;
-
-          case "notEquals":
-            value = deserializeValue(fieldFilterNode.get("value"));
-            if (value != null) {
-              currentFieldFilters.add(
-                  new NotFilterDto<>(new EqualsFieldFilterDto<>(fieldName, value)));
-            }
-            break;
-
-          case "lt":
-            numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
-            if (numberValue != null) {
-              currentFieldFilters.add(new LessThanFieldFilterDto<>(fieldName, numberValue));
-            }
-            break;
-
-          case "lte":
-            numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
-            if (numberValue != null) {
-              currentFieldFilters.add(new LessThanOrEqualFieldFilterDto<>(fieldName, numberValue));
-            }
-            break;
-
-          case "gt":
-            numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
-            if (numberValue != null) {
-              currentFieldFilters.add(new GreaterThanFieldFilterDto<>(fieldName, numberValue));
-            }
-            break;
-
-          case "gte":
-            numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
-            if (numberValue != null) {
-              currentFieldFilters.add(
-                  new GreaterThanOrEqualFieldFilterDto<>(fieldName, numberValue));
-            }
-            break;
-
-          case "in":
-            JsonNode valueNode = fieldFilterNode.get("value");
-            if (valueNode != null) {
-              int valueNodeSize = valueNode.size();
-              List<Object> possibleValues = new ArrayList<>();
-              for (int j = 0; j < valueNodeSize; j++) {
-                Object possibleValue = deserializeValue(valueNode.get(j));
-                if (possibleValue != null) {
-                  possibleValues.add(possibleValue);
-                }
-              }
-
-              if (!possibleValues.isEmpty()) {
-                currentFieldFilters.add(new InFieldFilterDto<>(fieldName, possibleValues));
-              }
-            }
-            break;
-
-          case FilterConstants.COMMUNICATION_TYPE_IS_ONE_OF_SET:
-            Collection<String> possibleValues = deserializeStringCollectionValue(fieldFilterNode.get("value"));
-            if (!possibleValues.isEmpty()) {
-              currentFieldFilters.add(
-                  new CommunicationLogTypeIsOneOfSetFilterDto(possibleValues));
-            }
-            break;
-
-          case FilterConstants.COMMUNICATION_FROM_HEI_ID:
-            value = deserializeValue(fieldFilterNode.get("value"));
-            if (value != null) {
-              currentFieldFilters.add(
-                  new HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto(value.toString()));
-            }
-            break;
-
-          case FilterConstants.COMMUNICATION_TO_HEI_ID:
-            value = deserializeValue(fieldFilterNode.get("value"));
-            if (value != null) {
-              currentFieldFilters.add(
-                  new HttpCommunicationToEwpNodeIsToHeiIdFilterDto(value.toString()));
-            }
-            break;
-
-          default:
-            throw new IllegalArgumentException("Invalid match mode: " + matchMode);
-        }
-      }
-
-      if (conjunction) {
-        allFilters.add(new ConjunctionFilterDto(currentFieldFilters));
+      if (fieldFiltersNode.isArray()) {
+        allFilters.addAll(createFiltersListFromArrayFieldJsonNode(fieldFiltersNode, fieldName));
       } else {
-        allFilters.add(new DisjunctionFilterDto(currentFieldFilters));
+        allFilters.addAll(createFiltersListFromObjectFieldJsonNode(fieldFiltersNode, fieldName));
       }
     }
     return new ConjunctionFilterDto(allFilters);
+  }
+
+  private List<FilterDto<?>> createFiltersListFromArrayFieldJsonNode(JsonNode fieldFiltersNode, String fieldName) {
+    int numberFieldFilters = fieldFiltersNode.size();
+    List<FilterDto<?>> currentFieldFilters = new ArrayList<>();
+    boolean conjunction = true;
+    for (int i = 0; i < numberFieldFilters; i++) {
+      JsonNode fieldFilterNode = fieldFiltersNode.get(i);
+      if (i == 0) {
+        if (fieldFilterNode.get("operator") != null) {
+          conjunction = "and".equals(fieldFilterNode.get("operator").asText());
+        }
+      }
+      currentFieldFilters.addAll(
+          createFiltersListFromObjectFieldJsonNode(fieldFilterNode, fieldName));
+    }
+
+    if (conjunction) {
+      return List.of(new ConjunctionFilterDto(currentFieldFilters));
+    } else {
+      return List.of(new DisjunctionFilterDto(currentFieldFilters));
+    }
+  }
+
+  private List<FilterDto<?>> createFiltersListFromObjectFieldJsonNode(
+      JsonNode fieldFilterNode, String fieldName) {
+    List<FilterDto<?>> result = new ArrayList<>();
+    String matchMode = fieldFilterNode.get("matchMode").asText();
+    Object value;
+    Number numberValue;
+    switch (matchMode) {
+      case "equals":
+        value = deserializeValue(fieldFilterNode.get("value"));
+        if (value != null) {
+          result.add(new EqualsFieldFilterDto<>(fieldName, value));
+        }
+        break;
+
+      case "notEquals":
+        value = deserializeValue(fieldFilterNode.get("value"));
+        if (value != null) {
+          result.add(new NotFilterDto<>(new EqualsFieldFilterDto<>(fieldName, value)));
+        }
+        break;
+
+      case "lt":
+        numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
+        if (numberValue != null) {
+          result.add(new LessThanFieldFilterDto<>(fieldName, numberValue));
+        }
+        break;
+
+      case "lte":
+        numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
+        if (numberValue != null) {
+          result.add(new LessThanOrEqualFieldFilterDto<>(fieldName, numberValue));
+        }
+        break;
+
+      case "gt":
+        numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
+        if (numberValue != null) {
+          result.add(new GreaterThanFieldFilterDto<>(fieldName, numberValue));
+        }
+        break;
+
+      case "gte":
+        numberValue = deserializeNumberValue(fieldFilterNode.get("value"));
+        if (numberValue != null) {
+          result.add(new GreaterThanOrEqualFieldFilterDto<>(fieldName, numberValue));
+        }
+        break;
+
+      case "in":
+        JsonNode valueNode = fieldFilterNode.get("value");
+        if (valueNode != null) {
+          int valueNodeSize = valueNode.size();
+          List<Object> possibleValues = new ArrayList<>();
+          for (int j = 0; j < valueNodeSize; j++) {
+            Object possibleValue = deserializeValue(valueNode.get(j));
+            if (possibleValue != null) {
+              possibleValues.add(possibleValue);
+            }
+          }
+
+          if (!possibleValues.isEmpty()) {
+            result.add(new InFieldFilterDto<>(fieldName, possibleValues));
+          }
+        }
+        break;
+
+      case FilterConstants.COMMUNICATION_TYPE_IS_ONE_OF_SET:
+        Collection<String> possibleValues =
+            deserializeStringCollectionValue(fieldFilterNode.get("value"));
+        if (!possibleValues.isEmpty()) {
+          result.add(new CommunicationLogTypeIsOneOfSetFilterDto(possibleValues));
+        }
+        break;
+
+      case FilterConstants.COMMUNICATION_FROM_HEI_ID:
+        value = deserializeValue(fieldFilterNode.get("value"));
+        if (value != null) {
+          result.add(new HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto(value.toString()));
+        }
+        break;
+
+      case FilterConstants.COMMUNICATION_TO_HEI_ID:
+        value = deserializeValue(fieldFilterNode.get("value"));
+        if (value != null) {
+          result.add(new HttpCommunicationToEwpNodeIsToHeiIdFilterDto(value.toString()));
+        }
+        break;
+
+      default:
+        throw new IllegalArgumentException("Invalid match mode: " + matchMode);
+    }
+
+    return result;
   }
 
   private Collection<String> deserializeStringCollectionValue(JsonNode valuesArrayNode) {
