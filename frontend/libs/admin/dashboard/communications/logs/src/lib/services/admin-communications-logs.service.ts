@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpParams, HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { AdminApiResponseWithObjectData, CommunicationLogDetail, CommunicationLogDetailWrapper, CommunicationLogSummary, HostPluginFunctionCallCommunicationLogDetail } from "@ewp-node-frontend/admin/shared/api-interfaces";
+import { AdminApiResponseWithObjectData, CommunicationLogDetail, CommunicationLogDetailWrapper, CommunicationLogSummary, HostPluginFunctionCallCommunicationLogDetail, OperationResult } from "@ewp-node-frontend/admin/shared/api-interfaces";
 import { Type, plainToClass, plainToClassFromExist, plainToInstance } from "class-transformer";
 import { Observable, catchError, map, throwError } from "rxjs";
 
@@ -40,8 +40,22 @@ export class AdminCommunicationsLogsService {
             );
     }
 
+    reportCommunicationToMonitoring(id: number, clientMessage?: string | null): Observable<OperationResult> {
+        return this.http
+            .post<AdminApiResponseWithObjectData<CommunicationLogDetail>>(`/api/admin/communications/logs/${id}/monitoring/report`, {
+                clientMessage: clientMessage
+            })
+            .pipe(
+                map(response => {
+                    return plainToClassFromExist(new OperationResult(), { data: response.data });
+                }),
+                catchError((errorResponse: HttpErrorResponse) => {
+                    return this.throwErrorFromErrorResponse(errorResponse);
+                })
+            );
+    }
+
     throwErrorFromErrorResponse(errorResponse: HttpErrorResponse) {
-        console.log(errorResponse);
         if (errorResponse.error && errorResponse.error.messages) {
             return throwError(() => errorResponse.error);
         }

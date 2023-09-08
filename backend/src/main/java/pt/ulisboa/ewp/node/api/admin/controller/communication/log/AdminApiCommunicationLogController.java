@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.node.api.admin.controller.AdminApi;
+import pt.ulisboa.ewp.node.api.admin.dto.response.AdminApiOperationResultDto;
 import pt.ulisboa.ewp.node.api.admin.dto.response.AdminApiResponseWithDataDto;
 import pt.ulisboa.ewp.node.api.admin.security.AdminApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.admin.utils.AdminApiConstants;
@@ -32,6 +34,7 @@ import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.service.communication.log.CommunicationLogService;
+import pt.ulisboa.ewp.node.service.ewp.monitoring.EwpMonitoringService;
 
 @AdminApi
 @RestController
@@ -41,12 +44,17 @@ import pt.ulisboa.ewp.node.service.communication.log.CommunicationLogService;
 public class AdminApiCommunicationLogController {
 
   private final CommunicationLogService communicationLogService;
+  private final EwpMonitoringService ewpMonitoringService;
 
-  public AdminApiCommunicationLogController(CommunicationLogService communicationLogService) {
+  public AdminApiCommunicationLogController(
+      CommunicationLogService communicationLogService, EwpMonitoringService ewpMonitoringService) {
     this.communicationLogService = communicationLogService;
+    this.ewpMonitoringService = ewpMonitoringService;
   }
 
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
   @Operation(
       summary = "Retrieves communication logs in summary format.",
       tags = {"Admin"})
@@ -58,16 +66,15 @@ public class AdminApiCommunicationLogController {
       filter =
           new ConjunctionFilterDto<>(
               filter,
-              new HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto(
-                  requestDto.getRequesterHeiId()));
+              new HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto(requestDto.getRequesterHeiId()));
     }
 
     Collection<CommunicationLogSummaryDto> communicationLogDtos =
         this.communicationLogService.findByFilter(
             filter, requestDto.getOffset(), requestDto.getLimit());
     long totalResults = this.communicationLogService.countByFilter(filter);
-    GetCommunicationLogsSummaryResponseDto responseDto = new GetCommunicationLogsSummaryResponseDto(
-        communicationLogDtos, totalResults);
+    GetCommunicationLogsSummaryResponseDto responseDto =
+        new GetCommunicationLogsSummaryResponseDto(communicationLogDtos, totalResults);
     return AdminApiResponseUtils.toOkResponseEntity(responseDto);
   }
 
@@ -76,9 +83,25 @@ public class AdminApiCommunicationLogController {
       summary = "Retrieves a communication log in detail.",
       tags = {"Admin"})
   public ResponseEntity<AdminApiResponseWithDataDto<CommunicationLogDetailDto>>
-  getCommunicationLogs(@Min(1) @PathVariable(name = "id") long id) {
+      getCommunicationLogs(@Min(1) @PathVariable(name = "id") long id) {
     CommunicationLogDetailDto communicationLogDetailDto = this.communicationLogService.findById(id);
     return AdminApiResponseUtils.toOkResponseEntity(communicationLogDetailDto);
+  }
+
+  @PostMapping(
+      value = "/{id}/monitoring/report",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  @Operation(
+      summary = "Reports a communication log to monitoring.",
+      tags = {"Admin"})
+  public ResponseEntity<AdminApiResponseWithDataDto<AdminApiOperationResultDto>>
+      reportCommunicationToMonitoring(
+          @Min(1) @PathVariable(name = "id") long id,
+          @Valid @RequestBody ReportCommunicationLogToMonitoringRequestDto requestDto) {
+    this.ewpMonitoringService.reportCommunicationErrorToMonitoring(
+        id, requestDto.getClientMessage());
+    return AdminApiResponseUtils.toOkResponseEntity(new AdminApiOperationResultDto(true));
   }
 
   private static class GetCommunicationLogsRequestDto implements Serializable {
@@ -146,6 +169,19 @@ public class AdminApiCommunicationLogController {
 
     public long getTotalResults() {
       return totalResults;
+    }
+  }
+
+  private static class ReportCommunicationLogToMonitoringRequestDto implements Serializable {
+
+    @NotEmpty private String clientMessage;
+
+    public String getClientMessage() {
+      return clientMessage;
+    }
+
+    public void setClientMessage(String clientMessage) {
+      this.clientMessage = clientMessage;
     }
   }
 }

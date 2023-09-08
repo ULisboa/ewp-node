@@ -2,6 +2,10 @@ package pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Optional;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicatio
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog_;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
@@ -29,6 +34,21 @@ public class HttpCommunicationToEwpNodeLogRepository
     super(HttpCommunicationToEwpNodeLog.class, sessionFactory);
   }
 
+  public Optional<HttpCommunicationToEwpNodeLog> findById(Long id) {
+    return runInSession(
+        session -> {
+          CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+          CriteriaQuery<HttpCommunicationToEwpNodeLog> query =
+              criteriaBuilder.createQuery(HttpCommunicationToEwpNodeLog.class);
+          Root<HttpCommunicationToEwpNodeLog> selection = query.from(HttpCommunicationToEwpNodeLog.class);
+          return session
+              .createQuery(
+                  query.where(criteriaBuilder.equal(selection.get(HttpCommunicationToEwpNodeLog_.id), id)))
+              .stream()
+              .findFirst();
+        });
+  }
+
   public boolean create(
       String targetHeiId,
       String apiName,
@@ -39,6 +59,7 @@ public class HttpCommunicationToEwpNodeLogRepository
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
+      String serverDeveloperMessage,
       String observations,
       HttpCommunicationLog parentCommunication)
       throws IOException {
@@ -53,6 +74,7 @@ public class HttpCommunicationToEwpNodeLogRepository
             response,
             startProcessingDateTime,
             endProcessingDateTime,
+            serverDeveloperMessage,
             observations,
             parentCommunication);
     return persist(communicationToEwpNodeLog);

@@ -154,7 +154,7 @@ public class ForwardEwpApiInstitutionsV2ControllerIntegrationTest extends
     String heiId = "demo";
 
     EwpClientInvalidResponseException exception =
-        new EwpClientInvalidResponseException(null, null, null, new IllegalStateException("Test"));
+        new EwpClientInvalidResponseException(null, null, null, errorResponseV1, new IllegalStateException("Test"));
     doThrow(exception).when(client).find(heiId);
 
     MvcResult result =

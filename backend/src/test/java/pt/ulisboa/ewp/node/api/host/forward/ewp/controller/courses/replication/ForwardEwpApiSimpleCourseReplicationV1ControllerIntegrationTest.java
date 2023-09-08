@@ -150,7 +150,7 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
     String heiId = "demo";
 
     EwpClientInvalidResponseException exception =
-        new EwpClientInvalidResponseException(null, null, null, new IllegalStateException("Test"));
+        new EwpClientInvalidResponseException(null, null, null, errorResponseV1, new IllegalStateException("Test"));
     doThrow(exception).when(client).findAllCourses(heiId, null);
 
     MvcResult result =

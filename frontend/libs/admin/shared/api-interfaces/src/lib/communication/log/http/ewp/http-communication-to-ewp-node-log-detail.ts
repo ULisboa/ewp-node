@@ -5,4 +5,6 @@ export class HttpCommunicationToEwpNodeLogDetail extends EwpHttpCommunicationLog
     apiName!: string;
     apiVersion!: string;
     endpointName!: string;
+    serverDeveloperMessage!: string;
+    reportedToMonitoring!: boolean;
 }

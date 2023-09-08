@@ -1,5 +1,6 @@
 export * from './lib/shared-api-interfaces.module';
 export * from './lib/message/message';
+export * from './lib/response/operation-result';
 export * from './lib/response/response';
 export * from './lib/response/response-with-array-data';
 export * from './lib/response/response-with-object-data';
@@ -7,6 +8,7 @@ export * from './lib/user';
 export * from './lib/communication/log/communication-log-summary';
 export * from './lib/communication/log/communication-log-detail';
 export * from './lib/communication/log/communication-log-detail-wrapper';
+export * from './lib/communication/log/communication-log-warning-code-converter';
 export * from './lib/communication/log/function/call/function-call-communication-log-detail';
 export * from './lib/communication/log/host/plugin/host-plugin-function-call-communication-log-detail';
 export * from './lib/communication/log/http/http-communication-log-detail';

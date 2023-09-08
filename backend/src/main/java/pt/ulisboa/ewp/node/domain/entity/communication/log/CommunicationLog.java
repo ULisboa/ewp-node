@@ -1,9 +1,11 @@
 package pt.ulisboa.ewp.node.domain.entity.communication.log;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.utils.DomainConstants;
+import pt.ulisboa.ewp.node.domain.utils.communication.log.CommunicationLogWarningCode;
 import pt.ulisboa.ewp.node.utils.StringUtils;
 
 @Entity
@@ -177,6 +180,11 @@ public class CommunicationLog {
   @Transient
   public String getTarget() {
     return "Unknown";
+  }
+
+  @Transient
+  public List<CommunicationLogWarningCode> getWarningCodes() {
+    return new ArrayList<>();
   }
 
   public enum Status {

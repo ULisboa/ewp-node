@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { AdminCommunicationsLogsService } from '../services/admin-communications-logs.service';
 import { CommunicationLogDetail, EwpHttpCommunicationLogDetail, FunctionCallCommunicationLogDetail, HostPluginFunctionCallCommunicationLogDetail, HttpCommunicationFromEwpNodeLogDetail, HttpCommunicationLogDetail, HttpCommunicationToEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
@@ -22,6 +22,9 @@ export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
   @Input()
   id!: number;
 
+  @Output()
+  communicationReportedToMonitoring = new EventEmitter<any>();
+
   communicationLog?: CommunicationLogDetail | HostPluginFunctionCallCommunicationLogDetail;
 
   loading = true;
@@ -41,6 +44,10 @@ export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
         this.loading = false;
       }
     })
+  }
+
+  onCommunicationReportedToMonitoring() {
+    this.communicationReportedToMonitoring.emit();
   }
 
 }

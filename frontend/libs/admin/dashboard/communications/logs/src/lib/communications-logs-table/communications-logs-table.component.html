@@ -1,5 +1,7 @@
 <p-messages [(value)]="messages" [enableService]="false"></p-messages>
 
+<p-toast position="top-center" key="tc"></p-toast>
+
 <p-table #table
     [lazy]="true"
     (onLazyLoad)="loadCommunicationsLogs($event)"
@@ -17,6 +19,7 @@
     <ng-template pTemplate="header">
         <tr>
             <th style="width: 3rem"></th>
+            <th style="width: 1rem"></th>
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     ID
@@ -78,6 +81,11 @@
                     class="p-button-text p-button-rounded p-button-plain" 
                     [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
             </td>
+            <td>
+                <ng-container *ngIf="communicationLog.warningCodes.length > 0">
+                    <i class="pi pi-exclamation-triangle"></i>
+                </ng-container>
+            </td>
             <td class="cell">{{ communicationLog.id }}</td>
             <td class="cell">{{ communicationLog.type }}</td>
             <td class="cell">{{ communicationLog.source }}</td>
@@ -91,9 +99,11 @@
     </ng-template>
     <ng-template pTemplate="rowexpansion" let-communicationLog>
         <tr>
-            <td colspan="8">
+            <td colspan="9">
                 <div class="p-3">
-                    <lib-admin-dashboard-communication-log-detail [id]="communicationLog.id"></lib-admin-dashboard-communication-log-detail>
+                    <lib-admin-dashboard-communication-log-detail 
+                        [id]="communicationLog.id"
+                        (communicationReportedToMonitoring)="onCommunicationReportedToMonitoring()"></lib-admin-dashboard-communication-log-detail>
                 </div>
             </td>
         </tr>

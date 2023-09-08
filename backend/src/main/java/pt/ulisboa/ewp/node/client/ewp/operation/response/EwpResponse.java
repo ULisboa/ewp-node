@@ -1,12 +1,15 @@
 package pt.ulisboa.ewp.node.client.ewp.operation.response;
 
+import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
 import org.springframework.http.HttpStatus;
+import pt.ulisboa.ewp.node.exception.XmlCannotUnmarshallToTypeException;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
+import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 public class EwpResponse implements Serializable {
 
@@ -48,6 +51,17 @@ public class EwpResponse implements Serializable {
 
   public boolean isServerError() {
     return status != null && status.is5xxServerError();
+  }
+
+  public String getServerDeveloperMessage() {
+    try {
+      // NOTE: attempt to parse an error response
+      ErrorResponseV1 errorResponse = XmlUtils.unmarshall(getRawBody(), ErrorResponseV1.class);
+      return errorResponse.getDeveloperMessage().getValue();
+
+    } catch (XmlCannotUnmarshallToTypeException e) {
+      return null;
+    }
   }
 
   public static EwpResponse create(Response response) {

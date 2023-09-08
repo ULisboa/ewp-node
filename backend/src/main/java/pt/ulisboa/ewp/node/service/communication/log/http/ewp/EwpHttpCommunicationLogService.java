@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpMethodLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationFromEwpNodeLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp.HttpCommunicationFromEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp.HttpCommunicationToEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
@@ -36,6 +38,10 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
 
   @Autowired
   private HttpCommunicationToEwpNodeLogRepository httpCommunicationToEwpNodeLogRepository;
+
+  public Optional<HttpCommunicationToEwpNodeLog> findCommunicationToEwpNodeById(long id) {
+    return httpCommunicationToEwpNodeLogRepository.findById(id);
+  }
 
   public HttpCommunicationFromEwpNodeLog logCommunicationFromEwpNodeBeforeExecution(
       EwpApiHttpRequestWrapper request,
@@ -94,6 +100,11 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
     return httpCommunicationFromEwpNodeLogRepository.persist(communicationLog);
   }
 
+  public boolean markCommunicationToEwpNodeAsReportedToMonitoring(HttpCommunicationToEwpNodeLog communicationLog) {
+    communicationLog.setReportedToMonitoring(true);
+    return httpCommunicationToEwpNodeLogRepository.persist(communicationLog);
+  }
+
   public <T extends Serializable> void logCommunicationToEwpNode(
       EwpSuccessOperationResult<T> successOperationResult,
       ZonedDateTime startProcessingDateTime,
@@ -105,6 +116,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         successOperationResult.getResponse(),
         startProcessingDateTime,
         endProcessingDateTime,
+        null,
         "",
         parentCommunication);
   }
@@ -115,11 +127,16 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       ZonedDateTime endProcessingDateTime,
       HttpCommunicationLog parentCommunication)
       throws IOException {
+    String serverDeveloperMessage = null;
+    if (clientErrorException.getResponse() != null) {
+      serverDeveloperMessage = clientErrorException.getResponse().getServerDeveloperMessage();
+    }
     logCommunicationToEwpNode(
         clientErrorException.getRequest(),
         clientErrorException.getResponse(),
         startProcessingDateTime,
         endProcessingDateTime,
+        serverDeveloperMessage,
         clientErrorException.getDetailedMessage(),
         parentCommunication);
   }
@@ -129,6 +146,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       EwpResponse response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
+      String serverDeveloperMessage,
       String observations,
       HttpCommunicationLog parentCommunication)
       throws IOException {
@@ -144,6 +162,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         responseLog,
         startProcessingDateTime,
         endProcessingDateTime,
+        serverDeveloperMessage,
         observations,
         parentCommunication);
   }

@@ -1,6 +1,6 @@
 import { AfterContentInit, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommunicationLogSummary, HttpCommunicationFromEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
-import { FilterService, Message, SelectItem } from 'primeng/api';
+import { FilterService, Message, MessageService, SelectItem } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { take } from 'rxjs';
 import { AdminCommunicationsLogsService } from '../services/admin-communications-logs.service';
@@ -22,6 +22,7 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
 
   adminCommunicationsLogsService = inject(AdminCommunicationsLogsService);
   filterService = inject(FilterService);
+  messageService = inject(MessageService);
 
   typeMatchModeOptions: SelectItem[];
   sourceMatchModeOptions: SelectItem[];
@@ -49,6 +50,7 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
 
   loading = true;
   messages: Message[] = [];
+  lastTableLazyLoadEvent?: TableLazyLoadEvent;
 
   constructor() {
     this.typeMatchModeOptions = [
@@ -124,6 +126,7 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
   }
 
   loadCommunicationsLogs(event: TableLazyLoadEvent) {
+    this.lastTableLazyLoadEvent = event;
     this.loading = true;
     this.messages = [];
     this.adminCommunicationsLogsService.getCommunicationsLogs({ format: 'primeng', filters: event.filters || {} }, event.first ?? 0, event.rows ?? 10)
@@ -141,6 +144,13 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
           this.loading = false;
         }
       })
+  }
+
+  onCommunicationReportedToMonitoring() {
+    this.messageService.add({ key: 'tc', severity: 'success', summary: 'Communication was reported to monitoring successfully'})
+    if (this.lastTableLazyLoadEvent) {
+      this.loadCommunicationsLogs(this.lastTableLazyLoadEvent);
+    }
   }
 
 }

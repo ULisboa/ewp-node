@@ -33,13 +33,13 @@
       "@ewp-node-frontend/admin/shared/util-primeng": [
         "libs/admin/shared/util-primeng/src/index.ts"
       ],
+      "@ewp-node-frontend/not-found": ["libs/not-found/src/index.ts"],
       "@ewp-node-frontend/shared/data-access-shared": [
         "libs/shared/data-access-shared/src/index.ts"
       ],
       "@ewp-node-frontend/shared/util-angular": [
         "libs/shared/util-angular/src/index.ts"
-      ],
-      "@ewp-node-frontend/not-found": ["libs/not-found/src/index.ts"]
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

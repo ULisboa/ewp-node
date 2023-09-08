@@ -3,6 +3,13 @@
     <ng-container *ngIf="communicationLog">
         <p-accordion [multiple]="true">
 
+            <!--- Warning messages -->
+            <ng-container *ngIf="communicationLog.warningCodes.length > 0">
+                <!-- EWP Monitoring -->
+                <p-messages *ngFor="let warningMessage of communicationLog.warningMessages" 
+                    [value]="[{ 'severity': 'warn', 'summary': warningMessage }]" [closable]="false"></p-messages>
+            </ng-container>
+
             <ng-container *ngIf="communicationLog | instanceof: EwpHttpCommunicationLogDetail as ewpHttpCommunicationLogDetail">
                 <!-- EWP HTTP Communication -->
                 <p-accordionTab header="EWP Communication">
@@ -16,7 +23,22 @@
                     <ng-container *ngIf="ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationFromEwpNodeLogDetail as httpCommunicationFromEwpNodeLogDetail">
                         <p-card header="HEI IDs covered by requester">{{ httpCommunicationFromEwpNodeLogDetail.heiIdsCoveredByClient }}</p-card>
                     </ng-container>
-                    
+                </p-accordionTab>
+            </ng-container>
+
+            <ng-container *ngIf="communicationLog | instanceof: HttpCommunicationToEwpNodeLogDetail as httpCommunicationToEwpNodeLogDetail">
+                <!-- EWP Monitoring -->
+                <p-accordionTab header="EWP Monitoring">
+                    <ng-container *ngIf="httpCommunicationToEwpNodeLogDetail.reportedToMonitoring">
+                        <p-messages [value]="[{'severity': 'success', 'summary': 'Communication was previously reported to monitoring'}]" [closable]="false"></p-messages>
+                    </ng-container>
+                    <ng-container *ngIf="!httpCommunicationToEwpNodeLogDetail.reportedToMonitoring">
+                        <p-card header="Report to Monitoring Form">
+                            <lib-admin-dashboard-communication-log-report-to-monitoring-form 
+                                [communicationLog]="httpCommunicationToEwpNodeLogDetail"
+                                (communicationReportedToMonitoring)="onCommunicationReportedToMonitoring()"></lib-admin-dashboard-communication-log-report-to-monitoring-form>
+                        </p-card>
+                    </ng-container>
                 </p-accordionTab>
             </ng-container>
 

@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.domain.dto.communication.log;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public class CommunicationLogSummaryDto {
     
@@ -11,6 +12,7 @@ public class CommunicationLogSummaryDto {
     private ZonedDateTime endProcessingDateTime;
     private String source;
     private String target;
+    private List<String> warningCodes;
 
     public long getId() {
         return id;
@@ -66,5 +68,13 @@ public class CommunicationLogSummaryDto {
 
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    public List<String> getWarningCodes() {
+        return warningCodes;
+    }
+
+    public void setWarningCodes(List<String> warningCodes) {
+        this.warningCodes = warningCodes;
     }
 }
