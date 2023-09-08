@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.domain.utils.DomainConstants;
 import pt.ulisboa.ewp.node.utils.StringUtils;
@@ -51,6 +52,11 @@ public class HttpResponseLog {
 
   public void setCommunication(HttpCommunicationLog communication) {
     this.communication = communication;
+  }
+
+  @Transient
+  public boolean isErrorCode() {
+    return 400 <= statusCode && statusCode < 600;
   }
 
   @Column(name = "status_code", nullable = false)
