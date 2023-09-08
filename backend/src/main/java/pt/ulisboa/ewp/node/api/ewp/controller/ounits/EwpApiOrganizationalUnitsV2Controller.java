@@ -20,6 +20,8 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownHeiIdException;
+import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownOrganizationalUnitCodeException;
+import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownOrganizationalUnitIdException;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
@@ -76,7 +78,7 @@ public class EwpApiOrganizationalUnitsV2Controller {
         heiId, ounitIds, OrganizationalUnitsV2HostProvider.class);
 
     if (providerToOunitIdsMap.isEmpty()) {
-      throw new EwpUnknownHeiIdException(heiId);
+      throw new EwpUnknownOrganizationalUnitIdException(heiId, ounitIds.get(0));
     }
 
     int maxOunitIdsPerRequest = providerToOunitIdsMap.keySet().stream().mapToInt(
@@ -111,7 +113,7 @@ public class EwpApiOrganizationalUnitsV2Controller {
         heiId, ounitCodes, OrganizationalUnitsV2HostProvider.class);
 
     if (providerToOunitCodesMap.isEmpty()) {
-      throw new EwpUnknownHeiIdException(heiId);
+      throw new EwpUnknownOrganizationalUnitCodeException(heiId, ounitCodes.get(0));
     }
 
     int maxOunitCodesPerRequest = providerToOunitCodesMap.keySet().stream().mapToInt(
