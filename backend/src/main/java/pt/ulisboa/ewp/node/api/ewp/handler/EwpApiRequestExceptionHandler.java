@@ -58,7 +58,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
         }
 
       } else {
-        fillModelAndViewWithException(modelAndView, ex);
+        fillModelAndViewWithException(modelAndView, "Unknown error");
       }
       return modelAndView;
     }
@@ -86,33 +86,35 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
 
   private ModelAndView handleUnknownException(Exception exception, HttpServletResponse response) {
     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-    return createModelAndViewFromException(exception);
+    return createModelAndView("Unknown error");
   }
 
-  private ModelAndView createModelAndViewFromException(Exception ex) {
-    ModelAndView modelAndView = new ModelAndView();
-    fillModelAndViewWithException(modelAndView, ex);
-    return modelAndView;
-  }
-
-  private void fillModelAndViewWithException(ModelAndView modelAndView, Exception ex) {
-    MarshallingView marshallingView = new MarshallingView();
-    marshallingView.setMarshaller(jaxb2HttpMessageConverter);
-    modelAndView.setView(marshallingView);
-
-    modelAndView.addObject(createErrorResponse(ex));
-  }
-
-  private ErrorResponseV1 createErrorResponse(Exception exception) {
-    logger.error("Handling unknown exception", exception);
-
+  private ModelAndView createModelAndViewFromException(Exception exception) {
     String developerMessage;
     if (exception.getMessage() != null) {
       developerMessage = exception.getMessage();
     } else {
-      developerMessage = "Unknown internal server error";
+      developerMessage = "Unknown error";
     }
 
+    return createModelAndView(developerMessage);
+  }
+
+  private ModelAndView createModelAndView(String developerMessage) {
+    ModelAndView modelAndView = new ModelAndView();
+    fillModelAndViewWithException(modelAndView, developerMessage);
+    return modelAndView;
+  }
+
+  private void fillModelAndViewWithException(ModelAndView modelAndView, String developerMessage) {
+    MarshallingView marshallingView = new MarshallingView();
+    marshallingView.setMarshaller(jaxb2HttpMessageConverter);
+    modelAndView.setView(marshallingView);
+
+    modelAndView.addObject(createErrorResponse(developerMessage));
+  }
+
+  private ErrorResponseV1 createErrorResponse(String developerMessage) {
     return EwpApiUtils.createErrorResponseWithDeveloperMessage(developerMessage);
   }
 
