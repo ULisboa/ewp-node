@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.servlet.view.xml.MarshallingView;
@@ -58,7 +59,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
         }
 
       } else {
-        fillModelAndViewWithException(modelAndView, "Unknown error");
+        fillModelAndViewWithException(modelAndView, getMessageFromException(ex));
       }
       return modelAndView;
     }
@@ -86,7 +87,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
 
   private ModelAndView handleUnknownException(Exception exception, HttpServletResponse response) {
     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-    return createModelAndView("Unknown error");
+    return createModelAndView(getMessageFromException(exception));
   }
 
   private ModelAndView createModelAndViewFromException(Exception exception) {
@@ -98,6 +99,14 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
     }
 
     return createModelAndView(developerMessage);
+  }
+
+  private String getMessageFromException(Exception exception) {
+    if (exception instanceof HttpRequestMethodNotSupportedException) {
+      return exception.getMessage();
+    } else {
+      return "Unknown error";
+    }
   }
 
   private ModelAndView createModelAndView(String developerMessage) {

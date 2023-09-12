@@ -85,9 +85,15 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
       HttpParams params,
       String errorMessage)
       throws Exception {
-    assertErrorRequest(registryClient, method, uri, params, HttpStatus.BAD_REQUEST,
-        new Condition<>(errorResponse -> errorResponse.getDeveloperMessage().getValue()
-            .equalsIgnoreCase(errorMessage), "valid developer message"));
+    assertErrorRequest(
+        registryClient,
+        method,
+        uri,
+        params,
+        HttpStatus.BAD_REQUEST,
+        new Condition<>(
+            errorResponse -> errorResponse.getDeveloperMessage().getValue().contains(errorMessage),
+            "valid developer message"));
   }
 
   protected void assertNotFound(
@@ -97,9 +103,15 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
       HttpParams params,
       String errorMessage)
       throws Exception {
-    assertErrorRequest(registryClient, method, uri, params, HttpStatus.NOT_FOUND,
-        new Condition<>(errorResponse -> errorResponse.getDeveloperMessage().getValue()
-            .equalsIgnoreCase(errorMessage), "valid developer message"));
+    assertErrorRequest(
+        registryClient,
+        method,
+        uri,
+        params,
+        HttpStatus.NOT_FOUND,
+        new Condition<>(
+            errorResponse -> errorResponse.getDeveloperMessage().getValue().contains(errorMessage),
+            "valid developer message"));
   }
 
   protected void assertErrorRequest(

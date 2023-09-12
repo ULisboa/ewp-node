@@ -33,6 +33,7 @@ import org.apache.commons.io.IOUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.core.StringContains;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -416,7 +417,9 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
         this.mockMvc
             .perform(requestBuilder)
             .andExpect(status().is(dataWrapper.expectedStatus.value()))
-            .andExpect(xpath("/error-response/developer-message").string(dataWrapper.errorMessage))
+            .andExpect(
+                xpath("/error-response/developer-message")
+                    .string(new StringContains(dataWrapper.errorMessage)))
             .andReturn();
 
     validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/common-types.xsd");
