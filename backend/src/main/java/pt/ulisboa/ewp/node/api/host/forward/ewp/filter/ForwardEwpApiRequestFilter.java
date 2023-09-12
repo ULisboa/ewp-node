@@ -15,6 +15,7 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.filter.ForwardEwpApiJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.wrapper.ForwardEwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.domain.entity.api.host.forward.ewp.client.HostForwardEwpApiClient;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HttpCommunicationFromHostLog;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
@@ -52,8 +53,7 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     ZonedDateTime startProcessingDateTime = ZonedDateTime.now();
-    ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(
-        request);
+    ForwardEwpApiHttpRequestWrapper requestWrapper = new ForwardEwpApiHttpRequestWrapper(request);
     ContentCachingResponseWrapper responseWrapper =
         new ContentCachingResponseWrapper(response);
 
