@@ -21,6 +21,10 @@ public class CommunicationContext implements Serializable {
     return parentContext;
   }
 
+  public boolean hasCurrentCommunicationLog() {
+    return getCurrentCommunicationLog() != null;
+  }
+
   public CommunicationLog getCurrentCommunicationLog() {
     return currentCommunicationLog;
   }

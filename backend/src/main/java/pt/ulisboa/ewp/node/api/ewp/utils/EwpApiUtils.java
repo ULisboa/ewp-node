@@ -21,6 +21,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthentica
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfigurationFactory;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfigurationFactory;
+import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
 import pt.ulisboa.ewp.node.utils.EwpApi;
 import pt.ulisboa.ewp.node.utils.EwpApiSpecification.SpecificationElementToConfigurationConverter;
 import pt.ulisboa.ewp.node.utils.SemanticVersion;
@@ -139,9 +140,18 @@ public class EwpApiUtils {
   }
 
   public static ErrorResponseV1 createErrorResponseWithDeveloperMessage(String developerMessage) {
+    StringBuilder updatedDeveloperMessageBuilder = new StringBuilder(developerMessage);
+    if (CommunicationContextHolder.getContext().hasCurrentCommunicationLog()) {
+      updatedDeveloperMessageBuilder
+          .append(" [Communication ID: ")
+          .append(CommunicationContextHolder.getContext().getCurrentCommunicationLog().getId())
+          .append("]");
+    }
+    String updatedDeveloperMessage = updatedDeveloperMessageBuilder.toString();
+
     ErrorResponseV1 errorResponse = new ErrorResponseV1();
     MultilineStringV1 message = new MultilineStringV1();
-    message.setValue(developerMessage);
+    message.setValue(updatedDeveloperMessage);
     errorResponse.setDeveloperMessage(message);
     return errorResponse;
   }
