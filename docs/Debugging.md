@@ -1,21 +1,8 @@
-# Communication Diagrams
+# Admin Dashboard
 
-Whenever a host communicates with the node or the node communicates with some node of the EWP
-network, the HTTP communication is logged.
+The EWP Node includes an admin dashboard at /admin that allows to check received/sent communication logs from/to other EWP nodes, 
+as well communications from hosts and to them via host plugins.
 
-On communications from a host, the produced responses contain the ID of the logged communication.
-This ID may be provided to the actuator API in order to obtain a sequence diagram of the
-communication.
-This sequence diagram will contain the request from the host, subsequent requests that the node
-makes to other nodes and, finally, the response returned to the host.
+The credentials of access are configured on the applications.yml file, namely with the keys admin.security.username and admin.security.password.
 
-This API is available by accessing the following URI of the node, on a browser:
-
-```/actuator/communications/diagrams/<id>```
-
-By default, this feature is disabled.
-However, it may be enabled by configuring the management and
-actuator sections on the application properties file (see application-dev.yml.example for an example
-on how
-to configure it).
-It is strongly recommended to configure the actuator section in order to protect the actuator API.
+![Admin Dashboard](images/admin-dashboard.png)
