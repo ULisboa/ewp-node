@@ -2,7 +2,7 @@
 
 ## Install/Update
 
-1. Build a ZIP archive of the host plugin;
+1. Build a ZIP archive of the host plugin (e.g. mvn clean package, should create .zip file on target/ directory of the host plugin);
 
 2. Place the ZIP archive on the folder referenced on the property plugins.path of application.yml (of the backend);
 
