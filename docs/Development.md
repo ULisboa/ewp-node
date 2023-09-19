@@ -28,7 +28,9 @@ These steps must be run inside the root folder of the EWP Node project.
      docker run --rm --name ewp-node -v ${PWD}/backend/src/main/resources/application-dev.yml:/config/application.yml -v ${PWD}/plugins:/plugins --net=host ewp-node:dev 
     ```
 
-2. Launch the EWP Registry by running:
+2. Authenticate in the Github Docker Registry (refer to https://github.com/erasmus-without-paper/ewp-registry-service#pull-the-image);
+
+3. Launch the EWP Registry by running:
     ```
     docker run --rm -it --name ewp-registry --net=host -v ${PWD}/docker/registry/dev/data:/root -v ${PWD}/backend/src/main/resources/keystore/localhost.p12:/opt/keystore.p12 --entrypoint /root/entrypoint.sh docker.pkg.github.com/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
     ```
