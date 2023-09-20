@@ -6,9 +6,24 @@ WORKDIR /build
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&\
     apt-get install -y nodejs
 
-# Compile and package
-COPY . .
-RUN mvn -B package -DskipTests=true
+COPY pom.xml pom.xml
+COPY backend/pom.xml backend/pom.xml
+COPY delivery/pom.xml delivery/pom.xml
+COPY frontend/pom.xml frontend/pom.xml
+
+# Download dependencies first
+RUN mvn -pl backend,frontend dependency:resolve
+
+# Package modules individually
+COPY frontend frontend
+RUN mvn -pl frontend -B install -DskipTests=true
+
+COPY backend backend
+RUN mvn -pl backend -B install -DskipTests=true -Ddependency-check.skip=true
+
+COPY delivery delivery
+RUN mvn -B install -DskipTests=true -Ddependency-check.skip=true
+
 
 # Deploy
 FROM eclipse-temurin:11-jre
@@ -18,17 +33,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget
 COPY --from=builder /build/backend/src/main/resources/keystore/localhost.p12 /root/keystore/localhost.p12
 COPY --from=builder /build/delivery/target/ewp-node-*-full.jar /opt/app.jar
 
-ENV SPRING_PROFILES_ACTIVE=dev
-
 # Add localhost certificate to CACERTS
 ENV CACERTS_STORE /opt/java/openjdk/lib/security/cacerts
 RUN keytool -v -importkeystore -srckeystore /root/keystore/localhost.p12 -srcstoretype PKCS12 \
   -srcstorepass p@ssw0rd -destkeystore ${CACERTS_STORE} -deststoretype JKS -deststorepass changeit \
   -noprompt
 
+ENV JAVA_TOOL_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+
+VOLUME /config
+COPY --from=builder /build/backend/src/main/resources/application-dev-docker.yml /config/application-dev-docker.yml
+
+ENV SPRING_CONFIG_LOCATION=/config/
+ENV SPRING_PROFILES_ACTIVE=dev,dev-docker
+
 VOLUME /plugins
 
 EXPOSE 5005
 EXPOSE 8443
 
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", "-jar","/opt/app.jar"]
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom", "-jar","/opt/app.jar"]

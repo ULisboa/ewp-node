@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo keytool -v -importkeystore -srckeystore backend/src/main/resources/keystore/localhost.p12 -srcstoretype PKCS12 -srcstorepass p@ssw0rd -destkeystore  $JAVA_HOME/lib/security/cacerts  -deststoretype JKS -deststorepass changeit -noprompt

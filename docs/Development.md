@@ -13,35 +13,58 @@ matches the target HEI ID;
 2. Copy the file backend/src/main/resources/application-dev.yml.example to backend/src/main/resources/application-dev.yml;
 
 3. Edit the file backend/src/main/resources/application-dev.yml (only the sections of it mentioning that can be edited);
-   
-4. Build local EWP Node Docker image:
-    ```
-    docker build -f Dockerfile.dev -t ewp-node:dev . 
-    ```
 
-## Running local EWP Node and EWP Registry
+4. Authenticate in the Github Docker Registry (refer to https://github.com/erasmus-without-paper/ewp-registry-service#pull-the-image);
 
-These steps must be run inside the root folder of the EWP Node project.
+5. Copy the file .env.dev.example to .env.dev;
 
-1. Launch the EWP Node by running (this considers that there is a local folder plugins/):
+6. If necessary, change the values of .env.dev (e.g. if the default ports are already used).
+
+7. Copy the file docker-compose.dev.override.yml.example to docker-compose.dev.override.yml;
+
+8. If necessary, override Docker Compose services specification using docker-compose.dev.override.yml;
+
+9. To install the certificate that the local EWP Node and EWP Registry use, execute:
+
     ```
-     docker run --rm --name ewp-node -v ${PWD}/backend/src/main/resources/application-dev.yml:/config/application.yml -v ${PWD}/plugins:/plugins --net=host ewp-node:dev 
-    ```
-
-2. Authenticate in the Github Docker Registry (refer to https://github.com/erasmus-without-paper/ewp-registry-service#pull-the-image);
-
-3. Launch the EWP Registry by running:
-    ```
-    docker run --rm -it --name ewp-registry --net=host -v ${PWD}/docker/registry/dev/data:/root -v ${PWD}/backend/src/main/resources/keystore/localhost.p12:/opt/keystore.p12 --entrypoint /root/entrypoint.sh docker.pkg.github.com/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
+    ./install-node-certificate.sh
     ```
 
-Once both Docker containers have started, the EWP Node is available on port 8443, and the EWP Registry on port 8000.
+10. If the EWP Node and/or EWP Registry is/are needed to be acessed outside the Docker environment (e.g. a web application not in the same Docker network that needs to communicate with the EWP Node), add the following lines to the file /etc/hosts:
+    ```
+    127.0.0.1   ewp-node
+    127.0.0.1   ewp-registry
+    ```
 
-### Notes
+## Start local EWP Node and EWP Registry
 
-- Debugging of EWP Node is available on port 5005;
-- If there is a change of a host plugin, both the docker container of the EWP Node and EWP Registry must be restarted.
-By default, the EWP Registry periodically reloads the manifest every 5 minutes, hence the need to restart it if the host plugin has changed.
+Inside the root folder of the EWP Node project, follow the steps:
+
+1. Execute:
+
+    ```
+    ./up_dev.sh
+    ```
+
+Once both Docker containers have started, unless the file .env.dev uses different ports, the EWP Node is available, on host, on port 8443, and the EWP Registry on port 8000. If .env configure different ports then consider those correct ports on this section, instead of the default ones.
+
+If the step 10 of Preparation was executed, opening a web browser at https://ewp-node:8443/admin should show the Admin Dashboard authentication page, and opening at https://ewp-registry:8000/status should show a page with the status of the imported manifests (including the one of ewp-node).
+
+## Stop local EWP Node and EWP Registry
+
+Inside the root folder of the EWP Node project, follow the steps:
+
+1. Execute:
+
+    ```
+    ./down_dev.sh
+    ```
+
+## Notes
+
+- Initially, the EWP Registry may not be able to obtain the EWP Node manifest, as it is launching. However, the EWP Registry periodically will attempt to connect to the EWP Node manifest. Alternatively, on a web browser the page https://localhost:8000/status?url=https://ewp-node:8443/api/ewp/manifest (the port 8000 may need to be changed if the environment variable uses some other port for the EWP Registry) and force a reload;
+- If there is a change of a host plugin, the containers must be restarted.
+
 
 # Add support for new EWP API
 

@@ -50,6 +50,8 @@ mvnw.cmd
 Dockerfile
 Dockerfile.dev
 .dockerignore
+docker-compose**
+.env**
 
 ### Others ###
 backend/logs
@@ -58,3 +60,6 @@ README.md
 /plugins
 /docs
 src/main/resources/application-dev.yml**
+install-node-certificate.sh
+up_dev.sh
+down_dev.sh

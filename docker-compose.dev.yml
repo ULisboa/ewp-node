@@ -1,0 +1,36 @@
+version: "3.0"
+services:
+  ewp-node:
+    container_name: ewp-node
+    hostname: ewp-node
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    networks:
+      - dev
+    ports:
+      - ${EWP_NODE_EXTERNAL_PORT}:8443
+      # Debug port
+      - ${EWP_NODE_EXTERNAL_DEBUG_PORT}:5005
+    volumes:
+      - ${PWD}/backend/src/main/resources/application-dev.yml:/config/application-dev.yml:ro
+      - ${PWD}/${EWP_NODE_RELATIVE_PLUGINS_PATH}:/plugins
+
+  ewp-registry:
+    container_name: ewp-registry
+    hostname: ewp-registry
+    image: docker.pkg.github.com/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
+    entrypoint: 
+      - "/root/entrypoint.sh"
+    networks:
+      - dev
+    ports:
+      - ${EWP_REGISTRY_EXTERNAL_PORT}:8000
+    depends_on:
+      - ewp-node
+    volumes:
+      - ${PWD}/docker/registry/dev/data:/root
+      - ${PWD}/backend/src/main/resources/keystore/localhost.p12:/opt/keystore.p12:ro
+
+networks:
+  dev:

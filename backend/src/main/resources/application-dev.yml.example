@@ -1,6 +1,4 @@
-# If using the provided DEV Docker image then ONLY edit the bootstrap/plugins sections.
-
-# DO NOT edit if using the provided DEV Docker image
+# This section is overriden on Docker development environment
 server:
   port: 8443
   ssl:
@@ -10,7 +8,7 @@ server:
     key-alias: dev # REPLACE with the correct keystore alias
     client-auth: want # "want" in order to allow client requests without embedded client certificate
 
-# DO NOT edit if using the provided DEV Docker image
+# This section is overriden on Docker development environment
 registry:
   url: localhost:8000
   autoRefresh: true
@@ -72,6 +70,7 @@ scheduling:
   # are enabled.
   enabled: true
 
+# EDIT this section accordingly.
 plugins:
   # Set the path to the plugins directory
   path: /plugins/
