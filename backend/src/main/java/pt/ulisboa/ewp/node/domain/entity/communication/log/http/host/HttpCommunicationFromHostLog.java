@@ -59,9 +59,9 @@ public class HttpCommunicationFromHostLog extends HostHttpCommunicationLog {
   @Override
   @Transient
   public String getSource() {
-    if (getHost() == null) {
+    if (getHostForwardEwpApiClient() == null) {
       return "Unknown";
     }
-    return getHost().getCode();
+    return getHostForwardEwpApiClient().getId();
   }
 }
