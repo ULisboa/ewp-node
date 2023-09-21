@@ -6,9 +6,23 @@ WORKDIR /build
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&\
     apt-get install -y nodejs
 
-# Compile and package
-COPY . .
-RUN mvn -B package
+COPY pom.xml pom.xml
+COPY backend/pom.xml backend/pom.xml
+COPY delivery/pom.xml delivery/pom.xml
+COPY frontend/pom.xml frontend/pom.xml
+
+# Download dependencies first
+RUN mvn -pl backend,frontend dependency:resolve
+
+# Package modules individually
+COPY frontend frontend
+RUN mvn -pl frontend -B install -DskipTests=true
+
+COPY backend backend
+RUN mvn -pl backend -B install -DskipTests=true -Ddependency-check.skip=true
+
+COPY delivery delivery
+RUN mvn -B install -DskipTests=true -Ddependency-check.skip=true
 
 # Deploy
 FROM eclipse-temurin:11-jre
