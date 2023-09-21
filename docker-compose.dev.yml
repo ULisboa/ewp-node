@@ -24,8 +24,10 @@ services:
       - "/root/entrypoint.sh"
     networks:
       - dev
+    environment:
+      - SERVER_PORT=${EWP_REGISTRY_PORT}
     ports:
-      - ${EWP_REGISTRY_EXTERNAL_PORT}:8000
+      - ${EWP_REGISTRY_PORT}:${EWP_REGISTRY_PORT}
     depends_on:
       - ewp-node
     volumes:
