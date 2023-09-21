@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import javax.transaction.Transactional;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -19,10 +20,17 @@ import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 public class HttpCommunicationLogService {
 
   public HttpRequestLog toHttpRequestLog(ContentCachingRequestWrapper request) {
+    StringBuilder urlBuilder = new StringBuilder();
+    urlBuilder.append(request.getRequestURL().toString());
+    if (!StringUtils.isEmpty(request.getQueryString())) {
+      urlBuilder.append("?");
+      urlBuilder.append(request.getQueryString());
+    }
+
     HttpRequestLog requestLog =
         HttpRequestLog.create(
             HttpMethodLog.fromString(request.getMethod()),
-            request.getRequestURL().toString(),
+            urlBuilder.toString(),
             toHttpHeaderCollection(request),
             new String(request.getContentAsByteArray()));
     requestLog.getHeaders().forEach(header -> header.setRequestLog(requestLog));
