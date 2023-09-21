@@ -15,6 +15,17 @@ registry:
   timeBetweenRetriesInMilliseconds: 3000
   minTimeBetweenQueries: 3000
 
+# Change this section if needed
+db:
+  driverClassName: org.h2.Driver
+  url: jdbc:h2:mem:ewp_node__dev;DB_CLOSE_DELAY=-1
+  username: sa
+  password:
+  hibernate:
+    dialect: org.hibernate.dialect.H2Dialect
+    hbm2ddlAuto: create
+    timeZone: Europe/Lisbon
+
 # EDIT this section accordingly.
 bootstrap:
   # Hosts are bootstrapped if no host is currently defined on DB
@@ -65,10 +76,28 @@ manifest:
     # For development it is recommended this setting to be false in order to test non-primary host plugins.
     excludeIfNoPrimaryProviderAvailable: false
 
+stats:
+  portal:
+    heiId: stats.erasmuswithoutpaper.eu
+
 scheduling:
   # If true, scheduling services, such as Notification Daemon (to deliver CNR messages) and mapping synchronization,
   # are enabled.
   enabled: true
+
+cnr:
+  # Frequency on which notification daemon runs to process new/pending notifications
+  intervalInMilliseconds: 5000
+  # Maximum number of attempts to send a notification before considering it as a failure.
+  # The notification daemon uses exponential delay, on the powers of 2 (in minutes), as wait time between attempts.
+  # With then 10 maximum attempts, wait time for the last attempt = 2^10 minutes = 1024 minutes ~ 17 hours
+  maxNumberAttempts: 10
+
+sync:
+  mappings:
+    # Frequency on which sync mapping services are executed
+    # 30m * 60s * 1000ms = 1800000ms
+    intervalInMilliseconds: 1800000
 
 # EDIT this section accordingly.
 plugins:
@@ -108,3 +137,9 @@ admin:
     # "{bcrypt}" specifies the password storage format (see https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html)
     # e.g. test123
     password: "{bcrypt}$2a$10$DEPYoOhC9r9FA3ca2e8LYeQcS7bYVXymqwBvKY8cAy4baT3MhP/Z6"
+
+springdoc:
+  version: '@springdoc.version@'
+  api-docs:
+    groups:
+      enabled: true

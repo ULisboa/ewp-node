@@ -42,7 +42,7 @@ RUN keytool -v -importkeystore -srckeystore /root/keystore/localhost.p12 -srcsto
 ENV JAVA_TOOL_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
 
 VOLUME /config
-COPY --from=builder /build/backend/src/main/resources/application-dev-docker.yml /config/application-dev-docker.yml
+COPY docker/node/dev/application-dev-docker.yml /config/application-dev-docker.yml
 
 ENV SPRING_CONFIG_LOCATION=/config/
 ENV SPRING_PROFILES_ACTIVE=dev,dev-docker

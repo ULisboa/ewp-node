@@ -10,16 +10,6 @@ server:
     key-store-password: p@ssw0rd
     key-alias: ewp-node
 
-db:
-  driverClassName: org.h2.Driver
-  url: jdbc:h2:mem:ewp_node__dev;DB_CLOSE_DELAY=-1
-  username: sa
-  password:
-  hibernate:
-    dialect: org.hibernate.dialect.H2Dialect
-    hbm2ddlAuto: create
-    timeZone: Europe/Lisbon
-
 registry:
   url: ewp-registry:8000
   autoRefresh: true
@@ -39,25 +29,3 @@ plugins:
   path: /plugins/
   aspects:
     enabled: true
-
-stats:
-  portal:
-    heiId: stats.erasmuswithoutpaper.eu
-
-manifest:
-  entries:
-    excludeIfNoPrimaryProviderAvailable: false
-
-scheduling:
-  enabled: true
-
-sync:
-  mappings:
-    # 30m * 60s * 1000ms = 1800000ms
-    intervalInMilliseconds: 1800000
-
-springdoc:
-  version: '@springdoc.version@'
-  api-docs:
-    groups:
-      enabled: true
