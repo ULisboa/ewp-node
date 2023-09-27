@@ -4,91 +4,6 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>pt.ulisboa</groupId>
-    <artifactId>ewp-node-parent</artifactId>
-    <version>0.21.0</version>
-  </parent>
-
-  <artifactId>ewp-node-backend</artifactId>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>sonar-maven-plugin</artifactId>
-          <groupId>org.sonarsource.scanner.maven</groupId>
-          <version>3.9.1.2184</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <annotationProcessorPaths>
-            <path>
-              <artifactId>hibernate-jpamodelgen</artifactId>
-              <groupId>org.hibernate</groupId>
-              <version>5.6.15.Final</version>
-            </path>
-            <path>
-              <artifactId>mapstruct-processor</artifactId>
-              <groupId>org.mapstruct</groupId>
-              <version>${org.mapstruct.version}</version>
-            </path>
-          </annotationProcessorPaths>
-          <compilerArguments>
-            <processor>
-              org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor,org.mapstruct.ap.MappingProcessor
-            </processor>
-          </compilerArguments>
-          <encoding>${project.build.sourceEncoding}</encoding>
-          <release>11</release>
-        </configuration>
-        <groupId>org.apache.maven.plugins</groupId>
-        <version>3.11.0</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-            <id>prepare-agent</id>
-          </execution>
-          <execution>
-            <goals>
-              <goal>report</goal>
-            </goals>
-            <id>jacoco-site</id>
-            <phase>test</phase>
-          </execution>
-        </executions>
-        <groupId>org.jacoco</groupId>
-        <version>${jacoco.version}</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>dependency-check-maven</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <groupId>org.owasp</groupId>
-        <version>8.3.1</version>
-      </plugin>
-    </plugins>
-
-    <testSourceDirectory>src/test/java</testSourceDirectory>
-  </build>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -134,7 +49,7 @@
     <dependency>
       <groupId>pt.ulisboa</groupId>
       <artifactId>ewp-host-plugin-skeleton</artifactId>
-      <version>0.18.0</version>
+      <version>0.19.0</version>
     </dependency>
 
     <dependency>
@@ -377,6 +292,91 @@
       <optional>true</optional>
     </dependency>
   </dependencies>
+
+  <artifactId>ewp-node-backend</artifactId>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <version>3.9.1.2184</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <artifactId>hibernate-jpamodelgen</artifactId>
+              <groupId>org.hibernate</groupId>
+              <version>5.6.15.Final</version>
+            </path>
+            <path>
+              <artifactId>mapstruct-processor</artifactId>
+              <groupId>org.mapstruct</groupId>
+              <version>${org.mapstruct.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArguments>
+            <processor>
+              org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor,org.mapstruct.ap.MappingProcessor
+            </processor>
+          </compilerArguments>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <release>11</release>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.11.0</version>
+      </plugin>
+
+      <plugin>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <id>prepare-agent</id>
+          </execution>
+          <execution>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <id>jacoco-site</id>
+            <phase>test</phase>
+          </execution>
+        </executions>
+        <groupId>org.jacoco</groupId>
+        <version>${jacoco.version}</version>
+      </plugin>
+
+      <plugin>
+        <artifactId>dependency-check-maven</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <groupId>org.owasp</groupId>
+        <version>8.3.1</version>
+      </plugin>
+    </plugins>
+
+    <testSourceDirectory>src/test/java</testSourceDirectory>
+  </build>
+
+  <parent>
+    <groupId>pt.ulisboa</groupId>
+    <artifactId>ewp-node-parent</artifactId>
+    <version>0.22.0</version>
+  </parent>
 
   <properties>
     <jacoco.version>0.8.10</jacoco.version>
