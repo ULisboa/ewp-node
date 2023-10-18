@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile.dev
     networks:
       - dev
+    environment:
+      - REGISTRY_URL=ewp-registry:${EWP_REGISTRY_PORT}
     ports:
       - ${EWP_NODE_EXTERNAL_PORT}:8443
       # Debug port
