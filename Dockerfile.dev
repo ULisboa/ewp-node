@@ -39,7 +39,7 @@ RUN keytool -v -importkeystore -srckeystore /root/keystore/localhost.p12 -srcsto
   -srcstorepass p@ssw0rd -destkeystore ${CACERTS_STORE} -deststoretype JKS -deststorepass changeit \
   -noprompt
 
-ENV JAVA_TOOL_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+ENV JAVA_TOOL_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005
 
 VOLUME /config
 COPY docker/node/dev/application-dev-docker.yml /config/application-dev-docker.yml
