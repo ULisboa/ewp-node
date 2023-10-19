@@ -43,12 +43,17 @@ Inside the root folder of the EWP Node project, follow the steps:
 1. Execute:
 
     ```
-    ./up_dev.sh
+    sh up_dev.sh
     ```
 
 Once both Docker containers have started, unless the file .env.dev uses different ports, the EWP Node is available, on host, on port 8443, and the EWP Registry on port 8000. If .env.dev configures different ports then consider those correct ports on this section, instead of the default ones.
 
 If the step 10 of Preparation was executed, opening a web browser at https://ewp-node:8443/admin should show the Admin Dashboard authentication page, and opening at https://ewp-registry:8000/status should show a page with the status of the imported manifests (including the one of ewp-node).
+
+Notes:
+ - The file docker-compose.dev.override.yml and .env.dev may be edited freely as those are not commited to the repository.
+ - If changes have been made to frontend/backend, just rerun the command. It will rebuild and recreate the Docker container.
+
 
 ## Stop local EWP Node and EWP Registry
 
@@ -57,7 +62,7 @@ Inside the root folder of the EWP Node project, follow the steps:
 1. Execute:
 
     ```
-    ./down_dev.sh
+    sh down_dev.sh
     ```
 
 ## Notes

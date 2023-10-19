@@ -99,29 +99,20 @@ Note the ```--recursive``` flag that is needed so the external dependencies conf
 
 ## Building and Running with Docker
 
-### Building the Docker image
+### Development Environment
+
+Refer to the [Development documentation](docs/Development.md).
+
+### Production Environment
+
+#### Building the Docker image
 
 Run the command line:
 ```
 docker build -t ulisboa/ewp-node .
 ```
 
-### Running the Docker image
-
-#### Directly with Docker
-
-Run the command line (check the section [Docker Image Parameters](#docker-image-parameters) for reference):
-```
-docker run \
-    --name=ewp-node \
-    -p 8080:8080 \
-    -v <path to config folder>:/config \
-    -v <path to logs folder>:/logs \
-    --restart unless-stopped \
-    ulisboa/ewp-node
-```
-
-#### With Docker Compose
+#### Running the Docker image (with Docker Compose)
 
 Write into a docker-compose.yml file (check the section [Docker Image Parameters](#docker-image-parameters) for reference):
 ```
@@ -133,7 +124,8 @@ services:
     container_name: ewp-node
     volumes:
       - <path to config folder>:/config
-      - <path to logs folder>:/logs
+      - <path to logs folder>:/logs # Optional
+      - <path to plugins folder>:/plugins # Optional
     ports:
       - 8080:8080
     healthcheck:
@@ -150,7 +142,9 @@ Then run on the folder containing that file:
 docker-compose up -d
 ```
 
-Note: This configuration can be adapted to run on Docker Swarm.
+Notes: 
+- If SSL is enabled then every reference in the docker-compose.yml file to port 8080 must be changed accordingly, including changing "http" to "https" on the healthcheck test command;
+- This configuration can be adapted to run on Docker Swarm.
 
 ### Docker Image Parameters
 
@@ -166,6 +160,7 @@ from the host's IP on port 80 outside the container.
 | `-p 8443` | Port used by the server (if SSL is enabled) |
 | `-v /config` | Path from where the server will read the configuration when starting. Namely, it expects a file application.yml with the same structure as [src/main/resources/application.yml](src/main/resources/application.yml) (check this file for an example as well documentation on it). |
 | `-v /logs` | Path where the server will store the logs. |
+| `-v /plugins` | Path where the server will store the plugins. |
 
 ## Automatic APIs documentation
 
