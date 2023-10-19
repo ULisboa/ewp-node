@@ -11,19 +11,24 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
     name = "",
-    propOrder = {"iias"})
+    propOrder = {"iias", "rawXmlInBase64"})
 @XmlRootElement(name = "iias")
 public class ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto {
 
   @XmlElement(name = "iia", required = true)
   private Collection<ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationResponseDto> iias = new ArrayList<>();
 
+  @XmlElement(name = "raw-xml-base64")
+  private byte[] rawXmlInBase64;
+
   public ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto() {
   }
 
   public ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto(
-      Collection<ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationResponseDto> iias) {
+      Collection<ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationResponseDto> iias,
+      byte[] rawXmlInBase64) {
     this.iias = iias;
+    this.rawXmlInBase64 = rawXmlInBase64;
   }
 
   public Collection<ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationResponseDto> getIias() {
@@ -33,5 +38,13 @@ public class ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto {
   public void setIias(
       Collection<ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationResponseDto> iias) {
     this.iias = iias;
+  }
+
+  public byte[] getRawXmlInBase64() {
+    return rawXmlInBase64;
+  }
+
+  public void setRawXmlInBase64(byte[] rawXmlInBase64) {
+    this.rawXmlInBase64 = rawXmlInBase64;
   }
 }

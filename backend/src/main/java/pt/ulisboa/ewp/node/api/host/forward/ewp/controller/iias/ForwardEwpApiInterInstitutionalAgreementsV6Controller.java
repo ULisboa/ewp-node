@@ -12,6 +12,7 @@ import javax.validation.constraints.NotEmpty;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -95,10 +96,12 @@ public class ForwardEwpApiInterInstitutionalAgreementsV6Controller extends
     }
 
     ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto getResponse = new ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto();
-    List<HashComparisonResult> hashComparisonResults = this.hashService.checkCooperationConditionsHash(
-        new InputSource(new ByteArrayInputStream(
-            response.getResponse().getRawBody().getBytes(StandardCharsets.UTF_8))),
-        EwpApiNamespaces.IIAS_V6_GET_RESPONSE.getNamespaceUrl());
+    byte[] rawBody = response.getResponse().getRawBody().getBytes(StandardCharsets.UTF_8);
+    getResponse.setRawXmlInBase64(Base64Utils.encode(rawBody));
+    List<HashComparisonResult> hashComparisonResults =
+        this.hashService.checkCooperationConditionsHash(
+            new InputSource(new ByteArrayInputStream(rawBody)),
+            EwpApiNamespaces.IIAS_V6_GET_RESPONSE.getNamespaceUrl());
     int index = 0;
     for (Iia iia : response.getResponseBody().getIia()) {
       HashComparisonResult hashComparisonResult = hashComparisonResults.get(index);
