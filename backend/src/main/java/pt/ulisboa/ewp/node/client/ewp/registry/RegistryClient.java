@@ -9,12 +9,16 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 
 @Service
 public class RegistryClient extends ClientImpl {
+
+  private static final Logger LOG = LoggerFactory.getLogger(RegistryClient.class);
 
   @Autowired
   public RegistryClient(RegistryProperties properties) {
@@ -26,6 +30,7 @@ public class RegistryClient extends ClientImpl {
   }
 
   private static ClientImplOptions createClientOptions(RegistryProperties properties) {
+    LOG.info("Using registry at: " + properties.getUrl());
     ClientImplOptions options = new ClientImplOptions();
     options.setCatalogueFetcher(new DefaultCatalogueFetcher(properties.getUrl()));
     options.setAutoRefreshing(properties.isAutoRefresh());

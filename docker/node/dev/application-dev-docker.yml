@@ -29,3 +29,9 @@ plugins:
   path: /plugins/
   aspects:
     enabled: true
+
+logging:
+  group:
+    ewp-registry: eu.erasmuswithoutpaper.registryclient
+  level:
+    ewp-registry: debug
