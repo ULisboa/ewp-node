@@ -118,9 +118,26 @@ public class IiaHashService {
       StreamResult iiasGetResponseStreamResult = new StreamResult(iiasGetResponseOutputStream);
       this.jaxb2HttpMessageConverter.marshal(iiasGetResponse, iiasGetResponseStreamResult);
 
+      return calculateCooperationConditionsHashesForV6(iiasGetResponseOutputStream.toByteArray());
+
+    } catch (HashCalculationException e) {
+      throw new HashCalculationException(e);
+    }
+  }
+
+  /**
+   * Calculates the cooperation conditions hash for each interinstitutional agreement V6 contained
+   * in the XML provided..
+   *
+   * @param xml A IIAs Get Response as a byte array
+   * @return A list of hashes for all agreements contained in the XML provided.
+   * @throws HashCalculationException when hash failed to be calculated for some reason.
+   */
+  public List<HashCalculationResult> calculateCooperationConditionsHashesForV6(byte[] xml)
+      throws HashCalculationException {
+    try {
       return calculateCooperationConditionsHashes(
-          EwpApiNamespaces.IIAS_V6_GET_RESPONSE.getNamespaceUrl(),
-          iiasGetResponseOutputStream.toByteArray());
+          EwpApiNamespaces.IIAS_V6_GET_RESPONSE.getNamespaceUrl(), xml);
 
     } catch (HashCalculationException e) {
       throw new HashCalculationException(e);

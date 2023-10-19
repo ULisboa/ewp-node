@@ -4,6 +4,7 @@ import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasIndexResponseV6;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.InputSource;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
@@ -125,6 +127,23 @@ public class ForwardEwpApiInterInstitutionalAgreementsV6Controller extends
     ForwardEwpApiIiaHashesCalculationResponseDTO response = new ForwardEwpApiIiaHashesCalculationResponseDTO(
         hashCalculationResults.stream().map(HashCalculationResult::getHash)
             .collect(Collectors.toList()));
+    return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
+  }
+
+  @PostMapping(
+      consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE,
+      value = "/hashes/calculate")
+  public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiIiaHashesCalculationResponseDTO>>
+      calculateCooperationConditionsHashes(@RequestPart("xml") byte[] xml)
+          throws HashCalculationException, IOException {
+    List<HashCalculationResult> hashCalculationResults =
+        this.hashService.calculateCooperationConditionsHashesForV6(xml);
+    ForwardEwpApiIiaHashesCalculationResponseDTO response =
+        new ForwardEwpApiIiaHashesCalculationResponseDTO(
+            hashCalculationResults.stream()
+                .map(HashCalculationResult::getHash)
+                .collect(Collectors.toList()));
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 }
