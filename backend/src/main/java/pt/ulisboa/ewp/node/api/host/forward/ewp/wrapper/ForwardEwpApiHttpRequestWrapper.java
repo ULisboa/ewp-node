@@ -22,6 +22,10 @@ public class ForwardEwpApiHttpRequestWrapper extends ContentCachingRequestWrappe
   public ForwardEwpApiHttpRequestWrapper(HttpServletRequest request) throws IOException {
     super(request);
 
+    // NOTE: this is necessary to force cache creation for parameters (namely for multipart requests)
+    // otherwise those are lost during processing
+    request.getParameterMap();
+
     initBody(request);
     initInputStream();
   }
