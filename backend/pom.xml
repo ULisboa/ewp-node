@@ -178,6 +178,11 @@
       <artifactId>sax</artifactId>
       <version>0.9.4</version>
     </dependency>
+    <dependency>
+      <artifactId>Saxon-HE</artifactId>
+      <groupId>net.sf.saxon</groupId>
+      <version>12.3</version>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.santuario</groupId>

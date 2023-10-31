@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.service.ewp.iia.hash;
+package pt.ulisboa.ewp.node.service.ewp.iia.hash.v6;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,6 +20,8 @@ import org.xml.sax.InputSource;
 import pt.ulisboa.ewp.node.AbstractIntegrationTest;
 import pt.ulisboa.ewp.node.exception.ewp.hash.HashCalculationException;
 import pt.ulisboa.ewp.node.exception.ewp.hash.HashComparisonException;
+import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashCalculationResult;
+import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashComparisonResult;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.v6.IiaHashServiceV6;
 import pt.ulisboa.ewp.node.utils.EwpApiNamespaces;
 
