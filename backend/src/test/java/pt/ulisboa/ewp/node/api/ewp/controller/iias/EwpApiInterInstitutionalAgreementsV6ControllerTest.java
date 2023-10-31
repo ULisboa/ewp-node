@@ -40,7 +40,7 @@ import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpInterInstitutionalAgreementMapping;
 import pt.ulisboa.ewp.node.domain.repository.mapping.EwpInterInstitutionalAgreementMappingRepository;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
-import pt.ulisboa.ewp.node.service.ewp.iia.hash.IiaHashService;
+import pt.ulisboa.ewp.node.service.ewp.iia.hash.v6.IiaHashServiceV6;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
@@ -60,7 +60,7 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
   private EwpInterInstitutionalAgreementMappingRepository mappingRepository;
 
   @Autowired
-  private IiaHashService iiaHashService;
+  private IiaHashServiceV6 iiaHashService;
 
   @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
@@ -208,7 +208,7 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     assertThat(response.getIia()).hasSize(iiaIds.size());
     for (Iia iia : response.getIia()) {
       assertThat(iia.getConditionsHash()).isEqualTo(
-          this.iiaHashService.calculateCooperationConditionsHashesForV6(List.of(iia)).get(0)
+          this.iiaHashService.calculateCooperationConditionsHashes(List.of(iia)).get(0)
               .getHash());
     }
   }
@@ -276,7 +276,7 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     assertThat(response.getIia()).hasSize(knownIiaIds.size());
     for (Iia iia : response.getIia()) {
       assertThat(iia.getConditionsHash()).isEqualTo(
-          this.iiaHashService.calculateCooperationConditionsHashesForV6(List.of(iia)).get(0)
+          this.iiaHashService.calculateCooperationConditionsHashes(List.of(iia)).get(0)
               .getHash());
     }
   }
@@ -349,7 +349,7 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     assertThat(response.getIia()).hasSize(iiaCodes.size());
     for (Iia iia : response.getIia()) {
       assertThat(iia.getConditionsHash()).isEqualTo(
-          this.iiaHashService.calculateCooperationConditionsHashesForV6(List.of(iia)).get(0)
+          this.iiaHashService.calculateCooperationConditionsHashes(List.of(iia)).get(0)
               .getHash());
     }
   }
@@ -417,7 +417,7 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     assertThat(response.getIia()).hasSize(knownIiaCodes.size());
     for (Iia iia : response.getIia()) {
       assertThat(iia.getConditionsHash()).isEqualTo(
-          this.iiaHashService.calculateCooperationConditionsHashesForV6(List.of(iia)).get(0)
+          this.iiaHashService.calculateCooperationConditionsHashes(List.of(iia)).get(0)
               .getHash());
     }
   }

@@ -36,7 +36,7 @@ import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownHeiIdException;
 import pt.ulisboa.ewp.node.exception.ewp.hash.HashCalculationException;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashCalculationResult;
-import pt.ulisboa.ewp.node.service.ewp.iia.hash.IiaHashService;
+import pt.ulisboa.ewp.node.service.ewp.iia.hash.v6.IiaHashServiceV6;
 
 @RestController
 @EwpApi
@@ -49,13 +49,13 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
   private final HostPluginManager hostPluginManager;
 
   private final EwpInterInstitutionalAgreementMappingRepository mappingRepository;
-  private final IiaHashService iiaHashService;
+  private final IiaHashServiceV6 iiaHashService;
 
   private final String statsPortalHeiId;
 
   public EwpApiInterInstitutionalAgreementsV6Controller(HostPluginManager hostPluginManager,
       EwpInterInstitutionalAgreementMappingRepository mappingRepository,
-      IiaHashService iiaHashService, @Value("${stats.portal.heiId}") String statsPortalHeiId) {
+      IiaHashServiceV6 iiaHashService, @Value("${stats.portal.heiId}") String statsPortalHeiId) {
     this.hostPluginManager = hostPluginManager;
     this.mappingRepository = mappingRepository;
     this.iiaHashService = iiaHashService;
@@ -180,7 +180,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
       Collection<Iia> iias = provider.findByHeiIdAndIiaIds(Collections.singletonList(heiId), heiId,
           coveredIiaIds, sendPdf);
       for (Iia iia : iias) {
-        List<HashCalculationResult> hashCalculationResults = this.iiaHashService.calculateCooperationConditionsHashesForV6(
+        List<HashCalculationResult> hashCalculationResults = this.iiaHashService.calculateCooperationConditionsHashes(
             List.of(iia));
         iia.setConditionsHash(hashCalculationResults.get(0).getHash());
         response.getIia().add(iia);
@@ -213,7 +213,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
       Collection<Iia> iias = provider.findByHeiIdAndIiaCodes(Collections.singletonList(heiId),
           heiId, coveredIiaCodes, sendPdf);
       for (Iia iia : iias) {
-        List<HashCalculationResult> hashCalculationResults = this.iiaHashService.calculateCooperationConditionsHashesForV6(
+        List<HashCalculationResult> hashCalculationResults = this.iiaHashService.calculateCooperationConditionsHashes(
             List.of(iia));
         iia.setConditionsHash(hashCalculationResults.get(0).getHash());
         response.getIia().add(iia);

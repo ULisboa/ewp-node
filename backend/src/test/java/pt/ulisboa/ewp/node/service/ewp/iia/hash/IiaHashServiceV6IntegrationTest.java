@@ -20,25 +20,26 @@ import org.xml.sax.InputSource;
 import pt.ulisboa.ewp.node.AbstractIntegrationTest;
 import pt.ulisboa.ewp.node.exception.ewp.hash.HashCalculationException;
 import pt.ulisboa.ewp.node.exception.ewp.hash.HashComparisonException;
+import pt.ulisboa.ewp.node.service.ewp.iia.hash.v6.IiaHashServiceV6;
 import pt.ulisboa.ewp.node.utils.EwpApiNamespaces;
 
-class IiaHashServiceIntegrationTest extends AbstractIntegrationTest {
+class IiaHashServiceV6IntegrationTest extends AbstractIntegrationTest {
 
-  private final IiaHashService iiaHashService;
+  private final IiaHashServiceV6 iiaHashService;
 
-  IiaHashServiceIntegrationTest(@Autowired IiaHashService iiaHashService) {
+  IiaHashServiceV6IntegrationTest(@Autowired IiaHashServiceV6 iiaHashService) {
     this.iiaHashService = iiaHashService;
   }
 
   @Test
-  public void testCalculateCooperationConditionsHashesForV6_OneIia_ReturnCorrectHash()
+  public void testCalculateCooperationConditionsHashes_OneIia_ReturnCorrectHash()
       throws HashCalculationException {
     // Given
     Iia iia = createSampleIia1();
 
     // When
-    List<HashCalculationResult> result = this.iiaHashService.calculateCooperationConditionsHashesForV6(
-        List.of(iia));
+    List<HashCalculationResult> result =
+        this.iiaHashService.calculateCooperationConditionsHashes(List.of(iia));
 
     // Then
     assertThat(result).hasSize(1);
@@ -47,14 +48,14 @@ class IiaHashServiceIntegrationTest extends AbstractIntegrationTest {
   }
 
   @Test
-  public void testCalculateCooperationConditionsHashesForV6_OneIiaTwice_ReturnSameCorrectHashTwice()
+  public void testCalculateCooperationConditionsHashes_OneIiaTwice_ReturnSameCorrectHashTwice()
       throws HashCalculationException {
     // Given
     Iia iia = createSampleIia1();
 
     // When
-    List<HashCalculationResult> result = this.iiaHashService.calculateCooperationConditionsHashesForV6(
-        List.of(iia, iia));
+    List<HashCalculationResult> result =
+        this.iiaHashService.calculateCooperationConditionsHashes(List.of(iia, iia));
 
     // Then
     assertThat(result).hasSize(2);

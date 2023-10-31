@@ -44,7 +44,7 @@ import pt.ulisboa.ewp.node.exception.ewp.hash.HashCalculationException;
 import pt.ulisboa.ewp.node.exception.ewp.hash.HashComparisonException;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashCalculationResult;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashComparisonResult;
-import pt.ulisboa.ewp.node.service.ewp.iia.hash.IiaHashService;
+import pt.ulisboa.ewp.node.service.ewp.iia.hash.v6.IiaHashServiceV6;
 import pt.ulisboa.ewp.node.utils.EwpApi;
 import pt.ulisboa.ewp.node.utils.EwpApiNamespaces;
 
@@ -56,10 +56,10 @@ public class ForwardEwpApiInterInstitutionalAgreementsV6Controller extends
     AbstractForwardEwpApiController {
 
   private final EwpInterInstitutionalAgreementsV6Client client;
-  private final IiaHashService hashService;
+  private final IiaHashServiceV6 hashService;
 
   public ForwardEwpApiInterInstitutionalAgreementsV6Controller(RegistryClient registryClient,
-      EwpInterInstitutionalAgreementsV6Client client, IiaHashService hashService) {
+      EwpInterInstitutionalAgreementsV6Client client, IiaHashServiceV6 hashService) {
     super(registryClient);
     this.client = client;
     this.hashService = hashService;
@@ -122,7 +122,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV6Controller extends
   public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiIiaHashesCalculationResponseDTO>> calculateCooperationConditionsHashes(
       @Valid @RequestBody ForwardEwpApiIiaHashesCalculationV6RequestDTO requestData)
       throws HashCalculationException {
-    List<HashCalculationResult> hashCalculationResults = this.hashService.calculateCooperationConditionsHashesForV6(
+    List<HashCalculationResult> hashCalculationResults = this.hashService.calculateCooperationConditionsHashes(
         requestData.getIias());
     ForwardEwpApiIiaHashesCalculationResponseDTO response = new ForwardEwpApiIiaHashesCalculationResponseDTO(
         hashCalculationResults.stream().map(HashCalculationResult::getHash)
@@ -138,7 +138,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV6Controller extends
       calculateCooperationConditionsHashes(@RequestPart("xml") byte[] xml)
           throws HashCalculationException, IOException {
     List<HashCalculationResult> hashCalculationResults =
-        this.hashService.calculateCooperationConditionsHashesForV6(xml);
+        this.hashService.calculateCooperationConditionsHashes(xml);
     ForwardEwpApiIiaHashesCalculationResponseDTO response =
         new ForwardEwpApiIiaHashesCalculationResponseDTO(
             hashCalculationResults.stream()
