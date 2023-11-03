@@ -68,6 +68,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
       summary = "IIAs Index API.",
       tags = {"ewp"})
   public ResponseEntity<IiasIndexResponseV6> iiaIds(
+      EwpApiHostAuthenticationToken authenticationToken,
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
       @RequestParam(value = EwpApiParamConstants.PARTNER_HEI_ID, defaultValue = "") String partnerHeiId,
       @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, required = false) Collection<String> receivingAcademicYearIds,
@@ -84,7 +85,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
 
     IiasIndexResponseV6 response = new IiasIndexResponseV6();
     providers.forEach(provider -> {
-      Collection<String> iiaIds = provider.findAllIiaIdsByHeiId(Collections.singletonList(heiId),
+      Collection<String> iiaIds = provider.findAllIiaIdsByHeiId(authenticationToken.getPrincipal().getHeiIdsCoveredByClient(),
           heiId, partnerHeiId,
           receivingAcademicYearIds, modifiedSince);
       response.getIiaId().addAll(iiaIds);
@@ -98,6 +99,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
       summary = "IIAs Get API.",
       tags = {"ewp"})
   public ResponseEntity<IiasGetResponseV6> iiasGet(
+      EwpApiHostAuthenticationToken authenticationToken,
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
       @RequestParam(value = EwpApiParamConstants.IIA_ID, required = false)
       List<String> iiaIds,
@@ -125,9 +127,11 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     }
 
     if (!iiaIds.isEmpty()) {
-      return iiasByIds(heiId, iiaIds, sendPdf);
+      return iiasByIds(authenticationToken.getPrincipal().getHeiIdsCoveredByClient(),
+          heiId, iiaIds, sendPdf);
     } else {
-      return iiasByCodes(heiId, iiaCodes, sendPdf);
+      return iiasByCodes(authenticationToken.getPrincipal().getHeiIdsCoveredByClient(),
+          heiId, iiaCodes, sendPdf);
     }
   }
 
@@ -156,8 +160,8 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     return ResponseEntity.ok(statsResponse);
   }
 
-  private ResponseEntity<IiasGetResponseV6> iiasByIds(String heiId, List<String> iiaIds,
-      Boolean sendPdf) throws HashCalculationException {
+  private ResponseEntity<IiasGetResponseV6> iiasByIds(Collection<String> requesterCoveredHeiIds,
+      String heiId, List<String> iiaIds, Boolean sendPdf) throws HashCalculationException {
 
     Map<InterInstitutionalAgreementsV6HostProvider, Collection<String>> providerToIiaIdsMap = getIiaIdsCoveredPerProviderOfHeiId(
         heiId, iiaIds);
@@ -177,7 +181,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     for (Map.Entry<InterInstitutionalAgreementsV6HostProvider, Collection<String>> entry : providerToIiaIdsMap.entrySet()) {
       InterInstitutionalAgreementsV6HostProvider provider = entry.getKey();
       Collection<String> coveredIiaIds = entry.getValue();
-      Collection<Iia> iias = provider.findByHeiIdAndIiaIds(Collections.singletonList(heiId), heiId,
+      Collection<Iia> iias = provider.findByHeiIdAndIiaIds(requesterCoveredHeiIds, heiId,
           coveredIiaIds, sendPdf);
       for (Iia iia : iias) {
         List<HashCalculationResult> hashCalculationResults = this.iiaHashService.calculateCooperationConditionsHashes(
@@ -189,8 +193,8 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     return ResponseEntity.ok(response);
   }
 
-  private ResponseEntity<IiasGetResponseV6> iiasByCodes(String heiId, List<String> iiaCodes,
-      Boolean sendPdf) throws HashCalculationException {
+  private ResponseEntity<IiasGetResponseV6> iiasByCodes(Collection<String> requesterCoveredHeiIds,
+      String heiId, List<String> iiaCodes, Boolean sendPdf) throws HashCalculationException {
 
     Map<InterInstitutionalAgreementsV6HostProvider, Collection<String>> providerToIiaCodesMap = getIiaCodesCoveredPerProviderOfHeiId(
         heiId, iiaCodes);
@@ -210,7 +214,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     for (Map.Entry<InterInstitutionalAgreementsV6HostProvider, Collection<String>> entry : providerToIiaCodesMap.entrySet()) {
       InterInstitutionalAgreementsV6HostProvider provider = entry.getKey();
       Collection<String> coveredIiaCodes = entry.getValue();
-      Collection<Iia> iias = provider.findByHeiIdAndIiaCodes(Collections.singletonList(heiId),
+      Collection<Iia> iias = provider.findByHeiIdAndIiaCodes(requesterCoveredHeiIds,
           heiId, coveredIiaCodes, sendPdf);
       for (Iia iia : iias) {
         List<HashCalculationResult> hashCalculationResults = this.iiaHashService.calculateCooperationConditionsHashes(
