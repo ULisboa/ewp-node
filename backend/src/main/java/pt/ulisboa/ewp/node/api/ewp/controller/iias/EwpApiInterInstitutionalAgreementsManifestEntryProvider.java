@@ -2,10 +2,12 @@ package pt.ulisboa.ewp.node.api.ewp.controller.iias;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.iias.v6.IiasV6;
+import eu.erasmuswithoutpaper.api.iias.v7.IiasV7;
 import java.math.BigInteger;
 import java.util.Collection;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV7HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
@@ -22,6 +24,9 @@ public class EwpApiInterInstitutionalAgreementsManifestEntryProvider
     super.registerHostProviderToManifestEntryConverter(
         InterInstitutionalAgreementsV6HostProvider.class,
         this::getManifestEntryForV6);
+
+    super.registerHostProviderToManifestEntryConverter(
+        InterInstitutionalAgreementsV7HostProvider.class, this::getManifestEntryForV7);
   }
 
   public ManifestApiEntryBaseV1 getManifestEntryForV6(String heiId, String baseUrl,
@@ -45,6 +50,43 @@ public class EwpApiInterInstitutionalAgreementsManifestEntryProvider
     int maxIiaCodesPerRequest = hostProviders.stream().mapToInt(
             InterInstitutionalAgreementsV6HostProvider::getMaxIiaCodesPerRequest)
         .min().orElse(0);
+    manifestEntry.setMaxIiaCodes(BigInteger.valueOf(maxIiaCodesPerRequest));
+
+    manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
+    return manifestEntry;
+  }
+
+  public ManifestApiEntryBaseV1 getManifestEntryForV7(
+      String heiId,
+      String baseUrl,
+      Collection<InterInstitutionalAgreementsV7HostProvider> hostProviders) {
+    IiasV7 manifestEntry = new IiasV7();
+    manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
+    manifestEntry.setAdminNotes(null);
+    manifestEntry.setIndexUrl(
+        baseUrl + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH + "/index");
+    manifestEntry.setGetUrl(
+        baseUrl + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH + "/get");
+    manifestEntry.setStatsUrl(
+        baseUrl
+            + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+            + "/stats?"
+            + EwpApiParamConstants.HEI_ID
+            + "="
+            + heiId);
+
+    int maxIiaIdsPerRequest =
+        hostProviders.stream()
+            .mapToInt(InterInstitutionalAgreementsV7HostProvider::getMaxIiaIdsPerRequest)
+            .min()
+            .orElse(0);
+    manifestEntry.setMaxIiaIds(BigInteger.valueOf(maxIiaIdsPerRequest));
+
+    int maxIiaCodesPerRequest =
+        hostProviders.stream()
+            .mapToInt(InterInstitutionalAgreementsV7HostProvider::getMaxIiaCodesPerRequest)
+            .min()
+            .orElse(0);
     manifestEntry.setMaxIiaCodes(BigInteger.valueOf(maxIiaCodesPerRequest));
 
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
