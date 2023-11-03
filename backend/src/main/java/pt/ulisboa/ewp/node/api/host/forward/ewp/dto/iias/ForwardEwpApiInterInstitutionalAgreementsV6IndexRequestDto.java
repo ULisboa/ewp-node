@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.utils.bean.ParamName;
 
-public class InterInstitutionalAgreementsIndexRequestDto {
+public class ForwardEwpApiInterInstitutionalAgreementsV6IndexRequestDto {
 
   @ParamName(EwpApiParamConstants.HEI_ID)
   @NotNull

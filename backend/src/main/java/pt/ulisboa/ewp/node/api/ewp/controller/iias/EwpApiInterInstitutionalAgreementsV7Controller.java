@@ -137,9 +137,8 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
       summary = "IIAs Index API.",
       tags = {"ewp"})
   public ResponseEntity<IiasIndexResponseV7> iiaIds(
+      EwpApiHostAuthenticationToken authenticationToken,
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.PARTNER_HEI_ID, defaultValue = "")
-          String partnerHeiId,
       @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, required = false)
           Collection<String> receivingAcademicYearIds,
       @RequestParam(value = EwpApiParamConstants.MODIFIED_SINCE, required = false)
@@ -160,9 +159,8 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
         provider -> {
           Collection<String> iiaIds =
               provider.findAllIiaIdsByHeiId(
-                  Collections.singletonList(heiId),
+                  authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next(),
                   heiId,
-                  partnerHeiId,
                   receivingAcademicYearIds,
                   modifiedSince);
           response.getIiaId().addAll(iiaIds);
@@ -178,33 +176,23 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
       summary = "IIAs Get API.",
       tags = {"ewp"})
   public ResponseEntity<IiasGetResponseV7> iiasGet(
+      EwpApiHostAuthenticationToken authenticationToken,
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.IIA_ID, required = false) List<String> iiaIds,
-      @RequestParam(value = EwpApiParamConstants.IIA_CODE, required = false) List<String> iiaCodes)
+      @RequestParam(value = EwpApiParamConstants.IIA_ID, required = false) List<String> iiaIds)
       throws HashCalculationException {
 
     iiaIds = iiaIds != null ? iiaIds : Collections.emptyList();
-    iiaCodes = iiaCodes != null ? iiaCodes : Collections.emptyList();
 
     if (!hostPluginManager.hasHostProvider(
         heiId, InterInstitutionalAgreementsV7HostProvider.class)) {
       throw new EwpUnknownHeiIdException(heiId);
     }
 
-    if (!iiaIds.isEmpty() && !iiaCodes.isEmpty()) {
-      throw new EwpBadRequestException(
-          "Only IIA IDs or codes are accepted, not both simultaneously");
+    if (iiaIds.isEmpty()) {
+      throw new EwpBadRequestException("At least some IIA ID must be provided");
     }
 
-    if (iiaIds.isEmpty() && iiaCodes.isEmpty()) {
-      throw new EwpBadRequestException("At least some IIA ID or code must be provided");
-    }
-
-    if (!iiaIds.isEmpty()) {
-      return iiasByIds(heiId, iiaIds);
-    } else {
-      return iiasByCodes(heiId, iiaCodes);
-    }
+    return iiasByIds(authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next(), heiId, iiaIds);
   }
 
   @RequestMapping(
@@ -237,7 +225,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
   }
 
   private ResponseEntity<IiasGetResponseV7> iiasByIds(
-      String heiId, List<String> iiaIds) throws HashCalculationException {
+      String requesterCoveredHeiId, String heiId, List<String> iiaIds) throws HashCalculationException {
 
     Map<InterInstitutionalAgreementsV7HostProvider, Collection<String>> providerToIiaIdsMap =
         getIiaIdsCoveredPerProviderOfHeiId(heiId, iiaIds);
@@ -261,45 +249,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
       InterInstitutionalAgreementsV7HostProvider provider = entry.getKey();
       Collection<String> coveredIiaIds = entry.getValue();
       Collection<Iia> iias =
-          provider.findByHeiIdAndIiaIds(
-              Collections.singletonList(heiId), heiId, coveredIiaIds);
-      for (Iia iia : iias) {
-        List<HashCalculationResult> hashCalculationResults =
-            this.iiaHashService.calculateIiaHashes(List.of(iia));
-        iia.setIiaHash(hashCalculationResults.get(0).getHash());
-        response.getIia().add(iia);
-      }
-    }
-    return ResponseEntity.ok(response);
-  }
-
-  private ResponseEntity<IiasGetResponseV7> iiasByCodes(
-      String heiId, List<String> iiaCodes) throws HashCalculationException {
-
-    Map<InterInstitutionalAgreementsV7HostProvider, Collection<String>> providerToIiaCodesMap =
-        getIiaCodesCoveredPerProviderOfHeiId(heiId, iiaCodes);
-
-    int maxIiaCodesPerRequest =
-        hostPluginManager
-            .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class)
-            .stream()
-            .mapToInt(InterInstitutionalAgreementsV7HostProvider::getMaxIiaCodesPerRequest)
-            .min()
-            .orElse(0);
-
-    if (iiaCodes.size() > maxIiaCodesPerRequest) {
-      throw new EwpBadRequestException(
-          "Maximum number of valid IIA codes per request is " + maxIiaCodesPerRequest);
-    }
-
-    IiasGetResponseV7 response = new IiasGetResponseV7();
-    for (Map.Entry<InterInstitutionalAgreementsV7HostProvider, Collection<String>> entry :
-        providerToIiaCodesMap.entrySet()) {
-      InterInstitutionalAgreementsV7HostProvider provider = entry.getKey();
-      Collection<String> coveredIiaCodes = entry.getValue();
-      Collection<Iia> iias =
-          provider.findByHeiIdAndIiaCodes(
-              Collections.singletonList(heiId), heiId, coveredIiaCodes);
+          provider.findByHeiIdAndIiaIds(requesterCoveredHeiId, heiId, coveredIiaIds);
       for (Iia iia : iias) {
         List<HashCalculationResult> hashCalculationResults =
             this.iiaHashService.calculateIiaHashes(List.of(iia));

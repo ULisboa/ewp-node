@@ -25,9 +25,9 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithDat
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementHashValidationDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementV7WithHashValidationResponseDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsV7GetRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsV7GetResponseDto;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.InterInstitutionalAgreementsGetRequestDto;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.InterInstitutionalAgreementsIndexRequestDto;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsV7IndexRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.hash.calculation.request.ForwardEwpApiIiaHashesCalculationV7RequestDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.hash.calculation.response.ForwardEwpApiIiaHashesCalculationResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
@@ -78,12 +78,12 @@ public class ForwardEwpApiInterInstitutionalAgreementsV7Controller
       produces = MediaType.APPLICATION_XML_VALUE,
       value = "/index")
   public ResponseEntity<ForwardEwpApiResponseWithData<IiasIndexResponseV7>> findAllByHeiId(
-      @Valid InterInstitutionalAgreementsIndexRequestDto requestDto)
+      @Valid ForwardEwpApiInterInstitutionalAgreementsV7IndexRequestDto requestDto)
       throws EwpClientErrorException {
     EwpSuccessOperationResult<IiasIndexResponseV7> response =
         client.findAllByHeiIds(
-            requestDto.getHeiId(), requestDto.getPartnerHeiId(),
-            requestDto.getReceivingAcademicYearIds(), requestDto.getModifiedSince());
+            requestDto.getHeiId(), requestDto.getReceivingAcademicYearIds(), 
+            requestDto.getModifiedSince());
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
@@ -93,16 +93,10 @@ public class ForwardEwpApiInterInstitutionalAgreementsV7Controller
       value = "/get")
   public ResponseEntity<
           ForwardEwpApiResponseWithData<ForwardEwpApiInterInstitutionalAgreementsV7GetResponseDto>>
-      findByHeiIdAndIiaIdsOrCodes(@Valid InterInstitutionalAgreementsGetRequestDto requestDto)
+      findByHeiIdAndIiaIdsOrCodes(@Valid ForwardEwpApiInterInstitutionalAgreementsV7GetRequestDto requestDto)
           throws EwpClientErrorException, HashComparisonException {
-    EwpSuccessOperationResult<IiasGetResponseV7> response;
     List<String> iiaIds = requestDto.getIiaIds();
-    List<String> iiaCodes = requestDto.getIiaCodes();
-    if (!iiaIds.isEmpty()) {
-      response = client.findByHeiIdAndIiaIds(requestDto.getHeiId(), iiaIds);
-    } else {
-      response = client.findByHeiIdAndIiaCodes(requestDto.getHeiId(), iiaCodes);
-    }
+    EwpSuccessOperationResult<IiasGetResponseV7> response = client.findByHeiIdAndIiaIds(requestDto.getHeiId(), iiaIds);
 
     ForwardEwpApiInterInstitutionalAgreementsV7GetResponseDto getResponse =
         new ForwardEwpApiInterInstitutionalAgreementsV7GetResponseDto();

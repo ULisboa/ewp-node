@@ -64,12 +64,18 @@ public class EwpApiInterInstitutionalAgreementsManifestEntryProvider
     manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
     manifestEntry.setAdminNotes(null);
     manifestEntry.setIndexUrl(
-        baseUrl + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH + "/index");
+        baseUrl + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH + "/index?"
+            + EwpApiParamConstants.HEI_ID
+            + "="
+            + heiId);
     manifestEntry.setGetUrl(
-        baseUrl + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH + "/get");
+        baseUrl + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH + "/get?"
+            + EwpApiParamConstants.HEI_ID
+            + "="
+            + heiId);
     manifestEntry.setStatsUrl(
         baseUrl
-            + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+            + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
             + "/stats?"
             + EwpApiParamConstants.HEI_ID
             + "="
@@ -81,13 +87,6 @@ public class EwpApiInterInstitutionalAgreementsManifestEntryProvider
             .min()
             .orElse(0);
     manifestEntry.setMaxIiaIds(BigInteger.valueOf(maxIiaIdsPerRequest));
-
-    int maxIiaCodesPerRequest =
-        hostProviders.stream()
-            .mapToInt(InterInstitutionalAgreementsV7HostProvider::getMaxIiaCodesPerRequest)
-            .min()
-            .orElse(0);
-    manifestEntry.setMaxIiaCodes(BigInteger.valueOf(maxIiaCodesPerRequest));
 
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
     return manifestEntry;

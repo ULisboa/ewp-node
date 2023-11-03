@@ -41,15 +41,12 @@ public class EwpInterInstitutionalAgreementsV7Client {
 
   public EwpSuccessOperationResult<IiasIndexResponseV7> findAllByHeiIds(
       String heiId,
-      String partnerHeiId,
       List<String> receivingAcademicYearIds,
       ZonedDateTime modifiedSince)
       throws EwpClientErrorException {
     EwpInterInstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams bodyParams = new HttpParams();
-    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
-    bodyParams.param(EwpApiParamConstants.PARTNER_HEI_ID, partnerHeiId);
     bodyParams.param(EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, receivingAcademicYearIds);
     bodyParams.param(EwpApiParamConstants.MODIFIED_SINCE, modifiedSince);
 
@@ -64,22 +61,7 @@ public class EwpInterInstitutionalAgreementsV7Client {
     EwpInterInstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
     HttpParams bodyParams = new HttpParams();
-    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
     bodyParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
-
-    EwpRequest request = EwpRequest.createPost(api, "get", api.getGetUrl(),
-        new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpHttpClient.execute(request, IiasGetResponseV7.class);
-  }
-
-  public EwpSuccessOperationResult<IiasGetResponseV7> findByHeiIdAndIiaCodes(
-      String heiId, Collection<String> iiaCodes)
-      throws EwpClientErrorException {
-    EwpInterInstitutionalAgreementApiConfiguration api = getApiConfigurationForHeiId(heiId);
-
-    HttpParams bodyParams = new HttpParams();
-    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
-    bodyParams.param(EwpApiParamConstants.IIA_CODE, iiaCodes);
 
     EwpRequest request = EwpRequest.createPost(api, "get", api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));

@@ -28,9 +28,9 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithDat
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementHashValidationDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationResponseDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsV6GetRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.InterInstitutionalAgreementsGetRequestDto;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.InterInstitutionalAgreementsIndexRequestDto;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.ForwardEwpApiInterInstitutionalAgreementsV6IndexRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.hash.calculation.request.ForwardEwpApiIiaHashesCalculationV6RequestDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.hash.calculation.response.ForwardEwpApiIiaHashesCalculationResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
@@ -74,7 +74,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV6Controller extends
 
   @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_XML_VALUE, value = "/index")
   public ResponseEntity<ForwardEwpApiResponseWithData<IiasIndexResponseV6>> findAllByHeiId(
-      @Valid InterInstitutionalAgreementsIndexRequestDto requestDto)
+      @Valid ForwardEwpApiInterInstitutionalAgreementsV6IndexRequestDto requestDto)
       throws EwpClientErrorException {
     EwpSuccessOperationResult<IiasIndexResponseV6> response = client.findAllByHeiIds(
         requestDto.getHeiId(), requestDto.getPartnerHeiId(),
@@ -84,7 +84,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV6Controller extends
 
   @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_XML_VALUE, value = "/get")
   public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto>> findByHeiIdAndIiaIdsOrCodes(
-      @Valid InterInstitutionalAgreementsGetRequestDto requestDto)
+      @Valid ForwardEwpApiInterInstitutionalAgreementsV6GetRequestDto requestDto)
       throws EwpClientErrorException, HashComparisonException {
     EwpSuccessOperationResult<IiasGetResponseV6> response;
     List<String> iiaIds = requestDto.getIiaIds();
