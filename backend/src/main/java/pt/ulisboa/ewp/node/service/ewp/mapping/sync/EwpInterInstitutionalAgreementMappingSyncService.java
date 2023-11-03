@@ -2,11 +2,13 @@ package pt.ulisboa.ewp.node.service.ewp.mapping.sync;
 
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia.Partner;
+import eu.erasmuswithoutpaper.api.iias.v7.endpoints.IiasGetResponseV7;
 import java.time.Instant;
 import java.util.*;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV7HostProvider;
 import pt.ulisboa.ewp.node.config.sync.SyncProperties;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpInterInstitutionalAgreementMapping;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
@@ -33,27 +35,32 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
 
   @Override
   public void run() {
+    syncInterInstitutionalAgreementsV6();
+    syncInterInstitutionalAgreementsV7();
+  }
+
+  private void syncInterInstitutionalAgreementsV6() {
     Map<String, Collection<InterInstitutionalAgreementsV6HostProvider>> providersPerHeiId = hostPluginManager.getAllProvidersOfTypePerHeiId(
         InterInstitutionalAgreementsV6HostProvider.class);
     for (Map.Entry<String, Collection<InterInstitutionalAgreementsV6HostProvider>> entry : providersPerHeiId.entrySet()) {
       String heiId = entry.getKey();
       for (InterInstitutionalAgreementsV6HostProvider provider : entry.getValue()) {
-        syncInterInstitutionalAgreementsOfHeiId(heiId, provider);
+        syncInterInstitutionalAgreementsOfHeiIdV6(heiId, provider);
       }
     }
   }
 
-  private void syncInterInstitutionalAgreementsOfHeiId(String heiId,
+  private void syncInterInstitutionalAgreementsOfHeiIdV6(String heiId,
       InterInstitutionalAgreementsV6HostProvider provider) {
     Collection<String> iiaIds = provider.findAllIiaIdsByHeiId(Collections.singletonList(heiId),
         heiId, null, null,
         null);
     for (String iiaId : iiaIds) {
-      syncInterInstitutionalAgreement(heiId, provider, iiaId);
+      syncInterInstitutionalAgreementV6(heiId, provider, iiaId);
     }
   }
 
-  private void syncInterInstitutionalAgreement(String heiId,
+  private void syncInterInstitutionalAgreementV6(String heiId,
       InterInstitutionalAgreementsV6HostProvider provider,
       String iiaId) {
     Optional<EwpInterInstitutionalAgreementMapping> mappingOptional = this.mappingService.getMapping(
@@ -61,22 +68,60 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
     if (mappingOptional.isEmpty()) {
       Collection<Iia> iias = provider.findByHeiIdAndIiaIds(Collections.singletonList(heiId), heiId,
           Collections.singletonList(iiaId), false);
-      registerMapping(heiId, iias.iterator().next());
+      registerMappingV6(heiId, iias.iterator().next());
     }
   }
 
-  private void registerMapping(String heiId, Iia iia) {
-    Partner partner = getPartnerByHeiId(heiId, iia);
+  private void syncInterInstitutionalAgreementsV7() {
+    Map<String, Collection<InterInstitutionalAgreementsV7HostProvider>> providersPerHeiId = hostPluginManager.getAllProvidersOfTypePerHeiId(
+        InterInstitutionalAgreementsV7HostProvider.class);
+    for (Map.Entry<String, Collection<InterInstitutionalAgreementsV7HostProvider>> entry : providersPerHeiId.entrySet()) {
+      String heiId = entry.getKey();
+      for (InterInstitutionalAgreementsV7HostProvider provider : entry.getValue()) {
+        syncInterInstitutionalAgreementsOfHeiIdV7(heiId, provider);
+      }
+    }
+  }
+
+  private void syncInterInstitutionalAgreementsOfHeiIdV7(String heiId,
+      InterInstitutionalAgreementsV7HostProvider provider) {
+    Collection<String> iiaIds = provider.findAllIiaIdsByHeiId(heiId,
+        heiId, null, null);
+    for (String iiaId : iiaIds) {
+      syncInterInstitutionalAgreementV7(heiId, provider, iiaId);
+    }
+  }
+
+  private void syncInterInstitutionalAgreementV7(String heiId,
+      InterInstitutionalAgreementsV7HostProvider provider,
+      String iiaId) {
+    Optional<EwpInterInstitutionalAgreementMapping> mappingOptional = this.mappingService.getMapping(
+        heiId, iiaId);
+    if (mappingOptional.isEmpty()) {
+      Collection<IiasGetResponseV7.Iia> iias = provider.findByHeiIdAndIiaIds(heiId, heiId,
+          Collections.singletonList(iiaId));
+      registerMappingV7(heiId, iias.iterator().next());
+    }
+  }
+
+  private void registerMappingV6(String heiId, Iia iia) {
+    Partner partner = iia.getPartner().stream()
+        .filter(p -> heiId.equals(p.getHeiId()))
+        .findFirst()
+        .orElse(null);
     assert partner != null;
     this.mappingService.registerMapping(
         heiId, partner.getOunitId(), partner.getIiaId(), partner.getIiaCode());
   }
 
-  private Partner getPartnerByHeiId(String heiId, Iia iia) {
-    return iia.getPartner().stream()
+  private void registerMappingV7(String heiId, IiasGetResponseV7.Iia iia) {
+    IiasGetResponseV7.Iia.Partner partner = iia.getPartner().stream()
         .filter(p -> heiId.equals(p.getHeiId()))
         .findFirst()
         .orElse(null);
+    assert partner != null;
+    this.mappingService.registerMapping(
+        heiId, partner.getOunitId(), partner.getIiaId(), partner.getIiaCode());
   }
 
   public Date getNextExecutionTime(TriggerContext context) {
