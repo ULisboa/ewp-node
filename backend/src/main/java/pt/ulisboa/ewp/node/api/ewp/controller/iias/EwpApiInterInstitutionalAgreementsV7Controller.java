@@ -12,10 +12,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -33,6 +32,7 @@ import pt.ulisboa.ewp.node.domain.entity.mapping.EwpInterInstitutionalAgreementM
 import pt.ulisboa.ewp.node.domain.repository.mapping.EwpInterInstitutionalAgreementMappingRepository;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
 import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownHeiIdException;
+import pt.ulisboa.ewp.node.exception.ewp.EwpUnknownOrganizationalUnitIdException;
 import pt.ulisboa.ewp.node.exception.ewp.hash.HashCalculationException;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashCalculationResult;
@@ -192,7 +192,45 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
       throw new EwpBadRequestException("At least some IIA ID must be provided");
     }
 
-    return iiasByIds(authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next(), heiId, iiaIds);
+    int maxIiaIdsPerRequest =
+        hostPluginManager
+            .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class)
+            .stream()
+            .mapToInt(InterInstitutionalAgreementsV7HostProvider::getMaxIiaIdsPerRequest)
+            .min()
+            .orElse(0);
+
+    if (iiaIds.size() > maxIiaIdsPerRequest) {
+      throw new EwpBadRequestException(
+          "Maximum number of valid IIA IDs per request is " + maxIiaIdsPerRequest);
+    }
+
+    String requesterCoveredHeiId = authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next();
+
+    IiasGetResponseV7 response = new IiasGetResponseV7();
+
+    // NOTE: The algorithm handles each IIA ID individually as it may be necessary to fall back to
+    // one or more providers.
+    for (String iiaId : iiaIds) {
+      List<InterInstitutionalAgreementsV7HostProvider> providersChain = getProvidersChainForHeiAndIiaId(
+          heiId, iiaId);
+      for (InterInstitutionalAgreementsV7HostProvider possibleProvider : providersChain) {
+        Collection<IiasGetResponseV7.Iia> providerResponse =
+            possibleProvider.findByHeiIdAndIiaIds(requesterCoveredHeiId, heiId, List.of(iiaId));
+        if (!providerResponse.isEmpty()) {
+          Iia iia = providerResponse.iterator().next();
+          if (StringUtils.isEmpty(iia.getIiaHash())) {
+            List<HashCalculationResult> hashCalculationResults =
+                this.iiaHashService.calculateIiaHashes(List.of(iia));
+            iia.setIiaHash(hashCalculationResults.get(0).getHash());
+          }
+          response.getIia().add(iia);
+          break;
+        }
+      }
+    }
+
+    return ResponseEntity.ok(response);
   }
 
   @RequestMapping(
@@ -224,97 +262,32 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
     return ResponseEntity.ok(statsResponse);
   }
 
-  private ResponseEntity<IiasGetResponseV7> iiasByIds(
-      String requesterCoveredHeiId, String heiId, List<String> iiaIds) throws HashCalculationException {
-
-    Map<InterInstitutionalAgreementsV7HostProvider, Collection<String>> providerToIiaIdsMap =
-        getIiaIdsCoveredPerProviderOfHeiId(heiId, iiaIds);
-
-    int maxIiaIdsPerRequest =
-        hostPluginManager
-            .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class)
-            .stream()
-            .mapToInt(InterInstitutionalAgreementsV7HostProvider::getMaxIiaIdsPerRequest)
-            .min()
-            .orElse(0);
-
-    if (iiaIds.size() > maxIiaIdsPerRequest) {
-      throw new EwpBadRequestException(
-          "Maximum number of valid IIA IDs per request is " + maxIiaIdsPerRequest);
-    }
-
-    IiasGetResponseV7 response = new IiasGetResponseV7();
-    for (Map.Entry<InterInstitutionalAgreementsV7HostProvider, Collection<String>> entry :
-        providerToIiaIdsMap.entrySet()) {
-      InterInstitutionalAgreementsV7HostProvider provider = entry.getKey();
-      Collection<String> coveredIiaIds = entry.getValue();
-      Collection<Iia> iias =
-          provider.findByHeiIdAndIiaIds(requesterCoveredHeiId, heiId, coveredIiaIds);
-      for (Iia iia : iias) {
-        List<HashCalculationResult> hashCalculationResults =
-            this.iiaHashService.calculateIiaHashes(List.of(iia));
-        iia.setIiaHash(hashCalculationResults.get(0).getHash());
-        response.getIia().add(iia);
-      }
-    }
-    return ResponseEntity.ok(response);
-  }
-
-  private Map<InterInstitutionalAgreementsV7HostProvider, Collection<String>>
-      getIiaIdsCoveredPerProviderOfHeiId(String heiId, Collection<String> iiaIds)
-          throws EwpUnknownHeiIdException {
+  private List<InterInstitutionalAgreementsV7HostProvider> getProvidersChainForHeiAndIiaId(
+      String heiId, String iiaId) throws EwpUnknownHeiIdException {
 
     if (!hostPluginManager.hasHostProvider(
         heiId, InterInstitutionalAgreementsV7HostProvider.class)) {
-      throw new EwpUnknownHeiIdException(heiId);
+      return new ArrayList<>();
     }
 
-    Map<InterInstitutionalAgreementsV7HostProvider, Collection<String>> result = new HashMap<>();
-    for (String iiaId : iiaIds) {
-      Optional<EwpInterInstitutionalAgreementMapping> mappingOptional =
-          mappingRepository.findByHeiIdAndIiaId(heiId, iiaId);
-      if (mappingOptional.isPresent()) {
-        EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
-
-        Optional<InterInstitutionalAgreementsV7HostProvider> providerOptional =
-            hostPluginManager.getSingleProvider(
-                heiId, mapping.getOunitId(), InterInstitutionalAgreementsV7HostProvider.class);
-        if (providerOptional.isPresent()) {
-          InterInstitutionalAgreementsV7HostProvider provider = providerOptional.get();
-          result.computeIfAbsent(provider, ignored -> new ArrayList<>());
-          result.get(provider).add(iiaId);
-        }
+    Optional<EwpInterInstitutionalAgreementMapping> mappingOptional =
+        mappingRepository.findByHeiIdAndIiaId(heiId, iiaId);
+    if (mappingOptional.isPresent()) {
+      EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
+      Optional<InterInstitutionalAgreementsV7HostProvider> providerOptional =
+          hostPluginManager.getSingleProvider(
+              heiId, mapping.getOunitId(), InterInstitutionalAgreementsV7HostProvider.class);
+      if (providerOptional.isPresent()) {
+        InterInstitutionalAgreementsV7HostProvider provider = providerOptional.get();
+        return List.of(provider);
+      } else {
+        throw new EwpUnknownOrganizationalUnitIdException(heiId, mapping.getOunitId());
       }
+
+    } else {
+      return hostPluginManager.getPrimaryFollowedByNonPrimaryProviders(
+          heiId, InterInstitutionalAgreementsV7HostProvider.class);
     }
-    return result;
   }
 
-  private Map<InterInstitutionalAgreementsV7HostProvider, Collection<String>>
-      getIiaCodesCoveredPerProviderOfHeiId(String heiId, Collection<String> iiaCodes)
-          throws EwpUnknownHeiIdException {
-
-    if (!hostPluginManager.hasHostProvider(
-        heiId, InterInstitutionalAgreementsV7HostProvider.class)) {
-      throw new EwpUnknownHeiIdException(heiId);
-    }
-
-    Map<InterInstitutionalAgreementsV7HostProvider, Collection<String>> result = new HashMap<>();
-    for (String iiaCode : iiaCodes) {
-      Optional<EwpInterInstitutionalAgreementMapping> mappingOptional =
-          mappingRepository.findByHeiIdAndIiaCode(heiId, iiaCode);
-      if (mappingOptional.isPresent()) {
-        EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
-
-        Optional<InterInstitutionalAgreementsV7HostProvider> providerOptional =
-            hostPluginManager.getSingleProvider(
-                heiId, mapping.getOunitId(), InterInstitutionalAgreementsV7HostProvider.class);
-        if (providerOptional.isPresent()) {
-          InterInstitutionalAgreementsV7HostProvider provider = providerOptional.get();
-          result.computeIfAbsent(provider, ignored -> new ArrayList<>());
-          result.get(provider).add(iiaCode);
-        }
-      }
-    }
-    return result;
-  }
 }
