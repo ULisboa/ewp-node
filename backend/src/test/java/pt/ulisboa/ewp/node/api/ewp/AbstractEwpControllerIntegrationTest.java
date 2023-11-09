@@ -140,7 +140,16 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
     MockHttpServletRequestBuilder requestBuilder =
         MockMvcRequestBuilders.request(method, uri).with(httpParamsProcessor(params));
 
-    return executeRequest(registryClient, requestBuilder);
+    return executeRequest(registryClient, requestBuilder, UUID.randomUUID().toString());
+  }
+
+  protected ResultActions executeRequest(
+      RegistryClient registryClient, HttpMethod method, String uri, HttpParams params, String requesterCoveredHeiId)
+      throws Exception {
+    MockHttpServletRequestBuilder requestBuilder =
+        MockMvcRequestBuilders.request(method, uri).with(httpParamsProcessor(params));
+
+    return executeRequest(registryClient, requestBuilder, requesterCoveredHeiId);
   }
 
   protected ResultActions executeRequest(
@@ -149,15 +158,15 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
     MockHttpServletRequestBuilder requestBuilder =
         MockMvcRequestBuilders.request(method, uri).with(serializableBodyProcessor(body));
 
-    return executeRequest(registryClient, requestBuilder);
+    return executeRequest(registryClient, requestBuilder, UUID.randomUUID().toString());
   }
 
   protected ResultActions executeRequest(
-      RegistryClient registryClient, MockHttpServletRequestBuilder requestBuilder)
+      RegistryClient registryClient, MockHttpServletRequestBuilder requestBuilder, String requesterCoveredHeiId)
       throws Exception {
     RequestPostProcessor securityRequestProcessor =
         httpSignatureRequestProcessor(registryClient,
-            Collections.singletonList(UUID.randomUUID().toString()));
+            Collections.singletonList(requesterCoveredHeiId));
 
     return executeRequest(registryClient, requestBuilder, securityRequestProcessor);
   }

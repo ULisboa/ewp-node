@@ -47,9 +47,10 @@ class EwpApiInterInstitutionalAgreementsApprovalV1ControllerTest extends
 
   @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testInterInstitutionalAgreementApprovalsRetrieval_ValidHeiIdDividedIntoTwoHosts_AllApprovalsReturned(
+  public void testInterInstitutionalAgreementApprovalsRetrieval_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllApprovalsReturned(
       HttpMethod method) throws Exception {
     String approvingHeiId = "test";
+    String ownerHeiId = "owner-hei-id";
     List<String> iiaIds = Arrays.asList("a1", "b2", "c3");
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");
 
@@ -79,31 +80,95 @@ class EwpApiInterInstitutionalAgreementsApprovalV1ControllerTest extends
 
     doReturn(true).when(hostPluginManager)
         .hasHostProvider(approvingHeiId, InterInstitutionalAgreementsApprovalV1HostProvider.class);
+
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(approvingHeiId,
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
-    doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
+    doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
         .getSingleProvider(approvingHeiId, ounitIds.get(0),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
-    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
+    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
         .getSingleProvider(approvingHeiId, ounitIds.get(1),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
-    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
+    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
         .getSingleProvider(approvingHeiId, ounitIds.get(2),
             InterInstitutionalAgreementsApprovalV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.APPROVING_HEI_ID, approvingHeiId);
+    queryParams.param(EwpApiParamConstants.OWNER_HEI_ID, ownerHeiId);
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
 
     String responseXml =
         executeRequest(registryClient, method,
             EwpApiConstants.API_BASE_URI
                 + EwpApiInterInstitutionalAgreementsApprovalV1Controller.BASE_PATH,
-            queryParams)
+            queryParams, ownerHeiId)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    IiasApprovalResponseV1 response = XmlUtils.unmarshall(responseXml,
+        IiasApprovalResponseV1.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getApproval()).hasSize(iiaIds.size());
+    for (Approval approval : approvals) {
+      Optional<Approval> approvalOptional = response.getApproval().stream()
+          .filter(a -> a.getIiaId().equals(approval.getIiaId())).findFirst();
+      assertThat(approvalOptional).isPresent();
+      assertThat(approvalOptional.get().getConditionsHash()).isEqualTo(
+          approval.getConditionsHash());
+    }
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  public void testInterInstitutionalAgreementApprovalsRetrieval_ValidHeiIdDividedIntoTwoHostsWithNoMappingsButProviderHasAll_AllApprovalsReturned(
+      HttpMethod method) throws Exception {
+    String approvingHeiId = "test";
+    String ownerHeiId = "owner-hei-id";
+    List<String> iiaIds = Arrays.asList("a1", "b2", "c3");
+
+    List<Approval> approvals = new ArrayList<>();
+    for (String iiaId : iiaIds) {
+      Approval approval = new Approval();
+      approval.setIiaId(iiaId);
+      approval.setConditionsHash(UUID.randomUUID().toString());
+      approvals.add(approval);
+    }
+
+    MockInterInstitutionalAgreementsApprovalV1HostProvider mockProvider1 = new MockInterInstitutionalAgreementsApprovalV1HostProvider(
+        3);
+    mockProvider1.registerApprovals(approvingHeiId, approvals.get(0));
+
+    MockInterInstitutionalAgreementsApprovalV1HostProvider mockProvider2 = new MockInterInstitutionalAgreementsApprovalV1HostProvider(
+        3);
+    mockProvider2.registerApprovals(approvingHeiId, approvals.get(1), approvals.get(2));
+
+    doReturn(true).when(hostPluginManager)
+        .hasHostProvider(approvingHeiId, InterInstitutionalAgreementsApprovalV1HostProvider.class);
+
+    doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
+        .getPrimaryProvider(approvingHeiId, InterInstitutionalAgreementsApprovalV1HostProvider.class);
+
+    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
+        .getAllProvidersOfType(approvingHeiId,
+            InterInstitutionalAgreementsApprovalV1HostProvider.class);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.APPROVING_HEI_ID, approvingHeiId);
+    queryParams.param(EwpApiParamConstants.OWNER_HEI_ID, ownerHeiId);
+    queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
+
+    String responseXml =
+        executeRequest(registryClient, method,
+            EwpApiConstants.API_BASE_URI
+                + EwpApiInterInstitutionalAgreementsApprovalV1Controller.BASE_PATH,
+            queryParams, ownerHeiId)
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
