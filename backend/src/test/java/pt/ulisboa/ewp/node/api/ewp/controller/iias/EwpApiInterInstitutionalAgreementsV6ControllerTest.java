@@ -24,6 +24,7 @@ import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpMethod;
@@ -68,6 +69,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
       HttpMethod method) throws Exception {
     String heiId = "test";
 
+    Mockito.reset(hostPluginManager);
+
     doReturn(false).when(hostPluginManager)
         .hasHostProvider(heiId, InterInstitutionalAgreementsV6HostProvider.class);
 
@@ -95,6 +98,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     mockProvider1.registerIiaIds(heiId, List.of(iiaIds.get(0)));
     mockProvider2.registerIiaIds(heiId, List.of(iiaIds.get(1), iiaIds.get(2)));
+
+    Mockito.reset(hostPluginManager);
 
     doReturn(true).when(hostPluginManager)
         .hasHostProvider(heiId, InterInstitutionalAgreementsV6HostProvider.class);
@@ -166,6 +171,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     mockProvider2.registerIia(heiId, iiaIds.get(1), UUID.randomUUID().toString(), iias.get(1));
     mockProvider2.registerIia(heiId, iiaIds.get(2), UUID.randomUUID().toString(), iias.get(2));
 
+    Mockito.reset(hostPluginManager);
+
     for (int index = 0; index < iiaIds.size(); index++) {
       doReturn(Optional.of(
           EwpInterInstitutionalAgreementMapping.create(heiId, ounitIds.get(index),
@@ -226,8 +233,6 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     Iia iia2 = new Iia();
 
-    List<Iia> iias = List.of(iia1, iia2);
-
     MockInterInstitutionalAgreementsV6HostProvider mockProvider1 = new MockInterInstitutionalAgreementsV6HostProvider(
         3, 0);
     MockInterInstitutionalAgreementsV6HostProvider mockProvider2 = new MockInterInstitutionalAgreementsV6HostProvider(
@@ -236,6 +241,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     mockProvider1.registerIia(heiId, iiaIds.get(0), UUID.randomUUID().toString(), iia1);
 
     mockProvider2.registerIia(heiId, iiaIds.get(1), UUID.randomUUID().toString(), iia2);
+
+    Mockito.reset(hostPluginManager);
 
     for (int index = 0; index < knownIiaIds.size(); index++) {
       doReturn(Optional.of(
@@ -282,35 +289,231 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testInterInstitutionalAgreementsGetRetrievalByIiaCodes_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllIiasReturned(
-      HttpMethod method) throws Exception {
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"GET", "POST"})
+  public void
+      testInterInstitutionalAgreementsGetRetrievalByIiaId_ValidHeiIdDividedIntoTwoHostsWithNoExistingMappingsButPrimaryProviderHasIia_IiaReturned(
+          HttpMethod method) throws Exception {
+    String heiId = "test";
+    List<String> iiaIds = List.of("a1");
+    List<String> knownIiaIds = List.of("a1");
+
+    Iia iia1 = new Iia();
+
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 =
+        new MockInterInstitutionalAgreementsV6HostProvider(3, 0);
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 =
+        new MockInterInstitutionalAgreementsV6HostProvider(3, 0);
+
+    mockProvider1.registerIia(heiId, iiaIds.get(0), UUID.randomUUID().toString(), iia1);
+
+    Mockito.reset(hostPluginManager);
+
+    doReturn(List.of(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    doReturn(Optional.of(mockProvider1))
+        .when(hostPluginManager)
+        .getPrimaryProvider(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
+
+    String responseXml =
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI
+                    + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+                    + "/get",
+                queryParams)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    IiasGetResponseV6 response = XmlUtils.unmarshall(responseXml, IiasGetResponseV6.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getIia()).hasSize(knownIiaIds.size());
+    for (Iia iia : response.getIia()) {
+      assertThat(iia.getConditionsHash())
+          .isEqualTo(
+              this.iiaHashService
+                  .calculateCooperationConditionsHashes(List.of(iia))
+                  .get(0)
+                  .getHash());
+    }
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"GET", "POST"})
+  public void
+      testInterInstitutionalAgreementsGetRetrievalByIiaId_ValidHeiIdDividedIntoTwoHostsWithNoExistingMappingsButNonPrimaryProviderHasIia_IiaReturned(
+          HttpMethod method) throws Exception {
+    String heiId = "test";
+    List<String> iiaIds = List.of("a1");
+    List<String> knownIiaIds = List.of("a1");
+
+    Iia iia1 = new Iia();
+
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 =
+        new MockInterInstitutionalAgreementsV6HostProvider(3, 0);
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 =
+        new MockInterInstitutionalAgreementsV6HostProvider(3, 0);
+
+    mockProvider2.registerIia(heiId, iiaIds.get(0), UUID.randomUUID().toString(), iia1);
+
+    Mockito.reset(hostPluginManager);
+
+    doReturn(List.of(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    doReturn(Optional.of(mockProvider1))
+        .when(hostPluginManager)
+        .getPrimaryProvider(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
+
+    String responseXml =
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI
+                    + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+                    + "/get",
+                queryParams)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    IiasGetResponseV6 response = XmlUtils.unmarshall(responseXml, IiasGetResponseV6.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getIia()).hasSize(knownIiaIds.size());
+    for (Iia iia : response.getIia()) {
+      assertThat(iia.getConditionsHash())
+          .isEqualTo(
+              this.iiaHashService
+                  .calculateCooperationConditionsHashes(List.of(iia))
+                  .get(0)
+                  .getHash());
+    }
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"GET", "POST"})
+  public void
+      testInterInstitutionalAgreementsGetRetrievalByIiaId_ValidHeiIdDividedIntoTwoHostsWithNoExistingMappingsAndNoProviderHasIia_NoIiaReturned(
+          HttpMethod method) throws Exception {
+    String heiId = "test";
+    List<String> iiaIds = List.of("a1");
+
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 =
+        new MockInterInstitutionalAgreementsV6HostProvider(3, 0);
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 =
+        new MockInterInstitutionalAgreementsV6HostProvider(3, 0);
+
+    Mockito.reset(hostPluginManager);
+
+    doReturn(List.of(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    doReturn(Optional.of(mockProvider1))
+        .when(hostPluginManager)
+        .getPrimaryProvider(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
+
+    String responseXml =
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI
+                    + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+                    + "/get",
+                queryParams)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    IiasGetResponseV6 response = XmlUtils.unmarshall(responseXml, IiasGetResponseV6.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getIia()).hasSize(0);
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"GET", "POST"})
+  public void
+      testInterInstitutionalAgreementsGetRetrievalByIiaCodes_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllIiasReturned(
+          HttpMethod method) throws Exception {
     String heiId = "test";
     List<String> iiaCodes = Arrays.asList("a1", "b2", "c3");
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");
 
-    Iia iia1 = new Iia();
-
-    Iia iia2 = new Iia();
-
-    Iia iia3 = new Iia();
-
-    List<Iia> iias = List.of(iia1, iia2, iia3);
-
-    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 = new MockInterInstitutionalAgreementsV6HostProvider(
-        0, 3);
-    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 = new MockInterInstitutionalAgreementsV6HostProvider(
-        0, 3);
-
-    mockProvider1.registerIia(heiId, UUID.randomUUID().toString(), iiaCodes.get(0), iia1);
-
-    mockProvider2.registerIia(heiId, UUID.randomUUID().toString(), iiaCodes.get(1), iia2);
-    mockProvider2.registerIia(heiId, UUID.randomUUID().toString(), iiaCodes.get(2), iia3);
+    List<Iia> iias = new ArrayList<>();
 
     for (int index = 0; index < iiaCodes.size(); index++) {
-      doReturn(Optional.of(
-          EwpInterInstitutionalAgreementMapping.create(heiId, ounitIds.get(index),
-              UUID.randomUUID().toString(), iiaCodes.get(index)))).when(mappingRepository)
+      Iia iia = new Iia();
+      for (int partnerIndex = 0; partnerIndex < 2; partnerIndex++) {
+        Partner partner = new Partner();
+        partner.setHeiId(UUID.randomUUID().toString());
+        iia.getPartner().add(partner);
+      }
+      CooperationConditions cooperationConditions = new CooperationConditions();
+      StudentStudiesMobilitySpecV6 studentStudiesMobilitySpecV6 =
+          new StudentStudiesMobilitySpecV6();
+      studentStudiesMobilitySpecV6.setSendingHeiId(UUID.randomUUID().toString());
+      studentStudiesMobilitySpecV6.setReceivingHeiId(UUID.randomUUID().toString());
+      studentStudiesMobilitySpecV6.setReceivingOunitId(ounitIds.get(index));
+      studentStudiesMobilitySpecV6.getReceivingAcademicYearId().add("2021/2022");
+      studentStudiesMobilitySpecV6.setTotalMonthsPerYear(BigDecimal.TEN);
+      ContactV1 receivingContact = new ContactV1();
+      StringWithOptionalLangV1 stringWithOptionalLangV1 = new StringWithOptionalLangV1();
+      stringWithOptionalLangV1.setValue("TEST");
+      receivingContact.getContactName().add(stringWithOptionalLangV1);
+      studentStudiesMobilitySpecV6.getReceivingContact().add(receivingContact);
+      cooperationConditions.getStudentStudiesMobilitySpec().add(studentStudiesMobilitySpecV6);
+      iia.setCooperationConditions(cooperationConditions);
+      iias.add(iia);
+    }
+
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 =
+        new MockInterInstitutionalAgreementsV6HostProvider(0, 3);
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 =
+        new MockInterInstitutionalAgreementsV6HostProvider(0, 3);
+
+    mockProvider1.registerIia(heiId, UUID.randomUUID().toString(), iiaCodes.get(0), iias.get(0));
+
+    mockProvider2.registerIia(heiId, UUID.randomUUID().toString(), iiaCodes.get(1), iias.get(1));
+    mockProvider2.registerIia(heiId, UUID.randomUUID().toString(), iiaCodes.get(2), iias.get(2));
+
+    Mockito.reset(hostPluginManager);
+
+    for (int index = 0; index < iiaCodes.size(); index++) {
+      doReturn(
+              Optional.of(
+                  EwpInterInstitutionalAgreementMapping.create(
+                      heiId,
+                      ounitIds.get(index),
+                      UUID.randomUUID().toString(),
+                      iiaCodes.get(index))))
+          .when(mappingRepository)
           .findByHeiIdAndIiaCode(heiId, iiaCodes.get(index));
     }
 
@@ -320,15 +523,18 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
 
-    doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
-        .getSingleProvider(heiId, ounitIds.get(0),
-            InterInstitutionalAgreementsV6HostProvider.class);
-    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(heiId, ounitIds.get(1),
-            InterInstitutionalAgreementsV6HostProvider.class);
-    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(heiId, ounitIds.get(2),
-            InterInstitutionalAgreementsV6HostProvider.class);
+    doReturn(Optional.ofNullable(mockProvider1))
+        .when(hostPluginManager)
+        .getSingleProvider(
+            heiId, ounitIds.get(0), InterInstitutionalAgreementsV6HostProvider.class);
+    doReturn(Optional.ofNullable(mockProvider2))
+        .when(hostPluginManager)
+        .getSingleProvider(
+            heiId, ounitIds.get(1), InterInstitutionalAgreementsV6HostProvider.class);
+    doReturn(Optional.ofNullable(mockProvider2))
+        .when(hostPluginManager)
+        .getSingleProvider(
+            heiId, ounitIds.get(2), InterInstitutionalAgreementsV6HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
@@ -355,9 +561,12 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testInterInstitutionalAgreementsGetRetrievalByIiaCodes_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownIiasReturned(
-      HttpMethod method) throws Exception {
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"GET", "POST"})
+  public void
+      testInterInstitutionalAgreementsGetRetrievalByIiaCodes_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownIiasReturned(
+          HttpMethod method) throws Exception {
     String heiId = "test";
     List<String> iiaCodes = Arrays.asList("a1", "b2", "c3");
     List<String> knownIiaCodes = Arrays.asList("a1", "b2");
@@ -367,21 +576,26 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
 
     Iia iia2 = new Iia();
 
-    List<Iia> iias = List.of(iia1, iia2);
-
-    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 = new MockInterInstitutionalAgreementsV6HostProvider(
-        0, 3);
-    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 = new MockInterInstitutionalAgreementsV6HostProvider(
-        0, 3);
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 =
+        new MockInterInstitutionalAgreementsV6HostProvider(0, 3);
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 =
+        new MockInterInstitutionalAgreementsV6HostProvider(0, 3);
 
     mockProvider1.registerIia(heiId, UUID.randomUUID().toString(), iiaCodes.get(0), iia1);
 
     mockProvider2.registerIia(heiId, UUID.randomUUID().toString(), iiaCodes.get(1), iia2);
 
+    Mockito.reset(hostPluginManager);
+
     for (int index = 0; index < knownIiaCodes.size(); index++) {
-      doReturn(Optional.of(
-          EwpInterInstitutionalAgreementMapping.create(heiId, ounitIds.get(index),
-              UUID.randomUUID().toString(), knownIiaCodes.get(index)))).when(mappingRepository)
+      doReturn(
+              Optional.of(
+                  EwpInterInstitutionalAgreementMapping.create(
+                      heiId,
+                      ounitIds.get(index),
+                      UUID.randomUUID().toString(),
+                      knownIiaCodes.get(index))))
+          .when(mappingRepository)
           .findByHeiIdAndIiaCode(heiId, knownIiaCodes.get(index));
     }
 
@@ -420,6 +634,173 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
           this.iiaHashService.calculateCooperationConditionsHashes(List.of(iia)).get(0)
               .getHash());
     }
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"GET", "POST"})
+  public void
+      testInterInstitutionalAgreementsGetRetrievalByIiaCode_ValidHeiIdDividedIntoTwoHostsWithNoExistingMappingsButPrimaryProviderHasIia_IiaReturned(
+          HttpMethod method) throws Exception {
+    String heiId = "test";
+    List<String> iiaCodes = List.of("a1");
+    List<String> knownIiaCodes = List.of("a1");
+
+    Iia iia1 = new Iia();
+
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 =
+        new MockInterInstitutionalAgreementsV6HostProvider(0, 3);
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 =
+        new MockInterInstitutionalAgreementsV6HostProvider(0, 3);
+
+    mockProvider1.registerIia(heiId, UUID.randomUUID().toString(), iiaCodes.get(0), iia1);
+
+    Mockito.reset(hostPluginManager);
+
+    doReturn(List.of(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    doReturn(Optional.of(mockProvider1))
+        .when(hostPluginManager)
+        .getPrimaryProvider(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.IIA_CODE, iiaCodes);
+
+    String responseXml =
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI
+                    + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+                    + "/get",
+                queryParams)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    IiasGetResponseV6 response = XmlUtils.unmarshall(responseXml, IiasGetResponseV6.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getIia()).hasSize(knownIiaCodes.size());
+    for (Iia iia : response.getIia()) {
+      assertThat(iia.getConditionsHash())
+          .isEqualTo(
+              this.iiaHashService
+                  .calculateCooperationConditionsHashes(List.of(iia))
+                  .get(0)
+                  .getHash());
+    }
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"GET", "POST"})
+  public void
+      testInterInstitutionalAgreementsGetRetrievalByIiaCode_ValidHeiIdDividedIntoTwoHostsWithNoExistingMappingsButNonPrimaryProviderHasIia_IiaReturned(
+          HttpMethod method) throws Exception {
+    String heiId = "test";
+    List<String> iiaCodes = List.of("a1");
+    List<String> knownIiaCodes = List.of("a1");
+
+    Iia iia1 = new Iia();
+
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 =
+        new MockInterInstitutionalAgreementsV6HostProvider(0, 3);
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 =
+        new MockInterInstitutionalAgreementsV6HostProvider(0, 3);
+
+    mockProvider2.registerIia(heiId, UUID.randomUUID().toString(), iiaCodes.get(0), iia1);
+
+    Mockito.reset(hostPluginManager);
+
+    doReturn(List.of(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    doReturn(Optional.of(mockProvider1))
+        .when(hostPluginManager)
+        .getPrimaryProvider(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.IIA_CODE, iiaCodes);
+
+    String responseXml =
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI
+                    + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+                    + "/get",
+                queryParams)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    IiasGetResponseV6 response = XmlUtils.unmarshall(responseXml, IiasGetResponseV6.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getIia()).hasSize(knownIiaCodes.size());
+    for (Iia iia : response.getIia()) {
+      assertThat(iia.getConditionsHash())
+          .isEqualTo(
+              this.iiaHashService
+                  .calculateCooperationConditionsHashes(List.of(iia))
+                  .get(0)
+                  .getHash());
+    }
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"GET", "POST"})
+  public void
+      testInterInstitutionalAgreementsGetRetrievalByIiaCode_ValidHeiIdDividedIntoTwoHostsWithNoExistingMappingsAndNoProviderHasIia_NoIiaReturned(
+          HttpMethod method) throws Exception {
+    String heiId = "test";
+    List<String> iiaCodes = List.of("a1");
+
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider1 =
+        new MockInterInstitutionalAgreementsV6HostProvider(0, 3);
+    MockInterInstitutionalAgreementsV6HostProvider mockProvider2 =
+        new MockInterInstitutionalAgreementsV6HostProvider(0, 3);
+
+    Mockito.reset(hostPluginManager);
+
+    doReturn(List.of(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    doReturn(Optional.of(mockProvider1))
+        .when(hostPluginManager)
+        .getPrimaryProvider(heiId, InterInstitutionalAgreementsV6HostProvider.class);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.IIA_CODE, iiaCodes);
+
+    String responseXml =
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI
+                    + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+                    + "/get",
+                queryParams)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    IiasGetResponseV6 response = XmlUtils.unmarshall(responseXml, IiasGetResponseV6.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getIia()).hasSize(0);
   }
 
   @Test
@@ -464,6 +845,8 @@ class EwpApiInterInstitutionalAgreementsV6ControllerTest extends
     stats2.setIiaBothApproved(BigInteger.valueOf(14L));
 
     mockProvider2.registerStats(heiId, stats2);
+
+    Mockito.reset(hostPluginManager);
 
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV6HostProvider.class);

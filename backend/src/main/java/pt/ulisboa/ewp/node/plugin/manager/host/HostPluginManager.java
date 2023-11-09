@@ -1,14 +1,34 @@
 package pt.ulisboa.ewp.node.plugin.manager.host;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import pt.ulisboa.ewp.host.plugin.skeleton.HostPlugin;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.HostProvider;
 
 public interface HostPluginManager {
 
   <T extends HostProvider> boolean hasHostProvider(String heiId, Class<T> providerClassType);
+
+  default <T extends HostProvider> List<T> getPrimaryFollowedByNonPrimaryProviders(String heiId, Class<T> providerClassType) {
+    List<T> result = new ArrayList<>();
+    Optional<T> primaryProviderOptional = getPrimaryProvider(heiId, providerClassType);
+    if (primaryProviderOptional.isEmpty()) {
+      return new ArrayList<>();
+    }
+    T primaryProvider = primaryProviderOptional.get();
+    result.add(primaryProvider);
+
+    Collection<T> nonPrimaryProviders = getAllProvidersOfType(heiId, providerClassType).stream()
+            .filter(p -> p != primaryProvider)
+                .collect(Collectors.toList());
+    result.addAll(nonPrimaryProviders);
+
+    return result;
+  }
 
   <T extends HostProvider> Optional<T> getPrimaryProvider(String heiId, Class<T> providerClassType);
 
