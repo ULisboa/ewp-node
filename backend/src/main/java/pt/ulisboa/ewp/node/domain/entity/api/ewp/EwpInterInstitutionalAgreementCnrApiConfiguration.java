@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
 import eu.erasmuswithoutpaper.api.iias.cnr.v2.IiaCnrV2;
+import eu.erasmuswithoutpaper.api.iias.cnr.v3.IiaCnrV3;
 import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
@@ -36,6 +37,16 @@ public class EwpInterInstitutionalAgreementCnrApiConfiguration extends EwpApiCon
     return new EwpInterInstitutionalAgreementCnrApiConfiguration(
         heiId,
         apiElement.getVersion(), 
+        apiElement.getUrl(),
+        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
+        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()));
+  }
+
+  public static EwpInterInstitutionalAgreementCnrApiConfiguration create(
+      String heiId, IiaCnrV3 apiElement) {
+    return new EwpInterInstitutionalAgreementCnrApiConfiguration(
+        heiId,
+        apiElement.getVersion(),
         apiElement.getUrl(),
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()));
