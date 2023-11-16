@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
 import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalV1;
+import eu.erasmuswithoutpaper.api.iias.approval.v2.IiasApprovalV2;
 import java.math.BigInteger;
 import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
@@ -41,6 +42,17 @@ public class EwpInterInstitutionalAgreementApprovalApiConfiguration extends EwpA
 
   public static EwpInterInstitutionalAgreementApprovalApiConfiguration create(
       String heiId, IiasApprovalV1 apiElement) {
+    return new EwpInterInstitutionalAgreementApprovalApiConfiguration(
+        heiId,
+        apiElement.getVersion(),
+        apiElement.getUrl(),
+        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
+        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
+        apiElement.getMaxIiaIds());
+  }
+
+  public static EwpInterInstitutionalAgreementApprovalApiConfiguration create(
+      String heiId, IiasApprovalV2 apiElement) {
     return new EwpInterInstitutionalAgreementApprovalApiConfiguration(
         heiId,
         apiElement.getVersion(),

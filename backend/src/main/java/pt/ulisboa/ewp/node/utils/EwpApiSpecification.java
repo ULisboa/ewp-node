@@ -7,6 +7,7 @@ import eu.erasmuswithoutpaper.api.factsheet.v1.FactsheetV1;
 import eu.erasmuswithoutpaper.api.files.v1.FileV1;
 import eu.erasmuswithoutpaper.api.iias.approval.cnr.v1.IiaApprovalCnrV1;
 import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalV1;
+import eu.erasmuswithoutpaper.api.iias.approval.v2.IiasApprovalV2;
 import eu.erasmuswithoutpaper.api.iias.cnr.v2.IiaCnrV2;
 import eu.erasmuswithoutpaper.api.iias.cnr.v3.IiaCnrV3;
 import eu.erasmuswithoutpaper.api.iias.v3.IiasV3;
@@ -51,241 +52,312 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpSimpleCourseReplicationApiCo
 
 public final class EwpApiSpecification {
 
-  private EwpApiSpecification() {
-  }
+  private EwpApiSpecification() {}
 
   public static class Institutions {
 
-    private Institutions() {
-    }
+    private Institutions() {}
 
     public static final EwpApiVersionSpecification<InstitutionsV2, EwpInstitutionApiConfiguration>
-        V2 = new EwpApiVersionSpecification<>(EwpApi.INSTITUTIONS, 2, InstitutionsV2.class,
-        EwpInstitutionApiConfiguration::create);
-
+        V2 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INSTITUTIONS,
+                2,
+                InstitutionsV2.class,
+                EwpInstitutionApiConfiguration::create);
   }
 
   public static class OrganizationalUnits {
 
-    private OrganizationalUnits() {
-    }
+    private OrganizationalUnits() {}
 
-    public static final EwpApiVersionSpecification<OrganizationalUnitsV2, EwpOrganizationalUnitApiConfiguration>
-        V2 = new EwpApiVersionSpecification<>(EwpApi.ORGANIZATIONAL_UNITS,
-        2, OrganizationalUnitsV2.class, EwpOrganizationalUnitApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            OrganizationalUnitsV2, EwpOrganizationalUnitApiConfiguration>
+        V2 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.ORGANIZATIONAL_UNITS,
+                2,
+                OrganizationalUnitsV2.class,
+                EwpOrganizationalUnitApiConfiguration::create);
   }
 
   public static class Courses {
 
-    private Courses() {
-    }
+    private Courses() {}
 
-    public static final EwpApiVersionSpecification<CoursesV0, EwpCourseApiConfiguration>
-        V0 = new EwpApiVersionSpecification<>(EwpApi.COURSES, 0, CoursesV0.class,
-        EwpCourseApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<CoursesV0, EwpCourseApiConfiguration> V0 =
+        new EwpApiVersionSpecification<>(
+            EwpApi.COURSES, 0, CoursesV0.class, EwpCourseApiConfiguration::create);
   }
 
   public static class SimpleCourseReplication {
 
-    private SimpleCourseReplication() {
-    }
+    private SimpleCourseReplication() {}
 
-    public static final EwpApiVersionSpecification<SimpleCourseReplicationV1, EwpSimpleCourseReplicationApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.SIMPLE_COURSE_REPLICATION,
-        1, SimpleCourseReplicationV1.class, EwpSimpleCourseReplicationApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            SimpleCourseReplicationV1, EwpSimpleCourseReplicationApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.SIMPLE_COURSE_REPLICATION,
+                1,
+                SimpleCourseReplicationV1.class,
+                EwpSimpleCourseReplicationApiConfiguration::create);
   }
 
   public static class InterInstitutionalAgreements {
 
-    private InterInstitutionalAgreements() {
-    }
+    private InterInstitutionalAgreements() {}
 
-    public static final EwpApiVersionSpecification<IiasV3, EwpInterInstitutionalAgreementApiConfiguration>
-        V3 = new EwpApiVersionSpecification<>(EwpApi.INTERINSTITUTIONAL_AGREEMENTS, 3, IiasV3.class,
-        EwpInterInstitutionalAgreementApiConfiguration::create);
+    public static final EwpApiVersionSpecification<
+            IiasV3, EwpInterInstitutionalAgreementApiConfiguration>
+        V3 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INTERINSTITUTIONAL_AGREEMENTS,
+                3,
+                IiasV3.class,
+                EwpInterInstitutionalAgreementApiConfiguration::create);
 
-    public static final EwpApiVersionSpecification<IiasV4, EwpInterInstitutionalAgreementApiConfiguration>
-        V4 = new EwpApiVersionSpecification<>(EwpApi.INTERINSTITUTIONAL_AGREEMENTS, 4, IiasV4.class,
-        EwpInterInstitutionalAgreementApiConfiguration::create);
+    public static final EwpApiVersionSpecification<
+            IiasV4, EwpInterInstitutionalAgreementApiConfiguration>
+        V4 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INTERINSTITUTIONAL_AGREEMENTS,
+                4,
+                IiasV4.class,
+                EwpInterInstitutionalAgreementApiConfiguration::create);
 
-    public static final EwpApiVersionSpecification<IiasV6, EwpInterInstitutionalAgreementApiConfiguration>
-        V6 = new EwpApiVersionSpecification<>(EwpApi.INTERINSTITUTIONAL_AGREEMENTS, 6, IiasV6.class,
-        EwpInterInstitutionalAgreementApiConfiguration::create);
+    public static final EwpApiVersionSpecification<
+            IiasV6, EwpInterInstitutionalAgreementApiConfiguration>
+        V6 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INTERINSTITUTIONAL_AGREEMENTS,
+                6,
+                IiasV6.class,
+                EwpInterInstitutionalAgreementApiConfiguration::create);
 
-    public static final EwpApiVersionSpecification<IiasV7, EwpInterInstitutionalAgreementApiConfiguration>
-        V7 = new EwpApiVersionSpecification<>(EwpApi.INTERINSTITUTIONAL_AGREEMENTS, 7, IiasV7.class,
-        EwpInterInstitutionalAgreementApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            IiasV7, EwpInterInstitutionalAgreementApiConfiguration>
+        V7 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INTERINSTITUTIONAL_AGREEMENTS,
+                7,
+                IiasV7.class,
+                EwpInterInstitutionalAgreementApiConfiguration::create);
   }
 
   public static class InterInstitutionalAgreementCnr {
 
-    private InterInstitutionalAgreementCnr() {
-    }
+    private InterInstitutionalAgreementCnr() {}
 
-    public static final EwpApiVersionSpecification<IiaCnrV2, EwpInterInstitutionalAgreementCnrApiConfiguration>
-        V2 = new EwpApiVersionSpecification<>(EwpApi.INTERINSTITUTIONAL_AGREEMENT_CNR, 2,
-        IiaCnrV2.class, EwpInterInstitutionalAgreementCnrApiConfiguration::create);
+    public static final EwpApiVersionSpecification<
+            IiaCnrV2, EwpInterInstitutionalAgreementCnrApiConfiguration>
+        V2 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INTERINSTITUTIONAL_AGREEMENT_CNR,
+                2,
+                IiaCnrV2.class,
+                EwpInterInstitutionalAgreementCnrApiConfiguration::create);
 
-    public static final EwpApiVersionSpecification<IiaCnrV3, EwpInterInstitutionalAgreementCnrApiConfiguration>
-        V3 = new EwpApiVersionSpecification<>(EwpApi.INTERINSTITUTIONAL_AGREEMENT_CNR, 3,
-        IiaCnrV3.class, EwpInterInstitutionalAgreementCnrApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            IiaCnrV3, EwpInterInstitutionalAgreementCnrApiConfiguration>
+        V3 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INTERINSTITUTIONAL_AGREEMENT_CNR,
+                3,
+                IiaCnrV3.class,
+                EwpInterInstitutionalAgreementCnrApiConfiguration::create);
   }
 
   public static class InterInstitutionalAgreementApprovals {
 
-    private InterInstitutionalAgreementApprovals() {
-    }
+    private InterInstitutionalAgreementApprovals() {}
 
-    public static final EwpApiVersionSpecification<IiasApprovalV1, EwpInterInstitutionalAgreementApprovalApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL, 1,
-        IiasApprovalV1.class, EwpInterInstitutionalAgreementApprovalApiConfiguration::create);
+    public static final EwpApiVersionSpecification<
+            IiasApprovalV1, EwpInterInstitutionalAgreementApprovalApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL,
+                1,
+                IiasApprovalV1.class,
+                EwpInterInstitutionalAgreementApprovalApiConfiguration::create);
 
+    public static final EwpApiVersionSpecification<
+            IiasApprovalV2, EwpInterInstitutionalAgreementApprovalApiConfiguration>
+        V2 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL,
+                2,
+                IiasApprovalV2.class,
+                EwpInterInstitutionalAgreementApprovalApiConfiguration::create);
   }
 
   public static class InterInstitutionalAgreementApprovalCnr {
 
-    private InterInstitutionalAgreementApprovalCnr() {
-    }
+    private InterInstitutionalAgreementApprovalCnr() {}
 
-    public static final EwpApiVersionSpecification<IiaApprovalCnrV1, EwpInterInstitutionalAgreementApprovalCnrApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL_CNR, 1,
-        IiaApprovalCnrV1.class, EwpInterInstitutionalAgreementApprovalCnrApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            IiaApprovalCnrV1, EwpInterInstitutionalAgreementApprovalCnrApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL_CNR,
+                1,
+                IiaApprovalCnrV1.class,
+                EwpInterInstitutionalAgreementApprovalCnrApiConfiguration::create);
   }
 
   public static class FactSheets {
 
-    private FactSheets() {
-    }
+    private FactSheets() {}
 
-    public static final EwpApiVersionSpecification<FactsheetV1, EwpFactsheetApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.FACTSHEETS, 1, FactsheetV1.class,
-        EwpFactsheetApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<FactsheetV1, EwpFactsheetApiConfiguration> V1 =
+        new EwpApiVersionSpecification<>(
+            EwpApi.FACTSHEETS, 1, FactsheetV1.class, EwpFactsheetApiConfiguration::create);
   }
 
   public static class Files {
 
-    private Files() {
-    }
+    private Files() {}
 
-    public static final EwpApiVersionSpecification<FileV1, EwpFilesApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.FILES, 1, FileV1.class,
-        EwpFilesApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<FileV1, EwpFilesApiConfiguration> V1 =
+        new EwpApiVersionSpecification<>(
+            EwpApi.FILES, 1, FileV1.class, EwpFilesApiConfiguration::create);
   }
 
   public static class OutgoingMobilities {
 
-    private OutgoingMobilities() {
-    }
+    private OutgoingMobilities() {}
 
-    public static final EwpApiVersionSpecification<OmobilitiesV1, EwpOutgoingMobilitiesApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.OUTGOING_MOBILITIES, 1, OmobilitiesV1.class,
-        EwpOutgoingMobilitiesApiConfiguration::create);
+    public static final EwpApiVersionSpecification<
+            OmobilitiesV1, EwpOutgoingMobilitiesApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.OUTGOING_MOBILITIES,
+                1,
+                OmobilitiesV1.class,
+                EwpOutgoingMobilitiesApiConfiguration::create);
 
-    public static final EwpApiVersionSpecification<OmobilitiesV2, EwpOutgoingMobilitiesApiConfiguration>
-        V2 = new EwpApiVersionSpecification<>(EwpApi.OUTGOING_MOBILITIES, 2, OmobilitiesV2.class,
-        EwpOutgoingMobilitiesApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            OmobilitiesV2, EwpOutgoingMobilitiesApiConfiguration>
+        V2 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.OUTGOING_MOBILITIES,
+                2,
+                OmobilitiesV2.class,
+                EwpOutgoingMobilitiesApiConfiguration::create);
   }
 
   public static class OutgoingMobilityCnr {
 
-    private OutgoingMobilityCnr() {
-    }
+    private OutgoingMobilityCnr() {}
 
-    public static final EwpApiVersionSpecification<OmobilityCnrV1, EwpOutgoingMobilityCnrApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.OUTGOING_MOBILITY_CNR, 1, OmobilityCnrV1.class,
-        EwpOutgoingMobilityCnrApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            OmobilityCnrV1, EwpOutgoingMobilityCnrApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.OUTGOING_MOBILITY_CNR,
+                1,
+                OmobilityCnrV1.class,
+                EwpOutgoingMobilityCnrApiConfiguration::create);
   }
 
   public static class OutgoingMobilityLearningAgreements {
 
-    private OutgoingMobilityLearningAgreements() {
-    }
+    private OutgoingMobilityLearningAgreements() {}
 
-    public static final EwpApiVersionSpecification<OmobilityLasV1, EwpOutgoingMobilityLearningAgreementsApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENTS, 1,
-        OmobilityLasV1.class, EwpOutgoingMobilityLearningAgreementsApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            OmobilityLasV1, EwpOutgoingMobilityLearningAgreementsApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENTS,
+                1,
+                OmobilityLasV1.class,
+                EwpOutgoingMobilityLearningAgreementsApiConfiguration::create);
   }
 
   public static class OutgoingMobilityLearningAgreementCnr {
 
-    private OutgoingMobilityLearningAgreementCnr() {
-    }
+    private OutgoingMobilityLearningAgreementCnr() {}
 
-    public static final EwpApiVersionSpecification<OmobilityLaCnrV1, EwpOutgoingMobilityLearningAgreementCnrApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR, 1,
-        OmobilityLaCnrV1.class, EwpOutgoingMobilityLearningAgreementCnrApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            OmobilityLaCnrV1, EwpOutgoingMobilityLearningAgreementCnrApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.OUTGOING_MOBILITY_LEARNING_AGREEMENT_CNR,
+                1,
+                OmobilityLaCnrV1.class,
+                EwpOutgoingMobilityLearningAgreementCnrApiConfiguration::create);
   }
 
   public static class IncomingMobilities {
 
-    private IncomingMobilities() {
-    }
+    private IncomingMobilities() {}
 
-    public static final EwpApiVersionSpecification<ImobilitiesV1, EwpIncomingMobilitiesApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.INCOMING_MOBILITIES, 1, ImobilitiesV1.class,
-        EwpIncomingMobilitiesApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            ImobilitiesV1, EwpIncomingMobilitiesApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INCOMING_MOBILITIES,
+                1,
+                ImobilitiesV1.class,
+                EwpIncomingMobilitiesApiConfiguration::create);
   }
 
   public static class IncomingMobilityCnr {
 
-    private IncomingMobilityCnr() {
-    }
+    private IncomingMobilityCnr() {}
 
-    public static final EwpApiVersionSpecification<ImobilityCnrV1, EwpIncomingMobilityCnrApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.INCOMING_MOBILITY_CNR, 1, ImobilityCnrV1.class,
-        EwpIncomingMobilityCnrApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            ImobilityCnrV1, EwpIncomingMobilityCnrApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INCOMING_MOBILITY_CNR,
+                1,
+                ImobilityCnrV1.class,
+                EwpIncomingMobilityCnrApiConfiguration::create);
   }
 
   public static class IncomingMobilityToRs {
 
-    private IncomingMobilityToRs() {
-    }
+    private IncomingMobilityToRs() {}
 
-    public static final EwpApiVersionSpecification<ImobilityTorsV1, EwpIncomingMobilityToRApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.INCOMING_MOBILITY_TORS, 1,
-        ImobilityTorsV1.class, EwpIncomingMobilityToRApiConfiguration::create);
+    public static final EwpApiVersionSpecification<
+            ImobilityTorsV1, EwpIncomingMobilityToRApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INCOMING_MOBILITY_TORS,
+                1,
+                ImobilityTorsV1.class,
+                EwpIncomingMobilityToRApiConfiguration::create);
 
-    public static final EwpApiVersionSpecification<ImobilityTorsV2, EwpIncomingMobilityToRApiConfiguration>
-        V2 = new EwpApiVersionSpecification<>(EwpApi.INCOMING_MOBILITY_TORS, 2,
-        ImobilityTorsV2.class, EwpIncomingMobilityToRApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            ImobilityTorsV2, EwpIncomingMobilityToRApiConfiguration>
+        V2 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INCOMING_MOBILITY_TORS,
+                2,
+                ImobilityTorsV2.class,
+                EwpIncomingMobilityToRApiConfiguration::create);
   }
 
   public static class IncomingMobilityToRCnr {
 
-    private IncomingMobilityToRCnr() {
-    }
+    private IncomingMobilityToRCnr() {}
 
-    public static final EwpApiVersionSpecification<ImobilityTorCnrV1, EwpIncomingMobilityToRCnrApiConfiguration>
-        V1 = new EwpApiVersionSpecification<>(EwpApi.INCOMING_MOBILITY_TOR_CNR, 1,
-        ImobilityTorCnrV1.class, EwpIncomingMobilityToRCnrApiConfiguration::create);
-
+    public static final EwpApiVersionSpecification<
+            ImobilityTorCnrV1, EwpIncomingMobilityToRCnrApiConfiguration>
+        V1 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INCOMING_MOBILITY_TOR_CNR,
+                1,
+                ImobilityTorCnrV1.class,
+                EwpIncomingMobilityToRCnrApiConfiguration::create);
   }
 
   public static class Monitoring {
 
-    public static final EwpApiVersionSpecification<
-            MonitoringV1, EwpMonitoringApiConfiguration>
-        V1 =
-            new EwpApiVersionSpecification<>(
-                EwpApi.MONITORING,
-                1,
-                MonitoringV1.class,
-                EwpMonitoringApiConfiguration::create);
+    public static final EwpApiVersionSpecification<MonitoringV1, EwpMonitoringApiConfiguration> V1 =
+        new EwpApiVersionSpecification<>(
+            EwpApi.MONITORING, 1, MonitoringV1.class, EwpMonitoringApiConfiguration::create);
 
     private Monitoring() {}
   }
@@ -303,13 +375,15 @@ public final class EwpApiSpecification {
     private final EwpApi api;
     private final int majorVersion;
     private final Class<E> specificationElementClassType;
-    private final SpecificationElementToConfigurationConverter<E, C> specificationElementToConfigurationConverter;
+    private final SpecificationElementToConfigurationConverter<E, C>
+        specificationElementToConfigurationConverter;
 
     private EwpApiVersionSpecification(
         EwpApi api,
         int majorVersion,
         Class<E> specificationElementClassType,
-        SpecificationElementToConfigurationConverter<E, C> specificationElementToConfigurationConverter) {
+        SpecificationElementToConfigurationConverter<E, C>
+            specificationElementToConfigurationConverter) {
       this.api = api;
       this.majorVersion = majorVersion;
       this.specificationElementClassType = specificationElementClassType;
@@ -318,8 +392,12 @@ public final class EwpApiSpecification {
     }
 
     public C getConfigurationForHeiId(RegistryClient registryClient, String heiId) {
-      return EwpApiUtils.getApiConfiguration(registryClient, heiId, api.getLocalName(),
-          majorVersion, specificationElementClassType,
+      return EwpApiUtils.getApiConfiguration(
+          registryClient,
+          heiId,
+          api.getLocalName(),
+          majorVersion,
+          specificationElementClassType,
           specificationElementToConfigurationConverter);
     }
   }
