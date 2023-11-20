@@ -6,6 +6,7 @@ import eu.erasmuswithoutpaper.api.courses.v0.CoursesV0;
 import eu.erasmuswithoutpaper.api.factsheet.v1.FactsheetV1;
 import eu.erasmuswithoutpaper.api.files.v1.FileV1;
 import eu.erasmuswithoutpaper.api.iias.approval.cnr.v1.IiaApprovalCnrV1;
+import eu.erasmuswithoutpaper.api.iias.approval.cnr.v2.IiaApprovalCnrV2;
 import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalV1;
 import eu.erasmuswithoutpaper.api.iias.approval.v2.IiasApprovalV2;
 import eu.erasmuswithoutpaper.api.iias.cnr.v2.IiaCnrV2;
@@ -202,6 +203,15 @@ public final class EwpApiSpecification {
                 EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL_CNR,
                 1,
                 IiaApprovalCnrV1.class,
+                EwpInterInstitutionalAgreementApprovalCnrApiConfiguration::create);
+
+    public static final EwpApiVersionSpecification<
+            IiaApprovalCnrV2, EwpInterInstitutionalAgreementApprovalCnrApiConfiguration>
+        V2 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.INTERINSTITUTIONAL_AGREEMENTS_APPROVAL_CNR,
+                2,
+                IiaApprovalCnrV2.class,
                 EwpInterInstitutionalAgreementApprovalCnrApiConfiguration::create);
   }
 
