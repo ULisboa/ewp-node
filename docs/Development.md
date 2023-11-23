@@ -14,7 +14,7 @@ matches the target HEI ID;
 
 3. Edit the file backend/src/main/resources/application-dev.yml (only the sections of it mentioning that can be edited);
 
-4. Authenticate in the Github Docker Registry (refer to https://github.com/erasmus-without-paper/ewp-registry-service#pull-the-image);
+4. Authenticate in the Github Docker Registry (refer to the section of "Pull the image" of https://github.com/erasmus-without-paper/ewp-registry-service#pull-the-image);
 
 5. Copy the file .env.dev.example to .env.dev;
 
