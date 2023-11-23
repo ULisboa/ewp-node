@@ -30,7 +30,7 @@ matches the target HEI ID;
     ./install-node-certificate.sh
     ```
 
-10. If the EWP Node and/or EWP Registry is/are needed to be acessed outside the Docker environment (e.g. a web application not in the same Docker network that needs to communicate with the EWP Node), add the following lines to the file /etc/hosts:
+10. [Recommended, allows to access both ewp-node and ewp-registry outside the Docker environment] Add the following lines to the file /etc/hosts:
     ```
     127.0.0.1   ewp-node
     127.0.0.1   ewp-registry
