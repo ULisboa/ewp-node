@@ -16,17 +16,14 @@ public class EwpInterInstitutionalAgreementMapping {
   private String heiId;
   private String ounitId;
   private String iiaId;
-  private String iiaCode;
 
   protected EwpInterInstitutionalAgreementMapping() {
   }
 
-  protected EwpInterInstitutionalAgreementMapping(String heiId, String ounitId, String iiaId,
-      String iiaCode) {
+  protected EwpInterInstitutionalAgreementMapping(String heiId, String ounitId, String iiaId) {
     this.heiId = heiId;
     this.ounitId = ounitId;
     this.iiaId = iiaId;
-    this.iiaCode = iiaCode;
   }
 
   @Id
@@ -67,19 +64,9 @@ public class EwpInterInstitutionalAgreementMapping {
     this.iiaId = iiaId;
   }
 
-  @Column(name = "iia_code", nullable = false)
-  public String getIiaCode() {
-    return iiaCode;
-  }
-
-  public void setIiaCode(String iiaCode) {
-    this.iiaCode = iiaCode;
-  }
-
-  public static EwpInterInstitutionalAgreementMapping create(String heiId, String ounitId,
-      String iiaId,
-      String iiaCode) {
-    return new EwpInterInstitutionalAgreementMapping(heiId, ounitId, iiaId, iiaCode);
+  public static EwpInterInstitutionalAgreementMapping create(
+      String heiId, String ounitId, String iiaId) {
+    return new EwpInterInstitutionalAgreementMapping(heiId, ounitId, iiaId);
   }
 
   @Override
@@ -91,14 +78,15 @@ public class EwpInterInstitutionalAgreementMapping {
       return false;
     }
     EwpInterInstitutionalAgreementMapping that = (EwpInterInstitutionalAgreementMapping) o;
-    return id == that.id && Objects.equals(heiId, that.heiId) && Objects.equals(
-        ounitId, that.ounitId) && Objects.equals(iiaId, that.iiaId)
-        && Objects.equals(iiaCode, that.iiaCode);
+    return id == that.id
+        && Objects.equals(heiId, that.heiId)
+        && Objects.equals(ounitId, that.ounitId)
+        && Objects.equals(iiaId, that.iiaId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, heiId, ounitId, iiaId, iiaCode);
+    return Objects.hash(id, heiId, ounitId, iiaId);
   }
 
   @Override
@@ -108,7 +96,6 @@ public class EwpInterInstitutionalAgreementMapping {
         ", heiId='" + heiId + '\'' +
         ", ounitId='" + ounitId + '\'' +
         ", iiaId='" + iiaId + '\'' +
-        ", iiaCode='" + iiaCode + '\'' +
         '}';
   }
 }

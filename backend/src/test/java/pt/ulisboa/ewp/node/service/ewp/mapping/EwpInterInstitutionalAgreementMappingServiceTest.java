@@ -23,11 +23,10 @@ class EwpInterInstitutionalAgreementMappingServiceTest extends AbstractIntegrati
     String heiId = UUID.randomUUID().toString();
     String ounitId = UUID.randomUUID().toString();
     String iiaId = UUID.randomUUID().toString();
-    String iiaCode = UUID.randomUUID().toString();
 
     assertThat(repository.findByHeiIdAndIiaId(heiId, iiaId)).isEmpty();
 
-    service.registerMapping(heiId, ounitId, iiaId, iiaCode);
+    service.registerMapping(heiId, ounitId, iiaId);
 
     Optional<EwpInterInstitutionalAgreementMapping> mappingOptional = repository.findByHeiIdAndIiaId(
         heiId, iiaId);
@@ -36,7 +35,6 @@ class EwpInterInstitutionalAgreementMappingServiceTest extends AbstractIntegrati
     assertThat(mappingOptional.get().getHeiId()).isEqualTo(heiId);
     assertThat(mappingOptional.get().getOunitId()).isEqualTo(ounitId);
     assertThat(mappingOptional.get().getIiaId()).isEqualTo(iiaId);
-    assertThat(mappingOptional.get().getIiaCode()).isEqualTo(iiaCode);
   }
 
   @Test
@@ -44,14 +42,13 @@ class EwpInterInstitutionalAgreementMappingServiceTest extends AbstractIntegrati
     String heiId = UUID.randomUUID().toString();
     String ounitId = UUID.randomUUID().toString();
     String iiaId = UUID.randomUUID().toString();
-    String iiaCode = UUID.randomUUID().toString();
 
-    service.registerMapping(heiId, ounitId, iiaId, iiaCode);
+    service.registerMapping(heiId, ounitId, iiaId);
 
     assertThat(repository.findByHeiIdAndIiaId(heiId, iiaId)).isPresent();
 
     ounitId = UUID.randomUUID().toString();
-    service.registerMapping(heiId, ounitId, iiaId, iiaCode);
+    service.registerMapping(heiId, ounitId, iiaId);
 
     Optional<EwpInterInstitutionalAgreementMapping> mappingOptional = repository.findByHeiIdAndIiaId(
         heiId, iiaId);
@@ -60,6 +57,5 @@ class EwpInterInstitutionalAgreementMappingServiceTest extends AbstractIntegrati
     assertThat(mappingOptional.get().getHeiId()).isEqualTo(heiId);
     assertThat(mappingOptional.get().getOunitId()).isEqualTo(ounitId);
     assertThat(mappingOptional.get().getIiaId()).isEqualTo(iiaId);
-    assertThat(mappingOptional.get().getIiaCode()).isEqualTo(iiaCode);
   }
 }

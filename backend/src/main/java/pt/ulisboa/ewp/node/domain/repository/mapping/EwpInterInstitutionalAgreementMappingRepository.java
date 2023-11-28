@@ -55,33 +55,6 @@ public class EwpInterInstitutionalAgreementMappingRepository extends
         });
   }
 
-  public Optional<EwpInterInstitutionalAgreementMapping> findByHeiIdAndIiaCode(String heiId,
-      String iiaCode) {
-    return runInSession(
-        session -> {
-          try {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<EwpInterInstitutionalAgreementMapping> query = criteriaBuilder.createQuery(
-                EwpInterInstitutionalAgreementMapping.class);
-            Root<EwpInterInstitutionalAgreementMapping> selection = query.from(
-                EwpInterInstitutionalAgreementMapping.class);
-            return Optional.ofNullable(
-                session
-                    .createQuery(
-                        query.where(
-                            criteriaBuilder.equal(
-                                selection.get(EwpInterInstitutionalAgreementMapping_.heiId), heiId),
-                            criteriaBuilder.equal(
-                                selection.get(EwpInterInstitutionalAgreementMapping_.iiaCode),
-                                iiaCode)))
-                    .getSingleResult());
-
-          } catch (NoResultException ignored) {
-            return Optional.empty();
-          }
-        });
-  }
-
   @Override
   protected boolean checkDomainConstraints(EwpInterInstitutionalAgreementMapping entity)
       throws DomainException {
@@ -93,11 +66,6 @@ public class EwpInterInstitutionalAgreementMappingRepository extends
     if (Strings.isNullOrEmpty(entity.getIiaId())) {
       throw new DomainException(
           messages.get("error.interInstitutionalAgreementMapping.iiaId.must.be.defined"));
-    }
-
-    if (Strings.isNullOrEmpty(entity.getIiaCode())) {
-      throw new DomainException(
-          messages.get("error.interInstitutionalAgreementMapping.iiaCode.must.be.defined"));
     }
 
     if (findAll().stream().anyMatch(o -> o != entity && o.getHeiId().equals(entity.getHeiId()) &&

@@ -44,18 +44,14 @@ public class ForwardEwpApiInterInstitutionalAgreementsCnrController extends
       produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<ForwardEwpApiResponse>
   sendChangeNotification(@Valid ForwardEwpApiInterInstitutionalAgreementCnrRequestDto requestDto) {
-    int index = 0;
     for (String iiaId : requestDto.getIiaIds()) {
       EwpInterInstitutionalAgreementChangeNotification changeNotification = new EwpInterInstitutionalAgreementChangeNotification(
           requestDto.getNotifierHeiId(),
           requestDto.getPartnerHeiId(), iiaId);
       changeNotificationRepository.persist(changeNotification);
 
-      interInstitutionalAgreementMappingService.registerMapping(requestDto.getNotifierHeiId(),
-          requestDto.getNotifierOunitId(), iiaId,
-          requestDto.getIiaCodes().get(index));
-
-      index++;
+      interInstitutionalAgreementMappingService.registerMapping(
+          requestDto.getNotifierHeiId(), requestDto.getNotifierOunitId(), iiaId);
     }
     return ForwardEwpApiResponseUtils.toAcceptedResponseEntity();
   }

@@ -71,9 +71,9 @@ class EwpApiInterInstitutionalAgreementsApprovalV1ControllerTest extends
     mockProvider2.registerApprovals(approvingHeiId, approvals.get(1), approvals.get(2));
 
     for (int index = 0; index < iiaIds.size(); index++) {
-      EwpInterInstitutionalAgreementMapping mapping = EwpInterInstitutionalAgreementMapping.create(
-          approvingHeiId, ounitIds.get(index),
-          iiaIds.get(index), UUID.randomUUID().toString());
+      EwpInterInstitutionalAgreementMapping mapping =
+          EwpInterInstitutionalAgreementMapping.create(
+              approvingHeiId, ounitIds.get(index), iiaIds.get(index));
       doReturn(Optional.of(mapping)).when(mappingRepository)
           .findByHeiIdAndIiaId(approvingHeiId, iiaIds.get(index));
     }

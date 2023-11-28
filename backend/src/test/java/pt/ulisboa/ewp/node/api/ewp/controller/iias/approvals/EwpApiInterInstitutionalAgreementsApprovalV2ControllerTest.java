@@ -72,7 +72,7 @@ class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
     for (int index = 0; index < iiaIds.size(); index++) {
       EwpInterInstitutionalAgreementMapping mapping =
           EwpInterInstitutionalAgreementMapping.create(
-              approvingHeiId, ounitIds.get(index), iiaIds.get(index), UUID.randomUUID().toString());
+              approvingHeiId, ounitIds.get(index), iiaIds.get(index));
       doReturn(Optional.of(mapping))
           .when(mappingRepository)
           .findByHeiIdAndIiaId(approvingHeiId, iiaIds.get(index));

@@ -110,8 +110,7 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
         .findFirst()
         .orElse(null);
     assert partner != null;
-    this.mappingService.registerMapping(
-        heiId, partner.getOunitId(), partner.getIiaId(), partner.getIiaCode());
+    this.mappingService.registerMapping(heiId, partner.getOunitId(), partner.getIiaId());
   }
 
   private void registerMappingV7(String heiId, IiasGetResponseV7.Iia iia) {
@@ -120,8 +119,7 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
         .findFirst()
         .orElse(null);
     assert partner != null;
-    this.mappingService.registerMapping(
-        heiId, partner.getOunitId(), partner.getIiaId(), partner.getIiaCode());
+    this.mappingService.registerMapping(heiId, partner.getOunitId(), partner.getIiaId());
   }
 
   public Date getNextExecutionTime(TriggerContext context) {

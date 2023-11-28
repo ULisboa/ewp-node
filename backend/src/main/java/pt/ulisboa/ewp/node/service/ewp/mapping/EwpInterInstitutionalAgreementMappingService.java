@@ -22,14 +22,13 @@ public class EwpInterInstitutionalAgreementMappingService {
   }
 
   @Transactional
-  public void registerMapping(String heiId, String ounitId, String iiaId, String iiaCode) {
+  public void registerMapping(String heiId, String ounitId, String iiaId) {
     Optional<EwpInterInstitutionalAgreementMapping> mappingOptional = repository.findByHeiIdAndIiaId(
         heiId, iiaId);
 
     EwpInterInstitutionalAgreementMapping mapping;
     if (mappingOptional.isEmpty()) {
-      mapping = EwpInterInstitutionalAgreementMapping.create(
-          heiId, ounitId, iiaId, iiaCode);
+      mapping = EwpInterInstitutionalAgreementMapping.create(heiId, ounitId, iiaId);
 
     } else {
       mapping = mappingOptional.get();

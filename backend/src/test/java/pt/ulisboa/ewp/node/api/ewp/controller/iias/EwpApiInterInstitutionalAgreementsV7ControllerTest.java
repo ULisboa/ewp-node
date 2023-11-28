@@ -174,9 +174,11 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
     Mockito.reset(hostPluginManager);
 
     for (int index = 0; index < iiaIds.size(); index++) {
-      doReturn(Optional.of(
-          EwpInterInstitutionalAgreementMapping.create(heiId, ounitIds.get(index),
-              iiaIds.get(index), UUID.randomUUID().toString()))).when(mappingRepository)
+      doReturn(
+              Optional.of(
+                  EwpInterInstitutionalAgreementMapping.create(
+                      heiId, ounitIds.get(index), iiaIds.get(index))))
+          .when(mappingRepository)
           .findByHeiIdAndIiaId(heiId, iiaIds.get(index));
     }
 
@@ -245,9 +247,11 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
     Mockito.reset(hostPluginManager);
 
     for (int index = 0; index < knownIiaIds.size(); index++) {
-      doReturn(Optional.of(
-          EwpInterInstitutionalAgreementMapping.create(heiId, ounitIds.get(index),
-              knownIiaIds.get(index), UUID.randomUUID().toString()))).when(mappingRepository)
+      doReturn(
+              Optional.of(
+                  EwpInterInstitutionalAgreementMapping.create(
+                      heiId, ounitIds.get(index), knownIiaIds.get(index))))
+          .when(mappingRepository)
           .findByHeiIdAndIiaId(heiId, knownIiaIds.get(index));
     }
 

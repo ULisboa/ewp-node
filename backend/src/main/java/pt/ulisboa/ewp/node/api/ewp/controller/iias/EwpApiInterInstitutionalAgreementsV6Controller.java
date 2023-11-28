@@ -279,24 +279,8 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
       return new ArrayList<>();
     }
 
-    Optional<EwpInterInstitutionalAgreementMapping> mappingOptional =
-        mappingRepository.findByHeiIdAndIiaCode(heiId, iiaCode);
-    if (mappingOptional.isPresent()) {
-      EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
-      Optional<InterInstitutionalAgreementsV6HostProvider> providerOptional =
-          hostPluginManager.getSingleProvider(
-              heiId, mapping.getOunitId(), InterInstitutionalAgreementsV6HostProvider.class);
-      if (providerOptional.isPresent()) {
-        InterInstitutionalAgreementsV6HostProvider provider = providerOptional.get();
-        return List.of(provider);
-      } else {
-        throw new EwpUnknownOrganizationalUnitIdException(heiId, mapping.getOunitId());
-      }
-
-    } else {
-      return hostPluginManager.getPrimaryFollowedByNonPrimaryProviders(
-          heiId, InterInstitutionalAgreementsV6HostProvider.class);
-    }
+    return hostPluginManager.getPrimaryFollowedByNonPrimaryProviders(
+        heiId, InterInstitutionalAgreementsV6HostProvider.class);
   }
 
   private static IiasStatsResponseV6 createEmptyStatsResponse() {
