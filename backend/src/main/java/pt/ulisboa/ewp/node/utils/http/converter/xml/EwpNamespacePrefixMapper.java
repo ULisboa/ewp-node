@@ -25,7 +25,7 @@ public class EwpNamespacePrefixMapper extends NamespacePrefixMapper {
   private final Map<Pattern, String> patternToPrefixMap = new HashMap<>();
 
   public EwpNamespacePrefixMapper() {
-    this.patternToPrefixMap.put(PATTERN_IIAS_GET_RESPONSE, "iia");
+    this.patternToPrefixMap.put(PATTERN_IIAS_GET_RESPONSE, "");
     this.patternToPrefixMap.put(PATTERN_SPECS_TYPES_CONTACT, "c");
     this.patternToPrefixMap.put(PATTERN_SPECS_TYPES_ADDRESS, "a");
     this.patternToPrefixMap.put(PATTERN_SPECS_TYPES_PHONE_NUMBER, "pn");

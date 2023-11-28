@@ -22,7 +22,6 @@ import pt.ulisboa.ewp.node.exception.ewp.hash.HashCalculationException;
 import pt.ulisboa.ewp.node.exception.ewp.hash.HashComparisonException;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashCalculationResult;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashComparisonResult;
-import pt.ulisboa.ewp.node.service.ewp.iia.hash.v6.IiaHashServiceV6;
 import pt.ulisboa.ewp.node.utils.EwpApiNamespaces;
 
 class IiaHashServiceV6IntegrationTest extends AbstractIntegrationTest {
@@ -45,8 +44,8 @@ class IiaHashServiceV6IntegrationTest extends AbstractIntegrationTest {
 
     // Then
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getHash()).isEqualTo(
-        "b0407689b06d74767bc499dced47a406aa5caeeb14818c98446818bb623e5785");
+    assertThat(result.get(0).getHash())
+        .isEqualTo("4136142a584c4af354bdd508ea8ba5675dba3f336c2a2928e073ecadec280e14");
   }
 
   @Test
@@ -61,10 +60,10 @@ class IiaHashServiceV6IntegrationTest extends AbstractIntegrationTest {
 
     // Then
     assertThat(result).hasSize(2);
-    assertThat(result.get(0).getHash()).isEqualTo(
-        "b0407689b06d74767bc499dced47a406aa5caeeb14818c98446818bb623e5785");
-    assertThat(result.get(1).getHash()).isEqualTo(
-        "b0407689b06d74767bc499dced47a406aa5caeeb14818c98446818bb623e5785");
+    assertThat(result.get(0).getHash())
+        .isEqualTo("4136142a584c4af354bdd508ea8ba5675dba3f336c2a2928e073ecadec280e14");
+    assertThat(result.get(1).getHash())
+        .isEqualTo("4136142a584c4af354bdd508ea8ba5675dba3f336c2a2928e073ecadec280e14");
   }
 
   @Test
