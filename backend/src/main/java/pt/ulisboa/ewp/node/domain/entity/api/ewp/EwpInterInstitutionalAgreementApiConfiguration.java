@@ -1,7 +1,5 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
-import eu.erasmuswithoutpaper.api.iias.v3.IiasV3;
-import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
 import eu.erasmuswithoutpaper.api.iias.v6.IiasV6;
 import eu.erasmuswithoutpaper.api.iias.v7.IiasV7;
 import java.math.BigInteger;
@@ -80,32 +78,6 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
     this.sendsNotifications = sendsNotifications;
   }
 
-  public static EwpInterInstitutionalAgreementApiConfiguration create(String heiId, IiasV3 apiElement) {
-    return new EwpInterInstitutionalAgreementApiConfiguration(
-        heiId,
-        apiElement.getVersion(),
-        apiElement.getIndexUrl(),
-        apiElement.getGetUrl(),
-        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
-        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
-        apiElement.getMaxIiaIds(),
-        apiElement.getMaxIiaCodes(),
-        apiElement.getSendsNotifications() != null);
-  }
-
-  public static EwpInterInstitutionalAgreementApiConfiguration create(String heiId, IiasV4 apiElement) {
-    return new EwpInterInstitutionalAgreementApiConfiguration(
-        heiId,
-        apiElement.getVersion(),
-        apiElement.getIndexUrl(),
-        apiElement.getGetUrl(),
-        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
-        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
-        apiElement.getMaxIiaIds(),
-        apiElement.getMaxIiaCodes(),
-        apiElement.getSendsNotifications() != null);
-  }
-
   public static EwpInterInstitutionalAgreementApiConfiguration create(String heiId, IiasV6 apiElement) {
     return new EwpInterInstitutionalAgreementApiConfiguration(
         heiId,
@@ -128,7 +100,7 @@ public class EwpInterInstitutionalAgreementApiConfiguration extends EwpApiConfig
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
         apiElement.getMaxIiaIds(),
-        apiElement.getMaxIiaCodes(),
+        BigInteger.ZERO,
         true);
   }
 

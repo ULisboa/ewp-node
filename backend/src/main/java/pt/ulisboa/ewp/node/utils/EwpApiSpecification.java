@@ -11,8 +11,6 @@ import eu.erasmuswithoutpaper.api.iias.approval.v1.IiasApprovalV1;
 import eu.erasmuswithoutpaper.api.iias.approval.v2.IiasApprovalV2;
 import eu.erasmuswithoutpaper.api.iias.cnr.v2.IiaCnrV2;
 import eu.erasmuswithoutpaper.api.iias.cnr.v3.IiaCnrV3;
-import eu.erasmuswithoutpaper.api.iias.v3.IiasV3;
-import eu.erasmuswithoutpaper.api.iias.v4.IiasV4;
 import eu.erasmuswithoutpaper.api.iias.v6.IiasV6;
 import eu.erasmuswithoutpaper.api.iias.v7.IiasV7;
 import eu.erasmuswithoutpaper.api.imobilities.cnr.v1.ImobilityCnrV1;
@@ -108,24 +106,6 @@ public final class EwpApiSpecification {
   public static class InterInstitutionalAgreements {
 
     private InterInstitutionalAgreements() {}
-
-    public static final EwpApiVersionSpecification<
-            IiasV3, EwpInterInstitutionalAgreementApiConfiguration>
-        V3 =
-            new EwpApiVersionSpecification<>(
-                EwpApi.INTERINSTITUTIONAL_AGREEMENTS,
-                3,
-                IiasV3.class,
-                EwpInterInstitutionalAgreementApiConfiguration::create);
-
-    public static final EwpApiVersionSpecification<
-            IiasV4, EwpInterInstitutionalAgreementApiConfiguration>
-        V4 =
-            new EwpApiVersionSpecification<>(
-                EwpApi.INTERINSTITUTIONAL_AGREEMENTS,
-                4,
-                IiasV4.class,
-                EwpInterInstitutionalAgreementApiConfiguration::create);
 
     public static final EwpApiVersionSpecification<
             IiasV6, EwpInterInstitutionalAgreementApiConfiguration>
