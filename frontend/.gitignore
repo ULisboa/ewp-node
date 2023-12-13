@@ -42,3 +42,4 @@ Thumbs.db
 
 # Maven
 target/
+.nx/cache

@@ -25,7 +25,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideEffects(adminAuthFunctionalEffects),
     provideRouterStore(),
-    !environment.production ? provideStoreDevtools() : [],
+    !environment.production ? provideStoreDevtools({connectInZone: true}) : [],
     {
       provide: APP_INITIALIZER,
       useFactory: (store: Store) => {
