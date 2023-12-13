@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +34,7 @@ public class EwpApiInterInstitutionalAgreementsCnrV3Controller {
   }
 
   @RequestMapping(
+      path = "/{heiId}",
       method = {RequestMethod.GET, RequestMethod.POST},
       produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
@@ -40,7 +42,7 @@ public class EwpApiInterInstitutionalAgreementsCnrV3Controller {
       tags = {"ewp"})
   public ResponseEntity<IiaCnrResponseV3> iiaCnr(
       EwpApiHostAuthenticationToken authenticationToken,
-      @NotNull @RequestParam(value = EwpApiParamConstants.HEI_ID) String heiId,
+      @NotNull @PathVariable String heiId,
       @NotNull @RequestParam(value = EwpApiParamConstants.IIA_ID) String iiaId) {
 
     String requesterCoveredHeiId = authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next();

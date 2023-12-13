@@ -32,9 +32,11 @@ public class EwpApiOutgoingMobilityLearningAgreementCnrManifestEntryProvider
     manifestEntry.setUrl(
         baseUrl + EwpApiOutgoingMobilityLearningAgreementCnrV1Controller.BASE_PATH);
     manifestEntry.setStatsUrl(
-        baseUrl + EwpApiOutgoingMobilityLearningAgreementCnrV1Controller.BASE_PATH + "/stats?"
-            + EwpApiParamConstants.HEI_ID + "="
-            + heiId);
+        baseUrl
+            + EwpApiOutgoingMobilityLearningAgreementCnrV1Controller.BASE_PATH
+            + "/"
+            + heiId
+            + "/stats");
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
 
     int maxOutgoingMobilityIdsPerRequest = hostProviders.stream().mapToInt(

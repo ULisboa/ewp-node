@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.cnr.InterInstitutionalAgreementCnrV2HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.cnr.InterInstitutionalAgreementCnrV3HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
@@ -46,10 +45,7 @@ public class EwpApiInterInstitutionalAgreementsCnrManifestEntryProvider
     IiaCnrV3 manifestEntry = new IiaCnrV3();
     manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
     manifestEntry.setAdminNotes(null);
-    manifestEntry.setUrl(baseUrl + EwpApiInterInstitutionalAgreementsCnrV3Controller.BASE_PATH + "?"
-        + EwpApiParamConstants.HEI_ID
-        + "="
-        + heiId);
+    manifestEntry.setUrl(baseUrl + EwpApiInterInstitutionalAgreementsCnrV3Controller.BASE_PATH + "/" + heiId);
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
     return manifestEntry;
   }

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -130,7 +131,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
   }
 
   @RequestMapping(
-      path = "/index",
+      path = "/{heiId}/index",
       method = {RequestMethod.GET, RequestMethod.POST},
       produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
@@ -138,7 +139,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
       tags = {"ewp"})
   public ResponseEntity<IiasIndexResponseV7> iiaIds(
       EwpApiHostAuthenticationToken authenticationToken,
-      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
+      @PathVariable String heiId,
       @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, required = false)
           Collection<String> receivingAcademicYearIds,
       @RequestParam(value = EwpApiParamConstants.MODIFIED_SINCE, required = false)
@@ -169,7 +170,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
   }
 
   @RequestMapping(
-      path = "/get",
+      path = "/{heiId}/get",
       method = {RequestMethod.GET, RequestMethod.POST},
       produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
@@ -177,7 +178,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
       tags = {"ewp"})
   public ResponseEntity<IiasGetResponseV7> iiasGet(
       EwpApiHostAuthenticationToken authenticationToken,
-      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
+      @PathVariable String heiId,
       @RequestParam(value = EwpApiParamConstants.IIA_ID, required = false) List<String> iiaIds)
       throws HashCalculationException {
 
@@ -234,15 +235,14 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
   }
 
   @RequestMapping(
-      path = "/stats",
+      path = "/{heiId}/stats",
       method = {RequestMethod.GET},
       produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "IIAs Stats API.",
       tags = {"ewp"})
   public ResponseEntity<IiasStatsResponseV7> getStats(
-      @RequestParam(EwpApiParamConstants.HEI_ID) String heiId,
-      EwpApiHostAuthenticationToken authenticationToken) {
+      @PathVariable String heiId, EwpApiHostAuthenticationToken authenticationToken) {
 
     if (!authenticationToken.getPrincipal().getHeiIdsCoveredByClient().contains(statsPortalHeiId)) {
       throw new EwpBadRequestException(

@@ -345,15 +345,20 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
       throws Exception {
     String invalidHeiId = UUID.randomUUID().toString();
 
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, invalidHeiId);
-
-    assertErrorRequest(registryClient, HttpMethod.GET,
+    assertErrorRequest(
+        registryClient,
+        HttpMethod.GET,
         EwpApiConstants.API_BASE_URI
             + EwpApiOutgoingMobilityLearningAgreementsV1Controller.BASE_PATH
-            + "/stats", queryParams, HttpStatus.BAD_REQUEST,
-        new Condition<>(errorResponse -> errorResponse.getDeveloperMessage().getValue()
-            .contains("Unauthorized HEI ID"), "unauthorized HEI ID"));
+            + "/"
+            + invalidHeiId
+            + "/stats",
+        new HttpParams(),
+        HttpStatus.BAD_REQUEST,
+        new Condition<>(
+            errorResponse ->
+                errorResponse.getDeveloperMessage().getValue().contains("Unauthorized HEI ID"),
+            "unauthorized HEI ID"));
   }
 
   @Test
@@ -387,13 +392,14 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(heiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
-
-    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.request(HttpMethod.GET,
-        EwpApiConstants.API_BASE_URI
-            + EwpApiOutgoingMobilityLearningAgreementsV1Controller.BASE_PATH
-            + "/stats?" + EwpApiParamConstants.HEI_ID + "=" + heiId);
+    MockHttpServletRequestBuilder requestBuilder =
+        MockMvcRequestBuilders.request(
+            HttpMethod.GET,
+            EwpApiConstants.API_BASE_URI
+                + EwpApiOutgoingMobilityLearningAgreementsV1Controller.BASE_PATH
+                + "/"
+                + heiId
+                + "/stats");
 
     String responseXml = executeRequest(registryClient, requestBuilder,
         httpSignatureRequestProcessor(registryClient, List.of("test123")))

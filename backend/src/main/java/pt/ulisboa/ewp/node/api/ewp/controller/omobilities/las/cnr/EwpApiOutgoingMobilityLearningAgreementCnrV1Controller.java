@@ -13,6 +13,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -62,12 +63,15 @@ public class EwpApiOutgoingMobilityLearningAgreementCnrV1Controller {
     return ResponseEntity.ok(new OmobilityLaCnrResponseV1(new EmptyV1()));
   }
 
-  @RequestMapping(path = "/stats", method = {
-      RequestMethod.GET}, produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(summary = "Outgoing Mobility Learning Agreements CNR Stats API.", tags = {"ewp"})
+  @RequestMapping(
+      path = "/{heiId}/stats",
+      method = {RequestMethod.GET},
+      produces = MediaType.APPLICATION_XML_VALUE)
+  @Operation(
+      summary = "Outgoing Mobility Learning Agreements CNR Stats API.",
+      tags = {"ewp"})
   public ResponseEntity<LasIncomingStatsResponseV1> getStats(
-      @RequestParam(EwpApiParamConstants.HEI_ID) String heiId,
-      EwpApiHostAuthenticationToken authenticationToken) {
+      @PathVariable String heiId, EwpApiHostAuthenticationToken authenticationToken) {
 
     if (!authenticationToken.getPrincipal().getHeiIdsCoveredByClient().contains(statsPortalHeiId)) {
       throw new EwpBadRequestException(

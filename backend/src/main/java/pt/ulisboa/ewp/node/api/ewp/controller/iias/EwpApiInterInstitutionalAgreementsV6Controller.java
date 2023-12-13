@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -135,12 +136,15 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     }
   }
 
-  @RequestMapping(path = "/stats", method = {
-      RequestMethod.GET}, produces = MediaType.APPLICATION_XML_VALUE)
-  @Operation(summary = "IIAs Stats API.", tags = {"ewp"})
+  @RequestMapping(
+      path = "/{heiId}/stats",
+      method = {RequestMethod.GET},
+      produces = MediaType.APPLICATION_XML_VALUE)
+  @Operation(
+      summary = "IIAs Stats API.",
+      tags = {"ewp"})
   public ResponseEntity<IiasStatsResponseV6> getStats(
-      @RequestParam(EwpApiParamConstants.HEI_ID) String heiId,
-      EwpApiHostAuthenticationToken authenticationToken) {
+      @PathVariable String heiId, EwpApiHostAuthenticationToken authenticationToken) {
 
     if (!authenticationToken.getPrincipal().getHeiIdsCoveredByClient().contains(statsPortalHeiId)) {
       throw new EwpBadRequestException(

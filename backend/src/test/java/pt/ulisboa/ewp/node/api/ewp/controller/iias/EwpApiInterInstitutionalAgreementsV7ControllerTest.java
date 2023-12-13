@@ -74,13 +74,15 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
     doReturn(false).when(hostPluginManager)
         .hasHostProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
-
-    assertBadRequest(registryClient, method,
-        EwpApiConstants.API_BASE_URI + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
+    assertBadRequest(
+        registryClient,
+        method,
+        EwpApiConstants.API_BASE_URI
+            + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
+            + "/"
+            + heiId
             + "/index",
-        queryParams,
+        new HttpParams(),
         "Unknown HEI ID: " + heiId);
   }
 
@@ -106,14 +108,16 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
-
     String responseXml =
-        executeRequest(registryClient, method,
-            EwpApiConstants.API_BASE_URI + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
-                + "/index",
-            queryParams)
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI
+                    + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
+                    + "/"
+                    + heiId
+                    + "/index",
+                new HttpParams())
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -199,14 +203,18 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
             InterInstitutionalAgreementsV7HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
 
     String responseXml =
-        executeRequest(registryClient, method,
-            EwpApiConstants.API_BASE_URI + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
-                + "/get",
-            queryParams)
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI
+                    + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
+                    + "/"
+                    + heiId
+                    + "/get",
+                queryParams)
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -269,14 +277,18 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
             InterInstitutionalAgreementsV7HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
 
     String responseXml =
-        executeRequest(registryClient, method,
-            EwpApiConstants.API_BASE_URI + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
-                + "/get",
-            queryParams)
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI
+                    + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
+                    + "/"
+                    + heiId
+                    + "/get",
+                queryParams)
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -323,7 +335,6 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
         .getPrimaryProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
 
     String responseXml =
@@ -332,6 +343,8 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
                 method,
                 EwpApiConstants.API_BASE_URI
                     + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
+                    + "/"
+                    + heiId
                     + "/get",
                 queryParams)
             .andExpect(status().isOk())
@@ -383,7 +396,6 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
         .getPrimaryProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
 
     String responseXml =
@@ -392,6 +404,8 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
                 method,
                 EwpApiConstants.API_BASE_URI
                     + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
+                    + "/"
+                    + heiId
                     + "/get",
                 queryParams)
             .andExpect(status().isOk())
@@ -438,7 +452,6 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
         .getPrimaryProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
 
     String responseXml =
@@ -447,6 +460,8 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
                 method,
                 EwpApiConstants.API_BASE_URI
                     + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
+                    + "/"
+                    + heiId
                     + "/get",
                 queryParams)
             .andExpect(status().isOk())
@@ -464,15 +479,20 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
       throws Exception {
     String invalidHeiId = UUID.randomUUID().toString();
 
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, invalidHeiId);
-
-    assertErrorRequest(registryClient, HttpMethod.GET,
+    assertErrorRequest(
+        registryClient,
+        HttpMethod.GET,
         EwpApiConstants.API_BASE_URI
             + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
-            + "/stats", queryParams, HttpStatus.BAD_REQUEST,
-        new Condition<>(errorResponse -> errorResponse.getDeveloperMessage().getValue()
-            .contains("Unauthorized HEI ID"), "unauthorized HEI ID"));
+            + "/"
+            + invalidHeiId
+            + "/stats",
+        new HttpParams(),
+        HttpStatus.BAD_REQUEST,
+        new Condition<>(
+            errorResponse ->
+                errorResponse.getDeveloperMessage().getValue().contains("Unauthorized HEI ID"),
+            "unauthorized HEI ID"));
   }
 
   @Test
@@ -507,13 +527,14 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
     doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
         .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
-
-    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.request(HttpMethod.GET,
-        EwpApiConstants.API_BASE_URI
-            + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
-            + "/stats?" + EwpApiParamConstants.HEI_ID + "=" + heiId);
+    MockHttpServletRequestBuilder requestBuilder =
+        MockMvcRequestBuilders.request(
+            HttpMethod.GET,
+            EwpApiConstants.API_BASE_URI
+                + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
+                + "/"
+                + heiId
+                + "/stats");
 
     String responseXml = executeRequest(registryClient, requestBuilder,
         httpSignatureRequestProcessor(registryClient, List.of("test123")))

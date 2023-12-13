@@ -39,8 +39,11 @@ public class EwpApiInterInstitutionalAgreementsManifestEntryProvider
     manifestEntry
         .setGetUrl(baseUrl + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH + "/get");
     manifestEntry.setStatsUrl(
-        baseUrl + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH + "/stats?" +
-            EwpApiParamConstants.HEI_ID + "=" + heiId);
+        baseUrl
+            + EwpApiInterInstitutionalAgreementsV6Controller.BASE_PATH
+            + "/"
+            + heiId
+            + "/stats");
 
     int maxIiaIdsPerRequest = hostProviders.stream().mapToInt(
             InterInstitutionalAgreementsV6HostProvider::getMaxIiaIdsPerRequest)
@@ -64,22 +67,19 @@ public class EwpApiInterInstitutionalAgreementsManifestEntryProvider
     manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
     manifestEntry.setAdminNotes(null);
     manifestEntry.setIndexUrl(
-        baseUrl + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH + "/index?"
-            + EwpApiParamConstants.HEI_ID
-            + "="
-            + heiId);
+        baseUrl
+            + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
+            + "/"
+            + heiId
+            + "/index");
     manifestEntry.setGetUrl(
-        baseUrl + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH + "/get?"
-            + EwpApiParamConstants.HEI_ID
-            + "="
-            + heiId);
+        baseUrl + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH + "/" + heiId + "/get");
     manifestEntry.setStatsUrl(
         baseUrl
             + EwpApiInterInstitutionalAgreementsV7Controller.BASE_PATH
-            + "/stats?"
-            + EwpApiParamConstants.HEI_ID
-            + "="
-            + heiId);
+            + "/"
+            + heiId
+            + "/stats");
 
     int maxIiaIdsPerRequest =
         hostProviders.stream()
