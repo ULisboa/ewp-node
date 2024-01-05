@@ -18,6 +18,9 @@ COPY frontend/pom.xml frontend/pom.xml
 # Download dependencies first
 RUN mvn -pl backend,frontend dependency:resolve
 
+# Disable NX build cache
+ENV NX_SKIP_NX_CACHE true
+
 # Package modules individually
 COPY frontend frontend
 RUN mvn -pl frontend -B install -DskipTests=true
