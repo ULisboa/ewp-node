@@ -14,23 +14,21 @@ matches the target HEI ID;
 
 3. Edit the file backend/src/main/resources/application-dev.yml (only the sections of it mentioning that can be edited);
 
-4. Authenticate in the Github Docker Registry (refer to the section of "Pull the image" of https://github.com/erasmus-without-paper/ewp-registry-service#pull-the-image);
+4. Copy the file .env.dev.example to .env.dev;
 
-5. Copy the file .env.dev.example to .env.dev;
+5. If necessary, change the values of .env.dev (e.g. if the default ports are already used).
 
-6. If necessary, change the values of .env.dev (e.g. if the default ports are already used).
+6. Copy the file docker-compose.dev.override.yml.example to docker-compose.dev.override.yml;
 
-7. Copy the file docker-compose.dev.override.yml.example to docker-compose.dev.override.yml;
+7. If necessary, override Docker Compose services specification using docker-compose.dev.override.yml;
 
-8. If necessary, override Docker Compose services specification using docker-compose.dev.override.yml;
-
-9. To install the certificate that the local EWP Node and EWP Registry use, execute:
+8. To install the certificate that the local EWP Node and EWP Registry use, execute:
 
     ```
     ./install-node-certificate.sh
     ```
 
-10. [Recommended, allows to access both ewp-node and ewp-registry outside the Docker environment] Add the following lines to the file /etc/hosts:
+9. [Recommended, allows to access both ewp-node and ewp-registry outside the Docker environment] Add the following lines to the file /etc/hosts:
     ```
     127.0.0.1   ewp-node
     127.0.0.1   ewp-registry
@@ -48,7 +46,7 @@ Inside the root folder of the EWP Node project, follow the steps:
 
 Once both Docker containers have started, unless the file .env.dev uses different ports, the EWP Node is available, on host, on port 8443, and the EWP Registry on port 8000. If .env.dev configures different ports then consider those correct ports on this section, instead of the default ones.
 
-If the step 10 of Preparation was executed, opening a web browser at https://ewp-node:8443/admin should show the Admin Dashboard authentication page, and opening at https://ewp-registry:8000/status should show a page with the status of the imported manifests (including the one of ewp-node).
+If the step 9 of Preparation was executed, opening a web browser at https://ewp-node:8443/admin should show the Admin Dashboard authentication page, and opening at https://ewp-registry:8000/status should show a page with the status of the imported manifests (including the one of ewp-node).
 
 Notes:
  - The file docker-compose.dev.override.yml and .env.dev may be edited freely as those are not commited to the repository.
