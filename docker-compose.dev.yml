@@ -21,7 +21,7 @@ services:
   ewp-registry:
     container_name: ewp-registry
     hostname: ewp-registry
-    image: docker.pkg.github.com/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
+    image: ghcr.io/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
     entrypoint: 
       - "/root/entrypoint.sh"
     networks:

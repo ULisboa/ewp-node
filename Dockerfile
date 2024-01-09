@@ -1,5 +1,5 @@
 # Build and package
-FROM maven:3-openjdk-11-slim as builder
+FROM maven:3-eclipse-temurin-11 as builder
 
 WORKDIR /build
 

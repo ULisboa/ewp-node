@@ -9,4 +9,4 @@ CACERTS_STORE="/opt/java/openjdk/lib/security/cacerts"
 KEYSTORE_PATH=/opt/keystore.p12
 keytool -v -importkeystore -srckeystore ${KEYSTORE_PATH} -srcstoretype PKCS12 -srcstorepass p@ssw0rd -destkeystore $CACERTS_STORE -deststoretype JKS -deststorepass changeit -noprompt
 
-exec /start-wrapper.sh
+java -XX:-OmitStackTraceInFastThrow ${JAVA_OPTS} -jar /app.jar
