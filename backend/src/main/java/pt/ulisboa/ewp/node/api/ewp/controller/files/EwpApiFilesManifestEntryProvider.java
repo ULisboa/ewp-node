@@ -6,7 +6,6 @@ import java.util.Collection;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.files.FilesV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
@@ -29,8 +28,7 @@ public class EwpApiFilesManifestEntryProvider
     manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
     manifestEntry.setAdminNotes(null);
     manifestEntry.setUrl(
-        baseUrl + EwpApiFilesV1Controller.BASE_PATH + "?" + EwpApiParamConstants.HEI_ID + "="
-            + heiId);
+        baseUrl + EwpApiFilesV1Controller.BASE_PATH + "/" + heiId);
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
     return manifestEntry;
   }

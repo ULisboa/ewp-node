@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,6 +45,7 @@ public class EwpApiInterInstitutionalAgreementsApprovalV2Controller {
   }
 
   @RequestMapping(
+      path = "/{approvingHeiId}",
       method = {RequestMethod.GET, RequestMethod.POST},
       produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
@@ -51,8 +53,7 @@ public class EwpApiInterInstitutionalAgreementsApprovalV2Controller {
       tags = {"ewp"})
   public ResponseEntity<IiasApprovalResponseV2> iiasApproval(
       EwpApiHostAuthenticationToken authenticationToken,
-      @RequestParam(value = EwpApiParamConstants.APPROVING_HEI_ID, defaultValue = "")
-          String approvingHeiId,
+      @PathVariable String approvingHeiId,
       @RequestParam(value = EwpApiParamConstants.IIA_ID) Collection<String> iiaIds) {
 
     String requesterCoveredHeiId =

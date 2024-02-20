@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,10 +33,14 @@ public class EwpApiFilesV1Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
-  @RequestMapping(method = {RequestMethod.GET})
-  @Operation(summary = "Files API.", tags = {"ewp"})
+  @RequestMapping(
+      path = "/{heiId}",
+      method = {RequestMethod.GET})
+  @Operation(
+      summary = "Files API.",
+      tags = {"ewp"})
   public ResponseEntity<byte[]> getFile(
-      @RequestParam(EwpApiParamConstants.HEI_ID) String heiId,
+      @PathVariable String heiId,
       @RequestParam(EwpApiParamConstants.FILE_ID) String fileId,
       EwpApiHostAuthenticationToken authenticationToken) {
 

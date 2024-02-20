@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.approval.InterInstitutionalAgreementsApprovalV1HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.approval.InterInstitutionalAgreementsApprovalV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
-import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.config.manifest.ManifestProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
@@ -59,9 +58,7 @@ public class EwpApiInterInstitutionalAgreementsApprovalManifestEntryProvider
     manifestEntry.setUrl(
         baseUrl
             + EwpApiInterInstitutionalAgreementsApprovalV2Controller.BASE_PATH
-            + "?"
-            + EwpApiParamConstants.APPROVING_HEI_ID
-            + "="
+            + "/"
             + heiId);
 
     int maxIiaIdsPerRequest =
