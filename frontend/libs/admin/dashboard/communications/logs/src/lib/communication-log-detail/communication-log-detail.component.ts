@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild, inject } fro
 import { AdminCommunicationsLogsService } from '../services/admin-communications-logs.service';
 import { CommunicationLogDetail, EwpHttpCommunicationLogDetail, FunctionCallCommunicationLogDetail, HostPluginFunctionCallCommunicationLogDetail, HttpCommunicationFromEwpNodeLogDetail, HttpCommunicationLogDetail, HttpCommunicationToEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
-import { Message } from 'primeng/api';
+import { Message, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'lib-admin-dashboard-communication-log-detail',
@@ -30,6 +30,8 @@ export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
   loading = true;
   messages: Message[] = [];
 
+  constructor(private messageService: MessageService) {}
+
   ngOnInit() {
     this.loading = true;
     this.adminCommunicationsLogsService.getCommunicationsLogInDetail(this.id).subscribe({
@@ -48,6 +50,14 @@ export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
 
   onCommunicationReportedToMonitoring() {
     this.communicationReportedToMonitoring.emit();
+  }
+
+  onCopyToClipboard(successful: boolean) {
+    if (successful) {
+      this.messageService.add({ severity: 'success', summary: 'Success' });
+    } else {
+      this.messageService.add({ severity: 'error', summary: 'Error' });
+    }
   }
 
 }

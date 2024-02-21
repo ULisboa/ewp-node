@@ -23,6 +23,7 @@ import { AdminDashboardCommunicationsLogsNestedTableComponent } from './communic
 import { SharedUtilAngularModule } from '@ewp-node-frontend/shared/util-angular';
 import { AdminDashboardCommunicationLogReportToMonitoringFormComponent } from './communication-log-report-to-monitoring-form/communication-log-report-to-monitoring-form.component';
 import { MessageService } from 'primeng/api';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 @NgModule({
   imports: [
@@ -39,6 +40,8 @@ import { MessageService } from 'primeng/api';
     TableModule,
     ToastModule,
     SharedUtilAngularModule,
+
+    ClipboardModule,
 
     CommonModule,
     FormsModule,

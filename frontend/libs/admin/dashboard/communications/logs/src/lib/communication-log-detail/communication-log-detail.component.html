@@ -65,7 +65,11 @@
                         </p-table>
                     </p-card>
                     <p-card header="Body">
-                        {{httpCommunicationLog.request.body}}
+                        <p>{{httpCommunicationLog.request.body}}</p>
+                        <div>
+                            <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.request.body" 
+                                (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
+                        </div>
                     </p-card>
                 </p-accordionTab>
 
@@ -88,7 +92,11 @@
                         </p-table>
                     </p-card>
                     <p-card header="Body">
-                        {{httpCommunicationLog.response.body}}
+                        <p>{{httpCommunicationLog.response.body}}</p>
+                        <div>
+                            <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.response.body" 
+                                (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
+                        </div>
                     </p-card>
                 </p-accordionTab>
             </ng-container>
@@ -124,7 +132,13 @@
                 <ng-container *ngIf="functionCallCommunicationLog.resultType">
                     <p-accordionTab header="Function Call Result">
                         <p-card header="Result Type">{{ functionCallCommunicationLog.resultType }}</p-card>
-                        <p-card header="Result">{{ functionCallCommunicationLog.result }}</p-card>
+                        <p-card header="Result" *ngIf="functionCallCommunicationLog.result">
+                            <p>{{functionCallCommunicationLog.result}}</p>
+                            <div>
+                                <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="functionCallCommunicationLog.result" 
+                                    (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
+                            </div>
+                        </p-card>
                     </p-accordionTab>
                 </ng-container>
             </ng-container>
@@ -152,3 +166,5 @@
         <p-progressSpinner [style]="{ 'width': '100%' }" class="align-items-center"></p-progressSpinner>
     </div>
 </ng-container>
+
+<p-toast position="bottom-center"></p-toast>
