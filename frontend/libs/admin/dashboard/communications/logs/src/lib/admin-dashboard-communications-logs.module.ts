@@ -24,6 +24,7 @@ import { SharedUtilAngularModule } from '@ewp-node-frontend/shared/util-angular'
 import { AdminDashboardCommunicationLogReportToMonitoringFormComponent } from './communication-log-report-to-monitoring-form/communication-log-report-to-monitoring-form.component';
 import { MessageService } from 'primeng/api';
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import { PrismComponent } from '@ewp-node-frontend/shared/ui-prism';
 
 @NgModule({
   imports: [
@@ -40,6 +41,8 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
     TableModule,
     ToastModule,
     SharedUtilAngularModule,
+
+    PrismComponent,
 
     ClipboardModule,
 

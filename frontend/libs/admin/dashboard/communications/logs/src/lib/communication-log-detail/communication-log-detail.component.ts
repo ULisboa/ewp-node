@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { AdminCommunicationsLogsService } from '../services/admin-communications-logs.service';
 import { CommunicationLogDetail, EwpHttpCommunicationLogDetail, FunctionCallCommunicationLogDetail, HostPluginFunctionCallCommunicationLogDetail, HttpCommunicationFromEwpNodeLogDetail, HttpCommunicationLogDetail, HttpCommunicationToEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
@@ -7,7 +7,7 @@ import { Message, MessageService } from 'primeng/api';
 @Component({
   selector: 'lib-admin-dashboard-communication-log-detail',
   templateUrl: './communication-log-detail.component.html',
-  styleUrls: ['./communication-log-detail.component.scss'],
+  styleUrls: ['./communication-log-detail.component.scss']
 })
 export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
   public readonly EwpHttpCommunicationLogDetail = EwpHttpCommunicationLogDetail;
@@ -24,6 +24,9 @@ export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
 
   @Output()
   communicationReportedToMonitoring = new EventEmitter<any>();
+
+  @ViewChild('codeElem')
+  codeElem!: ElementRef;
 
   communicationLog?: CommunicationLogDetail | HostPluginFunctionCallCommunicationLogDetail;
 

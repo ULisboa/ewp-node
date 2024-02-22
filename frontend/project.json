@@ -18,9 +18,19 @@
         "assets": ["./src/favicon.ico", "./src/assets"],
         "styles": [
           "node_modules/primeng/resources/primeng.min.css",
+          "node_modules/prismjs/themes/prism.min.css",
+          "node_modules/prismjs/plugins/toolbar/prism-toolbar.css",
+          "node_modules/prismjs/plugins/line-highlight/prism-line-highlight.min.css",
+          "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.min.css",
           "./src/styles.scss"
         ],
-        "scripts": []
+        "scripts": [
+          "node_modules/prismjs/prism.js",
+          "node_modules/prismjs/components/prism-markup.min.js",
+          "node_modules/prismjs/plugins/toolbar/prism-toolbar.min.js",
+          "node_modules/prismjs/plugins/line-highlight/prism-line-highlight.min.js",
+          "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.min.js"
+        ]
       },
       "configurations": {
         "production": {

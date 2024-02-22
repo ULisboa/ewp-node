@@ -92,7 +92,8 @@
                         </p-table>
                     </p-card>
                     <p-card header="Body">
-                        <p>{{httpCommunicationLog.response.body}}</p>
+                        <lib-prism [language]="'markup'" [code]="httpCommunicationLog.response.body"
+                            [linesToHighlight]="httpCommunicationLog.response.bodyValidation.lineNumbersAsString"></lib-prism>
                         <div>
                             <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.response.body" 
                                 (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
@@ -100,7 +101,7 @@
                     </p-card>
                     <p-card header="Body Validation">
                         <ng-container *ngIf="httpCommunicationLog.response.bodyValidation.valid">
-                            <p-message [text]="'Valid'"></p-message>
+                            <p-message [severity]="'success'" [text]="'Valid'"></p-message>
                         </ng-container>
                         <ng-container *ngIf="!httpCommunicationLog.response.bodyValidation.valid">
                             <ng-container *ngFor="let item of httpCommunicationLog.response.bodyValidation.validationEntries">

@@ -6,4 +6,8 @@ export class ValidationResult {
     
     @Type(() => ValidationEntry)
     validationEntries!: ValidationEntry[];
+
+    get lineNumbersAsString() {
+        return this.validationEntries.filter(e => e.lineNumber).map(e => e.lineNumber).join(',');
+    }
 }
