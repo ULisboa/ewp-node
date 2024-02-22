@@ -9,12 +9,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogSummaryDto;
+import pt.ulisboa.ewp.node.domain.dto.communication.log.http.HttpCommunicationLogDetailDto;
+import pt.ulisboa.ewp.node.domain.dto.communication.log.http.HttpResponseLogDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
+import pt.ulisboa.ewp.node.domain.dto.validation.ValidationResultDto;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.mapper.communication.log.CommunicationLogMapper;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.CommunicationLogRepository;
 import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
+import pt.ulisboa.ewp.node.service.communication.log.http.validator.HttpResponseLogBodyValidator;
 import pt.ulisboa.ewp.node.utils.ExceptionUtils;
 
 @Service
@@ -26,9 +30,13 @@ public class CommunicationLogService {
   private static final int MAX_NUMBER_OF_STACK_TRACE_LINES_PER_LEVEL = 15;
 
   private final CommunicationLogRepository repository;
+  private final HttpResponseLogBodyValidator httpResponseLogBodyValidator;
 
-  public CommunicationLogService(CommunicationLogRepository repository) {
+  public CommunicationLogService(
+      CommunicationLogRepository repository,
+      HttpResponseLogBodyValidator httpResponseLogBodyValidator) {
     this.repository = repository;
+    this.httpResponseLogBodyValidator = httpResponseLogBodyValidator;
   }
 
   public CommunicationLogDetailDto findById(long id) {
@@ -37,7 +45,22 @@ public class CommunicationLogService {
     if (communicationLogOptional.isEmpty()) {
       throw new IllegalArgumentException("There is no communication log with ID: " + id);
     }
-    return mapper.communicationLogToCommunicationLogDetailDto(communicationLogOptional.get());
+    CommunicationLogDetailDto result =
+        mapper.communicationLogToCommunicationLogDetailDto(communicationLogOptional.get());
+    if (result instanceof HttpCommunicationLogDetailDto) {
+      fillHttpCommunicationLogDetail((HttpCommunicationLogDetailDto) result);
+    }
+    return result;
+  }
+
+  private void fillHttpCommunicationLogDetail(
+      HttpCommunicationLogDetailDto httpCommunicationLogDetailDto) {
+    HttpResponseLogDto httpResponse = httpCommunicationLogDetailDto.getResponse();
+    if (httpResponse != null && httpResponse.getBody() != null) {
+      ValidationResultDto validationResult =
+          this.httpResponseLogBodyValidator.validate(httpResponse);
+      httpResponse.setBodyValidation(validationResult);
+    }
   }
 
   public Collection<CommunicationLogSummaryDto> findByFilter(FilterDto<CommunicationLog> filter, int offset, int limit) {

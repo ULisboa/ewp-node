@@ -1,12 +1,14 @@
 package pt.ulisboa.ewp.node.domain.dto.communication.log.http;
 
 import java.util.Collection;
+import pt.ulisboa.ewp.node.domain.dto.validation.ValidationResultDto;
 
 public class HttpResponseLogDto {
 
   private int statusCode;
   private Collection<HttpHeaderLogDto> headers;
   private String body;
+  private ValidationResultDto bodyValidation;
 
   public int getStatusCode() {
     return statusCode;
@@ -30,5 +32,13 @@ public class HttpResponseLogDto {
 
   public void setBody(String body) {
     this.body = body;
+  }
+
+  public ValidationResultDto getBodyValidation() {
+    return bodyValidation;
+  }
+
+  public void setBodyValidation(ValidationResultDto bodyValidation) {
+    this.bodyValidation = bodyValidation;
   }
 }

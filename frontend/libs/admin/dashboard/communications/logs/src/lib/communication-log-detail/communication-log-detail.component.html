@@ -98,6 +98,23 @@
                                 (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
                         </div>
                     </p-card>
+                    <p-card header="Body Validation">
+                        <ng-container *ngIf="httpCommunicationLog.response.bodyValidation.valid">
+                            <p-message [text]="'Valid'"></p-message>
+                        </ng-container>
+                        <ng-container *ngIf="!httpCommunicationLog.response.bodyValidation.valid">
+                            <ng-container *ngFor="let item of httpCommunicationLog.response.bodyValidation.validationEntries">
+                                <p>
+                                    <ng-container *ngIf="item.lineNumber">
+                                        <p-message [severity]="item.severity.toLowerCase()" [text]="'[Line #' + item.lineNumber + '] ' + item.message"></p-message>
+                                    </ng-container>
+                                    <ng-container *ngIf="!item.lineNumber">
+                                        <p-message [severity]="item.severity.toLowerCase()" [text]="item.message"></p-message>
+                                    </ng-container>
+                                </p>
+                            </ng-container>
+                        </ng-container>
+                    </p-card>
                 </p-accordionTab>
             </ng-container>
 

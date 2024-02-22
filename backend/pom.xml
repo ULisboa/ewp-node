@@ -191,6 +191,12 @@
     </dependency>
 
     <dependency>
+      <groupId>xml-resolver</groupId>
+      <artifactId>xml-resolver</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk18on</artifactId>
       <version>1.75</version>
@@ -380,7 +386,7 @@
   <parent>
     <artifactId>ewp-node-parent</artifactId>
     <groupId>pt.ulisboa</groupId>
-    <version>0.26.0</version>
+    <version>0.27.0</version>
   </parent>
 
   <properties>
