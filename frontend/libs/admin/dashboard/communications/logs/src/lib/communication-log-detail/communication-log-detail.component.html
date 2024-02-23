@@ -65,7 +65,8 @@
                         </p-table>
                     </p-card>
                     <p-card header="Body">
-                        <p>{{httpCommunicationLog.request.body}}</p>
+                        <lib-prism [language]="'markup'" [code]="httpCommunicationLog.request.body"
+                            [linesToHighlight]="httpCommunicationLog.response.bodyValidation.lineNumbersAsString"></lib-prism>
                         <div>
                             <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.request.body" 
                                 (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
