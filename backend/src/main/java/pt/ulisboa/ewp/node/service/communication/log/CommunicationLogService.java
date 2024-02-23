@@ -84,8 +84,11 @@ public class CommunicationLogService {
 
   public void registerExceptionInCurrentCommunication(Throwable throwable) {
     if (CommunicationContextHolder.getContext().getCurrentCommunicationLog() != null) {
-      this.registerException(
-          CommunicationContextHolder.getContext().getCurrentCommunicationLog(), throwable);
+      CommunicationLog communicationLog =
+          this.repository.merge(
+              CommunicationContextHolder.getContext().getCurrentCommunicationLog());
+      this.registerException(communicationLog, throwable);
+      CommunicationContextHolder.getContext().setCurrentCommunicationLog(communicationLog);
     } else {
       LOG.warn("No current communication found, ignoring exception...");
     }

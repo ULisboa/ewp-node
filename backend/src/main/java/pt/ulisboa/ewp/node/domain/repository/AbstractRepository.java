@@ -36,6 +36,11 @@ public abstract class AbstractRepository<T> {
         });
   }
 
+  public T merge(T entity) {
+    //noinspection unchecked
+    return (T) runInSession(session -> session.merge(entity));
+  }
+
   public boolean persist(T entity) {
     try {
       checkDomainConstraints(entity);

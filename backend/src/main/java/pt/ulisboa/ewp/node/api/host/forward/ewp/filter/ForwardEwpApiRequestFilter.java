@@ -66,8 +66,11 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
     HostForwardEwpApiClient hostForwardEwpApiClient = (HostForwardEwpApiClient) request
         .getAttribute(
             ForwardEwpApiJwtTokenAuthenticationFilter.REQUEST_ATTRIBUTE_HOST_FORWARD_EWP_API_CLIENT_NAME);
-    updateCommunicationLogWithHostForwardEwpApiClientAndResponse(newCommunicationLog,
-        hostForwardEwpApiClient, responseWrapper);
+    updateCommunicationLogWithHostForwardEwpApiClientAndResponse(
+        (HttpCommunicationFromHostLog)
+            CommunicationContextHolder.getContext().getCurrentCommunicationLog(),
+        hostForwardEwpApiClient,
+        responseWrapper);
     CommunicationContextHolder.clearContext();
 
     responseWrapper.copyBodyToResponse();
