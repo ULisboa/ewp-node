@@ -78,4 +78,14 @@ public class XmlUtils {
       throw new XmlCannotUnmarshallToTypeException(xml, classType);
     }
   }
+
+  public static boolean isEmptyXml(byte[] xml) {
+    return isEmptyXml(new String(xml));
+  }
+
+  public static boolean isEmptyXml(String xml) {
+    String xmlDeclarationPattern = "<\\?xml[\\s\\S]*\\?>";
+    String sanitizedXml = xml.replaceAll(xmlDeclarationPattern, "").replaceAll("[\\s]", "");
+    return sanitizedXml.isEmpty();
+  }
 }

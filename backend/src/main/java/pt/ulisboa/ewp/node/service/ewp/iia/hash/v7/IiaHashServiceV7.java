@@ -35,6 +35,7 @@ import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashCalculationResult;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.HashComparisonResult;
 import pt.ulisboa.ewp.node.utils.EwpApiNamespaces;
 import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
+import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 /** Class that allows to calculate and validate IIA Hashes V7. */
 @Service
@@ -92,6 +93,9 @@ public class IiaHashServiceV7 {
       byte[] xslt = getXsltForSourceMajorVersion(sourceApiMajorVersion);
 
       byte[] xmlTransformed = getXmlTransformed(iiasGetResponseBytes, xslt);
+      if (XmlUtils.isEmptyXml(xmlTransformed)) {
+        return List.of();
+      }
 
       XPath xPath = xpathFactory.newXPath();
       XPathExpression xPathExpression = xPath.compile("/iia/text-to-hash");
