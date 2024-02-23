@@ -38,6 +38,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.UriUtils;
 import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Signature;
@@ -62,6 +63,8 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
   @Autowired
   private XmlValidator xmlValidator;
 
+  @Autowired private RequestMappingHandlerMapping requestMappingHandlerMapping;
+
   @Autowired
   private EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
 
@@ -73,7 +76,8 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
         MockMvcBuilders.webAppContextSetup(this.wac)
             .addFilters(
                 new EwpApiRequestAndResponseWrapperFilter(),
-                new EwpApiCommunicationLoggerFilter(ewpHttpCommunicationLogService))
+                new EwpApiCommunicationLoggerFilter(
+                    requestMappingHandlerMapping, ewpHttpCommunicationLogService))
             .apply(springSecurity())
             .build();
   }
