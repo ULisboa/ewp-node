@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.exceptions.EditConflictException;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.las.OutgoingMobilityLearningAgreementsV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -66,19 +67,26 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
     this.statsPortalHeiId = statsPortalHeiId;
   }
 
-  @RequestMapping(path = "/index", method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "index")
+  @RequestMapping(
+      path = "/index",
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Outgoing Mobility Learning Agreements Index API.",
       tags = {"ewp"})
   public ResponseEntity<OmobilityLasIndexResponseV1> outgoingMobilityIds(
       @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID) String sendingHeiId,
-      @RequestParam(value = EwpApiParamConstants.RECEIVING_HEI_ID, required = false) Collection<String> receivingHeiIds,
-      @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, defaultValue = "") String receivingAcademicYearId,
+      @RequestParam(value = EwpApiParamConstants.RECEIVING_HEI_ID, required = false)
+          Collection<String> receivingHeiIds,
+      @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, defaultValue = "")
+          String receivingAcademicYearId,
       @RequestParam(value = EwpApiParamConstants.GLOBAL_ID, defaultValue = "") String globalId,
-      @RequestParam(value = EwpApiParamConstants.MOBILITY_TYPE, defaultValue = "") String mobilityType,
+      @RequestParam(value = EwpApiParamConstants.MOBILITY_TYPE, defaultValue = "")
+          String mobilityType,
       @RequestParam(value = EwpApiParamConstants.MODIFIED_SINCE, required = false)
-      @DateTimeFormat(iso = DATE_TIME) LocalDateTime modifiedSince,
+          @DateTimeFormat(iso = DATE_TIME)
+          LocalDateTime modifiedSince,
       EwpApiHostAuthenticationToken authenticationToken) {
 
     if (!hostPluginManager.hasHostProvider(sendingHeiId,
@@ -100,13 +108,17 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
     return ResponseEntity.ok(response);
   }
 
-  @RequestMapping(path = "/get", method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "get")
+  @RequestMapping(
+      path = "/get",
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Outgoing Mobility Learning Agreements Get API.",
       tags = {"ewp"})
   public ResponseEntity<OmobilityLasGetResponseV1> learningAgreements(
-      @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID, defaultValue = "") String sendingHeiId,
+      @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID, defaultValue = "")
+          String sendingHeiId,
       @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID) List<String> outgoingMobilityIds,
       EwpApiHostAuthenticationToken authenticationToken) {
 
@@ -149,14 +161,18 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
     return ResponseEntity.ok(response);
   }
 
-  @RequestMapping(path = "/update", method = {
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "update")
+  @RequestMapping(
+      path = "/update",
+      method = {RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Outgoing Mobility Learning Agreements Update API.",
       tags = {"ewp"})
   public ResponseEntity<OmobilityLasUpdateResponseV1> learningAgreementUpdate(
       @Valid @RequestBody OmobilityLasUpdateRequestV1 updateData,
-      EwpApiHostAuthenticationToken authenticationToken) throws EditConflictException {
+      EwpApiHostAuthenticationToken authenticationToken)
+      throws EditConflictException {
     String sendingHeiId = updateData.getSendingHeiId();
 
     String omobilityId = getOmobilityIdOfUpdateData(updateData);
@@ -184,6 +200,7 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
     return ResponseEntity.ok(response);
   }
 
+  @EwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "stats")
   @RequestMapping(
       path = "/{heiId}/stats",
       method = {RequestMethod.GET},

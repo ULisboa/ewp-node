@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -63,18 +64,24 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     this.statsPortalHeiId = statsPortalHeiId;
   }
 
-  @RequestMapping(path = "/index", method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "iias", apiMajorVersion = 6, endpoint = "index")
+  @RequestMapping(
+      path = "/index",
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "IIAs Index API.",
       tags = {"ewp"})
   public ResponseEntity<IiasIndexResponseV6> iiaIds(
       EwpApiHostAuthenticationToken authenticationToken,
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.PARTNER_HEI_ID, defaultValue = "") String partnerHeiId,
-      @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, required = false) Collection<String> receivingAcademicYearIds,
+      @RequestParam(value = EwpApiParamConstants.PARTNER_HEI_ID, defaultValue = "")
+          String partnerHeiId,
+      @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, required = false)
+          Collection<String> receivingAcademicYearIds,
       @RequestParam(value = EwpApiParamConstants.MODIFIED_SINCE, required = false)
-      @DateTimeFormat(iso = DATE_TIME) LocalDateTime modifiedSince) {
+          @DateTimeFormat(iso = DATE_TIME)
+          LocalDateTime modifiedSince) {
 
     if (!hostPluginManager.hasHostProvider(heiId,
         InterInstitutionalAgreementsV6HostProvider.class)) {
@@ -94,20 +101,21 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     return ResponseEntity.ok(response);
   }
 
-  @RequestMapping(path = "/get", method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "iias", apiMajorVersion = 6, endpoint = "get")
+  @RequestMapping(
+      path = "/get",
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "IIAs Get API.",
       tags = {"ewp"})
   public ResponseEntity<IiasGetResponseV6> iiasGet(
       EwpApiHostAuthenticationToken authenticationToken,
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.IIA_ID, required = false)
-      List<String> iiaIds,
-      @RequestParam(value = EwpApiParamConstants.IIA_CODE, required = false)
-      List<String> iiaCodes,
-      @RequestParam(value = EwpApiParamConstants.SEND_PDF, required = false)
-      Boolean sendPdf) throws HashCalculationException {
+      @RequestParam(value = EwpApiParamConstants.IIA_ID, required = false) List<String> iiaIds,
+      @RequestParam(value = EwpApiParamConstants.IIA_CODE, required = false) List<String> iiaCodes,
+      @RequestParam(value = EwpApiParamConstants.SEND_PDF, required = false) Boolean sendPdf)
+      throws HashCalculationException {
 
     iiaIds = iiaIds != null ? iiaIds : Collections.emptyList();
     iiaCodes = iiaCodes != null ? iiaCodes : Collections.emptyList();
@@ -136,6 +144,7 @@ public class EwpApiInterInstitutionalAgreementsV6Controller {
     }
   }
 
+  @EwpApiEndpoint(api = "iias", apiMajorVersion = 6, endpoint = "stats")
   @RequestMapping(
       path = "/{heiId}/stats",
       method = {RequestMethod.GET},

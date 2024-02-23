@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.OutgoingMobilitiesV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -48,17 +49,23 @@ public class EwpApiOutgoingMobilitiesV2Controller {
     this.mappingRepository = mappingRepository;
   }
 
-  @RequestMapping(path = "/index", method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "omobilities", apiMajorVersion = 2, endpoint = "index")
+  @RequestMapping(
+      path = "/index",
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Outgoing Mobilities Index API.",
       tags = {"ewp"})
   public ResponseEntity<OmobilitiesIndexResponseV2> outgoingMobilityIds(
       @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID) String sendingHeiId,
-      @RequestParam(value = EwpApiParamConstants.RECEIVING_HEI_ID, required = false) Collection<String> receivingHeiIds,
-      @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, defaultValue = "") String receivingAcademicYearId,
+      @RequestParam(value = EwpApiParamConstants.RECEIVING_HEI_ID, required = false)
+          Collection<String> receivingHeiIds,
+      @RequestParam(value = EwpApiParamConstants.RECEIVING_ACADEMIC_YEAR_ID, defaultValue = "")
+          String receivingAcademicYearId,
       @RequestParam(value = EwpApiParamConstants.MODIFIED_SINCE, required = false)
-      @DateTimeFormat(iso = DATE_TIME) LocalDateTime modifiedSince,
+          @DateTimeFormat(iso = DATE_TIME)
+          LocalDateTime modifiedSince,
       EwpApiHostAuthenticationToken authenticationToken) {
 
     if (!hostPluginManager.hasHostProvider(sendingHeiId, OutgoingMobilitiesV2HostProvider.class)) {
@@ -79,13 +86,17 @@ public class EwpApiOutgoingMobilitiesV2Controller {
     return ResponseEntity.ok(response);
   }
 
-  @RequestMapping(path = "/get", method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "omobilities", apiMajorVersion = 2, endpoint = "get")
+  @RequestMapping(
+      path = "/get",
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Outgoing Mobilities Get API.",
       tags = {"ewp"})
   public ResponseEntity<OmobilitiesGetResponseV2> outgoingMobilities(
-      @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID, defaultValue = "") String sendingHeiId,
+      @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID, defaultValue = "")
+          String sendingHeiId,
       @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID) List<String> outgoingMobilityIds,
       EwpApiHostAuthenticationToken authenticationToken) {
 

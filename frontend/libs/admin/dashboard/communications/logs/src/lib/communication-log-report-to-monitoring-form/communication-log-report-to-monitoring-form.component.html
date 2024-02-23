@@ -6,10 +6,10 @@
     <div>{{communicationLog.apiName}}</div>
 
     <h5>Endpoint Name</h5>
-    <div>{{communicationLog.endpointName}}</div>
+    <div *ngIf="communicationLog.endpointName">{{communicationLog.endpointName}}</div>
 
     <h5>HTTP Status Code</h5>
-    <div>{{communicationLog.response.statusCode}}</div>
+    <div *ngIf="communicationLog.response">{{communicationLog.response.statusCode}}</div>
 
     <!-- <ng-container *ngIf="communicationLog.serverDeveloperMessage"> -->
     <h5>Server Message</h5>

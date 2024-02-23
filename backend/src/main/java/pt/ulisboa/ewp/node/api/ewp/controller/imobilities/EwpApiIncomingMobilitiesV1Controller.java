@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.imobilities.IncomingMobilitiesV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -43,8 +44,11 @@ public class EwpApiIncomingMobilitiesV1Controller {
     this.mappingRepository = mappingRepository;
   }
 
-  @RequestMapping(path = "/get", method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "imobilities", apiMajorVersion = 1, endpoint = "get")
+  @RequestMapping(
+      path = "/get",
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Incoming Mobilities Get API.",
       tags = {"ewp"})

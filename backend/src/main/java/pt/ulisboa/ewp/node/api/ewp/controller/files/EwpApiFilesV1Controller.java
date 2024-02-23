@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.files.FileResponse;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.files.FilesV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -33,6 +34,7 @@ public class EwpApiFilesV1Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
+  @EwpApiEndpoint(api = "files", apiMajorVersion = 1)
   @RequestMapping(
       path = "/{heiId}",
       method = {RequestMethod.GET})

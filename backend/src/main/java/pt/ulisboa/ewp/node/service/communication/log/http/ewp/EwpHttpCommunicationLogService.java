@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.wrapper.EwpApiHttpRequestWrapper;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
@@ -46,6 +47,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
   public HttpCommunicationFromEwpNodeLog logCommunicationFromEwpNodeBeforeExecution(
       EwpApiHttpRequestWrapper request,
       ZonedDateTime startProcessingDateTime,
+      EwpApiEndpoint ewpApiEndpoint,
       String observations,
       HttpCommunicationLog parentCommunication)
       throws IOException, DomainException {
@@ -63,6 +65,9 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
     return httpCommunicationFromEwpNodeLogRepository.create(
         authenticationMethod,
         heiIdsCoveredByClient,
+        ewpApiEndpoint != null ? ewpApiEndpoint.api() : null,
+        ewpApiEndpoint != null ? ewpApiEndpoint.apiMajorVersion() : null,
+        ewpApiEndpoint != null ? ewpApiEndpoint.endpoint() : null,
         requestLog,
         null,
         startProcessingDateTime,

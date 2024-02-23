@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.cnr.InterInstitutionalAgreementCnrV3HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -33,6 +34,7 @@ public class EwpApiInterInstitutionalAgreementsCnrV3Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
+  @EwpApiEndpoint(api = "iia-cnr", apiMajorVersion = 3)
   @RequestMapping(
       path = "/{heiId}",
       method = {RequestMethod.GET, RequestMethod.POST},

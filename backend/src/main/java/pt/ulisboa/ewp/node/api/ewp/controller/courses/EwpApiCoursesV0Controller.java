@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.CoursesV0HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
@@ -42,26 +43,26 @@ public class EwpApiCoursesV0Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
-  @RequestMapping(method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "courses", apiMajorVersion = 0)
+  @RequestMapping(
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Courses API.",
       tags = {"ewp"})
   public ResponseEntity<CoursesResponseV0> courses(
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId,
-      @RequestParam(value = EwpApiParamConstants.LOS_ID, required = false)
-      List<String> losIds,
-      @RequestParam(value = EwpApiParamConstants.LOS_CODE, required = false)
-      List<String> losCodes,
+      @RequestParam(value = EwpApiParamConstants.LOS_ID, required = false) List<String> losIds,
+      @RequestParam(value = EwpApiParamConstants.LOS_CODE, required = false) List<String> losCodes,
       @RequestParam(value = EwpApiParamConstants.LOIS_BEFORE, required = false)
-      @DateTimeFormat(iso = DATE)
-      LocalDate loisBefore,
+          @DateTimeFormat(iso = DATE)
+          LocalDate loisBefore,
       @RequestParam(value = EwpApiParamConstants.LOIS_AFTER, required = false)
-      @DateTimeFormat(iso = DATE)
-      LocalDate loisAfter,
+          @DateTimeFormat(iso = DATE)
+          LocalDate loisAfter,
       @RequestParam(value = EwpApiParamConstants.LOS_AT_DATE, required = false)
-      @DateTimeFormat(iso = DATE)
-      LocalDate losAtDate) {
+          @DateTimeFormat(iso = DATE)
+          LocalDate losAtDate) {
 
     losIds = losIds != null ? losIds : Collections.emptyList();
     losCodes = losCodes != null ? losCodes : Collections.emptyList();

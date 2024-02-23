@@ -128,7 +128,7 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
   @Transient
   public List<CommunicationLogWarningCode> getWarningCodes() {
     List<CommunicationLogWarningCode> result = super.getWarningCodes();
-    if (getResponse().isErrorCode() && !isReportedToMonitoring()) {
+    if (getResponse() != null && getResponse().isErrorCode() && !isReportedToMonitoring()) {
       result.add(CommunicationLogWarningCode.ERROR_NOT_REPORTED_TO_MONITORING);
     }
     return result;

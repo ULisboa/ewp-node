@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV7HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -130,6 +131,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
     return result;
   }
 
+  @EwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "index")
   @RequestMapping(
       path = "/{heiId}/index",
       method = {RequestMethod.GET, RequestMethod.POST},
@@ -169,6 +171,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
     return ResponseEntity.ok(response);
   }
 
+  @EwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "get")
   @RequestMapping(
       path = "/{heiId}/get",
       method = {RequestMethod.GET, RequestMethod.POST},
@@ -234,6 +237,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
     return ResponseEntity.ok(response);
   }
 
+  @EwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "stats")
   @RequestMapping(
       path = "/{heiId}/stats",
       method = {RequestMethod.GET},

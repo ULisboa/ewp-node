@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.omobilities.las.cnr.OutgoingMobilityLearningAgreementCnrV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -45,8 +46,10 @@ public class EwpApiOutgoingMobilityLearningAgreementCnrV1Controller {
     this.statsPortalHeiId = statsPortalHeiId;
   }
 
-  @RequestMapping(method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "omobility-la-cnr", apiMajorVersion = 1)
+  @RequestMapping(
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Outgoing Mobility Learning Agreement CNR API.",
       tags = {"ewp"})
@@ -63,6 +66,7 @@ public class EwpApiOutgoingMobilityLearningAgreementCnrV1Controller {
     return ResponseEntity.ok(new OmobilityLaCnrResponseV1(new EmptyV1()));
   }
 
+  @EwpApiEndpoint(api = "omobility-la-cnr", apiMajorVersion = 1, endpoint = "stats")
   @RequestMapping(
       path = "/{heiId}/stats",
       method = {RequestMethod.GET},

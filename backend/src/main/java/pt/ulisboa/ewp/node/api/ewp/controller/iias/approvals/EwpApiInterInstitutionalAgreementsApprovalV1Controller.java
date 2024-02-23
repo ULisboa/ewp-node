@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.approval.InterInstitutionalAgreementsApprovalV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -44,18 +45,20 @@ public class EwpApiInterInstitutionalAgreementsApprovalV1Controller {
     this.mappingRepository = mappingRepository;
   }
 
-  @RequestMapping(method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "iias-approval", apiMajorVersion = 1)
+  @RequestMapping(
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "IIAs Approval API.",
       tags = {"ewp"})
   public ResponseEntity<IiasApprovalResponseV1> iiasApproval(
       EwpApiHostAuthenticationToken authenticationToken,
-      @RequestParam(value = EwpApiParamConstants.APPROVING_HEI_ID, defaultValue = "") String approvingHeiId,
+      @RequestParam(value = EwpApiParamConstants.APPROVING_HEI_ID, defaultValue = "")
+          String approvingHeiId,
       @RequestParam(value = EwpApiParamConstants.OWNER_HEI_ID, defaultValue = "") String ownerHeiId,
       @RequestParam(value = EwpApiParamConstants.IIA_ID) Collection<String> iiaIds,
-      @RequestParam(value = EwpApiParamConstants.SEND_PDF, required = false)
-          Boolean sendPdf) {
+      @RequestParam(value = EwpApiParamConstants.SEND_PDF, required = false) Boolean sendPdf) {
 
     if (!authenticationToken.getPrincipal().getHeiIdsCoveredByClient().contains(ownerHeiId)) {
       throw new EwpBadRequestException("Owner HEI ID does not match requester covered HEI ID");

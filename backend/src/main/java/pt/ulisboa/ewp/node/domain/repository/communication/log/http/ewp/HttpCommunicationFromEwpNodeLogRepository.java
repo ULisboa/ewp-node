@@ -31,6 +31,9 @@ public class HttpCommunicationFromEwpNodeLogRepository
   public HttpCommunicationFromEwpNodeLog create(
       EwpAuthenticationMethod authenticationMethod,
       Collection<String> coveredHeiIds,
+      String apiName,
+      Integer apiMajorVersion,
+      String endpointName,
       HttpRequestLog request,
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
@@ -42,11 +45,15 @@ public class HttpCommunicationFromEwpNodeLogRepository
         new HttpCommunicationFromEwpNodeLog(
             authenticationMethod,
             coveredHeiIds,
+            apiName,
+            apiMajorVersion,
+            endpointName,
             request,
             response,
             startProcessingDateTime,
             endProcessingDateTime,
-            observations, parentCommunication);
+            observations,
+            parentCommunication);
 
     if (persist(communicationFromEwpNodeLog)) {
       return communicationFromEwpNodeLog;

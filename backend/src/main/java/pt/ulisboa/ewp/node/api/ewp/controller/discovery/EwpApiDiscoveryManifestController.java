@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpManifestEntryProvider;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -59,14 +60,19 @@ public class EwpApiDiscoveryManifestController {
   @Autowired
   Collection<EwpManifestEntryProvider> manifestEntryProviders;
 
+  @EwpApiEndpoint(api = "discovery", apiMajorVersion = 6)
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Discovery manifest API.",
       tags = {"ewp"})
-  public ResponseEntity<ManifestV6> manifest(HttpServletRequest request,
+  public ResponseEntity<ManifestV6> manifest(
+      HttpServletRequest request,
       @RequestParam(value = EwpApiParamConstants.HOST_CODE, defaultValue = "") String hostCode)
-      throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException,
-      KeyStoreException, IOException {
+      throws UnrecoverableKeyException,
+          CertificateException,
+          NoSuchAlgorithmException,
+          KeyStoreException,
+          IOException {
     ManifestV6 manifest = new ManifestV6();
 
     setHost(request, manifest, hostCode);

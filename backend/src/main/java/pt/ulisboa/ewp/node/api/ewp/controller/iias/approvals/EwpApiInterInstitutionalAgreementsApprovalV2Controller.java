@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.approval.InterInstitutionalAgreementsApprovalV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -44,6 +45,7 @@ public class EwpApiInterInstitutionalAgreementsApprovalV2Controller {
     this.mappingRepository = mappingRepository;
   }
 
+  @EwpApiEndpoint(api = "iias-approval", apiMajorVersion = 2)
   @RequestMapping(
       path = "/{approvingHeiId}",
       method = {RequestMethod.GET, RequestMethod.POST},

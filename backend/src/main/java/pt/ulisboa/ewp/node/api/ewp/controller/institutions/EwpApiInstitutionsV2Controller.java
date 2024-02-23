@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.institutions.InstitutionsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
@@ -32,14 +33,15 @@ public class EwpApiInstitutionsV2Controller {
     this.hostPluginManager = hostPluginManager;
   }
 
-  @RequestMapping(method = {RequestMethod.GET,
-      RequestMethod.POST}, produces = MediaType.APPLICATION_XML_VALUE)
+  @EwpApiEndpoint(api = "institutions", apiMajorVersion = 2)
+  @RequestMapping(
+      method = {RequestMethod.GET, RequestMethod.POST},
+      produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Institutions API.",
       tags = {"ewp"})
   public ResponseEntity<InstitutionsResponseV2> institutions(
-      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "")
-          List<String> heiIds) {
+      @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") List<String> heiIds) {
     heiIds = heiIds != null ? heiIds : Collections.emptyList();
 
     if (heiIds.isEmpty()) {

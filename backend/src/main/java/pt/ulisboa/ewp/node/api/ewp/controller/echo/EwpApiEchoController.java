@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
+import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
@@ -22,6 +23,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 @RequestMapping(EwpApiConstants.API_BASE_URI + "echo")
 public class EwpApiEchoController {
 
+  @EwpApiEndpoint(api = "echo", apiMajorVersion = 2)
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Echo API.",
@@ -32,6 +34,7 @@ public class EwpApiEchoController {
     return echo(authentication.getPrincipal().getHeiIdsCoveredByClient(), echo);
   }
 
+  @EwpApiEndpoint(api = "echo", apiMajorVersion = 2)
   @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Echo API.",
