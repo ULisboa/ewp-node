@@ -50,11 +50,14 @@ public class HttpParams implements Serializable {
 
     for (Map.Entry<String, List<String>> entry : params.entrySet()) {
       for (String value : entry.getValue()) {
-        fragments.add(entry.getKey() + "=" + value);
+        fragments.add(
+            UriUtils.encodeQuery(entry.getKey(), "UTF-8")
+                + "="
+                + UriUtils.encodeQuery(value, "UTF-8"));
       }
     }
 
-    return UriUtils.encodeQuery(String.join("&", fragments), "UTF-8");
+    return String.join("&", fragments);
   }
 
   private <T> void addParamValues(@NotNull String key, Iterable<T> values,

@@ -9,11 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.institutions.InstitutionsV2HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.ounits.OrganizationalUnitsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
@@ -114,6 +116,22 @@ public class EwpApiInstitutionsV2ControllerIntegrationTest
         EwpApiConstants.API_BASE_URI + EwpApiInstitutionsV2Controller.BASE_PATH,
         queryParams,
         "Maximum number of valid HEI IDs per request is 1");
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"PUT", "DELETE"})
+  public void testInstitutionRetrieval_UnsupportedHttpMethod(HttpMethod method) throws Exception {
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, UUID.randomUUID().toString());
+    assertErrorRequest(
+        registryClient,
+        method,
+        EwpApiConstants.API_BASE_URI + EwpApiInstitutionsV2Controller.BASE_PATH,
+        queryParams,
+        HttpStatus.METHOD_NOT_ALLOWED,
+        new Condition<>(errorResponse -> true, "valid developer message"));
   }
 
   private static class MockInstitutionsV2HostProvider extends InstitutionsV2HostProvider {

@@ -129,16 +129,19 @@ public class EwpApiCommunicationLoggerFilter extends OncePerRequestFilter {
         return Optional.of(apiEndpoint);
 
       } else {
-        throw new IllegalStateException(
+        LOG.warn(
             "Failed to obtain the handler method (URL: "
                 + request.getRequestURL().toString()
                 + ")");
+        return Optional.empty();
       }
     } catch (Exception e) {
-      throw new RuntimeException(
+      LOG.warn(
           "Failed to get EWP API endpoint information for the request (URL: "
               + request.getRequestURL().toString()
-              + ")");
+              + "): "
+              + e.getMessage());
+      return Optional.empty();
     }
   }
 
