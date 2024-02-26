@@ -353,7 +353,7 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
             .andExpect(xpath("/*[local-name()='response']").node(validChildrenHeiIdsNodes()))
             .andReturn();
 
-    validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/echo/response.xsd");
+    validateXml(mvcResult.getResponse().getContentAsString());
   }
 
   private void assertSuccessfulEchoRequestWithHttpSignature(
@@ -383,7 +383,7 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
             .andExpect(xpath("/*[local-name()='response']").node(validChildrenHeiIdsNodes()))
             .andReturn();
 
-    validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/echo/response.xsd");
+    validateXml(mvcResult.getResponse().getContentAsString());
   }
 
   private void assertUnsuccessfulEchoRequest(InvalidEchoHttpSignatureTestDataWrapper dataWrapper)
@@ -422,7 +422,7 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
                     .string(new StringContains(dataWrapper.errorMessage)))
             .andReturn();
 
-    validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/common-types.xsd");
+    validateXml(mvcResult.getResponse().getContentAsString());
   }
 
   private MockHttpServletRequestBuilder postRequest(List<String> echo) {

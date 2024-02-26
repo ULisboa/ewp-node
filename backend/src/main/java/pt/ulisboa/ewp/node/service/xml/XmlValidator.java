@@ -9,29 +9,43 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import org.apache.xerces.util.XMLCatalogResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import pt.ulisboa.ewp.node.domain.dto.validation.ValidationEntryDto;
+import pt.ulisboa.ewp.node.domain.dto.validation.ValidationEntryDto.Severity;
 import pt.ulisboa.ewp.node.domain.dto.validation.ValidationResultDto;
+import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 @Service
 public class XmlValidator {
+
+  private static final Logger LOG = LoggerFactory.getLogger(XmlValidator.class);
 
   private final Schema compoundSchema;
 
@@ -117,6 +131,25 @@ public class XmlValidator {
       }
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read schemas index file");
+    }
+  }
+
+  public ValidationResultDto validateXpath(String xml, String xpath)
+      throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    Document document = XmlUtils.deserialize(xml);
+    Node node =
+        ((NodeList)
+                XPathFactory.newInstance()
+                    .newXPath()
+                    .compile(xpath)
+                    .evaluate(document, XPathConstants.NODESET))
+            .item(0);
+    try {
+      return validate(XmlUtils.serialize(node).getBytes(StandardCharsets.UTF_8));
+    } catch (TransformerException e) {
+      LOG.error("Failed to validate XPath", e);
+      return new ValidationResultDto(
+          List.of(new ValidationEntryDto(Severity.ERROR, "Failed to validate XPath")));
     }
   }
 

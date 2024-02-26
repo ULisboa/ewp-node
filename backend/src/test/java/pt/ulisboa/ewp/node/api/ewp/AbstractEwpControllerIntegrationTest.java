@@ -48,7 +48,7 @@ import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiCommunicationLoggerFilter;
 import pt.ulisboa.ewp.node.api.ewp.filter.EwpApiRequestAndResponseWrapperFilter;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.service.communication.log.http.ewp.EwpHttpCommunicationLogService;
-import pt.ulisboa.ewp.node.utils.XmlValidator;
+import pt.ulisboa.ewp.node.service.xml.XmlValidator;
 import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 import pt.ulisboa.ewp.node.utils.http.HttpSignatureUtils;
@@ -135,7 +135,7 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
         .values().iterator().next();
     assertThat(errorResponseV1).satisfies(errorResponseCondition);
 
-    validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/common-types.xsd");
+    validateXml(mvcResult.getResponse().getContentAsString());
   }
 
   protected ResultActions executeRequest(
@@ -204,7 +204,7 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
             .andExpect(xpath("/error-response/developer-message").string(errorMessage))
             .andReturn();
 
-    validateXml(mvcResult.getResponse().getContentAsString(), "xsd/ewp/common-types.xsd");
+    validateXml(mvcResult.getResponse().getContentAsString());
   }
 
   protected RequestPostProcessor serializableBodyProcessor(Serializable serializable) {

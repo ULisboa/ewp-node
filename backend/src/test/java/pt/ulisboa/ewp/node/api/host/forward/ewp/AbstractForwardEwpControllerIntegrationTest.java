@@ -19,7 +19,7 @@ import org.springframework.web.context.WebApplicationContext;
 import pt.ulisboa.ewp.node.api.AbstractResourceIntegrationTest;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
-import pt.ulisboa.ewp.node.utils.XmlValidator;
+import pt.ulisboa.ewp.node.service.xml.XmlValidator;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 public abstract class AbstractForwardEwpControllerIntegrationTest extends

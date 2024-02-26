@@ -78,16 +78,14 @@ public class EwpApiDiscoveryManifestControllerIntegrationTest extends
 
     String xml = mvcResult.getResponse().getContentAsString();
 
-    validateXml(xml, "xsd/ewp/discovery/manifest.xsd");
+    validateXml(xml);
 
     // Validate APIs implemented nodes
     validateXml(
         xml,
-        "/*[local-name()='manifest']/*[local-name()='host']/*[local-name()='apis-implemented']/*[local-name()='discovery']",
-        "xsd/ewp/discovery/manifest-entry.xsd");
+        "/*[local-name()='manifest']/*[local-name()='host']/*[local-name()='apis-implemented']/*[local-name()='discovery']");
     validateXml(
         xml,
-        "/*[local-name()='manifest']/*[local-name()='host']/*[local-name()='apis-implemented']/*[local-name()='echo']",
-        "xsd/ewp/echo/manifest-entry.xsd");
+        "/*[local-name()='manifest']/*[local-name()='host']/*[local-name()='apis-implemented']/*[local-name()='echo']");
   }
 }
