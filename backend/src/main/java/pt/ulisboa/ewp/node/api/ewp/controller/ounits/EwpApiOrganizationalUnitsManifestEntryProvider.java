@@ -29,14 +29,18 @@ public class EwpApiOrganizationalUnitsManifestEntryProvider
     manifestEntry.setAdminNotes(null);
     manifestEntry.setUrl(baseUrl + EwpApiOrganizationalUnitsV2Controller.BASE_PATH);
 
-    int maxOunitIdsPerRequest = hostProviders.stream().mapToInt(
-            OrganizationalUnitsV2HostProvider::getMaxOunitIdsPerRequest)
-        .min().orElse(0);
+    int maxOunitIdsPerRequest =
+        hostProviders.stream()
+            .mapToInt(OrganizationalUnitsV2HostProvider::getMaxOunitIdsPerRequest)
+            .min()
+            .orElse(1);
     manifestEntry.setMaxOunitIds(BigInteger.valueOf(maxOunitIdsPerRequest));
-    
-    int maxOunitCodesPerRequest = hostProviders.stream().mapToInt(
-            OrganizationalUnitsV2HostProvider::getMaxOunitCodesPerRequest)
-        .min().orElse(0);
+
+    int maxOunitCodesPerRequest =
+        hostProviders.stream()
+            .mapToInt(OrganizationalUnitsV2HostProvider::getMaxOunitCodesPerRequest)
+            .min()
+            .orElse(1);
     manifestEntry.setMaxOunitCodes(BigInteger.valueOf(maxOunitCodesPerRequest));
 
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());

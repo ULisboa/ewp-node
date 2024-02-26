@@ -77,6 +77,70 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"GET", "POST"})
+  public void testOunitRetrieval_ValidHeiIdAndUnknownOunitIdProvided_EmptyResponseReturned(
+      HttpMethod method) throws Exception {
+    String heiId = "test";
+    String ounitId = "a";
+
+    Mockito.when(hostPluginManager.hasHostProvider(heiId, OrganizationalUnitsV2HostProvider.class))
+        .thenReturn(true);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.OUNIT_ID, ounitId);
+
+    String responseXml =
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI + EwpApiOrganizationalUnitsV2Controller.BASE_PATH,
+                queryParams)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    OunitsResponseV2 response = XmlUtils.unmarshall(responseXml, OunitsResponseV2.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getOunit()).hasSize(0);
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = HttpMethod.class,
+      names = {"GET", "POST"})
+  public void testOunitRetrieval_ValidHeiIdAndUnknownOunitCodeProvided_EmptyResponseReturned(
+      HttpMethod method) throws Exception {
+    String heiId = "test";
+    String ounitCode = "a";
+
+    Mockito.when(hostPluginManager.hasHostProvider(heiId, OrganizationalUnitsV2HostProvider.class))
+        .thenReturn(true);
+
+    HttpParams queryParams = new HttpParams();
+    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    queryParams.param(EwpApiParamConstants.OUNIT_CODE, ounitCode);
+
+    String responseXml =
+        executeRequest(
+                registryClient,
+                method,
+                EwpApiConstants.API_BASE_URI + EwpApiOrganizationalUnitsV2Controller.BASE_PATH,
+                queryParams)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    OunitsResponseV2 response = XmlUtils.unmarshall(responseXml, OunitsResponseV2.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getOunit()).hasSize(0);
+  }
+
+  @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
   public void testOunitRetrieval_ValidHeiIdAndBothOunitIdsAndCodesProvidedSimultaneously(
       HttpMethod method)
