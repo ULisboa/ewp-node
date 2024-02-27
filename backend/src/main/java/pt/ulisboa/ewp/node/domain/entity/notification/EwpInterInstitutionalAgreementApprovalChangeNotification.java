@@ -82,10 +82,11 @@ public class EwpInterInstitutionalAgreementApprovalChangeNotification extends
     }
 
     EwpInterInstitutionalAgreementApprovalChangeNotification otherChangeNotification = (EwpInterInstitutionalAgreementApprovalChangeNotification) o;
-    return approvingHeiId.equals(otherChangeNotification.approvingHeiId) &&
-        partnerHeiId.equals(otherChangeNotification.partnerHeiId) &&
-        ownerHeiId.equals(otherChangeNotification.ownerHeiId) && iiaId.equals(
-        otherChangeNotification.iiaId);
+    return approvingHeiId.equals(otherChangeNotification.approvingHeiId)
+        && partnerHeiId.equals(otherChangeNotification.partnerHeiId)
+        && ownerHeiId.equals(otherChangeNotification.ownerHeiId)
+        && iiaId.equals(otherChangeNotification.iiaId)
+        && super.canBeMergedInto(o);
   }
 
   @Override

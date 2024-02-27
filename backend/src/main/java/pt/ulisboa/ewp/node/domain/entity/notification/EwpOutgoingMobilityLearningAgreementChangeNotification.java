@@ -69,9 +69,10 @@ public class EwpOutgoingMobilityLearningAgreementChangeNotification extends EwpC
     }
 
     EwpOutgoingMobilityLearningAgreementChangeNotification otherChangeNotification = (EwpOutgoingMobilityLearningAgreementChangeNotification) o;
-    return sendingHeiId.equals(otherChangeNotification.sendingHeiId) &&
-        receivingHeiId.equals(otherChangeNotification.receivingHeiId) && outgoingMobilityId.equals(
-        otherChangeNotification.outgoingMobilityId);
+    return sendingHeiId.equals(otherChangeNotification.sendingHeiId)
+        && receivingHeiId.equals(otherChangeNotification.receivingHeiId)
+        && outgoingMobilityId.equals(otherChangeNotification.outgoingMobilityId)
+        && super.canBeMergedInto(o);
   }
 
   @Override
