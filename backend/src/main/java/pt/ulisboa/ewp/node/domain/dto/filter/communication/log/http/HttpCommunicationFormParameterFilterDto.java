@@ -6,7 +6,9 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicatio
 public abstract class HttpCommunicationFormParameterFilterDto
     extends FilterDto<HttpCommunicationLog> {
 
-  private final String parameter;
+  private String parameter;
+
+  public HttpCommunicationFormParameterFilterDto() {}
 
   public HttpCommunicationFormParameterFilterDto(String parameter) {
     this.parameter = parameter;
@@ -14,5 +16,9 @@ public abstract class HttpCommunicationFormParameterFilterDto
 
   public String getParameter() {
     return parameter;
+  }
+
+  public void setParameter(String parameter) {
+    this.parameter = parameter;
   }
 }

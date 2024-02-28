@@ -29,10 +29,20 @@ public class CommunicationLogTypeIsOneOfSetFilterDto
     TYPE_TO_CLASS_MAP.put(HttpCommunicationToHostLog.TYPE, HttpCommunicationToHostLog.class);
   }
 
-  private final Collection<String> values;
+  private Collection<String> values;
 
-  public CommunicationLogTypeIsOneOfSetFilterDto(Collection<String> value) {
-    this.values = value;
+  public CommunicationLogTypeIsOneOfSetFilterDto() {}
+
+  public CommunicationLogTypeIsOneOfSetFilterDto(Collection<String> values) {
+    this.values = values;
+  }
+
+  public Collection<String> getValues() {
+    return values;
+  }
+
+  public void setValues(Collection<String> values) {
+    this.values = values;
   }
 
   @Override

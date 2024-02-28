@@ -1,8 +1,5 @@
 package pt.ulisboa.ewp.node.api.admin.controller.communication.log;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.Operation;
 import java.io.Serializable;
 import java.util.Collection;
@@ -28,7 +25,6 @@ import pt.ulisboa.ewp.node.api.admin.dto.response.AdminApiResponseWithDataDto;
 import pt.ulisboa.ewp.node.api.admin.security.AdminApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.admin.utils.AdminApiConstants;
 import pt.ulisboa.ewp.node.api.admin.utils.AdminApiResponseUtils;
-import pt.ulisboa.ewp.node.domain.deserializer.filter.FilterDtoDeserializer;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogDetailDto;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogSummaryDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.ConjunctionFilterDto;
@@ -64,10 +60,6 @@ public class AdminApiCommunicationLogController {
       getCommunicationLogs(@Valid @RequestBody GetCommunicationLogsRequestDto requestDto) {
 
     FilterDto<CommunicationLog> filter = requestDto.getFilter();
-
-    if (requestDto.getAdditionalFilter() != null) {
-      filter = new ConjunctionFilterDto<>(filter, requestDto.additionalFilter);
-    }
 
     if (!StringUtils.isEmpty(requestDto.getRequesterHeiId())) {
       filter =
@@ -113,11 +105,8 @@ public class AdminApiCommunicationLogController {
 
   private static class GetCommunicationLogsRequestDto implements Serializable {
 
-    @JsonTypeInfo(use = Id.NONE)
-    @JsonDeserialize(using = FilterDtoDeserializer.class)
+    @Valid
     private FilterDto<CommunicationLog> filter;
-
-    @Valid private FilterDto<CommunicationLog> additionalFilter;
 
     @Size(max = 255)
     private String requesterHeiId;
@@ -135,14 +124,6 @@ public class AdminApiCommunicationLogController {
 
     public void setFilter(FilterDto<CommunicationLog> filter) {
       this.filter = filter;
-    }
-
-    public FilterDto<CommunicationLog> getAdditionalFilter() {
-      return additionalFilter;
-    }
-
-    public void setAdditionalFilter(FilterDto<CommunicationLog> additionalFilter) {
-      this.additionalFilter = additionalFilter;
     }
 
     public String getRequesterHeiId() {

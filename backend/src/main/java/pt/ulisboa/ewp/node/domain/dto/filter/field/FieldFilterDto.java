@@ -4,7 +4,9 @@ import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 
 public abstract class FieldFilterDto<T> extends FilterDto<T> {
 
-  private final String field;
+  private String field;
+
+  public FieldFilterDto() {}
 
   public FieldFilterDto(String field) {
     this.field = field;
@@ -12,5 +14,9 @@ public abstract class FieldFilterDto<T> extends FilterDto<T> {
 
   public String getField() {
     return field;
+  }
+
+  public void setField(String field) {
+    this.field = field;
   }
 }

@@ -10,9 +10,19 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunic
 
 public class HttpCommunicationToEwpNodeIsToHeiIdFilterDto extends FilterDto<CommunicationLog> {
 
-  private final String value;
+  private String value;
+
+  public HttpCommunicationToEwpNodeIsToHeiIdFilterDto() {}
 
   public HttpCommunicationToEwpNodeIsToHeiIdFilterDto(String value) {
+    this.value = value;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public void setValue(String value) {
     this.value = value;
   }
 

@@ -7,7 +7,9 @@ import javax.persistence.criteria.Root;
 
 public class GreaterThanOrEqualFieldFilterDto<T> extends FieldFilterDto<T> {
 
-  private final Number value;
+  private Number value;
+
+  public GreaterThanOrEqualFieldFilterDto() {}
 
   public GreaterThanOrEqualFieldFilterDto(String field, Number value) {
     super(field);
@@ -17,6 +19,10 @@ public class GreaterThanOrEqualFieldFilterDto<T> extends FieldFilterDto<T> {
 
   public Object getValue() {
     return value;
+  }
+
+  public void setValue(Number value) {
+    this.value = value;
   }
 
   @Override

@@ -5,6 +5,7 @@ import { TableLazyLoadEvent } from 'primeng/table';
 import { take } from 'rxjs';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
 import { Message } from 'primeng/api';
+import { convertFilters } from '@ewp-node-frontend/shared/util-primeng';
 
 @Component({
   selector: 'lib-admin-dashboard-communications-logs-nested-table',
@@ -42,7 +43,8 @@ export class AdminDashboardCommunicationsLogsNestedTableComponent {
 
   loadCommunicationsLogs(event: TableLazyLoadEvent) {
     this.loading = true;
-    this.adminCommunicationsLogsService.getCommunicationsLogs({ format: 'primeng', filters: event.filters || {} }, {}, event.first ?? 0, event.rows ?? 10)
+    const filter = convertFilters(event.filters);
+    this.adminCommunicationsLogsService.getCommunicationsLogs(filter, event.first ?? 0, event.rows ?? 10)
       .pipe(take(1))
       .subscribe({
         next: response => {

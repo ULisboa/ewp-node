@@ -9,7 +9,9 @@ import pt.ulisboa.ewp.node.domain.dto.filter.DisjunctionFilterDto;
 
 public class InFieldFilterDto<T> extends FieldFilterDto<T> {
 
-  private final List<Object> values;
+  private List<Object> values;
+
+  public InFieldFilterDto() {}
 
   public InFieldFilterDto(String field, List<Object> values) {
     super(field);
@@ -18,6 +20,10 @@ public class InFieldFilterDto<T> extends FieldFilterDto<T> {
 
   public List<Object> getValues() {
     return values;
+  }
+
+  public void setValues(List<Object> values) {
+    this.values = values;
   }
 
   @Override

@@ -6,9 +6,19 @@ import javax.persistence.criteria.Root;
 
 public class NotFilterDto<T> extends FilterDto<T> {
 
-  private final FilterDto<T> subFilter;
+  private FilterDto<T> subFilter;
+
+  public NotFilterDto() {}
 
   public NotFilterDto(FilterDto<T> subFilter) {
+    this.subFilter = subFilter;
+  }
+
+  public FilterDto<T> getSubFilter() {
+    return subFilter;
+  }
+
+  public void setSubFilter(FilterDto<T> subFilter) {
     this.subFilter = subFilter;
   }
 

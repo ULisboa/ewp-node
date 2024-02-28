@@ -13,10 +13,20 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog_;
 public class HttpCommunicationFormParameterStartsWithValueFilterDto
     extends HttpCommunicationFormParameterFilterDto {
 
-  private final String value;
+  private String value;
+
+  public HttpCommunicationFormParameterStartsWithValueFilterDto() {}
 
   public HttpCommunicationFormParameterStartsWithValueFilterDto(String parameter, String value) {
     super(parameter);
+    this.value = value;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public void setValue(String value) {
     this.value = value;
   }
 

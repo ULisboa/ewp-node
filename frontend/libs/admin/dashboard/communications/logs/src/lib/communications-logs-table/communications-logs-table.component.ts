@@ -5,6 +5,7 @@ import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { take } from 'rxjs';
 import { AdminCommunicationsLogsService } from '../services/admin-communications-logs.service';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
+import { convertFilters } from '@ewp-node-frontend/shared/util-primeng';
 
 const CUSTOM_FILTER_COMMUNICATION_TYPE_IS_ONE_OF_SET_NAME = 'communicationTypeIsOneOfSet';
 const CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME = 'communicationFromHeiId';
@@ -143,9 +144,19 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
     this.lastTableLazyLoadEvent = event;
     this.loading = true;
     this.messages = [];
-    this.adminCommunicationsLogsService.getCommunicationsLogs({ 
-      format: 'primeng', filters: event.filters || {}
-    }, this.additionalFilter, event.first ?? 0, event.rows ?? 10)
+    const subFilters = [];
+    if (event.filters) {
+      const convertedFilters = convertFilters(event.filters);
+      subFilters.push(convertedFilters);
+    }
+    if (this.additionalFilter) {
+      subFilters.push(this.additionalFilter);
+    }
+    const filter = {
+      type: 'CONJUNCTION',
+      subFilters: subFilters
+    };
+    this.adminCommunicationsLogsService.getCommunicationsLogs(filter, event.first ?? 0, event.rows ?? 10)
       .pipe(take(1))
       .subscribe({
         next: response => {

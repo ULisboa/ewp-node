@@ -15,11 +15,10 @@ export class GetCommunicationsLogsResponse {
 export class AdminCommunicationsLogsService {
     http = inject(HttpClient);
 
-    getCommunicationsLogs(filter: { format: string, filters: { [k: string]: object | undefined } }, additionalFilter: {} | undefined,
-        offset: number, limit: number): Observable<AdminApiResponseWithObjectData<GetCommunicationsLogsResponse>> {
+    getCommunicationsLogs(filter: {} | null, offset: number, limit: number): Observable<AdminApiResponseWithObjectData<GetCommunicationsLogsResponse>> {
         return this.http
             .post<AdminApiResponseWithObjectData<GetCommunicationsLogsResponse>>(`/api/admin/communications/logs`, {
-                filter, additionalFilter, offset, limit
+                filter, offset, limit
             })
             .pipe(
                 catchError((errorResponse: HttpErrorResponse) => {

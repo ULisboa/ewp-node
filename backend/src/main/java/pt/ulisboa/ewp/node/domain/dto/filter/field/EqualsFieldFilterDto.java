@@ -8,7 +8,9 @@ import javax.persistence.criteria.Root;
 
 public class EqualsFieldFilterDto<T> extends FieldFilterDto<T> {
 
-  private final Object value;
+  private Object value;
+
+  public EqualsFieldFilterDto() {}
 
   public EqualsFieldFilterDto(String field, Object value) {
     super(field);
@@ -18,6 +20,10 @@ public class EqualsFieldFilterDto<T> extends FieldFilterDto<T> {
 
   public Object getValue() {
     return value;
+  }
+
+  public void setValue(Object value) {
+    this.value = value;
   }
 
   @SuppressWarnings("unchecked")
