@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterContentInit, Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { CommunicationLogSummary, HttpCommunicationFromEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
 import { FilterService, Message, MessageService, SelectItem } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
@@ -19,6 +19,20 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
 
   @ViewChild('table', { static: true })
   table!: Table;
+
+  private _additionalFilter: object | undefined;
+
+  @Input()
+  set additionalFilter(value: object | undefined) {
+    this._additionalFilter = value;
+    if (this.lastTableLazyLoadEvent) {
+      this.loadCommunicationsLogs(this.lastTableLazyLoadEvent);
+    }
+  }
+
+  get additionalFilter(): object | undefined {
+    return this._additionalFilter;
+  }
 
   adminCommunicationsLogsService = inject(AdminCommunicationsLogsService);
   filterService = inject(FilterService);
@@ -129,7 +143,9 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
     this.lastTableLazyLoadEvent = event;
     this.loading = true;
     this.messages = [];
-    this.adminCommunicationsLogsService.getCommunicationsLogs({ format: 'primeng', filters: event.filters || {} }, event.first ?? 0, event.rows ?? 10)
+    this.adminCommunicationsLogsService.getCommunicationsLogs({ 
+      format: 'primeng', filters: event.filters || {}
+    }, this.additionalFilter, event.first ?? 0, event.rows ?? 10)
       .pipe(take(1))
       .subscribe({
         next: response => {

@@ -42,7 +42,7 @@ export class AdminDashboardCommunicationsLogsNestedTableComponent {
 
   loadCommunicationsLogs(event: TableLazyLoadEvent) {
     this.loading = true;
-    this.adminCommunicationsLogsService.getCommunicationsLogs({ format: 'primeng', filters: event.filters || {} }, event.first ?? 0, event.rows ?? 10)
+    this.adminCommunicationsLogsService.getCommunicationsLogs({ format: 'primeng', filters: event.filters || {} }, {}, event.first ?? 0, event.rows ?? 10)
       .pipe(take(1))
       .subscribe({
         next: response => {

@@ -1,5 +1,7 @@
 package pt.ulisboa.ewp.node.api.admin.controller.communication.log;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.Operation;
 import java.io.Serializable;
@@ -62,6 +64,11 @@ public class AdminApiCommunicationLogController {
       getCommunicationLogs(@Valid @RequestBody GetCommunicationLogsRequestDto requestDto) {
 
     FilterDto<CommunicationLog> filter = requestDto.getFilter();
+
+    if (requestDto.getAdditionalFilter() != null) {
+      filter = new ConjunctionFilterDto<>(filter, requestDto.additionalFilter);
+    }
+
     if (!StringUtils.isEmpty(requestDto.getRequesterHeiId())) {
       filter =
           new ConjunctionFilterDto<>(
@@ -106,8 +113,11 @@ public class AdminApiCommunicationLogController {
 
   private static class GetCommunicationLogsRequestDto implements Serializable {
 
+    @JsonTypeInfo(use = Id.NONE)
     @JsonDeserialize(using = FilterDtoDeserializer.class)
     private FilterDto<CommunicationLog> filter;
+
+    @Valid private FilterDto<CommunicationLog> additionalFilter;
 
     @Size(max = 255)
     private String requesterHeiId;
@@ -125,6 +135,14 @@ public class AdminApiCommunicationLogController {
 
     public void setFilter(FilterDto<CommunicationLog> filter) {
       this.filter = filter;
+    }
+
+    public FilterDto<CommunicationLog> getAdditionalFilter() {
+      return additionalFilter;
+    }
+
+    public void setAdditionalFilter(FilterDto<CommunicationLog> additionalFilter) {
+      this.additionalFilter = additionalFilter;
     }
 
     public String getRequesterHeiId() {

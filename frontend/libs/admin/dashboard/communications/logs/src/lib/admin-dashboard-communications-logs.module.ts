@@ -25,6 +25,9 @@ import { AdminDashboardCommunicationLogReportToMonitoringFormComponent } from '.
 import { MessageService } from 'primeng/api';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { PrismComponent } from '@ewp-node-frontend/shared/ui-prism';
+import { CommunicationsLogsSearchFormComponent } from './communications-logs-search-form/communications-logs-search-form.component';
+import { InputTextModule } from 'primeng/inputtext';
+import {PanelModule} from 'primeng/panel';
 
 @NgModule({
   imports: [
@@ -33,10 +36,12 @@ import { PrismComponent } from '@ewp-node-frontend/shared/ui-prism';
     CardModule,
     DialogModule,
     DropdownModule,
+    InputTextModule,
     InputTextareaModule,
     MessageModule,
     MessagesModule,
     MultiSelectModule,
+    PanelModule,
     ProgressSpinnerModule,
     TableModule,
     ToastModule,
@@ -57,9 +62,8 @@ import { PrismComponent } from '@ewp-node-frontend/shared/ui-prism';
     AdminDashboardCommunicationsLogsTableComponent,
     AdminDashboardCommunicationsLogsNestedTableComponent,
     AdminDashboardCommunicationLogReportToMonitoringFormComponent,
+    CommunicationsLogsSearchFormComponent,
   ],
-  providers: [
-    MessageService,
-  ]
+  providers: [MessageService],
 })
 export class AdminDashboardCommunicationsLogsModule {}

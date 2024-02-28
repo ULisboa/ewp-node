@@ -7,7 +7,9 @@ import javax.persistence.criteria.Root;
 
 public class ConjunctionFilterDto<T> extends FilterDto<T> {
 
-  private final List<? extends FilterDto<T>> subFilters;
+  private List<? extends FilterDto<T>> subFilters;
+
+  public ConjunctionFilterDto() {}
 
   @SafeVarargs
   public ConjunctionFilterDto(FilterDto<T>... subFilters) {
@@ -20,6 +22,10 @@ public class ConjunctionFilterDto<T> extends FilterDto<T> {
 
   public List<? extends FilterDto<T>> getSubFilters() {
     return subFilters;
+  }
+
+  public void setSubFilters(List<? extends FilterDto<T>> subFilters) {
+    this.subFilters = subFilters;
   }
 
   @Override
