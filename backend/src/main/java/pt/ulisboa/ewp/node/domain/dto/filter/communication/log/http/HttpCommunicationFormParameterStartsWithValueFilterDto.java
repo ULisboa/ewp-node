@@ -41,13 +41,15 @@ public class HttpCommunicationFormParameterStartsWithValueFilterDto
     return criteriaBuilder.or(
         criteriaBuilder.like(
             requestPath.get(HttpRequestLog_.url),
-            UriUtils.encodeQuery(getParameter(), "UTF-8")
+            "%"
+                + UriUtils.encodeQuery(getParameter(), "UTF-8")
                 + "="
                 + UriUtils.encodeQuery(value, "UTF-8")
                 + "%"),
         criteriaBuilder.like(
             requestPath.get(HttpRequestLog_.body),
-            UriUtils.encodeQuery(getParameter(), "UTF-8")
+            "%"
+                + UriUtils.encodeQuery(getParameter(), "UTF-8")
                 + "="
                 + UriUtils.encodeQuery(value, "UTF-8")
                 + "%"));
