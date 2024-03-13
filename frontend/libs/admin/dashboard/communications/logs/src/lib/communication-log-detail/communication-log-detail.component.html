@@ -45,7 +45,7 @@
             <ng-container *ngIf="communicationLog | instanceof: HttpCommunicationLogDetail as httpCommunicationLog">
                 <!-- HTTP Request -->
                 <p-accordionTab header="HTTP Request" *ngIf="httpCommunicationLog.request">
-                    <p-card header="URL">{{httpCommunicationLog.request.url}}</p-card>
+                    <p-card header="URL" class="wrap-text">{{httpCommunicationLog.request.url}}</p-card>
                     <p-card header="Method">{{httpCommunicationLog.request.method}}</p-card>
                     <p-card header="Headers">
                         <p-table [autoLayout]="true" [value]="httpCommunicationLog.request.headers"
@@ -64,7 +64,7 @@
                             </ng-template>
                         </p-table>
                     </p-card>
-                    <p-card header="Body">
+                    <p-card header="Body" *ngIf="httpCommunicationLog.request.body">
                         <lib-prism [language]="'markup'" [code]="httpCommunicationLog.request.body"
                             [linesToHighlight]="httpCommunicationLog.response.bodyValidation.lineNumbersAsString"></lib-prism>
                         <div>
@@ -92,7 +92,7 @@
                             </ng-template>
                         </p-table>
                     </p-card>
-                    <p-card header="Body">
+                    <p-card header="Body" *ngIf="httpCommunicationLog.response.body">
                         <lib-prism [language]="'markup'" [code]="httpCommunicationLog.response.body"
                             [linesToHighlight]="httpCommunicationLog.response.bodyValidation.lineNumbersAsString"></lib-prism>
                         <div>
@@ -100,13 +100,13 @@
                                 (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
                         </div>
                     </p-card>
-                    <p-card header="Body Validation">
+                    <p-card header="Body Validation" *ngIf="httpCommunicationLog.response.body">
                         <ng-container *ngIf="httpCommunicationLog.response.bodyValidation.valid">
                             <p-message [severity]="'success'" [text]="'Valid'"></p-message>
                         </ng-container>
                         <ng-container *ngIf="!httpCommunicationLog.response.bodyValidation.valid">
                             <ng-container *ngFor="let item of httpCommunicationLog.response.bodyValidation.validationEntries">
-                                <p>
+                                <p class="wrap-text">
                                     <ng-container *ngIf="item.lineNumber">
                                         <p-message [severity]="item.severity.toLowerCase()" [text]="'[Line #' + item.lineNumber + '] ' + item.message"></p-message>
                                     </ng-container>
@@ -126,7 +126,7 @@
                     <ng-container *ngIf="functionCallCommunicationLog | instanceof: HostPluginFunctionCallCommunicationLogDetail as hostPluginFunctionCallCommunicationLog">
                         <p-card header="Host Plugin ID">{{ hostPluginFunctionCallCommunicationLog.hostPluginId }}</p-card>
                     </ng-container>
-                    <p-card header="Class Name">{{ functionCallCommunicationLog.className }}</p-card>
+                    <p-card header="Class Name" class="wrap-text">{{ functionCallCommunicationLog.className }}</p-card>
                     <p-card header="Method">{{ functionCallCommunicationLog.method }}</p-card>
                     <p-card header="Arguments">
                         <p-table [autoLayout]="true" [value]="functionCallCommunicationLog.sortedArguments"
@@ -151,7 +151,7 @@
                 <ng-container *ngIf="functionCallCommunicationLog.resultType">
                     <p-accordionTab header="Function Call Result">
                         <p-card header="Result Type">{{ functionCallCommunicationLog.resultType }}</p-card>
-                        <p-card header="Result" *ngIf="functionCallCommunicationLog.result">
+                        <p-card header="Result" *ngIf="functionCallCommunicationLog.result" class="wrap-text">
                             <p>{{functionCallCommunicationLog.result}}</p>
                             <div>
                                 <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="functionCallCommunicationLog.result" 
@@ -162,11 +162,11 @@
                 </ng-container>
             </ng-container>
 
-            <p-accordionTab header="Exception Stacktrace" hea *ngIf="communicationLog.exceptionStacktrace">
-                <div>{{ communicationLog.exceptionStacktrace }}</div>
+            <p-accordionTab header="Exception Stacktrace" *ngIf="communicationLog.exceptionStacktrace">
+                <div class="wrap-text">{{ communicationLog.exceptionStacktrace }}</div>
             </p-accordionTab>
             <p-accordionTab header="Observations" *ngIf="communicationLog.observations">
-                <div>{{ communicationLog.observations }}</div>
+                <div class="wrap-text">{{ communicationLog.observations }}</div>
             </p-accordionTab>
         </p-accordion>
 
