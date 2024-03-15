@@ -14,7 +14,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "iia-with-hash-validation")
 public class ForwardEwpApiInterInstitutionalAgreementV7WithHashValidationResponseDto {
 
-  @XmlElement(name = "iia", required = true)
+  @XmlElement(
+      name = "iia",
+      required = true,
+      namespace =
+          "https://github.com/erasmus-without-paper/ewp-specs-api-iias/blob/stable-v7/endpoints/get-response.xsd")
   private Iia iia;
 
   @XmlElement(name = "hash-validation", required = true)
