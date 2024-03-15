@@ -78,7 +78,9 @@ public class EwpApiOrganizationalUnitsV2Controller {
         heiId, ounitIds, OrganizationalUnitsV2HostProvider.class);
 
     int maxOunitIdsPerRequest =
-        providerToOunitIdsMap.keySet().stream()
+        hostPluginManager
+            .getAllProvidersOfType(heiId, OrganizationalUnitsV2HostProvider.class)
+            .stream()
             .mapToInt(OrganizationalUnitsV2HostProvider::getMaxOunitIdsPerRequest)
             .min()
             .orElse(1);
@@ -111,7 +113,9 @@ public class EwpApiOrganizationalUnitsV2Controller {
         heiId, ounitCodes, OrganizationalUnitsV2HostProvider.class);
 
     int maxOunitCodesPerRequest =
-        providerToOunitCodesMap.keySet().stream()
+        hostPluginManager
+            .getAllProvidersOfType(heiId, OrganizationalUnitsV2HostProvider.class)
+            .stream()
             .mapToInt(OrganizationalUnitsV2HostProvider::getMaxOunitCodesPerRequest)
             .min()
             .orElse(1);
