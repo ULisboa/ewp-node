@@ -12,13 +12,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(
     name = "",
     propOrder = {"iias", "rawXmlInBase64"})
-@XmlRootElement(name = "iias")
+@XmlRootElement(
+    name = "iias",
+    namespace = "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/v6")
 public class ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto {
 
-  @XmlElement(name = "iia", required = true)
-  private Collection<ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationResponseDto> iias = new ArrayList<>();
+  @XmlElement(
+      name = "iia-with-hash-validation",
+      required = true,
+      namespace = "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/v6")
+  private Collection<ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationResponseDto> iias =
+      new ArrayList<>();
 
-  @XmlElement(name = "raw-xml-base64")
+  @XmlElement(
+      name = "raw-xml-base64",
+      namespace = "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/v6")
   private byte[] rawXmlInBase64;
 
   public ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto() {

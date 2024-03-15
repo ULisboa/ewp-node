@@ -4,7 +4,7 @@ import eu.erasmuswithoutpaper.api.ounits.v2.OunitsResponseV2;
 import java.util.Collection;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ounits.ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;

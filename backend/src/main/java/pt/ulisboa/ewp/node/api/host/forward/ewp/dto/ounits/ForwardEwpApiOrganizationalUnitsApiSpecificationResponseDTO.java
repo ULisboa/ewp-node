@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.api.host.forward.ewp.dto;
+package pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ounits;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

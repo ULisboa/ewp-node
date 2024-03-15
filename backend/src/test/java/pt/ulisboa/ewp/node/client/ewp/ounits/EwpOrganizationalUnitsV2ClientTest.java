@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import pt.ulisboa.ewp.node.AbstractTest;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ounits.ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
 
 public class EwpOrganizationalUnitsV2ClientTest extends AbstractTest {

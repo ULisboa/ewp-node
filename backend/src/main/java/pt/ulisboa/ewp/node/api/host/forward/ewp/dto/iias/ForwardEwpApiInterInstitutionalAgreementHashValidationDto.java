@@ -10,16 +10,31 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(
     name = "",
     propOrder = {"hashExtracted", "hashExpected", "valid"})
-@XmlRootElement(name = "iia-with-hash-validation")
+@XmlRootElement(
+    name = "iia-with-hash-validation",
+    namespace =
+        "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/hash/validation")
 public class ForwardEwpApiInterInstitutionalAgreementHashValidationDto {
 
-  @XmlElement(name = "hash-extracted", required = true)
+  @XmlElement(
+      name = "hash-extracted",
+      required = true,
+      namespace =
+          "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/hash/validation")
   private String hashExtracted;
 
-  @XmlElement(name = "hash-expected", required = true)
+  @XmlElement(
+      name = "hash-expected",
+      required = true,
+      namespace =
+          "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/hash/validation")
   private String hashExpected;
 
-  @XmlElement(name = "valid", required = true)
+  @XmlElement(
+      name = "valid",
+      required = true,
+      namespace =
+          "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/hash/validation")
   private boolean valid;
 
   public ForwardEwpApiInterInstitutionalAgreementHashValidationDto() {

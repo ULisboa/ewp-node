@@ -11,10 +11,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(
     name = "",
     propOrder = {"hashes"})
-@XmlRootElement(name = "hashes")
+@XmlRootElement(
+    name = "hashes",
+    namespace =
+        "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/hash/calculation")
 public class ForwardEwpApiIiaHashesCalculationResponseDTO {
 
-  @XmlElement(name = "hashes", required = true)
+  @XmlElement(
+      name = "hashes",
+      required = true,
+      namespace =
+          "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/hash/calculation")
   private Collection<String> hashes;
 
   public ForwardEwpApiIiaHashesCalculationResponseDTO() {

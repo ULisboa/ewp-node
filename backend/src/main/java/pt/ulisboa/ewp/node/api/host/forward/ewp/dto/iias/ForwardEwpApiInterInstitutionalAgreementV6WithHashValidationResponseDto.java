@@ -11,7 +11,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(
     name = "",
     propOrder = {"iia", "hashValidation"})
-@XmlRootElement(name = "iia-with-hash-validation")
+@XmlRootElement(
+    name = "iia-with-hash-validation",
+    namespace = "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/v6")
 public class ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationResponseDto {
 
   @XmlElement(
@@ -21,7 +23,11 @@ public class ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationRespons
           "https://github.com/erasmus-without-paper/ewp-specs-api-iias/blob/stable-v6/endpoints/get-response.xsd")
   private Iia iia;
 
-  @XmlElement(name = "hash-validation", required = true)
+  @XmlElement(
+      name = "hash-validation",
+      required = true,
+      namespace =
+          "https://github.com/ULisboa/ewp-node/tree/master/api/forward/ewp/iias/hash/validation")
   private ForwardEwpApiInterInstitutionalAgreementHashValidationDto hashValidation;
 
   public ForwardEwpApiInterInstitutionalAgreementV6WithHashValidationResponseDto() {
