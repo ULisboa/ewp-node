@@ -163,7 +163,7 @@
             </ng-container>
 
             <p-accordionTab header="Exception Stacktrace" *ngIf="communicationLog.exceptionStacktrace">
-                <div class="wrap-text">{{ communicationLog.exceptionStacktrace }}</div>
+                <lib-prism [language]="'javastacktrace'" [code]="communicationLog.exceptionStacktrace" [showLineNumbers]="false"></lib-prism>
             </p-accordionTab>
             <p-accordionTab header="Observations" *ngIf="communicationLog.observations">
                 <div class="wrap-text">{{ communicationLog.observations }}</div>

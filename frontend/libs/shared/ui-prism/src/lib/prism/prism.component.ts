@@ -6,6 +6,7 @@ import * as Prism from 'prismjs';
 import 'prismjs/plugins/line-highlight/prism-line-highlight';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
 import 'prismjs/components/prism-markup';
+import 'prismjs/components/prism-javastacktrace';
 
 @Component({
   standalone: true,
@@ -21,6 +22,9 @@ export class PrismComponent implements AfterViewInit, OnChanges {
 
   @Input() 
   language?: string;
+
+  @Input()
+  showLineNumbers = true;
 
   @Input()
   linesToHighlight = '';
