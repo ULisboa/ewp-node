@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.ulisboa.ewp.host.plugin.skeleton.provider.files.FileResponse;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 public class SerializationUtils {
@@ -83,9 +84,19 @@ public class SerializationUtils {
       String string = XmlUtils.marshallAndOptimize(jaxbElement).trim();
       return new TypeAndString(object.getClass().getName(), string);
 
+    } else if (object instanceof FileResponse) {
+      FileResponse fileResponse = (FileResponse) object;
+      return new TypeAndString(
+          "FileResponse",
+          "[media type '"
+              + fileResponse.getMediaType()
+              + "'] "
+              + fileResponse.getData().length
+              + " bytes");
+
     } else {
       LOG.warn("Unknown object type: " + object.getClass().getName());
-      return new TypeAndString("Unknown", String.valueOf(object));
+      return new TypeAndString(object.getClass().getName(), "");
     }
   }
 }

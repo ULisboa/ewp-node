@@ -1,11 +1,14 @@
 package pt.ulisboa.ewp.node.service.communication.log.http;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -42,11 +45,22 @@ public class HttpCommunicationLogService {
       return null;
     }
 
+    byte[] responseBodyAsBytes;
+    if (isContentTypeOfBodyWhiteListedToLog(response.getContentType())) {
+      responseBodyAsBytes = response.getContentAsByteArray();
+    } else {
+      responseBodyAsBytes =
+          ("Bodies of content type '"
+                  + response.getContentType()
+                  + "' are not admissible to be logged")
+              .getBytes(StandardCharsets.UTF_8);
+    }
+
     HttpResponseLog responseLog =
         HttpResponseLog.create(
             response.getStatus(),
             toHttpHeaderCollection(response),
-            new String(response.getContentAsByteArray()));
+            new String(responseBodyAsBytes));
     responseLog.getHeaders().forEach(header -> header.setResponseLog(responseLog));
     return responseLog;
   }
@@ -85,5 +99,16 @@ public class HttpCommunicationLogService {
                     headerName,
                     String.join(HttpConstants.HEADERS_COMMA_SEPARATED_LIST_TOKEN, headerValues))));
     return result;
+  }
+
+  protected boolean isContentTypeOfBodyWhiteListedToLog(String contentType) {
+    List<String> whitelistedContentTypes =
+        List.of(
+            MediaType.APPLICATION_XML_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+    return contentType != null
+        && whitelistedContentTypes.stream()
+            .anyMatch(wct -> contentType.toLowerCase().contains(wct.toLowerCase()));
   }
 }

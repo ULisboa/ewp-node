@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.service.communication.log.http.ewp;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -203,11 +204,22 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       return null;
     }
 
+    byte[] responseBodyAsBytes;
+    if (isContentTypeOfBodyWhiteListedToLog(response.getMediaType())) {
+      responseBodyAsBytes = response.getRawBody().getBytes(StandardCharsets.UTF_8);
+    } else {
+      responseBodyAsBytes =
+          ("Bodies of content type '"
+                  + response.getMediaType()
+                  + "' are not admissible to be logged")
+              .getBytes(StandardCharsets.UTF_8);
+    }
+
     HttpResponseLog responseLog =
         HttpResponseLog.create(
             response.getStatus().value(),
             toHttpHeaderCollection(response.getHeaders()),
-            response.getRawBody());
+            new String(responseBodyAsBytes));
     responseLog.getHeaders().forEach(header -> header.setResponseLog(responseLog));
     return responseLog;
   }
