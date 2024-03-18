@@ -36,7 +36,12 @@ public class EwpFilesV1Client {
         request, byte[].class);
 
     FileResponse fileResponse = createFileResponse(successOperationResult);
-    return new EwpSuccessOperationResult.Builder<FileResponse>().responseBody(fileResponse).build();
+    return new EwpSuccessOperationResult.Builder<FileResponse>()
+        .request(successOperationResult.getRequest())
+        .response(successOperationResult.getResponse())
+        .responseAuthenticationResult(successOperationResult.getResponseAuthenticationResult())
+        .responseBody(fileResponse)
+        .build();
   }
 
   private FileResponse createFileResponse(

@@ -11,7 +11,7 @@
 
 	<groupId>pt.ulisboa</groupId>
 	<artifactId>ewp-node-parent</artifactId>
-	<version>0.28.0</version>
+	<version>0.29.0</version>
 	<packaging>pom</packaging>
 	<name>EWP Node</name>
 	<description>A generic and flexible EWP node implementation.</description>

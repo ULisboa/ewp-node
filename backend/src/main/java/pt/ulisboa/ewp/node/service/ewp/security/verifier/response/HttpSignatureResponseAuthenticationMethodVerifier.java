@@ -85,7 +85,7 @@ public class HttpSignatureResponseAuthenticationMethodVerifier
     }
 
     VerificationResult digestVerificationResult =
-        HttpSignatureUtils.verifyDigest(response.getHeaders(), response.getRawBody().getBytes());
+        HttpSignatureUtils.verifyDigest(response.getHeaders(), response.getRawBody());
     if (digestVerificationResult.isFailure()) {
       return HttpSignatureAuthenticationResult.createInvalid(
           digestVerificationResult.getMessage());

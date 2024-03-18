@@ -5,7 +5,6 @@ import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia;
 import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasIndexResponseV6;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -98,7 +97,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV6Controller extends
     }
 
     ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto getResponse = new ForwardEwpApiInterInstitutionalAgreementsV6GetResponseDto();
-    byte[] rawBody = response.getResponse().getRawBody().getBytes(StandardCharsets.UTF_8);
+    byte[] rawBody = response.getResponse().getRawBody();
     getResponse.setRawXmlInBase64(Base64Utils.encode(rawBody));
     List<HashComparisonResult> hashComparisonResults =
         this.hashService.checkCooperationConditionsHash(

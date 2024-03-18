@@ -144,11 +144,33 @@ public class EwpHttpClient {
       throws XmlCannotUnmarshallToTypeException, EwpClientErrorException {
 
     if (response.isSuccess()) {
-      T responseBody = XmlUtils.unmarshall(jaxb2Marshaller, response.getRawBody(),
-          expectedResponseBodyType);
-      return new EwpSuccessOperationResult.Builder<T>().request(request).response(response)
-          .responseAuthenticationResult(responseAuthenticationResult).responseBody(responseBody)
-          .build();
+      if (response.isXmlResponse()) {
+        // NOTE: deserialize as XML
+        T responseBody =
+            XmlUtils.unmarshall(jaxb2Marshaller, response.getRawBody(), expectedResponseBodyType);
+        return new EwpSuccessOperationResult.Builder<T>()
+            .request(request)
+            .response(response)
+            .responseAuthenticationResult(responseAuthenticationResult)
+            .responseBody(responseBody)
+            .build();
+
+      } else if (byte[].class.isAssignableFrom(expectedResponseBodyType)) {
+        // NOTE: deserialize as byte array
+        return new EwpSuccessOperationResult.Builder<T>()
+            .request(request)
+            .response(response)
+            .responseAuthenticationResult(responseAuthenticationResult)
+            .responseBody((T) response.getRawBody())
+            .build();
+
+      } else {
+        throw new EwpClientProcessorException(
+            request,
+            response,
+            new IllegalArgumentException(
+                "Failed to process response's body of type: " + response.getMediaType()));
+      }
 
     } else {
       throw createClientErrorExceptionFromResponse(request, response, responseAuthenticationResult);

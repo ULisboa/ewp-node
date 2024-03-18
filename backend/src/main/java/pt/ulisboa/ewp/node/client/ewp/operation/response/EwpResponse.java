@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import pt.ulisboa.ewp.node.exception.XmlCannotUnmarshallToTypeException;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
@@ -16,7 +17,7 @@ public class EwpResponse implements Serializable {
   private HttpStatus status;
   private String mediaType;
   private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
-  private String rawBody = "";
+  private byte[] rawBody = new byte[0];
 
   protected EwpResponse(Builder builder) {
     this.status = builder.status;
@@ -29,6 +30,10 @@ public class EwpResponse implements Serializable {
     return status;
   }
 
+  public boolean isXmlResponse() {
+    return getMediaType() != null && getMediaType().contains(MediaType.APPLICATION_XML_VALUE);
+  }
+
   public String getMediaType() {
     return mediaType;
   }
@@ -37,7 +42,11 @@ public class EwpResponse implements Serializable {
     return headers;
   }
 
-  public String getRawBody() {
+  public String getRawBodyAsString() {
+    return new String(this.rawBody);
+  }
+
+  public byte[] getRawBody() {
     return rawBody;
   }
 
@@ -56,7 +65,8 @@ public class EwpResponse implements Serializable {
   public String getServerDeveloperMessage() {
     try {
       // NOTE: attempt to parse an error response
-      ErrorResponseV1 errorResponse = XmlUtils.unmarshall(getRawBody(), ErrorResponseV1.class);
+      ErrorResponseV1 errorResponse =
+          XmlUtils.unmarshall(getRawBodyAsString(), ErrorResponseV1.class);
       return errorResponse.getDeveloperMessage().getValue();
 
     } catch (XmlCannotUnmarshallToTypeException e) {
@@ -82,7 +92,7 @@ public class EwpResponse implements Serializable {
     if (response.hasEntity()) {
       response.bufferEntity();
 
-      responseBuilder.rawBody(response.readEntity(String.class));
+      responseBuilder.rawBody(response.readEntity(byte[].class));
     }
 
     return responseBuilder.build();
@@ -93,7 +103,7 @@ public class EwpResponse implements Serializable {
     private HttpStatus status;
     private String mediaType;
     private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
-    private String rawBody = "";
+    private byte[] rawBody = new byte[0];
 
     public Builder(HttpStatus status) {
       this.status = status;
@@ -122,11 +132,11 @@ public class EwpResponse implements Serializable {
       return this;
     }
 
-    public String rawBody() {
+    public byte[] rawBody() {
       return rawBody;
     }
 
-    public Builder rawBody(String rawBody) {
+    public Builder rawBody(byte[] rawBody) {
       this.rawBody = rawBody;
       return this;
     }

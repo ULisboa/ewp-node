@@ -74,6 +74,11 @@ public class XmlUtils {
     return unmarshall(jaxb2Marshaller, xml, classType);
   }
 
+  public static <T> T unmarshall(Jaxb2Marshaller jaxb2Marshaller, byte[] xml, Class<T> classType)
+      throws XmlCannotUnmarshallToTypeException {
+    return unmarshall(jaxb2Marshaller, new String(xml), classType);
+  }
+
   public static <T> T unmarshall(Jaxb2Marshaller jaxb2Marshaller, String xml, Class<T> classType)
       throws XmlCannotUnmarshallToTypeException {
     try {

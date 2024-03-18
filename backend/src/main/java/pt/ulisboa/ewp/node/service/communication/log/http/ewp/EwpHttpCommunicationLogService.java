@@ -206,7 +206,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
 
     byte[] responseBodyAsBytes;
     if (isContentTypeOfBodyWhiteListedToLog(response.getMediaType())) {
-      responseBodyAsBytes = response.getRawBody().getBytes(StandardCharsets.UTF_8);
+      responseBodyAsBytes = response.getRawBody();
     } else {
       responseBodyAsBytes =
           ("Bodies of content type '"
