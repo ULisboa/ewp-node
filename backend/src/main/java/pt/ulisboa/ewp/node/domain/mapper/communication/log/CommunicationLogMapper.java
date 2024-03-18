@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.domain.mapper.communication.log;
 
+import java.nio.charset.StandardCharsets;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -66,4 +67,8 @@ public interface CommunicationLogMapper {
   @Mapping(source = "host.code", target = "hostCode")
   HostHttpCommunicationLogDetailDto communicationLogToCommunicationLogSummaryDto(
       HostHttpCommunicationLog communicationLog);
+
+  default String mapByteArrayToString(byte[] bytes) {
+    return new String(bytes, StandardCharsets.UTF_8);
+  }
 }

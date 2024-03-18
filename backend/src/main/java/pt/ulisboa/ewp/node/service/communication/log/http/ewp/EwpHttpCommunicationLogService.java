@@ -219,7 +219,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         HttpResponseLog.create(
             response.getStatus().value(),
             toHttpHeaderCollection(response.getHeaders()),
-            new String(responseBodyAsBytes));
+            responseBodyAsBytes);
     responseLog.getHeaders().forEach(header -> header.setResponseLog(responseLog));
     return responseLog;
   }

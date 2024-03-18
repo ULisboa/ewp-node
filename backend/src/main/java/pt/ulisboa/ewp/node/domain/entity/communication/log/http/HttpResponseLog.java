@@ -1,6 +1,8 @@
 package pt.ulisboa.ewp.node.domain.entity.communication.log.http;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,13 +10,13 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.domain.utils.DomainConstants;
-import pt.ulisboa.ewp.node.utils.StringUtils;
+import pt.ulisboa.ewp.node.utils.ByteArrayUtils;
 
 @Entity
 @Table(name = "HTTP_RESPONSE_LOG")
@@ -24,11 +26,11 @@ public class HttpResponseLog {
   private HttpCommunicationLog communication;
   private int statusCode;
   private Collection<HttpHeaderLog> headers;
-  private String body;
+  private byte[] body;
 
   protected HttpResponseLog() {}
 
-  protected HttpResponseLog(int statusCode, Collection<HttpHeaderLog> headers, String body) {
+  protected HttpResponseLog(int statusCode, Collection<HttpHeaderLog> headers, byte[] body) {
     this.statusCode = statusCode;
     this.headers = headers;
     setBody(body);
@@ -69,7 +71,7 @@ public class HttpResponseLog {
   }
 
   public static HttpResponseLog create(
-      int statusCode, Collection<HttpHeaderLog> headers, String body) {
+      int statusCode, Collection<HttpHeaderLog> headers, byte[] body) {
     return new HttpResponseLog(statusCode, headers, body);
   }
 
@@ -78,35 +80,23 @@ public class HttpResponseLog {
     return headers;
   }
 
-  @Column(name = "body", nullable = true, columnDefinition = "TEXT")
-  public String getBody() {
+  @Column(name = "body", nullable = true)
+  @Lob
+  @Basic(fetch = FetchType.EAGER)
+  public byte[] getBody() {
     return body;
   }
 
-  public void setBody(String body) {
+  public void setBody(byte[] body) {
     this.body =
-            StringUtils.truncateWithSuffix(
-                    body, DomainConstants.MAX_TEXT_COLUMN_TEXT_LENGTH, "====TRUNCATED====");
+        ByteArrayUtils.truncateWithSuffix(
+            body,
+            DomainConstants.MAX_TEXT_COLUMN_TEXT_LENGTH,
+            "====TRUNCATED====".getBytes(StandardCharsets.UTF_8));
   }
 
   public void setHeaders(Collection<HttpHeaderLog> headers) {
     this.headers = headers;
   }
 
-  public String toRawString(int maximumBodyLineLength) {
-    StringBuilder result = new StringBuilder();
-    HttpStatus httpStatus = HttpStatus.resolve(getStatusCode());
-    result.append("HTTP/1.1 ").append(getStatusCode()).append(" ")
-        .append(httpStatus != null ? httpStatus.getReasonPhrase() : "Unknown")
-        .append(System.lineSeparator());
-    for (HttpHeaderLog header : getHeaders()) {
-      String headerLine = header.getName() + ": " + header.getValue();
-      result.append(StringUtils.breakTextWithLineLengthLimit(headerLine, System.lineSeparator(),
-          maximumBodyLineLength)).append(System.lineSeparator());
-    }
-    result.append(System.lineSeparator());
-    result.append(StringUtils.breakTextWithLineLengthLimit(getBody(), System.lineSeparator(),
-        maximumBodyLineLength)).append(System.lineSeparator());
-    return result.toString();
-  }
 }

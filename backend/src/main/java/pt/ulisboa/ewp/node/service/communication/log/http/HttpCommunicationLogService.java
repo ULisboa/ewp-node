@@ -58,9 +58,7 @@ public class HttpCommunicationLogService {
 
     HttpResponseLog responseLog =
         HttpResponseLog.create(
-            response.getStatus(),
-            toHttpHeaderCollection(response),
-            new String(responseBodyAsBytes));
+            response.getStatus(), toHttpHeaderCollection(response), responseBodyAsBytes);
     responseLog.getHeaders().forEach(header -> header.setResponseLog(responseLog));
     return responseLog;
   }
