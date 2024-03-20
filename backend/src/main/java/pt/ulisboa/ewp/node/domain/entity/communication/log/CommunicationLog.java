@@ -137,7 +137,9 @@ public class CommunicationLog {
   @Transient
   public Collection<CommunicationLog> getSortedChildrenCommunications() {
     return getChildrenCommunications().stream()
-        .sorted(Comparator.comparing(CommunicationLog::getStartProcessingDateTime))
+        .sorted(
+            Comparator.comparing(CommunicationLog::getStartProcessingDateTime)
+                .thenComparing(CommunicationLog::getId))
         .collect(Collectors.toList());
   }
 
