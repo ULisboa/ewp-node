@@ -79,8 +79,15 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     String receivingHeiId = UUID.randomUUID().toString();
     String omobilityId = UUID.randomUUID().toString();
 
-    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
-        1, ZonedDateTime.now(), Status.PENDING, sendingHeiId, receivingHeiId, omobilityId);
+    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
+        new EwpOutgoingMobilityLearningAgreementChangeNotification(
+            null,
+            1,
+            ZonedDateTime.now(),
+            Status.PENDING,
+            sendingHeiId,
+            receivingHeiId,
+            omobilityId);
 
     EwpSuccessOperationResult<OmobilityLaCnrResponseV1> mockedSuccessResult = new EwpSuccessOperationResult.Builder<OmobilityLaCnrResponseV1>()
         .responseBody(new OmobilityLaCnrResponseV1())
@@ -106,9 +113,15 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     String receivingHeiId = UUID.randomUUID().toString();
     String omobilityId = UUID.randomUUID().toString();
 
-    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
-        cnrProperties.getMaxNumberAttempts(),
-        ZonedDateTime.now(), Status.PENDING, sendingHeiId, receivingHeiId, omobilityId);
+    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
+        new EwpOutgoingMobilityLearningAgreementChangeNotification(
+            null,
+            cnrProperties.getMaxNumberAttempts(),
+            ZonedDateTime.now(),
+            Status.PENDING,
+            sendingHeiId,
+            receivingHeiId,
+            omobilityId);
 
     doThrow(new NoEwpCnrAPIException(originalChangeNotification)).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
@@ -130,9 +143,15 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     String receivingHeiId = UUID.randomUUID().toString();
     String omobilityId = UUID.randomUUID().toString();
 
-    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
-        cnrProperties.getMaxNumberAttempts(),
-        ZonedDateTime.now(), Status.PENDING, sendingHeiId, receivingHeiId, omobilityId);
+    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
+        new EwpOutgoingMobilityLearningAgreementChangeNotification(
+            null,
+            cnrProperties.getMaxNumberAttempts(),
+            ZonedDateTime.now(),
+            Status.PENDING,
+            sendingHeiId,
+            receivingHeiId,
+            omobilityId);
 
     doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
@@ -154,8 +173,15 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     String receivingHeiId = UUID.randomUUID().toString();
     String omobilityId = UUID.randomUUID().toString();
 
-    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification = new EwpOutgoingMobilityLearningAgreementChangeNotification(
-        1, ZonedDateTime.now(), Status.PENDING, sendingHeiId, receivingHeiId, omobilityId);
+    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
+        new EwpOutgoingMobilityLearningAgreementChangeNotification(
+            null,
+            1,
+            ZonedDateTime.now(),
+            Status.PENDING,
+            sendingHeiId,
+            receivingHeiId,
+            omobilityId);
 
     doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
         outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(

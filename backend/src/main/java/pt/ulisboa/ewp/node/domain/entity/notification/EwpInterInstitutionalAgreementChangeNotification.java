@@ -5,6 +5,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 @Entity
 @DiscriminatorValue("IIA")
@@ -17,19 +18,26 @@ public class EwpInterInstitutionalAgreementChangeNotification extends EwpChangeN
   public EwpInterInstitutionalAgreementChangeNotification() {
   }
 
-  public EwpInterInstitutionalAgreementChangeNotification(String sendingHeiId,
-      String partnerHeiId, String iiaId) {
-    super();
+  public EwpInterInstitutionalAgreementChangeNotification(
+      CommunicationLog originCommunicationLog,
+      String sendingHeiId,
+      String partnerHeiId,
+      String iiaId) {
+    super(originCommunicationLog);
     this.notifierHeiId = sendingHeiId;
     this.partnerHeiId = partnerHeiId;
     this.iiaId = iiaId;
   }
 
-  public EwpInterInstitutionalAgreementChangeNotification(int attemptNumber,
+  public EwpInterInstitutionalAgreementChangeNotification(
+      CommunicationLog originCommunicationLog,
+      int attemptNumber,
       ZonedDateTime scheduledDateTime,
-      Status status, String sendingHeiId,
-      String partnerHeiId, String iiaId) {
-    super(attemptNumber, scheduledDateTime, status);
+      Status status,
+      String sendingHeiId,
+      String partnerHeiId,
+      String iiaId) {
+    super(originCommunicationLog, attemptNumber, scheduledDateTime, status);
     this.notifierHeiId = sendingHeiId;
     this.partnerHeiId = partnerHeiId;
     this.iiaId = iiaId;

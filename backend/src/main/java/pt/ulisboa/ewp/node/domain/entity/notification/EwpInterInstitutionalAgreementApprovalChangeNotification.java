@@ -5,6 +5,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 @Entity
 @DiscriminatorValue("IIA_APPROVAL")
@@ -19,20 +20,29 @@ public class EwpInterInstitutionalAgreementApprovalChangeNotification extends
   public EwpInterInstitutionalAgreementApprovalChangeNotification() {
   }
 
-  public EwpInterInstitutionalAgreementApprovalChangeNotification(String sendingHeiId,
-      String partnerHeiId, String ownerHeiId, String iiaId) {
-    super();
+  public EwpInterInstitutionalAgreementApprovalChangeNotification(
+      CommunicationLog originCommunicationLog,
+      String sendingHeiId,
+      String partnerHeiId,
+      String ownerHeiId,
+      String iiaId) {
+    super(originCommunicationLog);
     this.approvingHeiId = sendingHeiId;
     this.partnerHeiId = partnerHeiId;
     this.ownerHeiId = ownerHeiId;
     this.iiaId = iiaId;
   }
 
-  public EwpInterInstitutionalAgreementApprovalChangeNotification(int attemptNumber,
+  public EwpInterInstitutionalAgreementApprovalChangeNotification(
+      CommunicationLog originCommunicationLog,
+      int attemptNumber,
       ZonedDateTime scheduledDateTime,
-      Status status, String sendingHeiId,
-      String partnerHeiId, String ownerHeiId, String iiaId) {
-    super(attemptNumber, scheduledDateTime, status);
+      Status status,
+      String sendingHeiId,
+      String partnerHeiId,
+      String ownerHeiId,
+      String iiaId) {
+    super(originCommunicationLog, attemptNumber, scheduledDateTime, status);
     this.approvingHeiId = sendingHeiId;
     this.partnerHeiId = partnerHeiId;
     this.ownerHeiId = ownerHeiId;

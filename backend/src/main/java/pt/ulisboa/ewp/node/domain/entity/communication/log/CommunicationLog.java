@@ -28,6 +28,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.utils.DomainConstants;
 import pt.ulisboa.ewp.node.domain.utils.communication.log.CommunicationLogWarningCode;
 import pt.ulisboa.ewp.node.utils.StringUtils;
@@ -46,6 +47,7 @@ public class CommunicationLog {
   private String observations;
   private CommunicationLog parentCommunication;
   private Set<CommunicationLog> childrenCommunications = new HashSet<>();
+  private Collection<EwpChangeNotification> changeNotifications = new HashSet<>();
 
   protected CommunicationLog() {}
 
@@ -150,6 +152,15 @@ public class CommunicationLog {
 
   public void setChildrenCommunications(Set<CommunicationLog> childrenCommunications) {
     this.childrenCommunications = childrenCommunications;
+  }
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "originCommunicationLog", cascade = CascadeType.ALL)
+  public Collection<EwpChangeNotification> getChangeNotifications() {
+    return changeNotifications;
+  }
+
+  public void setChangeNotifications(Collection<EwpChangeNotification> changeNotifications) {
+    this.changeNotifications = changeNotifications;
   }
 
   public void markAsSuccess() {

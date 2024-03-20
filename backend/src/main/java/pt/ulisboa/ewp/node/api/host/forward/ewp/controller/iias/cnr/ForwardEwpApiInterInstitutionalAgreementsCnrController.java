@@ -15,8 +15,10 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCo
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
+import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
 import pt.ulisboa.ewp.node.service.ewp.mapping.EwpInterInstitutionalAgreementMappingService;
 import pt.ulisboa.ewp.node.utils.EwpApi;
 
@@ -44,10 +46,15 @@ public class ForwardEwpApiInterInstitutionalAgreementsCnrController extends
       produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<ForwardEwpApiResponse>
   sendChangeNotification(@Valid ForwardEwpApiInterInstitutionalAgreementCnrRequestDto requestDto) {
+    CommunicationLog currentCommunicationLog =
+        CommunicationContextHolder.getContext().getCurrentCommunicationLog();
     for (String iiaId : requestDto.getIiaIds()) {
-      EwpInterInstitutionalAgreementChangeNotification changeNotification = new EwpInterInstitutionalAgreementChangeNotification(
-          requestDto.getNotifierHeiId(),
-          requestDto.getPartnerHeiId(), iiaId);
+      EwpInterInstitutionalAgreementChangeNotification changeNotification =
+          new EwpInterInstitutionalAgreementChangeNotification(
+              currentCommunicationLog,
+              requestDto.getNotifierHeiId(),
+              requestDto.getPartnerHeiId(),
+              iiaId);
       changeNotificationRepository.persist(changeNotification);
 
       interInstitutionalAgreementMappingService.registerMapping(

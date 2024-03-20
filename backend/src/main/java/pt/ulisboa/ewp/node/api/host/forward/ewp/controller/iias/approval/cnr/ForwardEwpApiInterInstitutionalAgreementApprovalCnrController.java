@@ -15,8 +15,10 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCo
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpInterInstitutionalAgreementApprovalChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
+import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
 import pt.ulisboa.ewp.node.utils.EwpApi;
 
 @RestController
@@ -41,9 +43,15 @@ public class ForwardEwpApiInterInstitutionalAgreementApprovalCnrController exten
   public ResponseEntity<ForwardEwpApiResponse>
   sendChangeNotification(
       @Valid ForwardEwpApiInterInstitutionalAgreementApprovalCnrRequestDto requestDto) {
-    EwpInterInstitutionalAgreementApprovalChangeNotification changeNotification = new EwpInterInstitutionalAgreementApprovalChangeNotification(
-        requestDto.getApprovingHeiId(),
-        requestDto.getPartnerHeiId(), requestDto.getOwnerId(), requestDto.getIiaId());
+    CommunicationLog currentCommunicationLog =
+        CommunicationContextHolder.getContext().getCurrentCommunicationLog();
+    EwpInterInstitutionalAgreementApprovalChangeNotification changeNotification =
+        new EwpInterInstitutionalAgreementApprovalChangeNotification(
+            currentCommunicationLog,
+            requestDto.getApprovingHeiId(),
+            requestDto.getPartnerHeiId(),
+            requestDto.getOwnerId(),
+            requestDto.getIiaId());
     changeNotificationRepository.persist(changeNotification);
     return ForwardEwpApiResponseUtils.toAcceptedResponseEntity();
   }

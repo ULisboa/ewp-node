@@ -46,7 +46,7 @@ public class EwpInterInstitutionalAgreementChangeNotificationHandlerTest {
       String partnerHeiId = "partner-hei-id";
       EwpInterInstitutionalAgreementChangeNotification changeNotification =
           new EwpInterInstitutionalAgreementChangeNotification(
-              "sending-hei-id", partnerHeiId, "iia-id-test");
+              null, "sending-hei-id", partnerHeiId, "iia-id-test");
       ewpApiUtils
           .when(
               () ->
@@ -77,7 +77,7 @@ public class EwpInterInstitutionalAgreementChangeNotificationHandlerTest {
       String partnerHeiId = "partner-hei-id";
       EwpInterInstitutionalAgreementChangeNotification changeNotification =
           new EwpInterInstitutionalAgreementChangeNotification(
-              "sending-hei-id", partnerHeiId, "iia-id-test");
+              null, "sending-hei-id", partnerHeiId, "iia-id-test");
       ewpApiUtils
           .when(
               () ->

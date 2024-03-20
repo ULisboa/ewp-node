@@ -9,13 +9,17 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 @Entity
 @Table(name = "EWP_CHANGE_NOTIFICATION")
@@ -25,18 +29,24 @@ public abstract class EwpChangeNotification {
 
   private long id;
   private ZonedDateTime creationDateTime;
+  private CommunicationLog originCommunicationLog;
   private int attemptNumber;
   private ZonedDateTime scheduledDateTime;
   private Status status;
 
-  protected EwpChangeNotification() {
-    this(1, ZonedDateTime.now(), Status.PENDING);
+  protected EwpChangeNotification() {}
+
+  protected EwpChangeNotification(CommunicationLog originCommunicationLog) {
+    this(originCommunicationLog, 1, ZonedDateTime.now(), Status.PENDING);
   }
 
-  protected EwpChangeNotification(int attemptNumber,
+  protected EwpChangeNotification(
+      CommunicationLog originCommunicationLog,
+      int attemptNumber,
       ZonedDateTime scheduledDateTime,
       Status status) {
     this.creationDateTime = ZonedDateTime.now();
+    this.originCommunicationLog = originCommunicationLog;
     this.attemptNumber = attemptNumber;
     this.scheduledDateTime = scheduledDateTime;
     this.status = status;
@@ -60,6 +70,16 @@ public abstract class EwpChangeNotification {
 
   public void setCreationDateTime(ZonedDateTime creationDateTime) {
     this.creationDateTime = creationDateTime;
+  }
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "origin_communication_log_id")
+  public CommunicationLog getOriginCommunicationLog() {
+    return originCommunicationLog;
+  }
+
+  public void setOriginCommunicationLog(CommunicationLog originCommunicationLog) {
+    this.originCommunicationLog = originCommunicationLog;
   }
 
   @Column(name = "attempt_number", nullable = false)
@@ -151,34 +171,39 @@ public abstract class EwpChangeNotification {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof EwpChangeNotification)) {
-      return false;
-    }
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
     EwpChangeNotification that = (EwpChangeNotification) o;
-    return getId() == that.getId() && getAttemptNumber() == that.getAttemptNumber()
-        && Objects.equals(getCreationDateTime(), that.getCreationDateTime())
-        && Objects.equals(getScheduledDateTime(), that.getScheduledDateTime())
-        && getStatus() == that.getStatus();
+    return id == that.id
+        && attemptNumber == that.attemptNumber
+        && Objects.equals(creationDateTime, that.creationDateTime)
+        && Objects.equals(originCommunicationLog, that.originCommunicationLog)
+        && Objects.equals(scheduledDateTime, that.scheduledDateTime)
+        && status == that.status;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getCreationDateTime(), getAttemptNumber(), getScheduledDateTime(),
-        getStatus());
+    return Objects.hash(
+        id, creationDateTime, originCommunicationLog, attemptNumber, scheduledDateTime, status);
   }
 
   @Override
   public String toString() {
-    return "EwpChangeNotification{" +
-        "id=" + id +
-        ", creationDateTime=" + creationDateTime +
-        ", attemptNumber=" + attemptNumber +
-        ", scheduledDateTime=" + scheduledDateTime +
-        ", status=" + status +
-        '}';
+    return "EwpChangeNotification{"
+        + "id="
+        + id
+        + ", creationDateTime="
+        + creationDateTime
+        + ", originCommunicationLog="
+        + originCommunicationLog
+        + ", attemptNumber="
+        + attemptNumber
+        + ", scheduledDateTime="
+        + scheduledDateTime
+        + ", status="
+        + status
+        + '}';
   }
 
   public enum Status {

@@ -15,8 +15,10 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCo
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiResponseUtils;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpIncomingMobilityToRChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationRepository;
+import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
 import pt.ulisboa.ewp.node.utils.EwpApi;
 
 @RestController
@@ -39,10 +41,15 @@ public class ForwardEwpApiIncomingMobilityToRCnrController extends AbstractForwa
       produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<ForwardEwpApiResponse>
   sendChangeNotification(@Valid ForwardEwpApiIncomingMobilityToRCnrRequestDto requestDto) {
+    CommunicationLog currentCommunicationLog =
+        CommunicationContextHolder.getContext().getCurrentCommunicationLog();
     for (String outgoingMobilityId : requestDto.getOutgoingMobilityIds()) {
-      EwpIncomingMobilityToRChangeNotification changeNotification = new EwpIncomingMobilityToRChangeNotification(
-          requestDto.getSendingHeiId(),
-          requestDto.getReceivingHeiId(), outgoingMobilityId);
+      EwpIncomingMobilityToRChangeNotification changeNotification =
+          new EwpIncomingMobilityToRChangeNotification(
+              currentCommunicationLog,
+              requestDto.getSendingHeiId(),
+              requestDto.getReceivingHeiId(),
+              outgoingMobilityId);
       changeNotificationRepository.persist(changeNotification);
     }
     return ForwardEwpApiResponseUtils.toAcceptedResponseEntity();

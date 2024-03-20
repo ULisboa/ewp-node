@@ -5,6 +5,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 @Entity
 @DiscriminatorValue("IMOBILITY")
@@ -17,19 +18,26 @@ public class EwpIncomingMobilityChangeNotification extends EwpChangeNotification
   public EwpIncomingMobilityChangeNotification() {
   }
 
-  public EwpIncomingMobilityChangeNotification(String sendingHeiId,
-      String receivingHeiId, String outgoingMobilityId) {
-    super();
+  public EwpIncomingMobilityChangeNotification(
+      CommunicationLog originCommunicationLog,
+      String sendingHeiId,
+      String receivingHeiId,
+      String outgoingMobilityId) {
+    super(originCommunicationLog);
     this.sendingHeiId = sendingHeiId;
     this.receivingHeiId = receivingHeiId;
     this.outgoingMobilityId = outgoingMobilityId;
   }
 
-  public EwpIncomingMobilityChangeNotification(int attemptNumber,
+  public EwpIncomingMobilityChangeNotification(
+      CommunicationLog originCommunicationLog,
+      int attemptNumber,
       ZonedDateTime scheduledDateTime,
-      Status status, String sendingHeiId,
-      String receivingHeiId, String outgoingMobilityId) {
-    super(attemptNumber, scheduledDateTime, status);
+      Status status,
+      String sendingHeiId,
+      String receivingHeiId,
+      String outgoingMobilityId) {
+    super(originCommunicationLog, attemptNumber, scheduledDateTime, status);
     this.sendingHeiId = sendingHeiId;
     this.receivingHeiId = receivingHeiId;
     this.outgoingMobilityId = outgoingMobilityId;
