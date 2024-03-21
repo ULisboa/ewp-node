@@ -31,7 +31,9 @@ public class EwpResponse implements Serializable {
   }
 
   public boolean isXmlResponse() {
-    return getMediaType() != null && getMediaType().contains(MediaType.APPLICATION_XML_VALUE);
+    return getMediaType() != null
+        && getMediaType().contains(MediaType.APPLICATION_XML_VALUE)
+        && getMediaType().contains(MediaType.TEXT_XML_VALUE);
   }
 
   public String getMediaType() {
