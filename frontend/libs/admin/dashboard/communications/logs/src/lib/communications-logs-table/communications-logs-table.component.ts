@@ -132,7 +132,7 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
   }
 
   ngAfterContentInit() {
-    this.selectedTypes = ['EWP_IN', 'EWP_OUT', 'HOST_IN'];
+    this.selectedTypes = ['EWP_IN', 'HOST_IN'];
     this.table.filters['type'] = [{
       value: this.selectedTypes, 
       matchMode: CUSTOM_FILTER_COMMUNICATION_TYPE_IS_ONE_OF_SET_NAME, 
