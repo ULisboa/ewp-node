@@ -44,9 +44,9 @@ public interface CommunicationLogMapper {
     @SubclassMapping(
         source = HttpCommunicationFromEwpNodeLog.class,
         target = HttpCommunicationFromEwpNodeLogDetailDto.class),
-      @SubclassMapping(
-          source = HttpCommunicationToEwpNodeLog.class,
-          target = HttpCommunicationToEwpNodeLogDetailDto.class),
+    @SubclassMapping(
+        source = HttpCommunicationToEwpNodeLog.class,
+        target = HttpCommunicationToEwpNodeLogDetailDto.class),
     @SubclassMapping(
         source = EwpHttpCommunicationLog.class,
         target = EwpHttpCommunicationLogDetailDto.class),
@@ -61,6 +61,7 @@ public interface CommunicationLogMapper {
       source = "sortedChildrenCommunications",
       target = "sortedChildrenCommunications",
       qualifiedByName = "convertToSummaryDto")
+  @Mapping(source = "changeNotifications", target = "changeNotifications")
   CommunicationLogDetailDto communicationLogToCommunicationLogDetailDto(
       CommunicationLog communicationLog);
 

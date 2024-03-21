@@ -1,10 +1,13 @@
 package pt.ulisboa.ewp.node.domain.entity.notification;
 
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 @Entity
@@ -97,6 +100,17 @@ public class EwpInterInstitutionalAgreementApprovalChangeNotification extends
         && ownerHeiId.equals(otherChangeNotification.ownerHeiId)
         && iiaId.equals(otherChangeNotification.iiaId)
         && super.canBeMergedInto(o);
+  }
+
+  @Override
+  @Transient
+  public Map<String, String> getExtraVariables() {
+    Map<String, String> result = new HashMap<>();
+    result.put("approvingHeiId", getApprovingHeiId());
+    result.put("partnerHeiId", getPartnerHeiId());
+    result.put("ownerHeiId", getOwnerHeiId());
+    result.put("iiaId", getIiaId());
+    return result;
   }
 
   @Override

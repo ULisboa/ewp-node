@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.domain.entity.notification;
 
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
+import java.util.Map;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -168,6 +169,13 @@ public abstract class EwpChangeNotification {
     return isPending() && other.isPending() && getCreationDateTime().isBefore(
         other.getCreationDateTime());
   }
+
+  /**
+   * Returns a map of a key (label) to the actual value for every specific variable of the change
+   * notification (e.g. iiaId).
+   */
+  @Transient
+  public abstract Map<String, String> getExtraVariables();
 
   @Override
   public boolean equals(Object o) {

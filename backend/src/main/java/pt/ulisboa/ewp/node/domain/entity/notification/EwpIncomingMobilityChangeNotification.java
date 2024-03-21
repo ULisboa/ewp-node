@@ -1,10 +1,13 @@
 package pt.ulisboa.ewp.node.domain.entity.notification;
 
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 @Entity
@@ -81,6 +84,16 @@ public class EwpIncomingMobilityChangeNotification extends EwpChangeNotification
         && receivingHeiId.equals(otherChangeNotification.receivingHeiId)
         && outgoingMobilityId.equals(otherChangeNotification.outgoingMobilityId)
         && super.canBeMergedInto(o);
+  }
+
+  @Override
+  @Transient
+  public Map<String, String> getExtraVariables() {
+    Map<String, String> result = new HashMap<>();
+    result.put("sendingHeiId", getSendingHeiId());
+    result.put("receivingHeiId", getReceivingHeiId());
+    result.put("outgoingMobilityId", getOutgoingMobilityId());
+    return result;
   }
 
   @Override
