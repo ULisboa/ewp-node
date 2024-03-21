@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, Input, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { CommunicationLogSummary, HttpCommunicationFromEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
 import { FilterService, Message, MessageService, SelectItem } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
@@ -16,10 +16,28 @@ const CUSTOM_FILTER_COMMUNICATION_TO_HEI_ID_NAME = 'communicationToHeiId';
   templateUrl: './communications-logs-table.component.html',
   styleUrls: ['./communications-logs-table.component.scss'],
 })
-export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, AfterContentInit {
+export class AdminDashboardCommunicationsLogsTableComponent implements AfterContentInit {
 
   @ViewChild('table', { static: true })
   table!: Table;
+
+  @Input()
+  lazyLoad = true;
+
+  @Input()
+  allowFiltering = true;
+
+  _communicationLogs!: CommunicationLogSummary[];
+
+  @Input() get communicationLogs(): CommunicationLogSummary[] {
+    return this._communicationLogs;
+  }
+
+  set communicationLogs(val: CommunicationLogSummary[]) {
+    this._communicationLogs = val;
+    this.totalResults = this._communicationLogs ? this._communicationLogs.length : 0;
+    this.loading = false;
+  }
 
   private _additionalFilter: object | undefined;
 
@@ -60,7 +78,6 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
   selectedTypes: string[] = [];
   selectedStatuses: string[] = [];
 
-  communicationLogs!: CommunicationLogSummary[];
   totalResults = 0;
 
   loading = true;
@@ -81,9 +98,17 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
     ];
   }
 
-  ngOnInit() {
-      this.filterService.register(CUSTOM_FILTER_COMMUNICATION_TYPE_IS_ONE_OF_SET_NAME, (value: object, filter: string): boolean => {
-        if (filter === undefined || filter === null || filter.trim() === '') {
+  ngAfterContentInit() {
+    if (this.allowFiltering) {
+      this.selectedTypes = ['EWP_IN', 'HOST_IN'];
+      this.table.filters['type'] = [{
+        value: this.selectedTypes, 
+        matchMode: CUSTOM_FILTER_COMMUNICATION_TYPE_IS_ONE_OF_SET_NAME, 
+        operator: 'and' 
+      }];
+
+      this.filterService.register(CUSTOM_FILTER_COMMUNICATION_TYPE_IS_ONE_OF_SET_NAME, (value: object, filter: string[]): boolean => {
+        if (filter === undefined || filter === null || filter.length === 0) {
           return true;
         }
 
@@ -95,7 +120,7 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
           return false;
         }
 
-        return value.type === filter;
+        return filter.includes(value.type);
       });
 
       this.filterService.register(CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME, (value: object, filter: string): boolean => {
@@ -129,15 +154,7 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
 
         return value.heiIdsCoveredByClient.includes(filter);
       });
-  }
-
-  ngAfterContentInit() {
-    this.selectedTypes = ['EWP_IN', 'HOST_IN'];
-    this.table.filters['type'] = [{
-      value: this.selectedTypes, 
-      matchMode: CUSTOM_FILTER_COMMUNICATION_TYPE_IS_ONE_OF_SET_NAME, 
-      operator: 'and' 
-    }];
+    }
   }
 
   loadCommunicationsLogs(event: TableLazyLoadEvent) {
@@ -145,12 +162,14 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
     this.loading = true;
     this.messages = [];
     const subFilters = [];
-    if (event.filters) {
-      const convertedFilters = convertFilters(event.filters);
-      subFilters.push(convertedFilters);
-    }
-    if (this.additionalFilter) {
-      subFilters.push(this.additionalFilter);
+    if (this.allowFiltering) {
+      if (event.filters) {
+        const convertedFilters = convertFilters(event.filters);
+        subFilters.push(convertedFilters);
+      }
+      if (this.additionalFilter) {
+        subFilters.push(this.additionalFilter);
+      }
     }
     const filter = {
       type: 'CONJUNCTION',
@@ -160,13 +179,13 @@ export class AdminDashboardCommunicationsLogsTableComponent implements OnInit, A
       .pipe(take(1))
       .subscribe({
         next: response => {
-          this.communicationLogs = response.data.communicationLogs;
+          this._communicationLogs = response.data.communicationLogs;
           this.totalResults = response.data.totalResults;
           this.loading = false;
         },
         error: error => {
           this.messages = convertMessagesToPrimengFormat(error.messages as MessageInput[]);
-          this.communicationLogs = [];
+          this._communicationLogs = [];
           this.totalResults = 0;
           this.loading = false;
         }

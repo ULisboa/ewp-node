@@ -3,7 +3,7 @@
 <p-toast position="top-center" key="tc"></p-toast>
 
 <p-table #table
-    [lazy]="true"
+    [lazy]="lazyLoad"
     (onLazyLoad)="loadCommunicationsLogs($event)"
     dataKey="id"
     [loading]="loading"
@@ -23,13 +23,13 @@
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     ID
-                    <p-columnFilter field="id" type="numeric" display="menu" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
+                    <p-columnFilter *ngIf="allowFiltering" field="id" type="numeric" display="menu" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
                 </div>
             </th>
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     Type
-                    <p-columnFilter field="type" [matchModeOptions]="typeMatchModeOptions" matchMode="communicationTypeIsOneOfSet" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                    <p-columnFilter *ngIf="allowFiltering" field="type" [matchModeOptions]="typeMatchModeOptions" matchMode="communicationTypeIsOneOfSet" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
                         <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                             <p-multiSelect [options]="typeOptions" [(ngModel)]="selectedTypes" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" optionValue="value">
                                 <ng-template let-option pTemplate="item">
@@ -45,13 +45,13 @@
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     Source
-                    <p-columnFilter field="source" type="text" display="menu" [matchModeOptions]="sourceMatchModeOptions" matchMode="communicationFromHeiId" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
+                    <p-columnFilter *ngIf="allowFiltering" field="source" type="text" display="menu" [matchModeOptions]="sourceMatchModeOptions" matchMode="communicationFromHeiId" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
                 </div>
             </th>
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     Target
-                    <p-columnFilter field="target" type="text" display="menu" [matchModeOptions]="targetMatchModeOptions" matchMode="communicationToHeiId" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
+                    <p-columnFilter *ngIf="allowFiltering" field="target" type="text" display="menu" [matchModeOptions]="targetMatchModeOptions" matchMode="communicationToHeiId" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
                 </div>
             </th>
             <th pResizableColumn>Start Processing Time</th>
@@ -59,7 +59,7 @@
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     Status
-                    <p-columnFilter field="status" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                    <p-columnFilter *ngIf="allowFiltering" field="status" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
                         <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                             <p-multiSelect [options]="statusOptions" [(ngModel)]="selectedStatuses" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" optionValue="value">
                                 <ng-template let-option pTemplate="item">

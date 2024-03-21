@@ -19,7 +19,6 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { AdminDashboardCommunicationLogDetailComponent } from './communication-log-detail/communication-log-detail.component';
 import { AdminDashboardCommunicationsLogsTableComponent } from './communications-logs-table/communications-logs-table.component';
-import { AdminDashboardCommunicationsLogsNestedTableComponent } from './communications-logs-nested-table/communications-logs-nested-table.component';
 import { SharedUtilAngularModule } from '@ewp-node-frontend/shared/util-angular';
 import { AdminDashboardCommunicationLogReportToMonitoringFormComponent } from './communication-log-report-to-monitoring-form/communication-log-report-to-monitoring-form.component';
 import { MessageService } from 'primeng/api';
@@ -60,7 +59,6 @@ import {PanelModule} from 'primeng/panel';
     AdminDashboardCommunicationsLogsPageComponent,
     AdminDashboardCommunicationLogDetailComponent,
     AdminDashboardCommunicationsLogsTableComponent,
-    AdminDashboardCommunicationsLogsNestedTableComponent,
     AdminDashboardCommunicationLogReportToMonitoringFormComponent,
     CommunicationsLogsSearchFormComponent,
   ],

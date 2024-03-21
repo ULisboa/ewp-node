@@ -173,7 +173,7 @@
         <ng-container *ngIf="communicationLog.sortedChildrenCommunications && communicationLog.sortedChildrenCommunications.length > 0">
             <p-accordion [activeIndex]="0">
                 <p-accordionTab header="Nested Communications">
-                    <lib-admin-dashboard-communications-logs-nested-table [communicationLogs]="communicationLog.sortedChildrenCommunications"></lib-admin-dashboard-communications-logs-nested-table>
+                    <lib-admin-dashboard-communications-logs-table [lazyLoad]="false" [allowFiltering]="false" [communicationLogs]="communicationLog.sortedChildrenCommunications"></lib-admin-dashboard-communications-logs-table>
                 </p-accordionTab>
             </p-accordion>
         </ng-container>
