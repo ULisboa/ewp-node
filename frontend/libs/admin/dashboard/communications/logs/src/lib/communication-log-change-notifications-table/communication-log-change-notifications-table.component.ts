@@ -15,6 +15,12 @@ import { take } from 'rxjs';
 export class AdminDashboardCommunicationLogChangeNotificationsTableComponent {
 
   @Input()
+  lazyLoad = true;
+
+  @Input()
+  allowFiltering = true;
+
+  @Input()
   ids: number[] = [];
 
   private _additionalFilter: object | undefined;
@@ -62,9 +68,14 @@ export class AdminDashboardCommunicationLogChangeNotificationsTableComponent {
     this.loading = true;
     this.messages = [];
     const subFilters = [];
-    if (event.filters) {
-      const convertedFilters = convertFilters(event.filters);
-      subFilters.push(convertedFilters);
+    if (this.allowFiltering) {
+      if (event.filters) {
+        const convertedFilters = convertFilters(event.filters);
+        subFilters.push(convertedFilters);
+      }
+      if (this.additionalFilter) {
+        subFilters.push(this.additionalFilter);
+      }
     }
     if (this.ids) {
       subFilters.push({
@@ -72,9 +83,6 @@ export class AdminDashboardCommunicationLogChangeNotificationsTableComponent {
         field: 'id',
         values: this.ids
       })
-    }
-    if (this.additionalFilter) {
-      subFilters.push(this.additionalFilter);
     }
     const filter = {
       type: 'CONJUNCTION',
