@@ -27,8 +27,6 @@ public class CommunicationLogService {
 
   private static final Logger LOG = LoggerFactory.getLogger(CommunicationLogService.class);
 
-  private static final int MAX_NUMBER_OF_STACK_TRACE_LINES_PER_LEVEL = 15;
-
   private final CommunicationLogRepository repository;
   private final HttpResponseLogBodyValidator httpResponseLogBodyValidator;
 
@@ -77,7 +75,8 @@ public class CommunicationLogService {
   public static <T extends CommunicationLog> void registerException(
       AbstractRepository<T> repository, T communicationLog, Throwable throwable) {
     String stackTraceAsString =
-        ExceptionUtils.getStackTraceAsString(throwable, MAX_NUMBER_OF_STACK_TRACE_LINES_PER_LEVEL);
+        ExceptionUtils.getStackTraceAsString(
+            throwable, CommunicationLog.MAX_NUMBER_OF_STACK_TRACE_LINES_PER_LEVEL);
     communicationLog.setExceptionStacktrace(stackTraceAsString);
     repository.persist(communicationLog);
   }

@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
@@ -40,6 +39,8 @@ import pt.ulisboa.ewp.node.utils.StringUtils;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "communication_type", discriminatorType = DiscriminatorType.STRING)
 public class CommunicationLog {
+
+  public static final int MAX_NUMBER_OF_STACK_TRACE_LINES_PER_LEVEL = 15;
 
   private long id;
   private Status status;
@@ -80,11 +81,19 @@ public class CommunicationLog {
   @Column(name = "status", nullable = false)
   @Enumerated(EnumType.STRING)
   public Status getStatus() {
-    return status;
+    if (getEndProcessingDateTime() == null) {
+      return Status.INCOMPLETE;
+    }
+    if (getExceptionStacktrace() != null && !getExceptionStacktrace().isEmpty()) {
+      return Status.FAILURE;
+    }
+    return Status.SUCCESS;
   }
 
+  /** This method does nothing. Status is calculated on runtime when calling getStatus(). */
   public void setStatus(Status status) {
-    this.status = status;
+    // NOTE: status is ignored as it is calculated on runtime
+    // It is only implemented due to Hibernate requiring a setter method
   }
 
   @Column(name = "start_processing_date_time", nullable = false)
@@ -112,7 +121,6 @@ public class CommunicationLog {
 
   public void setExceptionStacktrace(String exceptionStacktrace) {
     this.exceptionStacktrace = exceptionStacktrace;
-    this.markAsFailure();
   }
 
   @Column(name = "observations", nullable = true, columnDefinition = "TEXT")
@@ -178,19 +186,6 @@ public class CommunicationLog {
 
   public void setEwpChangeNotifications(Collection<EwpChangeNotification> ewpChangeNotifications) {
     this.ewpChangeNotifications = ewpChangeNotifications;
-  }
-
-  public void markAsSuccess() {
-    this.updateStatus(Status.SUCCESS);
-  }
-
-  public void markAsFailure() {
-    this.updateStatus(Status.FAILURE);
-  }
-
-  public void updateStatus(Status status) {
-    Objects.requireNonNull(status);
-    this.status = status;
   }
 
   @Transient

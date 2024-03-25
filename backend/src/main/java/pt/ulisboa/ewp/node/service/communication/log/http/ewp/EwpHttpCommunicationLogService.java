@@ -127,10 +127,11 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         null,
         "",
         parentCommunication,
-        ewpChangeNotifications);
+        ewpChangeNotifications,
+        null);
   }
 
-  public void logCommunicationToEwpNode(
+  public HttpCommunicationToEwpNodeLog logCommunicationToEwpNode(
       EwpClientErrorException clientErrorException,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
@@ -141,7 +142,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
     if (clientErrorException.getResponse() != null) {
       serverDeveloperMessage = clientErrorException.getResponse().getServerDeveloperMessage();
     }
-    logCommunicationToEwpNode(
+    return logCommunicationToEwpNode(
         clientErrorException.getRequest(),
         clientErrorException.getResponse(),
         startProcessingDateTime,
@@ -149,10 +150,11 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         serverDeveloperMessage,
         clientErrorException.getDetailedMessage(),
         parentCommunication,
-        ewpChangeNotifications);
+        ewpChangeNotifications,
+        clientErrorException);
   }
 
-  public void logCommunicationToEwpNode(
+  public HttpCommunicationToEwpNodeLog logCommunicationToEwpNode(
       EwpRequest request,
       EwpResponse response,
       ZonedDateTime startProcessingDateTime,
@@ -160,11 +162,12 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       String serverDeveloperMessage,
       String observations,
       HttpCommunicationLog parentCommunication,
-      Collection<EwpChangeNotification> ewpChangeNotifications)
+      Collection<EwpChangeNotification> ewpChangeNotifications,
+      EwpClientErrorException ewpClientErrorException)
       throws IOException {
     HttpRequestLog requestLog = toHttpRequestLog(request);
     HttpResponseLog responseLog = toHttpResponseLog(response);
-    httpCommunicationToEwpNodeLogRepository.create(
+    return httpCommunicationToEwpNodeLogRepository.create(
         request.getEndpointInformation().getHeiId(),
         request.getEndpointInformation().getApiName(),
         request.getEndpointInformation().getApiVersion(),
@@ -177,7 +180,8 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         serverDeveloperMessage,
         observations,
         parentCommunication,
-        ewpChangeNotifications);
+        ewpChangeNotifications,
+        ewpClientErrorException);
   }
 
   private HttpRequestLog toHttpRequestLog(EwpApiHttpRequestWrapper request) {

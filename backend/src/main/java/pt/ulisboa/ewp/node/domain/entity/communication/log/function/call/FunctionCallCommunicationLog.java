@@ -39,6 +39,26 @@ public class FunctionCallCommunicationLog extends CommunicationLog {
     }
   }
 
+  @Override
+  public Status getStatus() {
+    switch (super.getStatus()) {
+      case SUCCESS:
+        if (getResultType() == null || getResultType().isEmpty()) {
+          return Status.FAILURE;
+        }
+        return Status.SUCCESS;
+
+      case INCOMPLETE:
+        return Status.INCOMPLETE;
+
+      case FAILURE:
+        return Status.FAILURE;
+
+      default:
+        throw new IllegalStateException("Unknown status: " + super.getStatus());
+    }
+  }
+
   @Column(name = "className")
   public String getClassName() {
     return className;
@@ -83,7 +103,6 @@ public class FunctionCallCommunicationLog extends CommunicationLog {
   public void editResult(String resultType, String result) {
     setResultType(resultType);
     setResult(result);
-    this.markAsSuccess();
   }
 
   @Column(name = "result_type", columnDefinition = "TEXT")

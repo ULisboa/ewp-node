@@ -27,6 +27,26 @@ public abstract class HttpCommunicationLog extends CommunicationLog {
     this.response = response;
   }
 
+  @Override
+  public Status getStatus() {
+    switch (super.getStatus()) {
+      case SUCCESS:
+        if (isResponseStatusError()) {
+          return Status.FAILURE;
+        }
+        return Status.SUCCESS;
+
+      case INCOMPLETE:
+        return Status.INCOMPLETE;
+
+      case FAILURE:
+        return Status.FAILURE;
+
+      default:
+        throw new IllegalStateException("Unknown status: " + super.getStatus());
+    }
+  }
+
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "request_log")
   public HttpRequestLog getRequest() {
@@ -45,18 +65,16 @@ public abstract class HttpCommunicationLog extends CommunicationLog {
 
   public void setResponse(HttpResponseLog response) {
     this.response = response;
-    if (this.response != null) {
-      if (HttpStatus.valueOf(this.response.getStatusCode()).isError()) {
-        this.markAsFailure();
-      } else {
-        this.markAsSuccess();
-      }
-    }
   }
 
   @Override
   @Transient
   public String getTarget() {
     return request.getUrl();
+  }
+
+  @Transient
+  private boolean isResponseStatusError() {
+    return HttpStatus.valueOf(this.response.getStatusCode()).isError();
   }
 }

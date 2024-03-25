@@ -12,7 +12,9 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
+import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
@@ -21,6 +23,7 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunic
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
+import pt.ulisboa.ewp.node.utils.ExceptionUtils;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
 
 @Repository
@@ -51,7 +54,7 @@ public class HttpCommunicationToEwpNodeLogRepository
         });
   }
 
-  public boolean create(
+  public HttpCommunicationToEwpNodeLog create(
       String targetHeiId,
       String apiName,
       String apiVersion,
@@ -64,7 +67,8 @@ public class HttpCommunicationToEwpNodeLogRepository
       String serverDeveloperMessage,
       String observations,
       HttpCommunicationLog parentCommunication,
-      Collection<EwpChangeNotification> ewpChangeNotifications)
+      Collection<EwpChangeNotification> ewpChangeNotifications,
+      EwpClientErrorException ewpClientErrorException)
       throws IOException {
     HttpCommunicationToEwpNodeLog communicationToEwpNodeLog =
         new HttpCommunicationToEwpNodeLog(
@@ -81,7 +85,15 @@ public class HttpCommunicationToEwpNodeLogRepository
             observations,
             parentCommunication,
             ewpChangeNotifications);
-    return persist(communicationToEwpNodeLog);
+    if (ewpClientErrorException != null) {
+      communicationToEwpNodeLog.setExceptionStacktrace(
+          ExceptionUtils.getStackTraceAsString(
+              ewpClientErrorException, CommunicationLog.MAX_NUMBER_OF_STACK_TRACE_LINES_PER_LEVEL));
+    }
+    if (!persist(communicationToEwpNodeLog)) {
+      throw new IllegalStateException("Failed to register communication");
+    }
+    return communicationToEwpNodeLog;
   }
 
   @Override
