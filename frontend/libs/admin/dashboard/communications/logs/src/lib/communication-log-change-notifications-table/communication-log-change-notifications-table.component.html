@@ -36,17 +36,17 @@
             </th>
             <th pResizableColumn>
                 <div class="flex align-items-center">
+                    Extra Variables
+                </div>
+            </th>
+            <th pResizableColumn>
+                <div class="flex align-items-center">
                     Current Attempt Number
                 </div>
             </th>
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     Next Scheduled Attempt
-                </div>
-            </th>
-            <th pResizableColumn>
-                <div class="flex align-items-center">
-                    Extra Variables
                 </div>
             </th>
             <th pResizableColumn>
@@ -65,6 +65,13 @@
             </td>
             <td class="cell">{{ changeNotification.id }}</td>
             <td class="cell">{{ changeNotification.creationDateTime | date:'medium' }}</td>
+            <td class="cell">
+                <div>
+                    @for (extraVariable of changeNotification.extraVariables; track extraVariable.key) {
+                        <p>{{ extraVariable.key }}: {{extraVariable.value }}</p>
+                    }
+                </div>
+            </td>
             <td class="cell">{{ changeNotification.attemptNumber }}</td>
             <td class="cell">
                 @if (changeNotification.scheduledDateTime) {
@@ -73,13 +80,6 @@
                 @else {
                     <span>---</span>
                 }
-            </td>
-            <td class="cell">
-                <div>
-                    @for (extraVariable of changeNotification.extraVariables; track extraVariable.key) {
-                        <p>{{ extraVariable.key }}: {{extraVariable.value }}</p>
-                    }
-                </div>
             </td>
             <td class="cell" [ngClass]="{
                 'cell-success': changeNotification.isSuccess(), 
