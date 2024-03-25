@@ -7,7 +7,7 @@
 </p>
 
 <p-table #table
-    [lazy]="true"
+    [lazy]="lazyLoad"
     (onLazyLoad)="onLoadEwpChangeNotifications($event)"
     dataKey="id"
     [loading]="loading"
@@ -26,6 +26,12 @@
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     ID
+                    <p-columnFilter *ngIf="allowFiltering" field="id" type="numeric" display="menu" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
+                </div>
+            </th>
+            <th pResizableColumn>
+                <div class="flex align-items-center">
+                    Creation Date Time
                 </div>
             </th>
             <th pResizableColumn>
@@ -58,6 +64,7 @@
                     [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
             </td>
             <td class="cell">{{ changeNotification.id }}</td>
+            <td class="cell">{{ changeNotification.creationDateTime | date:'medium' }}</td>
             <td class="cell">{{ changeNotification.attemptNumber }}</td>
             <td class="cell">
                 @if (changeNotification.scheduledDateTime) {
