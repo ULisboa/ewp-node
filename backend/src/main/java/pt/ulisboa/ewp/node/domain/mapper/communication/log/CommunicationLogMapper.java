@@ -24,8 +24,10 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.EwpHttpCommu
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationFromEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HostHttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
+import pt.ulisboa.ewp.node.domain.mapper.notification.EwpChangeNotificationMapper;
 
-@Mapper
+@Mapper(uses = EwpChangeNotificationMapper.class)
 public interface CommunicationLogMapper {
 
   CommunicationLogMapper INSTANCE = Mappers.getMapper(CommunicationLogMapper.class);
@@ -61,15 +63,27 @@ public interface CommunicationLogMapper {
       source = "sortedChildrenCommunications",
       target = "sortedChildrenCommunications",
       qualifiedByName = "convertToSummaryDto")
-  @Mapping(source = "changeNotifications", target = "changeNotifications")
+  @Mapping(
+      source = "changeNotifications",
+      target = "ewpChangeNotificationIds",
+      qualifiedByName = "ewpChangeNotificationToId")
   CommunicationLogDetailDto communicationLogToCommunicationLogDetailDto(
       CommunicationLog communicationLog);
 
   @Mapping(source = "host.code", target = "hostCode")
+  @Mapping(
+      source = "changeNotifications",
+      target = "ewpChangeNotificationIds",
+      qualifiedByName = "ewpChangeNotificationToId")
   HostHttpCommunicationLogDetailDto communicationLogToCommunicationLogSummaryDto(
       HostHttpCommunicationLog communicationLog);
 
   default String mapByteArrayToString(byte[] bytes) {
     return new String(bytes, StandardCharsets.UTF_8);
+  }
+
+  @Named("ewpChangeNotificationToId")
+  default Long mapEwpChangeNotificationToId(EwpChangeNotification ewpChangeNotification) {
+    return ewpChangeNotification.getId();
   }
 }

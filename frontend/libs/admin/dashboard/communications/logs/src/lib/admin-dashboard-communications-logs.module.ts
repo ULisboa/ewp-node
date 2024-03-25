@@ -27,6 +27,8 @@ import { PrismComponent } from '@ewp-node-frontend/shared/ui-prism';
 import { CommunicationsLogsSearchFormComponent } from './communications-logs-search-form/communications-logs-search-form.component';
 import { InputTextModule } from 'primeng/inputtext';
 import {PanelModule} from 'primeng/panel';
+import { AdminDashboardCommunicationLogChangeNotificationsTableComponent } from './communication-log-change-notifications-table/communication-log-change-notifications-table.component';
+import { AdminDashboardCommunicationLogChangeNotificationsDetailComponent } from './communication-log-change-notifications-detail/communication-log-change-notifications-detail.component';
 
 @NgModule({
   imports: [
@@ -56,6 +58,8 @@ import {PanelModule} from 'primeng/panel';
     RouterModule.forChild(adminDashboardCommunicationsLogsRoutes),
   ],
   declarations: [
+    AdminDashboardCommunicationLogChangeNotificationsDetailComponent,
+    AdminDashboardCommunicationLogChangeNotificationsTableComponent,
     AdminDashboardCommunicationsLogsPageComponent,
     AdminDashboardCommunicationLogDetailComponent,
     AdminDashboardCommunicationsLogsTableComponent,

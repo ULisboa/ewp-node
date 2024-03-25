@@ -17,3 +17,4 @@ export * from './lib/communication/log/http/ewp/http-communication-from-ewp-node
 export * from './lib/communication/log/http/ewp/http-communication-to-ewp-node-log-detail';
 export * from './lib/communication/log/validation/validation-result';
 export * from './lib/communication/log/validation/validation-entry';
+export * from './lib/notification/ewp-change-notification';

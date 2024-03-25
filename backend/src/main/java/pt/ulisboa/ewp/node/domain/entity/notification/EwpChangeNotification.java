@@ -2,7 +2,7 @@ package pt.ulisboa.ewp.node.domain.entity.notification;
 
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -175,7 +175,7 @@ public abstract class EwpChangeNotification {
    * notification (e.g. iiaId).
    */
   @Transient
-  public abstract Map<String, String> getExtraVariables();
+  public abstract List<ExtraVariableEntry> getExtraVariables();
 
   @Override
   public boolean equals(Object o) {
@@ -220,5 +220,24 @@ public abstract class EwpChangeNotification {
     FAILED_MAX_ATTEMPTS,
     FAILED_NO_CNR_API_AVAILABLE,
     MERGED;
+  }
+
+  public static class ExtraVariableEntry {
+
+    private final String key;
+    private final String value;
+
+    public ExtraVariableEntry(String key, String value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    public String getKey() {
+      return key;
+    }
+
+    public String getValue() {
+      return value;
+    }
   }
 }

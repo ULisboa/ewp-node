@@ -170,6 +170,15 @@
             </p-accordionTab>
         </p-accordion>
 
+        <ng-container *ngIf="communicationLog.ewpChangeNotificationIds && communicationLog.ewpChangeNotificationIds.length > 0">
+            <p-accordion>
+                <p-accordionTab header="EWP Change Notifications (CNRs)">
+                    <lib-admin-dashboard-communication-log-change-notifications-table
+                        [ids]="communicationLog.ewpChangeNotificationIds"></lib-admin-dashboard-communication-log-change-notifications-table>
+                </p-accordionTab>
+            </p-accordion>
+        </ng-container>
+
         <ng-container *ngIf="communicationLog.sortedChildrenCommunications && communicationLog.sortedChildrenCommunications.length > 0">
             <p-accordion [activeIndex]="0">
                 <p-accordionTab header="Nested Communications">

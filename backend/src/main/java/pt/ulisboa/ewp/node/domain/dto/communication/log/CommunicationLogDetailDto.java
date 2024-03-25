@@ -1,7 +1,6 @@
 package pt.ulisboa.ewp.node.domain.dto.communication.log;
 
 import java.util.List;
-import pt.ulisboa.ewp.node.domain.dto.notification.EwpChangeNotificationDto;
 
 public class CommunicationLogDetailDto extends CommunicationLogSummaryDto {
 
@@ -10,7 +9,7 @@ public class CommunicationLogDetailDto extends CommunicationLogSummaryDto {
   private String observations;
 
   private List<CommunicationLogSummaryDto> sortedChildrenCommunications;
-  private List<EwpChangeNotificationDto> changeNotifications;
+  private List<Long> ewpChangeNotificationIds;
 
   public String getExceptionStacktrace() {
     return exceptionStacktrace;
@@ -37,11 +36,11 @@ public class CommunicationLogDetailDto extends CommunicationLogSummaryDto {
     this.sortedChildrenCommunications = sortedChildrenCommunications;
   }
 
-  public List<EwpChangeNotificationDto> getChangeNotifications() {
-    return changeNotifications;
+  public List<Long> getEwpChangeNotificationIds() {
+    return ewpChangeNotificationIds;
   }
 
-  public void setChangeNotifications(List<EwpChangeNotificationDto> changeNotifications) {
-    this.changeNotifications = changeNotifications;
+  public void setEwpChangeNotificationIds(List<Long> ewpChangeNotificationIds) {
+    this.ewpChangeNotificationIds = ewpChangeNotificationIds;
   }
 }

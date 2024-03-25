@@ -1,8 +1,8 @@
 package pt.ulisboa.ewp.node.domain.entity.notification;
 
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -88,11 +88,11 @@ public class EwpInterInstitutionalAgreementChangeNotification extends EwpChangeN
 
   @Override
   @Transient
-  public Map<String, String> getExtraVariables() {
-    Map<String, String> result = new HashMap<>();
-    result.put("notifierHeiId", getNotifierHeiId());
-    result.put("partnerHeiId", getPartnerHeiId());
-    result.put("iiaId", getIiaId());
+  public List<ExtraVariableEntry> getExtraVariables() {
+    List<ExtraVariableEntry> result = new ArrayList<>();
+    result.add(new ExtraVariableEntry("notifierHeiId", getNotifierHeiId()));
+    result.add(new ExtraVariableEntry("partnerHeiId", getPartnerHeiId()));
+    result.add(new ExtraVariableEntry("iiaId", getIiaId()));
     return result;
   }
 

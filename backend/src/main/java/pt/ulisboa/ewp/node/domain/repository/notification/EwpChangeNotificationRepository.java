@@ -11,6 +11,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
+import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification_;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
@@ -28,6 +29,37 @@ public class EwpChangeNotificationRepository
 
   protected EwpChangeNotificationRepository(SessionFactory sessionFactory) {
     super(EwpChangeNotification.class, sessionFactory);
+  }
+
+  public Collection<EwpChangeNotification> findByFilter(
+      FilterDto<EwpChangeNotification> filter, int offset, int limit) {
+    return runInSession(
+        session -> {
+          CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+          CriteriaQuery<EwpChangeNotification> query =
+              criteriaBuilder.createQuery(EwpChangeNotification.class);
+          Root<EwpChangeNotification> selection = query.from(EwpChangeNotification.class);
+          if (filter != null) {
+            query = query.where(filter.createPredicate(criteriaBuilder, selection));
+          }
+          query.orderBy(criteriaBuilder.desc(selection.get(EwpChangeNotification_.id)));
+          return session.createQuery(query).setFirstResult(offset).setMaxResults(limit).stream()
+              .collect(Collectors.toList());
+        });
+  }
+
+  public long countByFilter(FilterDto<EwpChangeNotification> filter) {
+    return runInSession(
+        session -> {
+          CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+          CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
+          Root<EwpChangeNotification> selection = query.from(EwpChangeNotification.class);
+          query.select(criteriaBuilder.count(selection));
+          if (filter != null) {
+            query = query.where(filter.createPredicate(criteriaBuilder, selection));
+          }
+          return session.createQuery(query).getSingleResult();
+        });
   }
 
   @Override

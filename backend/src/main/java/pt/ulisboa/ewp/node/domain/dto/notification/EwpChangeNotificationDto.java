@@ -1,19 +1,21 @@
 package pt.ulisboa.ewp.node.domain.dto.notification;
 
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogSummaryDto;
 
 public class EwpChangeNotificationDto {
 
   private long id;
   private ZonedDateTime creationDateTime;
+  private List<CommunicationLogSummaryDto> sortedCommunicationLogs;
   private int attemptNumber;
   private ZonedDateTime scheduledDateTime;
   private String status;
 
   // NOTE: used to store actual CNR variables (e.g. iia_id)
-  private Map<String, String> extraVariables = new HashMap<>();
+  private List<ExtraVariableEntryDto> extraVariables = new ArrayList<>();
 
   public long getId() {
     return id;
@@ -29,6 +31,14 @@ public class EwpChangeNotificationDto {
 
   public void setCreationDateTime(ZonedDateTime creationDateTime) {
     this.creationDateTime = creationDateTime;
+  }
+
+  public List<CommunicationLogSummaryDto> getSortedCommunicationLogs() {
+    return sortedCommunicationLogs;
+  }
+
+  public void setSortedCommunicationLogs(List<CommunicationLogSummaryDto> sortedCommunicationLogs) {
+    this.sortedCommunicationLogs = sortedCommunicationLogs;
   }
 
   public int getAttemptNumber() {
@@ -55,11 +65,40 @@ public class EwpChangeNotificationDto {
     this.status = status;
   }
 
-  public Map<String, String> getExtraVariables() {
+  public List<ExtraVariableEntryDto> getExtraVariables() {
     return extraVariables;
   }
 
-  public void setExtraVariables(Map<String, String> extraVariables) {
+  public void setExtraVariables(List<ExtraVariableEntryDto> extraVariables) {
     this.extraVariables = extraVariables;
+  }
+
+  public static class ExtraVariableEntryDto {
+
+    private String key;
+    private String value;
+
+    public ExtraVariableEntryDto() {}
+
+    public ExtraVariableEntryDto(String key, String value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    public String getKey() {
+      return key;
+    }
+
+    public void setKey(String key) {
+      this.key = key;
+    }
+
+    public String getValue() {
+      return value;
+    }
+
+    public void setValue(String value) {
+      this.value = value;
+    }
   }
 }
