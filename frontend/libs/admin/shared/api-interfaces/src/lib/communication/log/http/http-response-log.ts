@@ -11,7 +11,7 @@ export class HttpResponseLog {
     body!: string;
 
     @Type(() => ValidationResult)
-    bodyValidation!: ValidationResult;
+    bodyValidation?: ValidationResult;
 
     getLine(lineNumber: number): string {
         return this.body.split('\n')[lineNumber - 1];

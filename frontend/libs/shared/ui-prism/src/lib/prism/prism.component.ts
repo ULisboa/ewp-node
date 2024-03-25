@@ -27,7 +27,7 @@ export class PrismComponent implements AfterViewInit, OnChanges {
   showLineNumbers = true;
 
   @Input()
-  linesToHighlight = '';
+  linesToHighlight? = '';
 
   @ViewChild('codeElem') 
   codeElem!: ElementRef;

@@ -8,5 +8,5 @@ export class HttpCommunicationLogDetail extends CommunicationLogDetail {
     request!: HttpRequestLog;
 
     @Type(() => HttpResponseLog)
-    response!: HttpResponseLog;
+    response?: HttpResponseLog;
 }
