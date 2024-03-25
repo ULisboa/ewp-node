@@ -108,11 +108,6 @@ public class EwpChangeNotificationRepository
   @Override
   protected boolean checkDomainConstraints(EwpChangeNotification entity)
       throws DomainException {
-    if (entity.getScheduledDateTime() == null) {
-      throw new DomainException(
-          messages.get("error.ewp.change.notification.scheduleDateTime.must.be.defined"));
-    }
-
     if (entity.getStatus() == null) {
       throw new DomainException(
           messages.get("error.ewp.change.notification.status.must.be.defined"));

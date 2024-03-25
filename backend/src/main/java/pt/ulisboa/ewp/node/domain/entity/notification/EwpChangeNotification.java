@@ -92,7 +92,7 @@ public abstract class EwpChangeNotification {
     this.attemptNumber = attemptNumber;
   }
 
-  @Column(name = "scheduled_date_time", nullable = false)
+  @Column(name = "scheduled_date_time")
   public ZonedDateTime getScheduledDateTime() {
     return this.scheduledDateTime;
   }
@@ -147,21 +147,25 @@ public abstract class EwpChangeNotification {
   @Transient
   public void markAsSuccess() {
     this.status = Status.SUCCESS;
+    this.scheduledDateTime = null;
   }
 
   @Transient
   public void markAsFailedDueToMaxAttempts() {
     this.status = Status.FAILED_MAX_ATTEMPTS;
+    this.scheduledDateTime = null;
   }
 
   @Transient
   public void markAsFailedDueToNoCnrApiAvailable() {
     this.status = Status.FAILED_NO_CNR_API_AVAILABLE;
+    this.scheduledDateTime = null;
   }
 
   @Transient
   public void markAsMerged() {
     this.status = Status.MERGED;
+    this.scheduledDateTime = null;
   }
 
   @Transient
