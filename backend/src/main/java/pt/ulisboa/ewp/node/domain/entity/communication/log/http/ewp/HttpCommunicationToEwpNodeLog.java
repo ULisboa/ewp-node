@@ -119,6 +119,16 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
 
   @Override
   @Transient
+  public String getSource() {
+    String superSource = super.getSource();
+    if (superSource != null && !superSource.equals("Unknown")) {
+      return superSource;
+    }
+    return "EWP Node";
+  }
+
+  @Override
+  @Transient
   public String getTarget() {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append(getTargetHeiId()).append(":").append(getApiName()).append("[").append(getApiVersion()).append("]");

@@ -37,6 +37,16 @@ public class HttpCommunicationToHostLog extends HostHttpCommunicationLog {
 
   @Override
   @Transient
+  public String getSource() {
+    String superSource = super.getSource();
+    if (superSource != null && !superSource.equals("Unknown")) {
+      return superSource;
+    }
+    return "EWP Node";
+  }
+
+  @Override
+  @Transient
   public String getTarget() {
     if (getHost() == null) {
       return "Unknown";
