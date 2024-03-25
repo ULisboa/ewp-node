@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.Optional;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,6 +18,7 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog_;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.AbstractRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
 import pt.ulisboa.ewp.node.utils.i18n.MessageResolver;
@@ -61,7 +63,8 @@ public class HttpCommunicationToEwpNodeLogRepository
       ZonedDateTime endProcessingDateTime,
       String serverDeveloperMessage,
       String observations,
-      HttpCommunicationLog parentCommunication)
+      HttpCommunicationLog parentCommunication,
+      Collection<EwpChangeNotification> ewpChangeNotifications)
       throws IOException {
     HttpCommunicationToEwpNodeLog communicationToEwpNodeLog =
         new HttpCommunicationToEwpNodeLog(
@@ -76,7 +79,8 @@ public class HttpCommunicationToEwpNodeLogRepository
             endProcessingDateTime,
             serverDeveloperMessage,
             observations,
-            parentCommunication);
+            parentCommunication,
+            ewpChangeNotifications);
     return persist(communicationToEwpNodeLog);
   }
 

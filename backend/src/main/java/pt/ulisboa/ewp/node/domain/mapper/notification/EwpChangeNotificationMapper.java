@@ -18,7 +18,7 @@ public interface EwpChangeNotificationMapper {
 
   @Mapping(target = "extraVariables", expression = "java(mapExtraVariables(ewpChangeNotification))")
   @Mapping(
-      source = "originCommunicationLog.sortedChildrenCommunications",
+      source = "sortedCommunications",
       target = "sortedCommunicationLogs",
       qualifiedByName = "convertToSummaryDto")
   EwpChangeNotificationDto mapEwpChangeNotificationToEwpChangeNotificationDto(

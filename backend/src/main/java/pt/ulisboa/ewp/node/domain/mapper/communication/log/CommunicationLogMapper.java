@@ -64,16 +64,16 @@ public interface CommunicationLogMapper {
       target = "sortedChildrenCommunications",
       qualifiedByName = "convertToSummaryDto")
   @Mapping(
-      source = "changeNotifications",
-      target = "ewpChangeNotificationIds",
+      source = "ewpChangeNotificationsAsOrigin",
+      target = "ewpChangeNotificationIdsAsOrigin",
       qualifiedByName = "ewpChangeNotificationToId")
   CommunicationLogDetailDto communicationLogToCommunicationLogDetailDto(
       CommunicationLog communicationLog);
 
   @Mapping(source = "host.code", target = "hostCode")
   @Mapping(
-      source = "changeNotifications",
-      target = "ewpChangeNotificationIds",
+      source = "ewpChangeNotificationsAsOrigin",
+      target = "ewpChangeNotificationIdsAsOrigin",
       qualifiedByName = "ewpChangeNotificationToId")
   HostHttpCommunicationLogDetailDto communicationLogToCommunicationLogSummaryDto(
       HostHttpCommunicationLog communicationLog);

@@ -24,6 +24,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -47,7 +49,8 @@ public class CommunicationLog {
   private String observations;
   private CommunicationLog parentCommunication;
   private Set<CommunicationLog> childrenCommunications = new HashSet<>();
-  private Collection<EwpChangeNotification> changeNotifications = new HashSet<>();
+  private Collection<EwpChangeNotification> ewpChangeNotificationsAsOrigin = new HashSet<>();
+  private Collection<EwpChangeNotification> ewpChangeNotifications = new HashSet<>();
 
   protected CommunicationLog() {}
 
@@ -155,12 +158,26 @@ public class CommunicationLog {
   }
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "originCommunicationLog", cascade = CascadeType.ALL)
-  public Collection<EwpChangeNotification> getChangeNotifications() {
-    return changeNotifications;
+  public Collection<EwpChangeNotification> getEwpChangeNotificationsAsOrigin() {
+    return ewpChangeNotificationsAsOrigin;
   }
 
-  public void setChangeNotifications(Collection<EwpChangeNotification> changeNotifications) {
-    this.changeNotifications = changeNotifications;
+  public void setEwpChangeNotificationsAsOrigin(
+      Collection<EwpChangeNotification> ewpChangeNotificationsAsOrigin) {
+    this.ewpChangeNotificationsAsOrigin = ewpChangeNotificationsAsOrigin;
+  }
+
+  @ManyToMany(cascade = {CascadeType.ALL})
+  @JoinTable(
+      name = "CommunicationLog_EwpChangeNotification",
+      joinColumns = {@JoinColumn(name = "communication_log_id")},
+      inverseJoinColumns = {@JoinColumn(name = "ewp_change_notification_id")})
+  public Collection<EwpChangeNotification> getEwpChangeNotifications() {
+    return ewpChangeNotifications;
+  }
+
+  public void setEwpChangeNotifications(Collection<EwpChangeNotification> ewpChangeNotifications) {
+    this.ewpChangeNotifications = ewpChangeNotifications;
   }
 
   public void markAsSuccess() {

@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.client.ewp.http.interceptor;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.WeakHashMap;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.HttpCommunicationLogRepository;
 import pt.ulisboa.ewp.node.service.communication.log.http.ewp.EwpHttpCommunicationLogService;
 
@@ -52,8 +54,12 @@ public class EwpHttpClientLoggerInterceptor implements EwpHttpClientInterceptor 
         request.getParentCommunicationId()).orElse(null);
 
     try {
-      ewpHttpCommunicationLogService.logCommunicationToEwpNode(successOperationResult,
-          communicationContext.startProcessingDateTime, ZonedDateTime.now(), parentCommunication);
+      ewpHttpCommunicationLogService.logCommunicationToEwpNode(
+          successOperationResult,
+          communicationContext.startProcessingDateTime,
+          ZonedDateTime.now(),
+          parentCommunication,
+          request.getEwpChangeNotifications());
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }
@@ -72,9 +78,12 @@ public class EwpHttpClientLoggerInterceptor implements EwpHttpClientInterceptor 
         request.getParentCommunicationId()).orElse(null);
 
     try {
-      this.ewpHttpCommunicationLogService.logCommunicationToEwpNode(e,
+      this.ewpHttpCommunicationLogService.logCommunicationToEwpNode(
+          e,
           communicationContext.startProcessingDateTime,
-          ZonedDateTime.now(), parentCommunication);
+          ZonedDateTime.now(),
+          parentCommunication,
+          request.getEwpChangeNotifications());
     } catch (IOException ex) {
       throw new IllegalStateException(ex);
     }

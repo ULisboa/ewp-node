@@ -2,6 +2,8 @@ package pt.ulisboa.ewp.node.client.ewp.operation.request;
 
 import com.google.common.base.Strings;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
@@ -10,6 +12,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpApiConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.service.communication.context.CommunicationContext;
 import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
@@ -26,6 +29,7 @@ public class EwpRequest implements Serializable {
   private EwpRequestBody body = new EwpRequestFormDataUrlEncodedBody(new HttpParams());
   private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.HTTP_SIGNATURE;
   private Long parentCommunicationId;
+  private Collection<EwpChangeNotification> ewpChangeNotifications = new HashSet<>();
   private final EwpEndpointInformation endpointInformation;
 
   public EwpRequest(
@@ -37,6 +41,9 @@ public class EwpRequest implements Serializable {
     CommunicationContext context = CommunicationContextHolder.getContext();
     if (context.getCurrentCommunicationLog() != null) {
       this.parentCommunicationId = context.getCurrentCommunicationLog().getId();
+    }
+    if (context.getCurrentEwpChangeNotifications() != null) {
+      this.ewpChangeNotifications = context.getCurrentEwpChangeNotifications();
     }
   }
 
@@ -135,6 +142,10 @@ public class EwpRequest implements Serializable {
 
   public Long getParentCommunicationId() {
     return parentCommunicationId;
+  }
+
+  public Collection<EwpChangeNotification> getEwpChangeNotifications() {
+    return ewpChangeNotifications;
   }
 
   public static EwpRequest createGet(

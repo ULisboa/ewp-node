@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -12,6 +13,7 @@ import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.utils.communication.log.CommunicationLogWarningCode;
 
 @Entity
@@ -41,7 +43,8 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
       ZonedDateTime endProcessingDateTime,
       String serverDeveloperMessage,
       String observations,
-      HttpCommunicationLog parentCommunication)
+      HttpCommunicationLog parentCommunication,
+      Collection<EwpChangeNotification> ewpChangeNotifications)
       throws IOException {
     super(
         authenticationMethod,
@@ -57,6 +60,7 @@ public class HttpCommunicationToEwpNodeLog extends EwpHttpCommunicationLog {
     this.endpointName = endpointName;
     this.serverDeveloperMessage = serverDeveloperMessage;
     this.reportedToMonitoring = false;
+    setEwpChangeNotifications(ewpChangeNotifications);
   }
   
   @Column(name = "target_hei_id")

@@ -26,6 +26,7 @@ import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpRequestLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpResponseLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationFromEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp.HttpCommunicationFromEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.ewp.HttpCommunicationToEwpNodeLogRepository;
 import pt.ulisboa.ewp.node.exception.domain.DomainException;
@@ -115,7 +116,8 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       EwpSuccessOperationResult<T> successOperationResult,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      HttpCommunicationLog parentCommunication)
+      HttpCommunicationLog parentCommunication,
+      Collection<EwpChangeNotification> ewpChangeNotifications)
       throws IOException {
     logCommunicationToEwpNode(
         successOperationResult.getRequest(),
@@ -124,14 +126,16 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         endProcessingDateTime,
         null,
         "",
-        parentCommunication);
+        parentCommunication,
+        ewpChangeNotifications);
   }
 
   public void logCommunicationToEwpNode(
       EwpClientErrorException clientErrorException,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
-      HttpCommunicationLog parentCommunication)
+      HttpCommunicationLog parentCommunication,
+      Collection<EwpChangeNotification> ewpChangeNotifications)
       throws IOException {
     String serverDeveloperMessage = null;
     if (clientErrorException.getResponse() != null) {
@@ -144,7 +148,8 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         endProcessingDateTime,
         serverDeveloperMessage,
         clientErrorException.getDetailedMessage(),
-        parentCommunication);
+        parentCommunication,
+        ewpChangeNotifications);
   }
 
   public void logCommunicationToEwpNode(
@@ -154,7 +159,8 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
       ZonedDateTime endProcessingDateTime,
       String serverDeveloperMessage,
       String observations,
-      HttpCommunicationLog parentCommunication)
+      HttpCommunicationLog parentCommunication,
+      Collection<EwpChangeNotification> ewpChangeNotifications)
       throws IOException {
     HttpRequestLog requestLog = toHttpRequestLog(request);
     HttpResponseLog responseLog = toHttpResponseLog(response);
@@ -170,7 +176,8 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         endProcessingDateTime,
         serverDeveloperMessage,
         observations,
-        parentCommunication);
+        parentCommunication,
+        ewpChangeNotifications);
   }
 
   private HttpRequestLog toHttpRequestLog(EwpApiHttpRequestWrapper request) {

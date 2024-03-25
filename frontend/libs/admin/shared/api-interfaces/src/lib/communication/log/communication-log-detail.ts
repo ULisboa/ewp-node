@@ -8,5 +8,5 @@ export class CommunicationLogDetail extends CommunicationLogSummary {
     @Type(() => CommunicationLogSummary)
     sortedChildrenCommunications!: CommunicationLogSummary[];
 
-    ewpChangeNotificationIds!: number[];
+    ewpChangeNotificationIdsAsOrigin!: number[];
 }

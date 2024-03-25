@@ -9,7 +9,7 @@ public class CommunicationLogDetailDto extends CommunicationLogSummaryDto {
   private String observations;
 
   private List<CommunicationLogSummaryDto> sortedChildrenCommunications;
-  private List<Long> ewpChangeNotificationIds;
+  private List<Long> ewpChangeNotificationIdsAsOrigin;
 
   public String getExceptionStacktrace() {
     return exceptionStacktrace;
@@ -36,11 +36,11 @@ public class CommunicationLogDetailDto extends CommunicationLogSummaryDto {
     this.sortedChildrenCommunications = sortedChildrenCommunications;
   }
 
-  public List<Long> getEwpChangeNotificationIds() {
-    return ewpChangeNotificationIds;
+  public List<Long> getEwpChangeNotificationIdsAsOrigin() {
+    return ewpChangeNotificationIdsAsOrigin;
   }
 
-  public void setEwpChangeNotificationIds(List<Long> ewpChangeNotificationIds) {
-    this.ewpChangeNotificationIds = ewpChangeNotificationIds;
+  public void setEwpChangeNotificationIdsAsOrigin(List<Long> ewpChangeNotificationIdsAsOrigin) {
+    this.ewpChangeNotificationIdsAsOrigin = ewpChangeNotificationIdsAsOrigin;
   }
 }

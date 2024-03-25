@@ -69,31 +69,31 @@ public class EwpNotificationSenderDaemon implements Runnable {
     }
   }
 
-  private void processChangeNotification(EwpChangeNotification changeNotification)
+  private void processChangeNotification(EwpChangeNotification ewpChangeNotification)
       throws Exception {
     CommunicationContextHolder.runInNestedContext(
         context -> {
-          context.setCurrentCommunicationLog(changeNotification.getOriginCommunicationLog());
+          context.setCurrentEwpChangeNotifications(List.of(ewpChangeNotification));
 
           try {
-            sendChangeNotification(changeNotification);
+            sendChangeNotification(ewpChangeNotification);
 
-            changeNotification.markAsSuccess();
-            changeNotificationRepository.persist(changeNotification);
+            ewpChangeNotification.markAsSuccess();
+            changeNotificationRepository.persist(ewpChangeNotification);
 
           } catch (NoEwpCnrAPIException e) {
             LOG.error(
                 String.format(
                     "Discarding change notification due to no CNR API available: %s",
-                    changeNotification),
+                    ewpChangeNotification),
                 e);
-            changeNotification.markAsFailedDueToNoCnrApiAvailable();
-            changeNotificationRepository.persist(changeNotification);
+            ewpChangeNotification.markAsFailedDueToNoCnrApiAvailable();
+            changeNotificationRepository.persist(ewpChangeNotification);
 
           } catch (Exception e) {
             LOG.error(
-                String.format("Failed to send change notification: %s", changeNotification), e);
-            scheduleNewAttempt(changeNotification);
+                String.format("Failed to send change notification: %s", ewpChangeNotification), e);
+            scheduleNewAttempt(ewpChangeNotification);
           }
 
           return null;

@@ -2,8 +2,12 @@ package pt.ulisboa.ewp.node.domain.entity.notification;
 
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -17,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -31,6 +36,7 @@ public abstract class EwpChangeNotification {
   private long id;
   private ZonedDateTime creationDateTime;
   private CommunicationLog originCommunicationLog;
+  private Collection<CommunicationLog> communications = new HashSet<>();
   private int attemptNumber;
   private ZonedDateTime scheduledDateTime;
   private Status status;
@@ -81,6 +87,24 @@ public abstract class EwpChangeNotification {
 
   public void setOriginCommunicationLog(CommunicationLog originCommunicationLog) {
     this.originCommunicationLog = originCommunicationLog;
+  }
+
+  @Transient
+  public Collection<CommunicationLog> getSortedCommunications() {
+    return getCommunications().stream()
+        .sorted(
+            Comparator.comparing(CommunicationLog::getStartProcessingDateTime)
+                .thenComparing(CommunicationLog::getId))
+        .collect(Collectors.toList());
+  }
+
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "ewpChangeNotifications")
+  public Collection<CommunicationLog> getCommunications() {
+    return communications;
+  }
+
+  public void setCommunications(Collection<CommunicationLog> communications) {
+    this.communications = communications;
   }
 
   @Column(name = "attempt_number", nullable = false)
