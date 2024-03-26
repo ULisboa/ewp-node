@@ -103,6 +103,7 @@ public class HttpCommunicationLogService {
     List<String> whitelistedContentTypes =
         List.of(
             MediaType.APPLICATION_XML_VALUE,
+            MediaType.TEXT_XML_VALUE,
             MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_FORM_URLENCODED_VALUE);
     return contentType != null
