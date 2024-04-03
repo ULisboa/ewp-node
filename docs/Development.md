@@ -1,34 +1,31 @@
 # Running EWP Node with Local EWP Registry
 
-Sometimes it is useful to have a local EWP registry in order to test the correct behavior 
-of host plugins.
+The following procedure includes the deployment of a local EWP Registry.
+This allows complete local testing of the behavior of host plugins.
 
 ## Preparation
 
 These steps must be run inside the root folder of the EWP Node project.
 
-1. Edit the file docker/registry/dev/data/manifest-sources.xml to use a correct HEI regular expression that 
-matches the target HEI ID;
+1. Copy the file backend/src/main/resources/application-dev.yml.example to backend/src/main/resources/application-dev.yml;
 
-2. Copy the file backend/src/main/resources/application-dev.yml.example to backend/src/main/resources/application-dev.yml;
+2. Edit the file backend/src/main/resources/application-dev.yml (only the sections of it mentioning that can be edited);
 
-3. Edit the file backend/src/main/resources/application-dev.yml (only the sections of it mentioning that can be edited);
+3. Copy the file .env.dev.example to .env.dev;
 
-4. Copy the file .env.dev.example to .env.dev;
+4. If necessary, change the values of .env.dev (e.g. if the default external ports are already used).
 
-5. If necessary, change the values of .env.dev (e.g. if the default ports are already used).
+5. Copy the file docker-compose.dev.override.yml.example to docker-compose.dev.override.yml;
 
-6. Copy the file docker-compose.dev.override.yml.example to docker-compose.dev.override.yml;
+6. If necessary, override Docker Compose services specification using docker-compose.dev.override.yml;
 
-7. If necessary, override Docker Compose services specification using docker-compose.dev.override.yml;
-
-8. To install the certificate that the local EWP Node and EWP Registry use, execute:
+7. To install the certificate that the local EWP Node and EWP Registry use, execute:
 
     ```
     ./install-node-certificate.sh
     ```
 
-9. [Recommended, allows to access both ewp-node and ewp-registry outside the Docker environment] Add the following lines to the file /etc/hosts:
+8. [Recommended, this step allows to access both ewp-node and ewp-registry outside the Docker environment] Add the following lines to the file /etc/hosts:
     ```
     127.0.0.1   ewp-node
     127.0.0.1   ewp-registry
@@ -44,9 +41,9 @@ Inside the root folder of the EWP Node project, follow the steps:
     sh up_dev.sh
     ```
 
-Once both Docker containers have started, unless the file .env.dev uses different ports, the EWP Node is available, on host, on port 8443, and the EWP Registry on port 8000. If .env.dev configures different ports then consider those correct ports on this section, instead of the default ones.
+Once both Docker containers have started, unless the file .env.dev uses different ports, the EWP Node is available, on host, on port 8443 (backend) and port 4200 (frontend), and the EWP Registry on port 8000. If .env.dev configures different ports then consider those correct ports on this section, instead of the default ones.
 
-If the step 9 of Preparation was executed, opening a web browser at https://ewp-node:8443/admin should show the Admin Dashboard authentication page, and opening at https://ewp-registry:8000/status should show a page with the status of the imported manifests (including the one of ewp-node).
+If the step 8 of Preparation was executed, opening a web browser at https://ewp-node:4200/admin should show the Admin Dashboard authentication page, and opening at https://ewp-registry:8000/status should show a page with the status of the imported manifests (including the one of ewp-node).
 
 Notes:
  - The file docker-compose.dev.override.yml and .env.dev may be edited freely as those are not commited to the repository.
@@ -65,7 +62,7 @@ Inside the root folder of the EWP Node project, follow the steps:
 
 ## Notes
 
-- Initially, the EWP Registry may not be able to obtain the EWP Node manifest, as it is launching. However, the EWP Registry periodically will attempt to connect to the EWP Node manifest. Alternatively, on a web browser the page https://localhost:8000/status?url=https://ewp-node:8443/api/ewp/manifest (the port 8000 may need to be changed if the environment variable uses some other port for the EWP Registry) and force a reload;
+- Initially, the EWP Registry may not be able to obtain the EWP Node manifest, as it is launching. However, the EWP Registry periodically will attempt to connect to the EWP Node manifest. Alternatively, on a web browser the page https://ewp-registry:8000/status?url=https://ewp-node:8443/api/ewp/manifest (the port 8000 may need to be changed if the environment variable uses some other port for the EWP Registry) and force a reload;
 - If there is a change of a host plugin, the containers must be restarted.
 
 

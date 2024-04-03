@@ -1,7 +1,11 @@
 {
     "/api": {
-      "target": "https://localhost:8443",
+      "target": "https://ewp-node:8443/",
       "secure": false,
-      "logLevel": "debug"
+      "changeOrigin": true,
+      "logLevel": "debug",
+      "router": {
+        "ewp-node:4200": "https://ewp-node:8443"
+      }
     }
   }

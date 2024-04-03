@@ -1,0 +1,36 @@
+FROM ghcr.io/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
+
+# Initialize empty GIT repo
+WORKDIR /root/repo
+RUN git init
+
+WORKDIR /opt/ewp-registry
+
+ARG EWP_NODE_HOSTNAME
+ARG EWP_NODE_PORT
+ARG EWP_NODE_HEI_REGEX
+
+# Prepare CACERTS
+COPY docker/dev/keystore/localhost.p12 /root/keystore/keystore.p12
+ENV CACERTS_STORE /opt/java/openjdk/lib/security/cacerts
+RUN keytool -v -importkeystore -srckeystore /root/keystore/keystore.p12 -srcstoretype PKCS12 \
+  -srcstorepass p@ssw0rd -destkeystore ${CACERTS_STORE} -deststoretype JKS -deststorepass changeit \
+  -noprompt
+
+# Configure a single manifest source to point to the EWP Node service
+RUN echo "<manifest-sources>\
+  <source>\
+    <location>https://${EWP_NODE_HOSTNAME}:${EWP_NODE_PORT}/api/ewp/manifest</location>\
+    <hei-regex>${EWP_NODE_HEI_REGEX}</hei-regex>\
+  </source>\
+</manifest-sources>" > /root/manifest-sources.xml
+
+ARG SERVER_PORT=8000
+ENV SERVER_PORT=${SERVER_PORT}
+
+COPY docker/dev/entrypoint.sh /opt/ewp-registry
+COPY docker/dev/application.properties /opt/ewp-registry
+
+EXPOSE ${SERVER_PORT}
+
+ENTRYPOINT ["/opt/ewp-registry/entrypoint.sh"]

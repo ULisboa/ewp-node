@@ -48,7 +48,7 @@ mvnw.cmd
 
 ### Docker ###
 Dockerfile
-Dockerfile.dev
+**/Dockerfile.dev
 .dockerignore
 docker-compose**
 .env**
@@ -63,3 +63,4 @@ src/main/resources/application-dev.yml**
 install-node-certificate.sh
 up_dev.sh
 down_dev.sh
+docs/

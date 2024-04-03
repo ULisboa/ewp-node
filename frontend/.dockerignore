@@ -1,0 +1,13 @@
+### Node.js ###
+**/node_modules/
+**/dist/
+
+### Angular ###
+**/.angular
+
+### Maven ###
+**/target
+
+### Docker ###
+Dockerfile.dev
+.dockerignore

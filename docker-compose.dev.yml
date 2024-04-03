@@ -1,40 +1,56 @@
 version: "3.0"
 services:
-  ewp-node:
-    container_name: ewp-node
-    hostname: ewp-node
+  ewp-node-frontend:
+    container_name: ewp-node-frontend
+    hostname: ewp-node-frontend
     build:
-      context: .
+      context: frontend
       dockerfile: Dockerfile.dev
     networks:
       - dev
-    environment:
-      - REGISTRY_URL=ewp-registry:${EWP_REGISTRY_PORT}
     ports:
-      - ${EWP_NODE_EXTERNAL_PORT}:8443
+      - ${EWP_NODE_FRONTEND_PORT:-4200}:4200
+    volumes:
+      - ${PWD}/frontend/libs:/opt/ewp-node/frontend/libs
+      - ${PWD}/frontend/src:/opt/ewp-node/frontend/src
+
+  ewp-node-backend:
+    container_name: ewp-node-backend
+    hostname: ewp-node-backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.dev
+    networks:
+       dev:
+        aliases:
+          - ewp-node
+    environment:
+      - REGISTRY_URL=ewp-registry:${EWP_REGISTRY_PORT:-8000}
+    ports:
+      - ${EWP_NODE_EXTERNAL_PORT:-8443}:8443
       # Debug port
-      - ${EWP_NODE_EXTERNAL_DEBUG_PORT}:5005
+      - ${EWP_NODE_EXTERNAL_DEBUG_PORT:-5005}:5005
     volumes:
       - ${PWD}/backend/src/main/resources/application-dev.yml:/config/application-dev.yml:ro
-      - ${PWD}/${EWP_NODE_RELATIVE_PLUGINS_PATH}:/plugins
+      - ${PWD}/${EWP_NODE_RELATIVE_PLUGINS_PATH:-plugins/}:/plugins
 
   ewp-registry:
     container_name: ewp-registry
     hostname: ewp-registry
-    image: ghcr.io/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
-    entrypoint: 
-      - "/root/entrypoint.sh"
+    build:
+      context: registry
+      dockerfile: Dockerfile.dev
+      args:
+        - SERVER_PORT=${EWP_REGISTRY_PORT:-8000}
+        - EWP_NODE_HOSTNAME=ewp-node
+        - EWP_NODE_PORT=8443
+        - EWP_NODE_HEI_REGEX=${EWP_REGISTRY_EWP_NODE_HEI_REGEX:-^ulisboa\.pt$}
     networks:
       - dev
-    environment:
-      - SERVER_PORT=${EWP_REGISTRY_PORT}
     ports:
-      - ${EWP_REGISTRY_PORT}:${EWP_REGISTRY_PORT}
+      - ${EWP_REGISTRY_PORT:-8000}:${EWP_REGISTRY_PORT:-8000}
     depends_on:
-      - ewp-node
-    volumes:
-      - ${PWD}/docker/registry/dev/data:/root
-      - ${PWD}/backend/src/main/resources/keystore/localhost.p12:/opt/keystore.p12:ro
+      - ewp-node-backend
 
 networks:
   dev:

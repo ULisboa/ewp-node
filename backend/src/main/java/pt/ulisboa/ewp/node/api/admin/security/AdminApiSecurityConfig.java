@@ -90,7 +90,8 @@ public class AdminApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Lists.newArrayList("http://localhost:4200"));
+    configuration.setAllowedOrigins(
+        Lists.newArrayList("http://localhost:4200", "https://ewp-node:4200"));
     configuration.setAllowedMethods(Lists.newArrayList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowCredentials(true);
     configuration.setAllowedHeaders(Lists.newArrayList("XSRF-TOKEN"));

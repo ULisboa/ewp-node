@@ -1,6 +1,0 @@
-<manifest-sources>
-  <source>
-    <location>https://ewp-node:8443/api/ewp/manifest</location>
-    <hei-regex>^ulisboa\.pt$</hei-regex>
-  </source>
-</manifest-sources>
