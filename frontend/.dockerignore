@@ -4,6 +4,7 @@
 
 ### Angular ###
 **/.angular
+**/.nx
 
 ### Maven ###
 **/target
