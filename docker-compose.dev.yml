@@ -42,13 +42,15 @@ services:
       dockerfile: Dockerfile.dev
       args:
         - SERVER_PORT=${EWP_REGISTRY_PORT:-8000}
-        - EWP_NODE_HOSTNAME=ewp-node
-        - EWP_NODE_PORT=8443
-        - EWP_NODE_HEI_REGEX=${EWP_REGISTRY_EWP_NODE_HEI_REGEX:-^ulisboa\.pt$}
     networks:
       - dev
     ports:
       - ${EWP_REGISTRY_PORT:-8000}:${EWP_REGISTRY_PORT:-8000}
+    environment:
+      - EWP_NODE_HOSTNAME=ewp-node
+      - EWP_NODE_PORT=8443
+      - EWP_NODE_HEI_REGEX=${EWP_REGISTRY_EWP_NODE_HEI_REGEX:-^ulisboa\.pt$}
+      - WAIT_FOR_EWP_NODE=1
     depends_on:
       - ewp-node-backend
 

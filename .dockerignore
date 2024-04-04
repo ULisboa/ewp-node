@@ -49,7 +49,7 @@ mvnw.cmd
 ### Docker ###
 Dockerfile
 **/Dockerfile.dev
-.dockerignore
+**/.dockerignore
 docker-compose**
 .env**
 
