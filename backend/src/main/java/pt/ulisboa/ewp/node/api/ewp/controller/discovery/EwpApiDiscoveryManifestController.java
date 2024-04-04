@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.domain.entity.Hei;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
+import pt.ulisboa.ewp.node.events.ewp.discovery.EwpDiscoveryManifestRequestedEvent;
 import pt.ulisboa.ewp.node.exception.ApplicationException;
 import pt.ulisboa.ewp.node.service.keystore.KeyStoreService;
 import pt.ulisboa.ewp.node.utils.keystore.DecodedCertificateAndKey;
@@ -57,6 +59,8 @@ public class EwpApiDiscoveryManifestController {
   @Autowired
   private HostRepository hostRepository;
 
+  @Autowired private ApplicationEventPublisher eventPublisher;
+
   @Autowired
   Collection<EwpManifestEntryProvider> manifestEntryProviders;
 
@@ -76,6 +80,10 @@ public class EwpApiDiscoveryManifestController {
     ManifestV6 manifest = new ManifestV6();
 
     setHost(request, manifest, hostCode);
+
+    eventPublisher.publishEvent(
+        new EwpDiscoveryManifestRequestedEvent(
+            this, manifest.getHost().getInstitutionsCovered().getHei().getId()));
 
     return ResponseEntity.ok(manifest);
   }
