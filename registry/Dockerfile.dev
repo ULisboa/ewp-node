@@ -17,14 +17,6 @@ RUN keytool -v -importkeystore -srckeystore /root/keystore/keystore.p12 -srcstor
   -srcstorepass p@ssw0rd -destkeystore ${CACERTS_STORE} -deststoretype JKS -deststorepass changeit \
   -noprompt
 
-# Configure a single manifest source to point to the EWP Node service
-RUN echo "<manifest-sources>\
-  <source>\
-    <location>https://${EWP_NODE_HOSTNAME}:${EWP_NODE_PORT}/api/ewp/manifest</location>\
-    <hei-regex>${EWP_NODE_HEI_REGEX}</hei-regex>\
-  </source>\
-</manifest-sources>" > /root/manifest-sources.xml
-
 ARG SERVER_PORT=8000
 ENV SERVER_PORT=${SERVER_PORT}
 
