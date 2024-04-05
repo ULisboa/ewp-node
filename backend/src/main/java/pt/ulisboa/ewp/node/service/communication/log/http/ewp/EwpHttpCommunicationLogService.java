@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,8 @@ import pt.ulisboa.ewp.node.service.communication.log.http.HttpCommunicationLogSe
 @Transactional
 public class EwpHttpCommunicationLogService extends HttpCommunicationLogService {
 
+  private static final Logger LOG = LoggerFactory.getLogger(EwpHttpCommunicationLogService.class);
+
   @Autowired
   private HttpCommunicationFromEwpNodeLogRepository httpCommunicationFromEwpNodeLogRepository;
 
@@ -44,6 +48,10 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
 
   public Optional<HttpCommunicationToEwpNodeLog> findCommunicationToEwpNodeById(long id) {
     return httpCommunicationToEwpNodeLogRepository.findById(id);
+  }
+
+  public Optional<HttpCommunicationFromEwpNodeLog> findCommunicationFromEwpNodeById(long id) {
+    return httpCommunicationFromEwpNodeLogRepository.findById(id);
   }
 
   public HttpCommunicationFromEwpNodeLog logCommunicationFromEwpNodeBeforeExecution(
@@ -112,14 +120,14 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
     return httpCommunicationToEwpNodeLogRepository.persist(communicationLog);
   }
 
-  public <T extends Serializable> void logCommunicationToEwpNode(
+  public <T extends Serializable> HttpCommunicationToEwpNodeLog logCommunicationToEwpNode(
       EwpSuccessOperationResult<T> successOperationResult,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       HttpCommunicationLog parentCommunication,
       Collection<EwpChangeNotification> ewpChangeNotifications)
       throws IOException {
-    logCommunicationToEwpNode(
+    return logCommunicationToEwpNode(
         successOperationResult.getRequest(),
         successOperationResult.getResponse(),
         startProcessingDateTime,
@@ -182,6 +190,28 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         parentCommunication,
         ewpChangeNotifications,
         ewpClientErrorException);
+  }
+
+  public void setParentCommunicationLogOf(long communicationId, long parentCommunicationLogId) {
+
+    Optional<HttpCommunicationFromEwpNodeLog> communicationLogOptional =
+        findCommunicationFromEwpNodeById(communicationId);
+    if (communicationLogOptional.isEmpty()) {
+      LOG.warn("Could not find communication ID #" + communicationId);
+      return;
+    }
+
+    Optional<HttpCommunicationToEwpNodeLog> parentCommunicationLogOptional =
+        findCommunicationToEwpNodeById(parentCommunicationLogId);
+    if (parentCommunicationLogOptional.isEmpty()) {
+      LOG.warn("Could not find parent communication ID #" + parentCommunicationLogId);
+      return;
+    }
+
+    HttpCommunicationFromEwpNodeLog childCommunicationLog = communicationLogOptional.get();
+    HttpCommunicationToEwpNodeLog parentCommunicationLog = parentCommunicationLogOptional.get();
+    childCommunicationLog.setParentCommunication(parentCommunicationLog);
+    httpCommunicationFromEwpNodeLogRepository.persist(childCommunicationLog);
   }
 
   private HttpRequestLog toHttpRequestLog(EwpApiHttpRequestWrapper request) {

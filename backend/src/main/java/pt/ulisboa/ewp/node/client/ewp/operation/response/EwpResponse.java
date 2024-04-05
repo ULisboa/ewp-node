@@ -3,16 +3,22 @@ package pt.ulisboa.ewp.node.client.ewp.operation.response;
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import pt.ulisboa.ewp.node.exception.XmlCannotUnmarshallToTypeException;
 import pt.ulisboa.ewp.node.utils.http.ExtendedHttpHeaders;
+import pt.ulisboa.ewp.node.utils.http.HttpConstants;
 import pt.ulisboa.ewp.node.utils.http.HttpUtils;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 public class EwpResponse implements Serializable {
+
+  private static final Logger LOG = LoggerFactory.getLogger(EwpResponse.class);
 
   private HttpStatus status;
   private String mediaType;
@@ -38,6 +44,21 @@ public class EwpResponse implements Serializable {
 
   public String getMediaType() {
     return mediaType;
+  }
+
+  /** Returns the header value of EWP Node communication ID, if existing. */
+  public Optional<Long> getEwpNodeCommunicationId() {
+    List<String> headerValues = headers.get(HttpConstants.HEADER_X_EWP_NODE_COMMUNICATION_ID);
+    if (headerValues == null || headerValues.isEmpty()) {
+      return Optional.empty();
+    }
+    try {
+      return Optional.of(Long.valueOf(headerValues.iterator().next()));
+    } catch (NumberFormatException e) {
+      LOG.warn(
+          "Invalid EWP Node communication ID #" + headerValues.iterator().next() + ", ignoring it");
+      return Optional.empty();
+    }
   }
 
   public ExtendedHttpHeaders getHeaders() {

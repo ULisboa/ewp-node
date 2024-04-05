@@ -18,6 +18,7 @@ import org.springframework.security.web.session.SessionManagementFilter;
 import pt.ulisboa.ewp.node.api.common.filter.security.logging.MDCAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiPreAuthenticationFilter;
+import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiResponseCommunicationIdFillerFilter;
 import pt.ulisboa.ewp.node.api.ewp.security.filter.EwpApiResponseSignerFilter;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
@@ -68,8 +69,9 @@ public class EwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
         .exceptionHandling()
         .authenticationEntryPoint(new UnauthorizedAuthenticationEntryPoint());
 
+    http.addFilterBefore(new EwpApiResponseSignerFilter(responseSigner), HeaderWriterFilter.class);
     http.addFilterBefore(
-        new EwpApiResponseSignerFilter(responseSigner), HeaderWriterFilter.class);
+        new EwpApiResponseCommunicationIdFillerFilter(), EwpApiResponseSignerFilter.class);
 
     http.addFilterBefore(
         new EwpApiPreAuthenticationFilter(jaxb2HttpMessageConverter),
