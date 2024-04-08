@@ -48,6 +48,8 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
 
   public static final String BASE_PATH = "iias/v7";
 
+  private static final String REGEX_RECEIVING_ACADEMIC_YEAR_ID = "[0-9]{4}/[0-9]{4}";
+
   private final HostPluginManager hostPluginManager;
 
   private final EwpInterInstitutionalAgreementMappingRepository mappingRepository;
@@ -147,6 +149,15 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
       @RequestParam(value = EwpApiParamConstants.MODIFIED_SINCE, required = false)
           @DateTimeFormat(iso = DATE_TIME)
           LocalDateTime modifiedSince) {
+
+    if (receivingAcademicYearIds != null) {
+      for (String receivingAcademicYearId : receivingAcademicYearIds) {
+        if (!receivingAcademicYearId.matches(REGEX_RECEIVING_ACADEMIC_YEAR_ID)) {
+          throw new EwpBadRequestException(
+              "Receiving academic year ID '" + receivingAcademicYearId + "' has incorrect format");
+        }
+      }
+    }
 
     if (!hostPluginManager.hasHostProvider(
         heiId, InterInstitutionalAgreementsV7HostProvider.class)) {
