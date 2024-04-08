@@ -148,7 +148,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
           Collection<String> receivingAcademicYearIds,
       @RequestParam(value = EwpApiParamConstants.MODIFIED_SINCE, required = false)
           @DateTimeFormat(iso = DATE_TIME)
-          LocalDateTime modifiedSince) {
+          Collection<LocalDateTime> modifiedSinceList) {
 
     if (receivingAcademicYearIds != null) {
       for (String receivingAcademicYearId : receivingAcademicYearIds) {
@@ -158,6 +158,15 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
         }
       }
     }
+
+    if (modifiedSinceList != null && modifiedSinceList.size() > 1) {
+      throw new EwpBadRequestException("Only one modified since argument is accepted");
+    }
+
+    LocalDateTime modifiedSince =
+        modifiedSinceList != null && !modifiedSinceList.isEmpty()
+            ? modifiedSinceList.iterator().next()
+            : null;
 
     if (!hostPluginManager.hasHostProvider(
         heiId, InterInstitutionalAgreementsV7HostProvider.class)) {
