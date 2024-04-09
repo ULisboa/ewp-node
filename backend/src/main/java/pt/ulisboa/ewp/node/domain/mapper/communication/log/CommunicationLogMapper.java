@@ -75,7 +75,7 @@ public interface CommunicationLogMapper {
       source = "ewpChangeNotificationsAsOrigin",
       target = "ewpChangeNotificationIdsAsOrigin",
       qualifiedByName = "ewpChangeNotificationToId")
-  HostHttpCommunicationLogDetailDto communicationLogToCommunicationLogSummaryDto(
+  HostHttpCommunicationLogDetailDto hostHttpCommunicationLogToHostHttpCommunicationLogDetailDto(
       HostHttpCommunicationLog communicationLog);
 
   default String mapByteArrayToString(byte[] bytes) {
