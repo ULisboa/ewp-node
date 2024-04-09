@@ -29,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import org.hibernate.proxy.HibernateProxy;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
 import pt.ulisboa.ewp.node.domain.utils.DomainConstants;
 import pt.ulisboa.ewp.node.domain.utils.communication.log.CommunicationLogWarningCode;
@@ -190,7 +191,11 @@ public class CommunicationLog {
 
   @Transient
   public final String getType() {
-    DiscriminatorValue discriminatorValue = this.getClass().getAnnotation(DiscriminatorValue.class);
+    Class<?> clazz = this.getClass();
+    if (this instanceof HibernateProxy) {
+      clazz = ((HibernateProxy) this).getHibernateLazyInitializer().getImplementation().getClass();
+    }
+    DiscriminatorValue discriminatorValue = clazz.getAnnotation(DiscriminatorValue.class);
     return discriminatorValue != null ? discriminatorValue.value() : null;
   }
 
