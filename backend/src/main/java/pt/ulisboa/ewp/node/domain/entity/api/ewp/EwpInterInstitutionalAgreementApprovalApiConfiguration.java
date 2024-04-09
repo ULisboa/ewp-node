@@ -29,6 +29,7 @@ public class EwpInterInstitutionalAgreementApprovalApiConfiguration extends EwpA
         version,
         supportedClientAuthenticationMethods,
         supportedServerAuthenticationMethods);
+    this.url = url;
     this.maxIiaIds = maxIiaIds;
   }
 
