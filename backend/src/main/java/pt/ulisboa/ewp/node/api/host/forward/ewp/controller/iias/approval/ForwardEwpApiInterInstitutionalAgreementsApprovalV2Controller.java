@@ -52,8 +52,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsApprovalV2Controller
 
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-      produces = MediaType.APPLICATION_XML_VALUE,
-      value = "/")
+      produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<ForwardEwpApiResponseWithData<IiasApprovalResponseV2>> getApprovals(
       @Valid InterInstitutionalAgreementsApprovalGetRequestDto requestDto)
       throws EwpClientErrorException {
