@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewInit, Component, Input, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterContentInit, Component, Input, ViewChild, inject } from '@angular/core';
 import { CommunicationLogSummary, HttpCommunicationFromEwpNodeLogDetail } from '@ewp-node-frontend/admin/shared/api-interfaces';
 import { FilterService, Message, MessageService, SelectItem } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
@@ -7,9 +7,11 @@ import { AdminCommunicationsLogsService } from '../services/admin-communications
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
 import { convertFilters } from '@ewp-node-frontend/shared/util-primeng';
 
-const CUSTOM_FILTER_COMMUNICATION_TYPE_IS_ONE_OF_SET_NAME = 'communicationTypeIsOneOfSet';
-const CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME = 'communicationFromHeiId';
-const CUSTOM_FILTER_COMMUNICATION_TO_HEI_ID_NAME = 'communicationToHeiId';
+const CUSTOM_FILTER_COMMUNICATION_TYPE_IS_ONE_OF_SET_NAME = 'COMMUNICATION-LOG-TYPE-IS-ONE-OF-SET';
+const CUSTOM_FILTER_COMMUNICATION_FROM_HEI_ID_NAME = 'HTTP-COMMUNICATION-FROM-EWP-NODE-IS-FROM-HEI-ID';
+const CUSTOM_FILTER_COMMUNICATION_TO_HEI_ID_NAME = 'HTTP-COMMUNICATION-TO-EWP-NODE-IS-TO-HEI-ID';
+const CUSTOM_FILTER_COMMUNICATION_LOG_START_PROCESSING_AFTER_OR_EQUAL_DATE_TIME_NAME = 'COMMUNICATION-LOG-START-PROCESSING-AFTER-OR-EQUAL-DATE-TIME';
+const CUSTOM_FILTER_COMMUNICATION_LOG_END_PROCESSING_BEFORE_OR_EQUAL_DATE_TIME_NAME = 'COMMUNICATION-LOG-END-PROCESSING-BEFORE-OR-EQUAL-DATE-TIME';
 
 @Component({
   selector: 'lib-admin-dashboard-communications-logs-table',
@@ -60,6 +62,8 @@ export class AdminDashboardCommunicationsLogsTableComponent implements AfterCont
   typeMatchModeOptions: SelectItem[];
   sourceMatchModeOptions: SelectItem[];
   targetMatchModeOptions: SelectItem[];
+  startProcessingDateTimeMatchModeOptions: SelectItem[];
+  endProcessingDateTimeMatchModeOptions: SelectItem[];
 
   typeOptions = [
     { name: 'EWP_IN', value: 'EWP_IN' },
@@ -77,6 +81,8 @@ export class AdminDashboardCommunicationsLogsTableComponent implements AfterCont
 
   selectedTypes: string[] = [];
   selectedStatuses: string[] = [];
+  selectedAfterOrEqualStartProcessingDateTime: Date | null = null;
+  selectedBeforeOrEqualEndProcessingDateTime: Date | null = null;
 
   totalResults = 0;
 
@@ -96,6 +102,14 @@ export class AdminDashboardCommunicationsLogsTableComponent implements AfterCont
     this.targetMatchModeOptions = [
       { label: 'Communication to HEI ID', value: CUSTOM_FILTER_COMMUNICATION_TO_HEI_ID_NAME }
     ];
+
+    this.startProcessingDateTimeMatchModeOptions = [
+      { label: 'After or equal than', value: CUSTOM_FILTER_COMMUNICATION_LOG_START_PROCESSING_AFTER_OR_EQUAL_DATE_TIME_NAME }
+    ];
+
+    this.endProcessingDateTimeMatchModeOptions = [
+      { label: 'Before or equal than', value: CUSTOM_FILTER_COMMUNICATION_LOG_END_PROCESSING_BEFORE_OR_EQUAL_DATE_TIME_NAME }
+    ];
   }
 
   ngAfterContentInit() {
@@ -104,6 +118,21 @@ export class AdminDashboardCommunicationsLogsTableComponent implements AfterCont
       this.table.filters['type'] = [{
         value: this.selectedTypes, 
         matchMode: CUSTOM_FILTER_COMMUNICATION_TYPE_IS_ONE_OF_SET_NAME, 
+        operator: 'and' 
+      }];
+
+      this.selectedAfterOrEqualStartProcessingDateTime = new Date();
+      this.selectedAfterOrEqualStartProcessingDateTime.setDate(this.selectedAfterOrEqualStartProcessingDateTime.getDate() - 3);
+      this.table.filters['startProcessingDateTime'] = [{
+        value: this.selectedAfterOrEqualStartProcessingDateTime, 
+        matchMode: CUSTOM_FILTER_COMMUNICATION_LOG_START_PROCESSING_AFTER_OR_EQUAL_DATE_TIME_NAME, 
+        operator: 'and' 
+      }];
+
+      this.selectedBeforeOrEqualEndProcessingDateTime = new Date();
+      this.table.filters['endProcessingDateTime'] = [{
+        value: this.selectedBeforeOrEqualEndProcessingDateTime, 
+        matchMode: CUSTOM_FILTER_COMMUNICATION_LOG_END_PROCESSING_BEFORE_OR_EQUAL_DATE_TIME_NAME, 
         operator: 'and' 
       }];
 
@@ -153,6 +182,46 @@ export class AdminDashboardCommunicationsLogsTableComponent implements AfterCont
         }
 
         return value.heiIdsCoveredByClient.includes(filter);
+      });
+
+      this.filterService.register(CUSTOM_FILTER_COMMUNICATION_LOG_START_PROCESSING_AFTER_OR_EQUAL_DATE_TIME_NAME, (value: object, filter: number): boolean => {
+        if (filter === undefined || filter === null) {
+          return true;
+        }
+
+        if (value === undefined || value === null) {
+          return false;
+        }
+
+        if (!(value instanceof CommunicationLogSummary)) {
+          return false;
+        }
+
+        if (!value.startProcessingDateTime) {
+          return false;
+        }
+
+        return value.startProcessingDateTime.getTime()>= filter;
+      });
+
+      this.filterService.register(CUSTOM_FILTER_COMMUNICATION_LOG_END_PROCESSING_BEFORE_OR_EQUAL_DATE_TIME_NAME, (value: object, filter: number): boolean => {
+        if (filter === undefined || filter === null) {
+          return true;
+        }
+
+        if (value === undefined || value === null) {
+          return false;
+        }
+
+        if (!(value instanceof CommunicationLogSummary)) {
+          return false;
+        }
+
+        if (!value.endProcessingDateTime) {
+          return false;
+        }
+
+        return value.endProcessingDateTime.getTime() <= filter;
       });
     }
   }

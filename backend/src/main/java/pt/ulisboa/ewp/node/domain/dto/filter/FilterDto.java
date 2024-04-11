@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogEndProcessingBeforeOrEqualDateTimeFilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogStartProcessingAfterOrEqualDateTimeFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogTypeIsOneOfSetFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.HttpCommunicationFormParameterStartsWithValueFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto;
@@ -43,7 +45,13 @@ import pt.ulisboa.ewp.node.domain.dto.filter.field.LessThanOrEqualFieldFilterDto
           name = "HTTP-COMMUNICATION-TO-EWP-NODE-IS-TO-HEI-ID"),
       @JsonSubTypes.Type(
           value = HttpCommunicationFormParameterStartsWithValueFilterDto.class,
-          name = "HTTP-COMMUNICATION-FORM-PARAMETER-STARTS-WITH-VALUE")
+          name = "HTTP-COMMUNICATION-FORM-PARAMETER-STARTS-WITH-VALUE"),
+      @JsonSubTypes.Type(
+          value = CommunicationLogStartProcessingAfterOrEqualDateTimeFilterDto.class,
+          name = "COMMUNICATION-LOG-START-PROCESSING-AFTER-OR-EQUAL-DATE-TIME"),
+      @JsonSubTypes.Type(
+          value = CommunicationLogEndProcessingBeforeOrEqualDateTimeFilterDto.class,
+          name = "COMMUNICATION-LOG-END-PROCESSING-BEFORE-OR-EQUAL-DATE-TIME")
     })
 public abstract class FilterDto<T> {
 

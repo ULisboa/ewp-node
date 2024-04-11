@@ -29,7 +29,7 @@
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     Type
-                    <p-columnFilter *ngIf="allowFiltering" field="type" [matchModeOptions]="typeMatchModeOptions" matchMode="communicationTypeIsOneOfSet" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                    <p-columnFilter *ngIf="allowFiltering" field="type" [matchModeOptions]="typeMatchModeOptions" matchMode="COMMUNICATION-LOG-TYPE-IS-ONE-OF-SET" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
                         <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                             <p-multiSelect [options]="typeOptions" [(ngModel)]="selectedTypes" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" optionValue="value">
                                 <ng-template let-option pTemplate="item">
@@ -45,17 +45,35 @@
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     Source
-                    <p-columnFilter *ngIf="allowFiltering" field="source" type="text" display="menu" [matchModeOptions]="sourceMatchModeOptions" matchMode="communicationFromHeiId" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
+                    <p-columnFilter *ngIf="allowFiltering" field="source" type="text" display="menu" [matchModeOptions]="sourceMatchModeOptions" matchMode="HTTP-COMMUNICATION-FROM-EWP-NODE-IS-FROM-HEI-ID" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
                 </div>
             </th>
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     Target
-                    <p-columnFilter *ngIf="allowFiltering" field="target" type="text" display="menu" [matchModeOptions]="targetMatchModeOptions" matchMode="communicationToHeiId" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
+                    <p-columnFilter *ngIf="allowFiltering" field="target" type="text" display="menu" [matchModeOptions]="targetMatchModeOptions" matchMode="HTTP-COMMUNICATION-TO-EWP-NODE-IS-TO-HEI-ID" [showOperator]="false" [showAddButton]="false"></p-columnFilter>
                 </div>
             </th>
-            <th pResizableColumn>Start Processing Time</th>
-            <th pResizableColumn>End Processing Time</th>
+            <th pResizableColumn>
+                <div class="flex align-items-center">
+                    Start Processing Time
+                    <p-columnFilter *ngIf="allowFiltering" field="startProcessingDateTime" [matchModeOptions]="startProcessingDateTimeMatchModeOptions" matchMode="COMMUNICATION-LOG-START-PROCESSING-AFTER-OR-EQUAL-DATE-TIME" display="menu" [showOperator]="false" [showAddButton]="false">
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-calendar [(ngModel)]="selectedAfterOrEqualStartProcessingDateTime" dateFormat="dd/mm/yy" [showTime]="true" [showSeconds]="true" (onSelect)="filter($event)"></p-calendar>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+            </th>
+            <th pResizableColumn>
+                <div class="flex align-items-center">
+                    End Processing Time
+                    <p-columnFilter *ngIf="allowFiltering" field="endProcessingDateTime" [matchModeOptions]="endProcessingDateTimeMatchModeOptions" matchMode="COMMUNICATION-LOG-END-PROCESSING-BEFORE-OR-EQUAL-DATE-TIME" display="menu" [showOperator]="false" [showAddButton]="false">
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-calendar [(ngModel)]="selectedBeforeOrEqualEndProcessingDateTime" dateFormat="dd/mm/yy" [showTime]="true" [showSeconds]="true" (onSelect)="filter($event)"></p-calendar>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+            </th>
             <th pResizableColumn>
                 <div class="flex align-items-center">
                     Status

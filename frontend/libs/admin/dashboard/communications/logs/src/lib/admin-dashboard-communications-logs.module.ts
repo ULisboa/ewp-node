@@ -29,11 +29,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import {PanelModule} from 'primeng/panel';
 import { AdminDashboardCommunicationLogChangeNotificationsTableComponent } from './communication-log-change-notifications-table/communication-log-change-notifications-table.component';
 import { AdminDashboardCommunicationLogChangeNotificationsDetailComponent } from './communication-log-change-notifications-detail/communication-log-change-notifications-detail.component';
+import { CalendarModule } from 'primeng/calendar';
 
 @NgModule({
   imports: [
     AccordionModule,
     ButtonModule,
+    CalendarModule,
     CardModule,
     DialogModule,
     DropdownModule,

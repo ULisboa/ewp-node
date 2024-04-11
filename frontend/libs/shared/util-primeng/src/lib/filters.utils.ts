@@ -4,11 +4,11 @@ export function convertFilters(filters: { [s: string]: FilterMetadata | FilterMe
     if (!filters) {
         return null;
     }
-    const resultFilter: { type: string, subFilters: {}[] } = {
+    const resultFilter: { type: string, subFilters: object[] } = {
         type: 'CONJUNCTION',
         subFilters: []
     };
-    for (let field in filters) {
+    for (const field in filters) {
         const filterMetadata = filters[field];
         if (filterMetadata) {
             if (Array.isArray(filterMetadata)) {
@@ -27,7 +27,7 @@ export function convertFilters(filters: { [s: string]: FilterMetadata | FilterMe
     return resultFilter;
 }
 
-function convertFilterMetadata(field: string, filterMetadata : FilterMetadata): {} | null {
+function convertFilterMetadata(field: string, filterMetadata : FilterMetadata): object | null {
     const value = filterMetadata.value;
     if (!value) {
         return null;
@@ -85,26 +85,16 @@ function convertFilterMetadata(field: string, filterMetadata : FilterMetadata): 
                 values: value
             };
 
-        case 'communicationTypeIsOneOfSet':
+        case 'COMMUNICATION-LOG-TYPE-IS-ONE-OF-SET':
             return {
                 type: 'COMMUNICATION-LOG-TYPE-IS-ONE-OF-SET',
                 values: value
             };
 
-        case 'communicationFromHeiId':
-            return {
-                type: 'HTTP-COMMUNICATION-FROM-EWP-NODE-IS-FROM-HEI-ID',
-                value: value
-            };
-
-        case 'communicationToHeiId':
-            return {
-                type: 'HTTP-COMMUNICATION-TO-EWP-NODE-IS-TO-HEI-ID',
-                value: value
-            };
-
         default:
-            console.error('Unknown match mode: ' + filterMetadata.matchMode);
-            return null;
+            return {
+                type: filterMetadata.matchMode,
+                value: value
+            };
     }
 }
