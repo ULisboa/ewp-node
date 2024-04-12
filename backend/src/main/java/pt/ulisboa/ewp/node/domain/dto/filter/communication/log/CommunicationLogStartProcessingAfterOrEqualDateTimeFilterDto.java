@@ -31,6 +31,6 @@ public class CommunicationLogStartProcessingAfterOrEqualDateTimeFilterDto
   public Predicate createPredicate(
       CriteriaBuilder criteriaBuilder, Root<CommunicationLog> selection) {
     return criteriaBuilder.greaterThanOrEqualTo(
-        selection.get(CommunicationLog_.END_PROCESSING_DATE_TIME), value);
+        selection.get(CommunicationLog_.START_PROCESSING_DATE_TIME), value);
   }
 }
