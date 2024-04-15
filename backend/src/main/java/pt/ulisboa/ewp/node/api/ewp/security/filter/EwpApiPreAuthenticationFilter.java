@@ -82,6 +82,8 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
       HttpHeaders headers = new HttpHeaders();
       headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
 
+      response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
+
       this.jaxb2HttpMessageConverter.writeToResult(object, headers, streamResult);
 
     } catch (IOException | TransformerException e) {
