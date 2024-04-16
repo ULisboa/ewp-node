@@ -12,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.cnr.InterInstitutionalAgreementCnrV2HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.cnr.MockInterInstitutionalAgreementsCnrV2HostProvider;
@@ -29,8 +30,7 @@ class EwpApiInterInstitutionalAgreementsCnrV2ControllerIntegrationTest extends
   @Autowired
   private HostPluginManager hostPluginManager;
 
-  @Autowired
-  private RegistryClient registryClient;
+  @MockBean private RegistryClient registryClient;
 
   @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})

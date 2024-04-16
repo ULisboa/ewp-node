@@ -1,36 +1,37 @@
 package pt.ulisboa.ewp.node.api.actuator.security;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
-import pt.ulisboa.ewp.node.AbstractIntegrationTest;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import pt.ulisboa.ewp.node.api.AbstractResourceIntegrationTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+@TestPropertySource(
+    properties = {
+      "actuator.security.username=actuator",
+      "actuator.security.password={bcrypt}$2a$10$HmxuRyMdk5DEAcXg95QrR.NpV5inrl7RMN868bzhWosQhS.J.OnKC" // test123
+    })
+public class ActuatorSecurityIntegrationTest extends AbstractResourceIntegrationTest {
 
-@TestPropertySource(properties = {
-        "actuator.security.username=actuator",
-        "actuator.security.password={bcrypt}$2a$10$HmxuRyMdk5DEAcXg95QrR.NpV5inrl7RMN868bzhWosQhS.J.OnKC" // test123
-})
-public class ActuatorSecurityIntegrationTest extends AbstractIntegrationTest {
+  @Test
+  public void givenInvalidAuthToActuator_shouldFailWith401() throws Exception {
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.request(HttpMethod.GET, "/actuator")
+                .with(httpBasic("invalid", "invalid")))
+        .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()));
+  }
 
-    @Autowired
-    private TestRestTemplate template;
-
-    @Test
-    public void givenInvalidAuthToActuator_shouldFailWith401() {
-        ResponseEntity<String> result = template.withBasicAuth("invalid", "invalid")
-                .getForEntity("/actuator", String.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, result.getStatusCode());
-    }
-
-    @Test
-    public void givenValidAuthToActuator_shouldSucceedWith200() {
-        ResponseEntity<String> result = template.withBasicAuth("actuator", "test123")
-                .getForEntity("/actuator", String.class);
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-    }
-
+  @Test
+  public void givenValidAuthToActuator_shouldSucceedWith200() throws Exception {
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.request(HttpMethod.GET, "/actuator")
+                .with(httpBasic("actuator", "test123")))
+        .andExpect(status().is(HttpStatus.OK.value()));
+  }
 }

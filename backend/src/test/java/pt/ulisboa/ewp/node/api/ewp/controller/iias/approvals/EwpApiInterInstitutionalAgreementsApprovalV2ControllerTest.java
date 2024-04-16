@@ -19,6 +19,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.approval.InterInstitutionalAgreementsApprovalV2HostProvider;
@@ -37,7 +38,7 @@ class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
 
   @Autowired private HostPluginManager hostPluginManager;
 
-  @Autowired private RegistryClient registryClient;
+  @MockBean private RegistryClient registryClient;
 
   @SpyBean private EwpInterInstitutionalAgreementMappingRepository mappingRepository;
 
@@ -109,7 +110,6 @@ class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
             InterInstitutionalAgreementsApprovalV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.APPROVING_HEI_ID, approvingHeiId);
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
 
     String responseXml =
@@ -117,7 +117,9 @@ class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
                 registryClient,
                 method,
                 EwpApiConstants.API_BASE_URI
-                    + EwpApiInterInstitutionalAgreementsApprovalV2Controller.BASE_PATH,
+                    + EwpApiInterInstitutionalAgreementsApprovalV2Controller.BASE_PATH
+                    + "/"
+                    + approvingHeiId,
                 queryParams,
                 ownerHeiId)
             .andExpect(status().isOk())
@@ -181,7 +183,6 @@ class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
             approvingHeiId, InterInstitutionalAgreementsApprovalV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.APPROVING_HEI_ID, approvingHeiId);
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
 
     String responseXml =
@@ -189,7 +190,9 @@ class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
                 registryClient,
                 method,
                 EwpApiConstants.API_BASE_URI
-                    + EwpApiInterInstitutionalAgreementsApprovalV2Controller.BASE_PATH,
+                    + EwpApiInterInstitutionalAgreementsApprovalV2Controller.BASE_PATH
+                    + "/"
+                    + approvingHeiId,
                 queryParams,
                 ownerHeiId)
             .andExpect(status().isOk())

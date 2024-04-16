@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -25,14 +26,9 @@ import pt.ulisboa.ewp.node.utils.http.HttpParams;
 
 public class EwpApiFilesV1ControllerIntegrationTest extends AbstractEwpControllerIntegrationTest {
 
-  private final RegistryClient registryClient;
-  private final HostPluginManager hostPluginManager;
+  @MockBean private RegistryClient registryClient;
 
-  public EwpApiFilesV1ControllerIntegrationTest(@Autowired RegistryClient registryClient,
-      @Autowired HostPluginManager hostPluginManager) {
-    this.registryClient = registryClient;
-    this.hostPluginManager = hostPluginManager;
-  }
+  @Autowired private HostPluginManager hostPluginManager;
 
   @Test
   public void testFileRetrieval_UnknownFileId_NotFoundReturned() throws Exception {
@@ -47,12 +43,14 @@ public class EwpApiFilesV1ControllerIntegrationTest extends AbstractEwpControlle
         .thenReturn(List.of(provider1));
 
     HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.FILE_ID, unknownFileId);
 
-    assertNotFound(registryClient, HttpMethod.GET,
-        EwpApiConstants.API_BASE_URI + EwpApiFilesV1Controller.BASE_PATH,
-        queryParams, "File ID is unknown: " + unknownFileId);
+    assertNotFound(
+        registryClient,
+        HttpMethod.GET,
+        EwpApiConstants.API_BASE_URI + EwpApiFilesV1Controller.BASE_PATH + "/" + heiId,
+        queryParams,
+        "File ID is unknown: " + unknownFileId);
   }
 
   @Test
@@ -73,14 +71,17 @@ public class EwpApiFilesV1ControllerIntegrationTest extends AbstractEwpControlle
         .thenReturn(List.of(provider1));
 
     HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
     queryParams.param(EwpApiParamConstants.FILE_ID, fileId);
 
-    MockHttpServletResponse response = executeRequest(registryClient, HttpMethod.GET,
-        EwpApiConstants.API_BASE_URI + EwpApiFilesV1Controller.BASE_PATH,
-        queryParams).andExpect(status().isOk())
-        .andReturn()
-        .getResponse();
+    MockHttpServletResponse response =
+        executeRequest(
+                registryClient,
+                HttpMethod.GET,
+                EwpApiConstants.API_BASE_URI + EwpApiFilesV1Controller.BASE_PATH + "/" + heiId,
+                queryParams)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse();
     byte[] resultFileContents = response.getContentAsByteArray();
 
     assertThat(response.getHeader(HttpHeaders.CONTENT_TYPE)).isEqualTo(fileResponse.getMediaType());

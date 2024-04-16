@@ -19,6 +19,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.ounits.OrganizationalUnitsV2HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
@@ -35,8 +36,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   @Autowired
   private HostPluginManager hostPluginManager;
 
-  @Autowired
-  private RegistryClient registryClient;
+  @MockBean private RegistryClient registryClient;
 
   @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
@@ -179,6 +179,9 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         .when(hostPluginManager.hasHostProvider(heiId,
             OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
+    Mockito.when(
+            hostPluginManager.getAllProvidersOfType(heiId, OrganizationalUnitsV2HostProvider.class))
+        .thenReturn(List.of(mockProvider));
     doReturn(providerToOunitIdsMap).when(hostPluginManager)
         .getOunitIdsCoveredPerProviderOfHeiId(heiId, ounitIds,
             OrganizationalUnitsV2HostProvider.class);
@@ -206,6 +209,9 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         .when(hostPluginManager.hasHostProvider(heiId,
             OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
+    Mockito.when(
+            hostPluginManager.getAllProvidersOfType(heiId, OrganizationalUnitsV2HostProvider.class))
+        .thenReturn(List.of(mockProvider));
     Mockito.when(
             hostPluginManager.getPrimaryProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
@@ -252,6 +258,10 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         .when(hostPluginManager.hasHostProvider(validHeiId,
             OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
+    Mockito.when(
+            hostPluginManager.getAllProvidersOfType(
+                validHeiId, OrganizationalUnitsV2HostProvider.class))
+        .thenReturn(List.of(mockProvider));
     doReturn(providerToOunitIdsMap).when(hostPluginManager)
         .getOunitIdsCoveredPerProviderOfHeiId(validHeiId, validOunitIds,
             OrganizationalUnitsV2HostProvider.class);
@@ -302,6 +312,10 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         .when(hostPluginManager.hasHostProvider(validHeiId,
             OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
+    Mockito.when(
+            hostPluginManager.getAllProvidersOfType(
+                validHeiId, OrganizationalUnitsV2HostProvider.class))
+        .thenReturn(List.of(mockProvider));
     doReturn(providerToOunitCodesMap).when(hostPluginManager)
         .getOunitCodesCoveredPerProviderOfHeiId(validHeiId, validOunitCodes,
             OrganizationalUnitsV2HostProvider.class);
@@ -361,6 +375,10 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         .when(hostPluginManager.hasHostProvider(validHeiId,
             OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
+    Mockito.when(
+            hostPluginManager.getAllProvidersOfType(
+                validHeiId, OrganizationalUnitsV2HostProvider.class))
+        .thenReturn(List.of(mockProvider1, mockProvider2));
     doReturn(providerToOunitIdsMap).when(hostPluginManager)
         .getOunitIdsCoveredPerProviderOfHeiId(validHeiId, validOunitIds,
             OrganizationalUnitsV2HostProvider.class);
@@ -420,6 +438,10 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         .when(hostPluginManager.hasHostProvider(validHeiId,
             OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
+    Mockito.when(
+            hostPluginManager.getAllProvidersOfType(
+                validHeiId, OrganizationalUnitsV2HostProvider.class))
+        .thenReturn(List.of(mockProvider1, mockProvider2));
     doReturn(providerToOunitCodesMap).when(hostPluginManager)
         .getOunitCodesCoveredPerProviderOfHeiId(validHeiId, validOunitCodes,
             OrganizationalUnitsV2HostProvider.class);

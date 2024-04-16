@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.imobilities.IncomingMobilitiesV1HostProvider;
@@ -34,8 +35,7 @@ class EwpApiIncomingMobilitiesV1ControllerIntegrationTest extends
   @Autowired
   private HostPluginManager hostPluginManager;
 
-  @Autowired
-  private RegistryClient registryClient;
+  @MockBean private RegistryClient registryClient;
 
   @SpyBean
   private EwpOutgoingMobilityMappingRepository mappingRepository;

@@ -36,6 +36,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.core.StringContains;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -74,7 +75,7 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
   private static final Collection<String> EXPECTED_HEI_IDS =
       Arrays.asList("myInstId1", "myInstId2");
 
-  @Autowired private RegistryClient registryClient;
+  @MockBean private RegistryClient registryClient;
 
   @Autowired private KeyStoreService keyStoreService;
 

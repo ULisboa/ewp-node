@@ -58,9 +58,7 @@ public class EwpApiFilesV1ManifestEntryProviderTest {
     assertThat(manifestEntries).hasSize(1);
     assertThat(manifestEntries.iterator().next()).isInstanceOf(FileV1.class);
     assertThat(((FileV1) manifestEntries.iterator().next()).getUrl())
-        .isEqualTo(
-            baseUrl + EwpApiFilesV1Controller.BASE_PATH + "?" + EwpApiParamConstants.HEI_ID + "=" +
-                heiId);
+        .isEqualTo(baseUrl + EwpApiFilesV1Controller.BASE_PATH + "/" + heiId);
   }
 
 }

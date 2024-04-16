@@ -219,13 +219,21 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
   protected RequestPostProcessor httpParamsProcessor(HttpParams params) {
     return request -> {
       if (request.getMethod() != null) {
-        switch (request.getMethod()) {
-          case "POST":
-          case "PUT":
-            request.setContentType(MediaType.APPLICATION_FORM_URLENCODED.toString());
-            break;
+        request.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
+        if (List.of("POST", "PUT", "PATCH").contains(request.getMethod())) {
+          request.setContentType(MediaType.APPLICATION_FORM_URLENCODED.toString());
         }
-        request.setContent(params.toString().getBytes(StandardCharsets.UTF_8));
+
+        if (List.of("GET", "POST").contains(request.getMethod())) {
+          for (Map.Entry<String, List<String>> paramEntry : params.asMap().entrySet()) {
+            for (String paramValue : paramEntry.getValue()) {
+              request.addParameter(paramEntry.getKey(), paramValue);
+            }
+          }
+        } else {
+          request.setContent(params.toString().getBytes(StandardCharsets.UTF_8));
+        }
       }
       return request;
     };

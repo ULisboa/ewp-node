@@ -87,7 +87,9 @@ public class EwpApiHttpRequestWrapper extends ContentCachingRequestWrapper {
   }
 
   private void initBody(HttpServletRequest request) throws IOException {
-    if (HttpMethod.POST.matches(request.getMethod())) {
+    if (HttpMethod.POST.matches(request.getMethod())
+        || HttpMethod.PUT.matches(request.getMethod())
+        || HttpMethod.PATCH.matches(request.getMethod())) {
       StringHttpMessageConverter converter = new StringHttpMessageConverter(
           StandardCharsets.UTF_8);
       this.body = converter.read(String.class, new ServletServerHttpRequest(this));

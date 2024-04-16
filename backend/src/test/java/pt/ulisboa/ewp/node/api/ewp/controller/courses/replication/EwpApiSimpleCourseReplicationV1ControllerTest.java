@@ -14,6 +14,7 @@ import java.util.Map;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.courses.replication.SimpleCourseReplicationV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
@@ -29,8 +30,7 @@ class EwpApiSimpleCourseReplicationV1ControllerTest extends AbstractEwpControlle
   @Autowired
   private HostPluginManager hostPluginManager;
 
-  @Autowired
-  private RegistryClient registryClient;
+  @MockBean private RegistryClient registryClient;
 
   @ParameterizedTest
   @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
