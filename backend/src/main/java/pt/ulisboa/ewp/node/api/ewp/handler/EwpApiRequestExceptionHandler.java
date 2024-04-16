@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.servlet.view.xml.MarshallingView;
@@ -49,6 +50,11 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
             handleHttpMessageNotReadableExceptionException(
                 (HttpMessageNotReadableException) ex, response);
 
+      } else if (ex instanceof MissingServletRequestParameterException) {
+        modelAndView =
+            handleMissingServletRequestParameterException(
+                (MissingServletRequestParameterException) ex, response);
+
       } else if (modelAndView == null) {
         if (ex instanceof EwpBadRequestException) {
           modelAndView = handleEwpBadRequestException((EwpBadRequestException) ex, response);
@@ -71,6 +77,14 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
     response.setStatus(HttpStatus.BAD_REQUEST.value());
     return createModelAndViewFromException(
         new IllegalArgumentException("Required request body is missing"));
+  }
+
+  private ModelAndView handleMissingServletRequestParameterException(
+      MissingServletRequestParameterException exception, HttpServletResponse response) {
+    response.setStatus(HttpStatus.BAD_REQUEST.value());
+    return createModelAndViewFromException(
+        new IllegalArgumentException(
+            "Required parameter '" + exception.getParameterName() + "' is missing"));
   }
 
   private ModelAndView handleEwpBadRequestException(
