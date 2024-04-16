@@ -23,10 +23,10 @@ ENV NX_SKIP_NX_CACHE true
 
 # Package modules individually
 COPY frontend frontend
-RUN mvn -pl frontend -B install -DskipTests=true
+RUN mvn -pl frontend -B install
 
 COPY backend backend
-RUN mvn -pl backend -B install -DskipTests=true -Ddependency-check.skip=true
+RUN mvn -pl backend -B install -Ddependency-check.skip=true
 
 COPY delivery delivery
 RUN mvn -B install -DskipTests=true -Ddependency-check.skip=true
