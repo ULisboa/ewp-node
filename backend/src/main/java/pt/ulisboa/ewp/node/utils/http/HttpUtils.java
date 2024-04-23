@@ -112,7 +112,7 @@ public class HttpUtils {
     // namely, some servers respond with a Content-Type like "xml;charset=ISO-8859-1" which is not
     // considered correct for Jersey since it contains only the subtype and not the type
     String contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
-    if (contentType.matches("[ \t]*xml[ \t]*;[ \t]*charset=.*")) {
+    if (contentType != null && contentType.matches("[ \t]*xml[ \t]*;[ \t]*charset=.*")) {
       String correctContentType = contentType.replace("xml", "application/xml");
       response.getMetadata().putSingle(HttpHeaders.CONTENT_TYPE, correctContentType);
     }
