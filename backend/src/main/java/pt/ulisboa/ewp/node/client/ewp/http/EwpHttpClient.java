@@ -184,18 +184,21 @@ public class EwpHttpClient {
     if (response.isClientError()) {
       ErrorResponseV1 errorResponse = XmlUtils.unmarshall(jaxb2Marshaller, response.getRawBody(),
           ErrorResponseV1.class);
-      if (HttpStatus.BAD_REQUEST.equals(response.getStatus())) {
-        return new EwpClientErrorResponseException(request, response, responseAuthenticationResult,
-            errorResponse);
+      if (HttpStatus.UNAUTHORIZED.equals(response.getStatus())
+          || HttpStatus.FORBIDDEN.equals(response.getStatus())) {
+        return new EwpClientProcessorException(
+            request,
+            response,
+            new EwpClientAuthenticationFailedException(
+                request, response, errorResponse.getDeveloperMessage().getValue()));
 
       } else if (HttpStatus.CONFLICT.equals(response.getStatus())) {
-        return new EwpClientConflictException(request, response, responseAuthenticationResult,
-            errorResponse);
+        return new EwpClientConflictException(
+            request, response, responseAuthenticationResult, errorResponse);
 
       } else {
-        return new EwpClientProcessorException(request, response,
-            new EwpClientAuthenticationFailedException(request, response,
-                errorResponse.getDeveloperMessage().getValue()));
+        return new EwpClientErrorResponseException(
+            request, response, responseAuthenticationResult, errorResponse);
       }
 
     } else if (response.isServerError()) {
