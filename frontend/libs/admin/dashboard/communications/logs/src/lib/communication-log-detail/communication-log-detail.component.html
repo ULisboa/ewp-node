@@ -76,6 +76,7 @@
 
                 <!-- HTTP Response -->
                 <p-accordionTab header="HTTP Response" *ngIf="httpCommunicationLog.response">
+                    <p-card header="Status Code">{{ httpCommunicationLog.response.statusCode }}</p-card>
                     <p-card header="Headers">
                         <p-table [value]="httpCommunicationLog.response.headers">
                             <ng-template pTemplate="header">
