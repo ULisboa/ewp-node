@@ -102,7 +102,10 @@ public class EwpResponse implements Serializable {
 
     EwpResponse.Builder responseBuilder =
         new EwpResponse.Builder(HttpStatus.resolve(response.getStatus()));
-    responseBuilder.mediaType(response.getMediaType().toString());
+
+    if (response.getMediaType() != null) {
+      responseBuilder.mediaType(response.getMediaType().toString());
+    }
 
     response
         .getHeaders()
