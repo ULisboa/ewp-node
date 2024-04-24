@@ -35,4 +35,9 @@ public class EwpClientProcessorException extends EwpClientErrorException {
   public String getMessage() {
     return "Processor error: " + exception.getMessage();
   }
+
+  @Override
+  public synchronized Throwable getCause() {
+    return exception;
+  }
 }

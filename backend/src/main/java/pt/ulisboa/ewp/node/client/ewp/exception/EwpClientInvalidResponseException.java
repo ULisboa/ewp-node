@@ -34,4 +34,9 @@ public class EwpClientInvalidResponseException extends EwpClientErrorException {
   public String getMessage() {
     return "Server returned an invalid response: " + exception.getMessage();
   }
+
+  @Override
+  public synchronized Throwable getCause() {
+    return exception;
+  }
 }
