@@ -41,7 +41,7 @@ Inside the root folder of the EWP Node project, follow the steps:
     sh up_dev.sh
     ```
 
-Once both Docker containers have started, unless the file .env.dev uses different ports, the EWP Node is available, on host, on port 8443 (backend) and port 4200 (frontend), and the EWP Registry on port 8000. If .env.dev configures different ports then consider those correct ports on this section, instead of the default ones.
+Once both Docker containers have started, unless the file .env.dev uses different ports, the EWP Node is available, on host, on port 8443 (backend), port 4200 (frontend), and port 5005 (debugging on backend), and the EWP Registry on port 8000. If .env.dev configures different ports then consider those correct ports on this section, instead of the default ones.
 
 If the step 8 of Preparation was executed, opening a web browser at https://ewp-node:4200/admin should show the Admin Dashboard authentication page, and opening at https://ewp-registry:8000/status should show a page with the status of the imported manifests (including the one of ewp-node).
 
