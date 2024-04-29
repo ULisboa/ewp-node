@@ -49,17 +49,23 @@ public class HostsBootstrapService {
     Host host;
     if (hostOptional.isPresent()) {
       host = hostOptional.get();
-      host.update(hostBootstrapProperties.getDescription(),
-          hostBootstrapProperties.getAdminEmail(),
-          hostBootstrapProperties.getAdminNotes(),
-          hostBootstrapProperties.getAdminProvider());
-    } else {
-      host = Host.create(
-          hostBootstrapProperties.getCode(),
+      host.update(
           hostBootstrapProperties.getDescription(),
           hostBootstrapProperties.getAdminEmail(),
           hostBootstrapProperties.getAdminNotes(),
-          hostBootstrapProperties.getAdminProvider());
+          hostBootstrapProperties.getAdminProvider(),
+          hostBootstrapProperties.isOunitIdInObjectsRequired(),
+          hostBootstrapProperties.getOunitIdInObjectsRequiredErrorMessage());
+    } else {
+      host =
+          Host.create(
+              hostBootstrapProperties.getCode(),
+              hostBootstrapProperties.getDescription(),
+              hostBootstrapProperties.getAdminEmail(),
+              hostBootstrapProperties.getAdminNotes(),
+              hostBootstrapProperties.getAdminProvider(),
+              hostBootstrapProperties.isOunitIdInObjectsRequired(),
+              hostBootstrapProperties.getOunitIdInObjectsRequiredErrorMessage());
     }
 
     createOrUpdateHostForwardEwpApi(host, hostBootstrapProperties.getForwardEwpApi());

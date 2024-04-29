@@ -32,6 +32,8 @@ public class Host {
   private String adminEmail;
   private String adminNotes;
   private String adminProvider;
+  private boolean ounitIdInObjectsRequired;
+  private String ounitIdInObjectsRequiredErrorMessage;
 
   private HostForwardEwpApi forwardEwpApi;
   private Set<Hei> coveredHeis = new HashSet<>();
@@ -40,13 +42,21 @@ public class Host {
   protected Host() {
   }
 
-  protected Host(String code, String description, String adminEmail, String adminNotes,
-      String adminProvider) {
+  protected Host(
+      String code,
+      String description,
+      String adminEmail,
+      String adminNotes,
+      String adminProvider,
+      boolean ounitIdInObjectsRequired,
+      String ounitIdInObjectsRequiredErrorMessage) {
     this.code = code;
     this.description = description;
     this.adminEmail = adminEmail;
     this.adminNotes = adminNotes;
     this.adminProvider = adminProvider;
+    this.ounitIdInObjectsRequired = ounitIdInObjectsRequired;
+    this.ounitIdInObjectsRequiredErrorMessage = ounitIdInObjectsRequiredErrorMessage;
   }
 
   @Id
@@ -104,6 +114,27 @@ public class Host {
     this.adminProvider = adminProvider;
   }
 
+  @Column(name = "ounit_id_in_objects_required")
+  public boolean isOunitIdInObjectsRequired() {
+    return ounitIdInObjectsRequired;
+  }
+
+  public void setOunitIdInObjectsRequired(boolean ounitIdInObjectsRequired) {
+    this.ounitIdInObjectsRequired = ounitIdInObjectsRequired;
+  }
+
+  @Column(
+      name = "ounit_id_in_objects_required_error_message",
+      columnDefinition = "TEXT",
+      nullable = true)
+  public String getOunitIdInObjectsRequiredErrorMessage() {
+    return ounitIdInObjectsRequiredErrorMessage;
+  }
+
+  public void setOunitIdInObjectsRequiredErrorMessage(String ounitIdInObjectsRequiredErrorMessage) {
+    this.ounitIdInObjectsRequiredErrorMessage = ounitIdInObjectsRequiredErrorMessage;
+  }
+
   @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinColumn(name = "forward_ewp_api_id")
   public HostForwardEwpApi getForwardEwpApi() {
@@ -138,23 +169,64 @@ public class Host {
     this.httpCommunicationLogs = httpCommunicationLogs;
   }
 
-  public void update(String description, String adminEmail, String adminNotes,
-      String adminProvider) {
+  public void update(
+      String description,
+      String adminEmail,
+      String adminNotes,
+      String adminProvider,
+      boolean ounitIdInObjectsRequired,
+      String ounitIdInObjectsRequiredErrorMessage) {
     this.description = description;
     this.adminEmail = adminEmail;
     this.adminNotes = adminNotes;
     this.adminProvider = adminProvider;
+    this.ounitIdInObjectsRequired = ounitIdInObjectsRequired;
+    this.ounitIdInObjectsRequiredErrorMessage = ounitIdInObjectsRequiredErrorMessage;
   }
 
-  public static Host create(String code, String description, String adminEmail, String adminNotes,
-      String adminProvider) {
-    return new Host(code, description, adminEmail, adminNotes, adminProvider);
+  public static Host create(
+      String code,
+      String description,
+      String adminEmail,
+      String adminNotes,
+      String adminProvider,
+      boolean ounitIdInObjectsRequired,
+      String ounitIdInObjectsRequiredErrorMessage) {
+    return new Host(
+        code,
+        description,
+        adminEmail,
+        adminNotes,
+        adminProvider,
+        ounitIdInObjectsRequired,
+        ounitIdInObjectsRequiredErrorMessage);
   }
 
   @Override
   public String toString() {
-    return String.format(
-        "Host(code = %s; description = %s; adminEmail = %s; adminNotes = %s; adminProvider = %s)",
-        code, description, adminEmail, adminNotes, adminProvider);
+    return "Host{"
+        + "id="
+        + id
+        + ", code='"
+        + code
+        + '\''
+        + ", description='"
+        + description
+        + '\''
+        + ", adminEmail='"
+        + adminEmail
+        + '\''
+        + ", adminNotes='"
+        + adminNotes
+        + '\''
+        + ", adminProvider='"
+        + adminProvider
+        + '\''
+        + ", ounitIdInObjectsRequired="
+        + ounitIdInObjectsRequired
+        + ", ounitIdInObjectsRequiredErrorMessage='"
+        + ounitIdInObjectsRequiredErrorMessage
+        + '\''
+        + '}';
   }
 }

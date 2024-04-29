@@ -174,7 +174,8 @@ public class ForwardEwpApiSimpleCourseReplicationV1ControllerIntegrationTest ext
   public void testSimpleCourseReplicationGet_Authenticated_ErrorResponse() throws Exception {
     String heiId = "demo";
 
-    ErrorResponseV1 errorResponse = EwpApiUtils.createErrorResponseWithDeveloperMessage("Test");
+    ErrorResponseV1 errorResponse =
+        EwpApiUtils.createErrorResponseWithUserAndDeveloperMessage(null, "Test");
 
     EwpResponse response = new EwpResponse.Builder(HttpStatus.BAD_REQUEST).build();
 

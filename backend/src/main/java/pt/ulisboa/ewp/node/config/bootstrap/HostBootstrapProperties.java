@@ -9,6 +9,8 @@ public class HostBootstrapProperties {
   private String adminEmail;
   private String adminNotes;
   private String adminProvider;
+  private boolean ounitIdInObjectsRequired = false;
+  private String ounitIdInObjectsRequiredErrorMessage = "";
   private HostForwardEwpApiBootstrapProperties forwardEwpApi;
   private List<HostCoveredHeiBootstrapProperties> coveredHeis;
 
@@ -50,6 +52,22 @@ public class HostBootstrapProperties {
 
   public void setAdminProvider(String adminProvider) {
     this.adminProvider = adminProvider;
+  }
+
+  public boolean isOunitIdInObjectsRequired() {
+    return ounitIdInObjectsRequired;
+  }
+
+  public void setOunitIdInObjectsRequired(boolean ounitIdInObjectsRequired) {
+    this.ounitIdInObjectsRequired = ounitIdInObjectsRequired;
+  }
+
+  public String getOunitIdInObjectsRequiredErrorMessage() {
+    return ounitIdInObjectsRequiredErrorMessage;
+  }
+
+  public void setOunitIdInObjectsRequiredErrorMessage(String ounitIdInObjectsRequiredErrorMessage) {
+    this.ounitIdInObjectsRequiredErrorMessage = ounitIdInObjectsRequiredErrorMessage;
   }
 
   public HostForwardEwpApiBootstrapProperties getForwardEwpApi() {

@@ -35,6 +35,8 @@ bootstrap:
       adminEmail: admin@example.com
       adminNotes: Sample host
       adminProvider: Sample Provider (EWP Node)
+      ounitIdInObjectsRequired: false
+      ounitIdInObjectsRequiredErrorMessage: ""
       # Configuration of the Forward EWP APIs
       forwardEwpApi:
         # OPTIONAL

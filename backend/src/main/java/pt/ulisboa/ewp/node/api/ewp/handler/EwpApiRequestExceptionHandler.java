@@ -65,7 +65,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
         }
 
       } else {
-        fillModelAndViewWithException(modelAndView, getMessageFromException(ex));
+        fillModelAndViewWithException(modelAndView, null, getDeveloperMessageFromException(ex));
       }
       return modelAndView;
     }
@@ -90,7 +90,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
   private ModelAndView handleEwpBadRequestException(
       EwpBadRequestException exception, HttpServletResponse response) {
     response.setStatus(HttpStatus.BAD_REQUEST.value());
-    return createModelAndViewFromException(exception);
+    return createModelAndView(exception.getUserMessage(), exception.getDeveloperMessage());
   }
 
   private ModelAndView handleEwpNotFoundException(
@@ -101,7 +101,7 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
 
   private ModelAndView handleUnknownException(Exception exception, HttpServletResponse response) {
     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-    return createModelAndView(getMessageFromException(exception));
+    return createModelAndView(null, getDeveloperMessageFromException(exception));
   }
 
   private ModelAndView createModelAndViewFromException(Exception exception) {
@@ -112,10 +112,10 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
       developerMessage = "Unknown error";
     }
 
-    return createModelAndView(developerMessage);
+    return createModelAndView(null, developerMessage);
   }
 
-  private String getMessageFromException(Exception exception) {
+  private String getDeveloperMessageFromException(Exception exception) {
     if (exception instanceof HttpRequestMethodNotSupportedException) {
       return exception.getMessage();
     } else {
@@ -123,22 +123,24 @@ public class EwpApiRequestExceptionHandler extends DefaultHandlerExceptionResolv
     }
   }
 
-  private ModelAndView createModelAndView(String developerMessage) {
+  private ModelAndView createModelAndView(String userMessage, String developerMessage) {
     ModelAndView modelAndView = new ModelAndView();
-    fillModelAndViewWithException(modelAndView, developerMessage);
+    fillModelAndViewWithException(modelAndView, userMessage, developerMessage);
     return modelAndView;
   }
 
-  private void fillModelAndViewWithException(ModelAndView modelAndView, String developerMessage) {
+  private void fillModelAndViewWithException(
+      ModelAndView modelAndView, String userMessage, String developerMessage) {
     MarshallingView marshallingView = new MarshallingView();
     marshallingView.setMarshaller(jaxb2HttpMessageConverter);
     modelAndView.setView(marshallingView);
 
-    modelAndView.addObject(createErrorResponse(developerMessage));
+    modelAndView.addObject(createErrorResponse(userMessage, developerMessage));
   }
 
-  private ErrorResponseV1 createErrorResponse(String developerMessage) {
-    return EwpApiUtils.createErrorResponseWithDeveloperMessage(developerMessage);
+  private ErrorResponseV1 createErrorResponse(String userMessage, String developerMessage) {
+    return EwpApiUtils.createErrorResponseWithUserAndDeveloperMessage(
+        userMessage, developerMessage);
   }
 
   /**

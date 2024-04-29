@@ -51,8 +51,8 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
 
         writeResponse(
             response,
-            EwpApiUtils.createErrorResponseWithDeveloperMessage(
-                "No authorization method found in the request"));
+            EwpApiUtils.createErrorResponseWithUserAndDeveloperMessage(
+                null, "No authorization method found in the request"));
       }
     } catch (AuthenticationException exception) {
       fillResponseWithAuthenticationError(response, exception);
@@ -72,7 +72,8 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
     }
 
     writeResponse(
-        response, EwpApiUtils.createErrorResponseWithDeveloperMessage(exception.getMessage()));
+        response,
+        EwpApiUtils.createErrorResponseWithUserAndDeveloperMessage(null, exception.getMessage()));
   }
 
   private void writeResponse(HttpServletResponse response, Object object) {

@@ -5,6 +5,7 @@ import static org.joox.JOOX.$;
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import eu.erasmuswithoutpaper.api.architecture.v1.ManifestApiEntryBaseV1;
 import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringV1;
+import eu.erasmuswithoutpaper.api.architecture.v1.MultilineStringWithOptionalLangV1;
 import eu.erasmuswithoutpaper.api.specs.sec.intro.HttpSecurityOptions;
 import eu.erasmuswithoutpaper.registryclient.ApiSearchConditions;
 import java.util.ArrayDeque;
@@ -139,7 +140,11 @@ public class EwpApiUtils {
     return result;
   }
 
-  public static ErrorResponseV1 createErrorResponseWithDeveloperMessage(String developerMessage) {
+  public static ErrorResponseV1 createErrorResponseWithUserAndDeveloperMessage(
+      String userMessage, String developerMessage) {
+    if (developerMessage == null) {
+      developerMessage = "Unknown error";
+    }
     StringBuilder updatedDeveloperMessageBuilder = new StringBuilder(developerMessage);
     if (CommunicationContextHolder.getContext().hasCurrentCommunicationLog()) {
       updatedDeveloperMessageBuilder
@@ -150,6 +155,14 @@ public class EwpApiUtils {
     String updatedDeveloperMessage = updatedDeveloperMessageBuilder.toString();
 
     ErrorResponseV1 errorResponse = new ErrorResponseV1();
+
+    if (userMessage != null) {
+      MultilineStringWithOptionalLangV1 multilineStringWithOptionalLangV1 =
+          new MultilineStringWithOptionalLangV1();
+      multilineStringWithOptionalLangV1.setValue(userMessage);
+      errorResponse.getUserMessage().add(multilineStringWithOptionalLangV1);
+    }
+
     MultilineStringV1 message = new MultilineStringV1();
     message.setValue(updatedDeveloperMessage);
     errorResponse.setDeveloperMessage(message);
