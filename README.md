@@ -38,12 +38,12 @@ non-backward changes may be introduced.
 |                 Courses                  | :heavy_check_mark: |            0             |
 |        Simple Course Replication         | :heavy_check_mark: |            1             |
 |                  Files                   | :heavy_check_mark: |            1             |
-|      Interinstitutional Agreements       | :heavy_check_mark: |            6 & 7         |
-|    Interinstitutional Agreements CNR     | :heavy_check_mark: |            2 & 3         |
-|       Interinstitutional Approval        | :heavy_check_mark: |            1 & 2         |
-|     Interinstitutional Approval CNR      | :heavy_check_mark: |            1             |
+|      Interinstitutional Agreements       | :heavy_check_mark: |            7             |
+|    Interinstitutional Agreements CNR     | :heavy_check_mark: |            3             |
+|       Interinstitutional Approval        | :heavy_check_mark: |            2             |
+|     Interinstitutional Approval CNR      | :heavy_check_mark: |            2             |
 |            Mobility Factsheet            | :heavy_check_mark: |            1             |
-|           Outgoing Mobilities            | :heavy_check_mark: |          1 & 2           |
+|           Outgoing Mobilities            | :heavy_check_mark: |            2             |
 |  Outgoing Mobility Learning Agreements   | :heavy_check_mark: |            1             |
 |          Outgoing Mobility CNR           | :heavy_check_mark: |            1             |
 | Outgoing Mobility Learning Agreement CNR | :heavy_check_mark: |            1             |
@@ -61,12 +61,12 @@ non-backward changes may be introduced.
 |                 Courses                  | :heavy_check_mark: |            0             |
 |        Simple Course Replication         | :heavy_check_mark: |            1             |
 |                  Files                   | :heavy_check_mark: |            1             |
-|      Interinstitutional Agreements       | :heavy_check_mark: |            6 & 7         |
-|    Interinstitutional Agreements CNR     | :heavy_check_mark: |            2 & 3         |
-|       Interinstitutional Approval        | :heavy_check_mark: |            1 & 2         |
-|     Interinstitutional Approval CNR      | :heavy_check_mark: |            1             |
+|      Interinstitutional Agreements       | :heavy_check_mark: |            7             |
+|    Interinstitutional Agreements CNR     | :heavy_check_mark: |            3             |
+|       Interinstitutional Approval        | :heavy_check_mark: |            2             |
+|     Interinstitutional Approval CNR      | :heavy_check_mark: |            2             |
 |            Mobility Factsheet            | :heavy_check_mark: |            1             |
-|           Outgoing Mobilities            | :heavy_check_mark: |          1 & 2           |
+|           Outgoing Mobilities            | :heavy_check_mark: |            2             |
 |  Outgoing Mobility Learning Agreements   | :heavy_check_mark: |            1             |
 |          Outgoing Mobility CNR           | :heavy_check_mark: |            1             |
 | Outgoing Mobility Learning Agreement CNR | :heavy_check_mark: |            1             |

@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.iias.approval.cnr.EwpInterInstitutionalAgreementApprovalCnrV1Client;
 import pt.ulisboa.ewp.node.client.ewp.iias.approval.cnr.EwpInterInstitutionalAgreementApprovalCnrV2Client;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
@@ -17,18 +16,14 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 public class EwpInterInstitutionalAgreementApprovalChangeNotificationHandler extends
         EwpChangeNotificationHandler {
 
-  private final EwpInterInstitutionalAgreementApprovalCnrV1Client interInstitutionalAgreementApprovalCnrV1Client;
   private final EwpInterInstitutionalAgreementApprovalCnrV2Client
       interInstitutionalAgreementApprovalCnrV2Client;
 
   public EwpInterInstitutionalAgreementApprovalChangeNotificationHandler(
       RegistryClient registryClient,
-      EwpInterInstitutionalAgreementApprovalCnrV1Client
-          interInstitutionalAgreementApprovalCnrV1Client,
       EwpInterInstitutionalAgreementApprovalCnrV2Client
           interInstitutionalAgreementApprovalCnrV2Client) {
     super(registryClient);
-    this.interInstitutionalAgreementApprovalCnrV1Client = interInstitutionalAgreementApprovalCnrV1Client;
     this.interInstitutionalAgreementApprovalCnrV2Client =
         interInstitutionalAgreementApprovalCnrV2Client;
   }
@@ -55,8 +50,6 @@ public class EwpInterInstitutionalAgreementApprovalChangeNotificationHandler ext
 
     if (supportedMajorVersions.contains(2)) {
       sendChangeNotificationVersion2(interInstitutionalAgreementApprovalChangeNotification);
-    } else if (supportedMajorVersions.contains(1)) {
-      sendChangeNotificationVersion1(interInstitutionalAgreementApprovalChangeNotification);
     } else {
       throw new NoEwpCnrAPIException(changeNotification);
     }
@@ -68,16 +61,5 @@ public class EwpInterInstitutionalAgreementApprovalChangeNotificationHandler ext
 
     interInstitutionalAgreementApprovalCnrV2Client.sendChangeNotification(
         changeNotification.getPartnerHeiId(), changeNotification.getIiaId());
-  }
-
-  private void sendChangeNotificationVersion1(
-      EwpInterInstitutionalAgreementApprovalChangeNotification changeNotification)
-      throws EwpClientErrorException {
-
-    interInstitutionalAgreementApprovalCnrV1Client.sendChangeNotification(
-        changeNotification.getApprovingHeiId(),
-        changeNotification.getPartnerHeiId(),
-        changeNotification.getOwnerHeiId(),
-        changeNotification.getIiaId());
   }
 }

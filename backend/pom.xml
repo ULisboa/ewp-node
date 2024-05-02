@@ -128,7 +128,7 @@
     <dependency>
       <groupId>pt.ulisboa</groupId>
       <artifactId>ewp-host-plugin-skeleton</artifactId>
-      <version>0.23.0</version>
+      <version>0.25.0</version>
     </dependency>
 
     <dependency>
@@ -386,7 +386,7 @@
   <parent>
     <artifactId>ewp-node-parent</artifactId>
     <groupId>pt.ulisboa</groupId>
-    <version>0.30.0</version>
+    <version>0.31.0</version>
   </parent>
 
   <properties>

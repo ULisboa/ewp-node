@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
-import pt.ulisboa.ewp.node.client.ewp.iias.cnr.EwpInterInstitutionalAgreementCnrV2Client;
 import pt.ulisboa.ewp.node.client.ewp.iias.cnr.EwpInterInstitutionalAgreementCnrV3Client;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification;
@@ -18,15 +17,12 @@ import pt.ulisboa.ewp.node.utils.EwpApi;
 public class EwpInterInstitutionalAgreementChangeNotificationHandler extends
         EwpChangeNotificationHandler {
 
-  private final EwpInterInstitutionalAgreementCnrV2Client interInstitutionalAgreementCnrV2Client;
   private final EwpInterInstitutionalAgreementCnrV3Client interInstitutionalAgreementCnrV3Client;
 
   public EwpInterInstitutionalAgreementChangeNotificationHandler(
       RegistryClient registryClient,
-      EwpInterInstitutionalAgreementCnrV2Client interInstitutionalAgreementCnrV2Client,
       EwpInterInstitutionalAgreementCnrV3Client interInstitutionalAgreementCnrV3Client) {
     super(registryClient);
-    this.interInstitutionalAgreementCnrV2Client = interInstitutionalAgreementCnrV2Client;
     this.interInstitutionalAgreementCnrV3Client = interInstitutionalAgreementCnrV3Client;
   }
 
@@ -52,8 +48,6 @@ public class EwpInterInstitutionalAgreementChangeNotificationHandler extends
 
     if (supportedMajorVersions.contains(3)) {
       sendChangeNotificationVersion3(interInstitutionalAgreementChangeNotification);
-    } else if (supportedMajorVersions.contains(2)) {
-      sendChangeNotificationVersion2(interInstitutionalAgreementChangeNotification);
     } else {
       throw new NoEwpCnrAPIException(changeNotification);
     }
@@ -64,16 +58,6 @@ public class EwpInterInstitutionalAgreementChangeNotificationHandler extends
       throws EwpClientErrorException {
 
     interInstitutionalAgreementCnrV3Client.sendChangeNotification(
-        changeNotification.getPartnerHeiId(),
-        Collections.singletonList(changeNotification.getIiaId()));
-  }
-
-  private void sendChangeNotificationVersion2(
-      EwpInterInstitutionalAgreementChangeNotification changeNotification)
-      throws EwpClientErrorException {
-
-    interInstitutionalAgreementCnrV2Client.sendChangeNotification(
-        changeNotification.getNotifierHeiId(),
         changeNotification.getPartnerHeiId(),
         Collections.singletonList(changeNotification.getIiaId()));
   }

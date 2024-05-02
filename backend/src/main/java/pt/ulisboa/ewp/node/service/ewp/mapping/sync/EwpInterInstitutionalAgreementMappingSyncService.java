@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.util.*;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.stereotype.Service;
-import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV6HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.InterInstitutionalAgreementsV7HostProvider;
 import pt.ulisboa.ewp.node.config.sync.SyncProperties;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpInterInstitutionalAgreementMapping;
@@ -35,41 +34,7 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
 
   @Override
   public void run() {
-    syncInterInstitutionalAgreementsV6();
     syncInterInstitutionalAgreementsV7();
-  }
-
-  private void syncInterInstitutionalAgreementsV6() {
-    Map<String, Collection<InterInstitutionalAgreementsV6HostProvider>> providersPerHeiId = hostPluginManager.getAllProvidersOfTypePerHeiId(
-        InterInstitutionalAgreementsV6HostProvider.class);
-    for (Map.Entry<String, Collection<InterInstitutionalAgreementsV6HostProvider>> entry : providersPerHeiId.entrySet()) {
-      String heiId = entry.getKey();
-      for (InterInstitutionalAgreementsV6HostProvider provider : entry.getValue()) {
-        syncInterInstitutionalAgreementsOfHeiIdV6(heiId, provider);
-      }
-    }
-  }
-
-  private void syncInterInstitutionalAgreementsOfHeiIdV6(String heiId,
-      InterInstitutionalAgreementsV6HostProvider provider) {
-    Collection<String> iiaIds = provider.findAllIiaIdsByHeiId(Collections.singletonList(heiId),
-        heiId, null, null,
-        null);
-    for (String iiaId : iiaIds) {
-      syncInterInstitutionalAgreementV6(heiId, provider, iiaId);
-    }
-  }
-
-  private void syncInterInstitutionalAgreementV6(String heiId,
-      InterInstitutionalAgreementsV6HostProvider provider,
-      String iiaId) {
-    Optional<EwpInterInstitutionalAgreementMapping> mappingOptional = this.mappingService.getMapping(
-        heiId, iiaId);
-    if (mappingOptional.isEmpty()) {
-      Collection<Iia> iias = provider.findByHeiIdAndIiaIds(Collections.singletonList(heiId), heiId,
-          Collections.singletonList(iiaId), false);
-      registerMappingV6(heiId, iias.iterator().next());
-    }
   }
 
   private void syncInterInstitutionalAgreementsV7() {
