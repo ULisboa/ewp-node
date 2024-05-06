@@ -1,14 +1,12 @@
-import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormGroup, UntypedFormArray, UntypedFormBuilder, Validators } from '@angular/forms';
-import { DropdownChangeEvent } from 'primeng/dropdown';
-import { Observable, of } from 'rxjs';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormBuilder, UntypedFormArray, Validators } from '@angular/forms';
 
 @Component({
   selector: 'lib-admin-communications-logs-search-form',
   templateUrl: './communications-logs-search-form.component.html',
   styleUrl: './communications-logs-search-form.component.scss',
 })
-export class CommunicationsLogsSearchFormComponent implements AfterViewInit {
+export class CommunicationsLogsSearchFormComponent {
 
   FILTER_TYPE_HTTP_COMMUNICATION_FORM_PARAMETER_STARTS_WITH_VALUE = 'HTTP-COMMUNICATION-FORM-PARAMETER-STARTS-WITH-VALUE';
   FILTER_TYPE_HTTP_COMMUNICATION_RESPONSE_WITH_STATUS_CODE = 'HTTP-COMMUNICATION-RESPONSE-WITH-STATUS-CODE';
@@ -38,13 +36,6 @@ export class CommunicationsLogsSearchFormComponent implements AfterViewInit {
   filterTypeSelected?: { name: string, value: string };
 
   constructor(private formBuilder: FormBuilder) {}
-
-  ngAfterViewInit() {
-    // NOTE setTimeout is used to skip a tick so there is no error of component changed on rendering
-    setTimeout(() => {
-      this.addSubFilter();
-    });
-  }
 
   get subFilters() {
     return this.searchForm.controls['subFilters'] as UntypedFormArray;
