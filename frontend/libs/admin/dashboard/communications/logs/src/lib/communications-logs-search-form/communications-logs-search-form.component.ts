@@ -11,6 +11,7 @@ import { Observable, of } from 'rxjs';
 export class CommunicationsLogsSearchFormComponent implements AfterViewInit {
 
   FILTER_TYPE_HTTP_COMMUNICATION_FORM_PARAMETER_STARTS_WITH_VALUE = 'HTTP-COMMUNICATION-FORM-PARAMETER-STARTS-WITH-VALUE';
+  FILTER_TYPE_HTTP_COMMUNICATION_RESPONSE_WITH_STATUS_CODE = 'HTTP-COMMUNICATION-RESPONSE-WITH-STATUS-CODE';
 
   @Output()
   filterHandler = new EventEmitter<object>();
@@ -21,7 +22,8 @@ export class CommunicationsLogsSearchFormComponent implements AfterViewInit {
   });
 
   filterTypes: { name: string, value: string }[] = [
-    { name: 'HTTP Request has form parameter with value', value: this.FILTER_TYPE_HTTP_COMMUNICATION_FORM_PARAMETER_STARTS_WITH_VALUE }
+    { name: 'HTTP Request has form parameter with value', value: this.FILTER_TYPE_HTTP_COMMUNICATION_FORM_PARAMETER_STARTS_WITH_VALUE },
+    { name: 'HTTP Response has a specific status code', value: this.FILTER_TYPE_HTTP_COMMUNICATION_RESPONSE_WITH_STATUS_CODE }
   ];
 
   parameterNames = [

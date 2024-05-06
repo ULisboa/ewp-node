@@ -31,6 +31,13 @@
                                 <input formControlName="value" id="value" type="text" pInputText>
                             </div>
                         }
+
+                        @case (FILTER_TYPE_HTTP_COMMUNICATION_RESPONSE_WITH_STATUS_CODE) {
+                            <div class="field col-12 md:col-12">
+                                <label for="value">Status Code</label>
+                                <input formControlName="value" id="value" type="number" min="100" max="599" pInputText>
+                            </div>
+                        }
                     }
                 </div>
                 </p-panel>

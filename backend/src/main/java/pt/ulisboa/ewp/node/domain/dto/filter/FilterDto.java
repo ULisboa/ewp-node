@@ -11,6 +11,7 @@ import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogE
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogStartProcessingAfterOrEqualDateTimeFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogTypeIsOneOfSetFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.HttpCommunicationFormParameterStartsWithValueFilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.HttpCommunicationResponseWithStatusCodeFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationToEwpNodeIsToHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.EqualsFieldFilterDto;
@@ -46,6 +47,9 @@ import pt.ulisboa.ewp.node.domain.dto.filter.field.LessThanOrEqualFieldFilterDto
       @JsonSubTypes.Type(
           value = HttpCommunicationFormParameterStartsWithValueFilterDto.class,
           name = "HTTP-COMMUNICATION-FORM-PARAMETER-STARTS-WITH-VALUE"),
+      @JsonSubTypes.Type(
+          value = HttpCommunicationResponseWithStatusCodeFilterDto.class,
+          name = "HTTP-COMMUNICATION-RESPONSE-WITH-STATUS-CODE"),
       @JsonSubTypes.Type(
           value = CommunicationLogStartProcessingAfterOrEqualDateTimeFilterDto.class,
           name = "COMMUNICATION-LOG-START-PROCESSING-AFTER-OR-EQUAL-DATE-TIME"),
