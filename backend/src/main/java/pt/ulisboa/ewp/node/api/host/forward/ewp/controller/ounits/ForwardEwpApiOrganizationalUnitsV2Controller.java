@@ -80,6 +80,11 @@ public class ForwardEwpApiOrganizationalUnitsV2Controller extends AbstractForwar
   // NOTE: currently only allows to obtain by ounit IDs or ounit codes (not both simultaneously)
   private ResponseEntity<ForwardEwpApiResponseWithData<OunitsResponseV2>> getOrganizationalUnits(
       OrganizationalUnitsRequestDto requestDto) throws EwpClientErrorException {
+    if (requestDto.getOrganizationalUnitIds().isEmpty()
+        && requestDto.getOrganizationalUnitCodes().isEmpty()) {
+      return ForwardEwpApiResponseUtils.toSuccessResponseEntity(new OunitsResponseV2());
+    }
+
     EwpSuccessOperationResult<OunitsResponseV2> ounitsResponse;
     if (!requestDto.getOrganizationalUnitIds().isEmpty()) {
       ounitsResponse =

@@ -73,6 +73,10 @@ public class ForwardEwpApiIncomingMobilityToRsV2Controller extends AbstractForwa
   findByReceivingHeiIdAndOutgoingMobilityIds(
       @Valid ForwardEwpApiIncomingMobilityToRsGetRequestDto requestDto)
       throws EwpClientErrorException {
+    if (requestDto.getOmobilityIds().isEmpty()) {
+      return ForwardEwpApiResponseUtils.toSuccessResponseEntity(new ImobilityTorsGetResponseV2());
+    }
+
     EwpSuccessOperationResult<ImobilityTorsGetResponseV2> response =
         client.findByReceivingHeiIdAndOutgoingMobilityIds(
             requestDto.getReceivingHeiId(), requestDto.getOmobilityIds());

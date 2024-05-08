@@ -79,6 +79,10 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
   // NOTE: currently only allows to obtain by LOS IDs or LOS codes (not both simultaneously)
   private ResponseEntity<ForwardEwpApiResponseWithData<CoursesResponseV0>> getCourses(
       CoursesRequestDto requestDto) throws EwpClientErrorException {
+    if (requestDto.getLosIds().isEmpty() && requestDto.getLosCodes().isEmpty()) {
+      return ForwardEwpApiResponseUtils.toSuccessResponseEntity(new CoursesResponseV0());
+    }
+
     EwpSuccessOperationResult<CoursesResponseV0> coursesResponse;
     if (!requestDto.getLosIds().isEmpty()) {
       coursesResponse =

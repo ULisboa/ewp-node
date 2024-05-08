@@ -81,6 +81,10 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementsV1Controller extends
   findBySendingHeiIdAndOutgoingMobilityIds(
       @Valid ForwardEwpApiOutgoingMobilityLearningAgreementsGetRequestDto requestDto)
       throws EwpClientErrorException {
+    if (requestDto.getOmobilityIds().isEmpty()) {
+      return ForwardEwpApiResponseUtils.toSuccessResponseEntity(new OmobilityLasGetResponseV1());
+    }
+
     EwpSuccessOperationResult<OmobilityLasGetResponseV1> response =
         client.findBySendingHeiIdAndOutgoingMobilityIds(
             requestDto.getSendingHeiId(), requestDto.getOmobilityIds());
