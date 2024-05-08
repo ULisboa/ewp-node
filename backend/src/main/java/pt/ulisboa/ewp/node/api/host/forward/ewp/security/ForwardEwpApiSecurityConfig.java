@@ -1,10 +1,12 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.common.filter.security.logging.MDCAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.filter.ForwardEwpApiJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
@@ -12,8 +14,7 @@ import pt.ulisboa.ewp.node.domain.repository.host.forward.ewp.client.HostForward
 import pt.ulisboa.ewp.node.utils.http.converter.xml.Jaxb2HttpMessageConverter;
 
 @Configuration
-@Order(2)
-public class ForwardEwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
+public class ForwardEwpApiSecurityConfig {
 
   private final HostForwardEwpApiClientRepository repository;
 
@@ -25,8 +26,9 @@ public class ForwardEwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
     this.jaxb2HttpMessageConverter = jaxb2HttpMessageConverter;
   }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  @Bean
+  @Order(2)
+  public SecurityFilterChain forwardEwpFilterChain(HttpSecurity http) throws Exception {
     http.antMatcher(ForwardEwpApiConstants.API_BASE_URI + "**")
         .httpBasic()
         .realmName("API")
@@ -42,10 +44,12 @@ public class ForwardEwpApiSecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-    http.addFilter(
-        new ForwardEwpApiJwtTokenAuthenticationFilter(authenticationManager(), repository,
-            jaxb2HttpMessageConverter));
+    http.addFilterBefore(
+        new ForwardEwpApiJwtTokenAuthenticationFilter(repository, jaxb2HttpMessageConverter),
+        UsernamePasswordAuthenticationFilter.class);
     http.addFilterAfter(
         new MDCAuthenticationFilter(), ForwardEwpApiJwtTokenAuthenticationFilter.class);
+
+    return http.build();
   }
 }

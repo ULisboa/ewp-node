@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,7 +15,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiClientAuthenticationToken;
@@ -42,10 +42,9 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
   private final Jaxb2HttpMessageConverter jaxb2HttpMessageConverter;
 
   public ForwardEwpApiJwtTokenAuthenticationFilter(
-      AuthenticationManager authenticationManager,
       HostForwardEwpApiClientRepository clientRepository,
       Jaxb2HttpMessageConverter jaxb2HttpMessageConverter) {
-    super(authenticationManager, true);
+    super(true);
     this.clientRepository = clientRepository;
     this.jaxb2HttpMessageConverter = jaxb2HttpMessageConverter;
   }
@@ -114,7 +113,7 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
       headers.set(HttpHeaders.CONTENT_TYPE, mediaType.toString());
 
       this.jaxb2HttpMessageConverter.writeToResult(object, headers, result);
-      return byteArrayOutputStream.toString("UTF-8");
+      return byteArrayOutputStream.toString(StandardCharsets.UTF_8);
 
     } else {
       throw new IllegalArgumentException("Unsupported media type: " + mediaType);

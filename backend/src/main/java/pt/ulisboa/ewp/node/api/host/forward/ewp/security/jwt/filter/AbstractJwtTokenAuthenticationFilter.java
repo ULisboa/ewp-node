@@ -11,12 +11,11 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.service.messaging.MessageService;
 import pt.ulisboa.ewp.node.utils.LoggerUtils;
@@ -28,20 +27,17 @@ import pt.ulisboa.ewp.node.utils.messaging.Severity;
  *
  * <p>Token verification is done using HMAC256 algorithm.
  */
-public abstract class AbstractJwtTokenAuthenticationFilter extends BasicAuthenticationFilter {
+public abstract class AbstractJwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
   private final boolean isTokenRequired;
   private String tokenSecret;
 
-  public AbstractJwtTokenAuthenticationFilter(
-      AuthenticationManager authenticationManager, boolean isTokenRequired, String tokenSecret) {
-    this(authenticationManager, isTokenRequired);
+  public AbstractJwtTokenAuthenticationFilter(boolean isTokenRequired, String tokenSecret) {
+    this(isTokenRequired);
     this.tokenSecret = tokenSecret;
   }
 
-  public AbstractJwtTokenAuthenticationFilter(
-      AuthenticationManager authenticationManager, boolean isTokenRequired) {
-    super(authenticationManager);
+  public AbstractJwtTokenAuthenticationFilter(boolean isTokenRequired) {
     this.isTokenRequired = isTokenRequired;
   }
 
@@ -153,9 +149,11 @@ public abstract class AbstractJwtTokenAuthenticationFilter extends BasicAuthenti
     return Optional.ofNullable(tokenSecret);
   }
 
-  @Override
-  protected abstract void onUnsuccessfulAuthentication(
-      HttpServletRequest request, HttpServletResponse response, AuthenticationException failed);
+  protected void onSuccessfulAuthentication(
+      HttpServletRequest request, HttpServletResponse response, Authentication authResult) {}
+
+  protected void onUnsuccessfulAuthentication(
+      HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {}
 
   protected void throwAuthenticationErrorCode(String errorCode) throws AuthenticationException {
     throwAuthenticationError(MessageResolver.getInstance().get(errorCode));

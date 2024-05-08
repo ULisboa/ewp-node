@@ -5,12 +5,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,8 +26,7 @@ import pt.ulisboa.ewp.node.api.admin.utils.AdminApiConstants;
 
 @Configuration
 @ConditionalOnProperty(value = "admin.security.password")
-@Order(6)
-public class AdminApiSecurityConfig extends WebSecurityConfigurerAdapter {
+public class AdminApiSecurityConfig {
 
   private static final Logger LOG = LoggerFactory.getLogger(AdminApiSecurityConfig.class);
 
@@ -49,8 +51,9 @@ public class AdminApiSecurityConfig extends WebSecurityConfigurerAdapter {
     this.logoutSuccessHandler = logoutSuccessHandler;
   }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  @Bean
+  @Order(6)
+  public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
     LOG.info("Initializing security for Admin endpoints");
 
     http.antMatcher(AdminApiConstants.API_BASE_URI + "**")
@@ -60,6 +63,7 @@ public class AdminApiSecurityConfig extends WebSecurityConfigurerAdapter {
         .anyRequest()
         .hasRole(ROLE_ADMIN)
         .and()
+        .userDetailsService(inMemoryUserDetailsManager())
         .formLogin(
             formLogin ->
                 formLogin
@@ -81,11 +85,14 @@ public class AdminApiSecurityConfig extends WebSecurityConfigurerAdapter {
                     new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
         .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+    return http.build();
   }
 
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.inMemoryAuthentication().withUser(username).password(password).roles(ROLE_ADMIN);
+  private InMemoryUserDetailsManager inMemoryUserDetailsManager() {
+    UserDetails userDetails =
+        User.withUsername(username).password(password).roles(ROLE_ADMIN).build();
+    return new InMemoryUserDetailsManager(userDetails);
   }
 
   private CorsConfigurationSource corsConfigurationSource() {
