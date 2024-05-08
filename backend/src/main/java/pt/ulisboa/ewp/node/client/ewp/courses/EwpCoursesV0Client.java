@@ -9,6 +9,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.courses.ForwardEwpApiCourses
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpCourseApiConfiguration;
@@ -41,14 +42,16 @@ public class EwpCoursesV0Client {
       throws EwpClientErrorException {
     EwpCourseApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
-    queryParams.param(EwpApiParamConstants.LOS_ID, losIds);
-    queryParams.param(EwpApiParamConstants.LOIS_BEFORE, loisBeforeDate);
-    queryParams.param(EwpApiParamConstants.LOIS_AFTER, loisAfterDate);
-    queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
+    HttpParams bodyParams = new HttpParams();
+    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    bodyParams.param(EwpApiParamConstants.LOS_ID, losIds);
+    bodyParams.param(EwpApiParamConstants.LOIS_BEFORE, loisBeforeDate);
+    bodyParams.param(EwpApiParamConstants.LOIS_AFTER, loisAfterDate);
+    bodyParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
 
-    EwpRequest request = EwpRequest.createGet(api, "", api.getUrl(), queryParams);
+    EwpRequest request =
+        EwpRequest.createPost(
+            api, "", api.getUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, CoursesResponseV0.class);
   }
 
@@ -61,14 +64,16 @@ public class EwpCoursesV0Client {
       throws EwpClientErrorException {
     EwpCourseApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
-    queryParams.param(EwpApiParamConstants.LOS_CODE, losCodes);
-    queryParams.param(EwpApiParamConstants.LOIS_BEFORE, loisBeforeDate);
-    queryParams.param(EwpApiParamConstants.LOIS_AFTER, loisAfterDate);
-    queryParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
+    HttpParams bodyParams = new HttpParams();
+    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    bodyParams.param(EwpApiParamConstants.LOS_CODE, losCodes);
+    bodyParams.param(EwpApiParamConstants.LOIS_BEFORE, loisBeforeDate);
+    bodyParams.param(EwpApiParamConstants.LOIS_AFTER, loisAfterDate);
+    bodyParams.param(EwpApiParamConstants.LOS_AT_DATE, losAtDate);
 
-    EwpRequest request = EwpRequest.createGet(api, "", api.getUrl(), queryParams);
+    EwpRequest request =
+        EwpRequest.createPost(
+            api, "", api.getUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, CoursesResponseV0.class);
   }
 

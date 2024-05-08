@@ -8,6 +8,7 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ounits.ForwardEwpApiOrganiza
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
+import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.EwpOrganizationalUnitApiConfiguration;
@@ -39,11 +40,13 @@ public class EwpOrganizationalUnitsV2Client {
       throws EwpClientErrorException {
     EwpOrganizationalUnitApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
-    queryParams.param(EwpApiParamConstants.OUNIT_ID, organizationalUnitIds);
+    HttpParams bodyParams = new HttpParams();
+    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    bodyParams.param(EwpApiParamConstants.OUNIT_ID, organizationalUnitIds);
 
-    EwpRequest request = EwpRequest.createGet(api, "", api.getUrl(), queryParams);
+    EwpRequest request =
+        EwpRequest.createPost(
+            api, "", api.getUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, OunitsResponseV2.class);
   }
 
@@ -52,11 +55,13 @@ public class EwpOrganizationalUnitsV2Client {
       throws EwpClientErrorException {
     EwpOrganizationalUnitApiConfiguration api = getApiConfigurationForHeiId(heiId);
 
-    HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
-    queryParams.param(EwpApiParamConstants.OUNIT_CODE, organizationalUnitCodes);
+    HttpParams bodyParams = new HttpParams();
+    bodyParams.param(EwpApiParamConstants.HEI_ID, heiId);
+    bodyParams.param(EwpApiParamConstants.OUNIT_CODE, organizationalUnitCodes);
 
-    EwpRequest request = EwpRequest.createGet(api, "", api.getUrl(), queryParams);
+    EwpRequest request =
+        EwpRequest.createPost(
+            api, "", api.getUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
     return ewpHttpClient.execute(request, OunitsResponseV2.class);
   }
 
