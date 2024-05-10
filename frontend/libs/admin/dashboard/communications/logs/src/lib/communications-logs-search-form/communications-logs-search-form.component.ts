@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, UntypedFormArray, Validators } from '@angular/forms';
 
 @Component({
@@ -6,8 +6,9 @@ import { FormBuilder, UntypedFormArray, Validators } from '@angular/forms';
   templateUrl: './communications-logs-search-form.component.html',
   styleUrl: './communications-logs-search-form.component.scss',
 })
-export class CommunicationsLogsSearchFormComponent {
+export class CommunicationsLogsSearchFormComponent implements AfterViewInit {
 
+  FILTER_TYPE_COMMUNICATION_LOG_IS_ROOT = 'COMMUNICATION-LOG-IS-ROOT';
   FILTER_TYPE_HTTP_COMMUNICATION_FORM_PARAMETER_STARTS_WITH_VALUE = 'HTTP-COMMUNICATION-FORM-PARAMETER-STARTS-WITH-VALUE';
   FILTER_TYPE_HTTP_COMMUNICATION_RESPONSE_WITH_STATUS_CODE = 'HTTP-COMMUNICATION-RESPONSE-WITH-STATUS-CODE';
 
@@ -20,6 +21,7 @@ export class CommunicationsLogsSearchFormComponent {
   });
 
   filterTypes: { name: string, value: string }[] = [
+    { name: 'Communication log is a root (has no parent communication defined)', value: this.FILTER_TYPE_COMMUNICATION_LOG_IS_ROOT },
     { name: 'HTTP Request has form parameter with value', value: this.FILTER_TYPE_HTTP_COMMUNICATION_FORM_PARAMETER_STARTS_WITH_VALUE },
     { name: 'HTTP Response has a specific status code', value: this.FILTER_TYPE_HTTP_COMMUNICATION_RESPONSE_WITH_STATUS_CODE }
   ];
@@ -37,15 +39,26 @@ export class CommunicationsLogsSearchFormComponent {
 
   constructor(private formBuilder: FormBuilder) {}
 
+  ngAfterViewInit() {
+    // NOTE setTimeout is used to skip a tick so there is no error of component changed on rendering
+    setTimeout(() => {
+      this.addSubFilter(this.FILTER_TYPE_COMMUNICATION_LOG_IS_ROOT);
+      this.search();
+    });
+  }
+
   get subFilters() {
     return this.searchForm.controls['subFilters'] as UntypedFormArray;
   }
 
-  addSubFilter() {
+  addSubFilter(type?: string) {
     const filterForm = this.formBuilder.group({
       type: this.formBuilder.control('', [Validators.required]),
       parameter: this.formBuilder.control('', []),
       value: this.formBuilder.control('', [])
+    });
+    filterForm.patchValue({
+      type: type
     });
 
     this.subFilters.push(filterForm);

@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogEndProcessingBeforeOrEqualDateTimeFilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogIsRootFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogStartProcessingAfterOrEqualDateTimeFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogTypeIsOneOfSetFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.HttpCommunicationFormParameterStartsWithValueFilterDto;
@@ -35,6 +36,9 @@ import pt.ulisboa.ewp.node.domain.dto.filter.field.LessThanOrEqualFieldFilterDto
       @JsonSubTypes.Type(value = InFieldFilterDto.class, name = "IN"),
       @JsonSubTypes.Type(value = LessThanFieldFilterDto.class, name = "LESS-THAN"),
       @JsonSubTypes.Type(value = LessThanOrEqualFieldFilterDto.class, name = "LESS-THAN-OR-EQUAL"),
+      @JsonSubTypes.Type(
+          value = CommunicationLogIsRootFilterDto.class,
+          name = "COMMUNICATION-LOG-IS-ROOT"),
       @JsonSubTypes.Type(
           value = CommunicationLogTypeIsOneOfSetFilterDto.class,
           name = "COMMUNICATION-LOG-TYPE-IS-ONE-OF-SET"),
