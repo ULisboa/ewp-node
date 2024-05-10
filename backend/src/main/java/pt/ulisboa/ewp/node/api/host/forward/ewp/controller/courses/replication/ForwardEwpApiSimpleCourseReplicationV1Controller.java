@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -40,17 +41,19 @@ public class ForwardEwpApiSimpleCourseReplicationV1Controller
     this.client = client;
   }
 
+  @ForwardEwpApiEndpoint(api = "simple-course-replication", apiMajorVersion = 1)
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Simple Course Replication Forward API.",
       tags = {"Simple Course Replication"})
   public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponseV1>>
-  simpleCourseReplicationGet(
-      @Valid @ParameterObject @RequestParam SimpleCourseReplicationRequestDto requestDto)
-      throws EwpClientErrorException {
+      simpleCourseReplicationGet(
+          @Valid @ParameterObject @RequestParam SimpleCourseReplicationRequestDto requestDto)
+          throws EwpClientErrorException {
     return getCourses(requestDto);
   }
 
+  @ForwardEwpApiEndpoint(api = "simple-course-replication", apiMajorVersion = 1)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)
@@ -58,8 +61,8 @@ public class ForwardEwpApiSimpleCourseReplicationV1Controller
       summary = "EWP Simple Course Replication Forward API.",
       tags = {"Simple Course Replication"})
   public ResponseEntity<ForwardEwpApiResponseWithData<CourseReplicationResponseV1>>
-  simpleCourseReplicationPost(@Valid SimpleCourseReplicationRequestDto requestDto)
-      throws EwpClientErrorException {
+      simpleCourseReplicationPost(@Valid SimpleCourseReplicationRequestDto requestDto)
+          throws EwpClientErrorException {
     return getCourses(requestDto);
   }
 

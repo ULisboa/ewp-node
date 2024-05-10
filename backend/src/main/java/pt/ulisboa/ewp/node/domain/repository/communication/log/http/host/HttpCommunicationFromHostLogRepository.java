@@ -37,21 +37,29 @@ public class HttpCommunicationFromHostLogRepository
   public HttpCommunicationFromHostLog create(
       Host host,
       HostForwardEwpApiClient hostForwardEwpApiClient,
+      String apiName,
+      Integer apiMajorVersion,
+      String endpointName,
       HttpRequestLog request,
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
       ZonedDateTime endProcessingDateTime,
       String observations,
-      HttpCommunicationLog parentCommunication) throws DomainException, IOException {
+      HttpCommunicationLog parentCommunication)
+      throws DomainException, IOException {
     HttpCommunicationFromHostLog communicationFromHostLog =
         new HttpCommunicationFromHostLog(
             host,
             hostForwardEwpApiClient,
+            apiName,
+            apiMajorVersion,
+            endpointName,
             request,
             response,
             startProcessingDateTime,
             endProcessingDateTime,
-            observations, parentCommunication);
+            observations,
+            parentCommunication);
 
     if (persist(communicationFromHostLog)) {
       return communicationFromHostLog;

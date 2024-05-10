@@ -7,6 +7,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
@@ -36,11 +37,12 @@ public class ForwardEwpApiIncomingMobilityToRCnrController extends AbstractForwa
     this.changeNotificationRepository = changeNotificationRepository;
   }
 
+  @ForwardEwpApiEndpoint(api = "imobility-tor-cnr")
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)
-  public ResponseEntity<ForwardEwpApiResponse>
-  sendChangeNotification(@Valid ForwardEwpApiIncomingMobilityToRCnrRequestDto requestDto) {
+  public ResponseEntity<ForwardEwpApiResponse> sendChangeNotification(
+      @Valid ForwardEwpApiIncomingMobilityToRCnrRequestDto requestDto) {
     CommunicationLog currentCommunicationLog =
         CommunicationContextHolder.getContext().getCurrentCommunicationLog();
     for (String outgoingMobilityId : requestDto.getOutgoingMobilityIds()) {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -41,22 +42,24 @@ public class ForwardEwpApiOutgoingMobilitiesV1Controller extends AbstractForward
     this.client = client;
   }
 
+  @ForwardEwpApiEndpoint(api = "omobilities", apiMajorVersion = 1, endpoint = "specification")
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<
-      ForwardEwpApiResponseWithData<ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO>>
-  getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
+          ForwardEwpApiResponseWithData<ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO>>
+      getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
     return ResponseEntity.ok(
         ForwardEwpApiResponseUtils
             .createResponseWithMessagesAndData(client.getApiSpecification(heiId)));
   }
 
+  @ForwardEwpApiEndpoint(api = "omobilities", apiMajorVersion = 1, endpoint = "index")
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
       value = "/index")
   public ResponseEntity<ForwardEwpApiResponseWithData<OmobilitiesIndexResponseV1>>
-  findAllBySendingHeiId(@Valid ForwardEwpApiOutgoingMobilitiesIndexRequestDto requestDto)
-      throws EwpClientErrorException {
+      findAllBySendingHeiId(@Valid ForwardEwpApiOutgoingMobilitiesIndexRequestDto requestDto)
+          throws EwpClientErrorException {
     EwpSuccessOperationResult<OmobilitiesIndexResponseV1> response =
         client.findAllBySendingHeiId(
             requestDto.getSendingHeiId(),
@@ -66,14 +69,15 @@ public class ForwardEwpApiOutgoingMobilitiesV1Controller extends AbstractForward
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
+  @ForwardEwpApiEndpoint(api = "omobilities", apiMajorVersion = 1, endpoint = "get")
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
       value = "/get")
   public ResponseEntity<ForwardEwpApiResponseWithData<OmobilitiesGetResponseV1>>
-  findBySendingHeiIdAndOmobilityIds(
-      @Valid ForwardEwpApiOutgoingMobilitiesGetRequestDto requestDto)
-      throws EwpClientErrorException {
+      findBySendingHeiIdAndOmobilityIds(
+          @Valid ForwardEwpApiOutgoingMobilitiesGetRequestDto requestDto)
+          throws EwpClientErrorException {
     if (requestDto.getOmobilityIds().isEmpty()) {
       return ForwardEwpApiResponseUtils.toSuccessResponseEntity(new OmobilitiesGetResponseV1());
     }

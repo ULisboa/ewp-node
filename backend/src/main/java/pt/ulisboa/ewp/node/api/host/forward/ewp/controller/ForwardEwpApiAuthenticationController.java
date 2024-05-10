@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.auth.ForwardEwpApiAuthenticationTestResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiClientAuthenticationToken;
@@ -26,13 +27,14 @@ public class ForwardEwpApiAuthenticationController extends AbstractForwardEwpApi
     super(registryClient);
   }
 
+  @ForwardEwpApiEndpoint(api = "authentication", endpoint = "test")
   @GetMapping(value = "/test", produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Authentication test operation Forward API",
       description = "Used for testing authentication of EWP Forward APIs.",
       tags = {"Authentication"})
   public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiAuthenticationTestResponseDTO>>
-  testAuthentication(ForwardEwpApiClientAuthenticationToken authentication) {
+      testAuthentication(ForwardEwpApiClientAuthenticationToken authentication) {
     ForwardEwpApiAuthenticationTestResponseDTO response =
         new ForwardEwpApiAuthenticationTestResponseDTO();
     response.setHostCode(

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -62,6 +63,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV7Controller
     this.hashService = hashService;
   }
 
+  @ForwardEwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "specification")
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<
           ForwardEwpApiResponseWithData<
@@ -72,6 +74,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV7Controller
             client.getApiSpecification(heiId)));
   }
 
+  @ForwardEwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "index")
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
@@ -86,13 +89,15 @@ public class ForwardEwpApiInterInstitutionalAgreementsV7Controller
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
+  @ForwardEwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "get")
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
       value = "/get")
   public ResponseEntity<
           ForwardEwpApiResponseWithData<ForwardEwpApiInterInstitutionalAgreementsV7GetResponseDto>>
-      findByHeiIdAndIiaIdsOrCodes(@Valid ForwardEwpApiInterInstitutionalAgreementsV7GetRequestDto requestDto)
+      findByHeiIdAndIiaIdsOrCodes(
+          @Valid ForwardEwpApiInterInstitutionalAgreementsV7GetRequestDto requestDto)
           throws EwpClientErrorException, HashComparisonException {
     List<String> iiaIds = requestDto.getIiaIds();
     EwpSuccessOperationResult<IiasGetResponseV7> response = client.findByHeiIdAndIiaIds(requestDto.getHeiId(), iiaIds);
@@ -120,6 +125,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV7Controller
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(getResponse);
   }
 
+  @ForwardEwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "hashes-calculate")
   @PostMapping(
       consumes = MediaType.APPLICATION_XML_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
@@ -138,6 +144,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV7Controller
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
+  @ForwardEwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "hashes-calculate")
   @PostMapping(
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.files.FileResponse;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -39,6 +40,7 @@ public class ForwardEwpApiFilesV1Controller extends AbstractForwardEwpApiControl
     this.client = client;
   }
 
+  @ForwardEwpApiEndpoint(api = "file", apiMajorVersion = 1)
   @GetMapping
   @Operation(
       summary = "EWP Files Forward API.",

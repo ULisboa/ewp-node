@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -41,6 +42,7 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
     this.client = client;
   }
 
+  @ForwardEwpApiEndpoint(api = "courses", apiMajorVersion = 0, endpoint = "specification")
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Returns the specification for the API when considering a given HEI ID.",
@@ -55,6 +57,7 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
             client.getApiSpecification(heiId)));
   }
 
+  @ForwardEwpApiEndpoint(api = "courses", apiMajorVersion = 0)
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Courses Forward API.",
@@ -65,6 +68,7 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
     return getCourses(requestDto);
   }
 
+  @ForwardEwpApiEndpoint(api = "courses", apiMajorVersion = 0)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)

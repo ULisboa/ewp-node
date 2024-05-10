@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiHeiIdsResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
@@ -28,12 +29,13 @@ public class ForwardEwpApiInstitutionsGeneralController {
     this.registryClient = registryClient;
   }
 
+  @ForwardEwpApiEndpoint(api = "institutions", endpoint = "hei-ids")
   @GetMapping(value = "/hei-ids", produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Institutions Forward API.",
       tags = {"Institutions"})
   public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiHeiIdsResponseDTO>>
-  getAllHeiIds() {
+      getAllHeiIds() {
     Collection<String> heiIds = registryClient.getAllHeiIds();
     return ResponseEntity.ok(
         ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(

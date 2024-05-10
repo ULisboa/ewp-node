@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -45,23 +46,26 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementsV1Controller extends
     this.client = client;
   }
 
+  @ForwardEwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "specification")
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<
-      ForwardEwpApiResponseWithData<ForwardEwpApiOutgoingMobilityLearningAgreementsApiSpecificationResponseDTO>>
-  getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
+          ForwardEwpApiResponseWithData<
+              ForwardEwpApiOutgoingMobilityLearningAgreementsApiSpecificationResponseDTO>>
+      getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
     return ResponseEntity.ok(
         ForwardEwpApiResponseUtils
             .createResponseWithMessagesAndData(client.getApiSpecification(heiId)));
   }
 
+  @ForwardEwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "index")
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
       value = "/index")
   public ResponseEntity<ForwardEwpApiResponseWithData<OmobilityLasIndexResponseV1>>
-  findOutgoingMobilityIdsWithLearningAgreement(
-      @Valid ForwardEwpApiOutgoingMobilityLearningAgreementsIndexRequestDto requestDto)
-      throws EwpClientErrorException {
+      findOutgoingMobilityIdsWithLearningAgreement(
+          @Valid ForwardEwpApiOutgoingMobilityLearningAgreementsIndexRequestDto requestDto)
+          throws EwpClientErrorException {
     EwpSuccessOperationResult<OmobilityLasIndexResponseV1> response =
         client.findOutgoingMobilityIdsWithLearningAgreement(
             requestDto.getSendingHeiId(),
@@ -73,14 +77,15 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementsV1Controller extends
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
+  @ForwardEwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "get")
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
       value = "/get")
   public ResponseEntity<ForwardEwpApiResponseWithData<OmobilityLasGetResponseV1>>
-  findBySendingHeiIdAndOutgoingMobilityIds(
-      @Valid ForwardEwpApiOutgoingMobilityLearningAgreementsGetRequestDto requestDto)
-      throws EwpClientErrorException {
+      findBySendingHeiIdAndOutgoingMobilityIds(
+          @Valid ForwardEwpApiOutgoingMobilityLearningAgreementsGetRequestDto requestDto)
+          throws EwpClientErrorException {
     if (requestDto.getOmobilityIds().isEmpty()) {
       return ForwardEwpApiResponseUtils.toSuccessResponseEntity(new OmobilityLasGetResponseV1());
     }
@@ -91,14 +96,15 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementsV1Controller extends
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
+  @ForwardEwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "update")
   @PostMapping(
       consumes = MediaType.APPLICATION_XML_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
       value = "/update")
   public ResponseEntity<ForwardEwpApiResponseWithData<OmobilityLasUpdateResponseV1>>
-  updateOutgoingMobilityLearningAgreement(
-      @Valid @RequestBody OmobilityLasUpdateRequestV1 updateData)
-      throws EwpClientErrorException {
+      updateOutgoingMobilityLearningAgreement(
+          @Valid @RequestBody OmobilityLasUpdateRequestV1 updateData)
+          throws EwpClientErrorException {
     EwpSuccessOperationResult<OmobilityLasUpdateResponseV1> response =
         client.updateOutgoingMobilityLearningAgreement(updateData);
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);

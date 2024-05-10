@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -39,6 +40,7 @@ public class ForwardEwpApiIncomingMobilitiesV1Controller extends AbstractForward
     this.client = client;
   }
 
+  @ForwardEwpApiEndpoint(api = "imobilities", apiMajorVersion = 1, endpoint = "specification")
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<
           ForwardEwpApiResponseWithData<ForwardEwpApiIncomingMobilitiesApiSpecificationResponseDTO>>
@@ -48,14 +50,15 @@ public class ForwardEwpApiIncomingMobilitiesV1Controller extends AbstractForward
             client.getApiSpecification(heiId)));
   }
 
+  @ForwardEwpApiEndpoint(api = "imobilities", apiMajorVersion = 1, endpoint = "get")
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
       value = "/get")
   public ResponseEntity<ForwardEwpApiResponseWithData<ImobilitiesGetResponseV1>>
-  findByReceivingHeiIdAndOmobilityIds(
-      @Valid ForwardEwpApiIncomingMobilitiesGetRequestDto requestDto)
-      throws EwpClientErrorException {
+      findByReceivingHeiIdAndOmobilityIds(
+          @Valid ForwardEwpApiIncomingMobilitiesGetRequestDto requestDto)
+          throws EwpClientErrorException {
     if (requestDto.getOmobilityIds().isEmpty()) {
       return ForwardEwpApiResponseUtils.toSuccessResponseEntity(new ImobilitiesGetResponseV1());
     }

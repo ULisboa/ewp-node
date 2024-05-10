@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
@@ -40,6 +41,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsApprovalV2Controller
     this.client = client;
   }
 
+  @ForwardEwpApiEndpoint(api = "iias-approval", apiMajorVersion = 2, endpoint = "specification")
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<
           ForwardEwpApiResponseWithData<
@@ -50,6 +52,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsApprovalV2Controller
             client.getApiSpecification(heiId)));
   }
 
+  @ForwardEwpApiEndpoint(api = "iias-approval", apiMajorVersion = 2)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)

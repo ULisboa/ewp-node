@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.api.host.forward.ewp.filter;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,8 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerExecutionChain;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import org.springframework.web.util.ServletRequestPathUtils;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.filter.ForwardEwpApiJwtTokenAuthenticationFilter;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.wrapper.ForwardEwpApiHttpRequestWrapper;
@@ -36,9 +42,13 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
 
   private static final Logger LOG = LoggerFactory.getLogger(ForwardEwpApiRequestFilter.class);
 
-  private HostHttpCommunicationLogService hostCommunicationLogService;
+  private final RequestMappingHandlerMapping requestMappingHandlerMapping;
+  private final HostHttpCommunicationLogService hostCommunicationLogService;
 
-  public ForwardEwpApiRequestFilter(HostHttpCommunicationLogService hostCommunicationLogService) {
+  public ForwardEwpApiRequestFilter(
+      RequestMappingHandlerMapping requestMappingHandlerMapping,
+      HostHttpCommunicationLogService hostCommunicationLogService) {
+    this.requestMappingHandlerMapping = requestMappingHandlerMapping;
     this.hostCommunicationLogService = hostCommunicationLogService;
   }
 
@@ -57,8 +67,12 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
     ContentCachingResponseWrapper responseWrapper =
         new ContentCachingResponseWrapper(response);
 
-    HttpCommunicationFromHostLog newCommunicationLog = createCommunicationLog(
-        startProcessingDateTime, requestWrapper);
+    Optional<ForwardEwpApiEndpoint> forwardEwpApiEndpointOptional =
+        getForwardEwpApiEndpointOfHandlerMethod(request);
+
+    HttpCommunicationFromHostLog newCommunicationLog =
+        createCommunicationLog(
+            forwardEwpApiEndpointOptional.orElse(null), startProcessingDateTime, requestWrapper);
     CommunicationContextHolder.setContext(new CommunicationContext(null, newCommunicationLog));
 
     filterChain.doFilter(requestWrapper, responseWrapper);
@@ -93,19 +107,63 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
   }
 
   private HttpCommunicationFromHostLog createCommunicationLog(
-      ZonedDateTime startProcessingDateTime, ContentCachingRequestWrapper requestWrapper) {
+      ForwardEwpApiEndpoint forwardEwpApiEndpoint,
+      ZonedDateTime startProcessingDateTime,
+      ContentCachingRequestWrapper requestWrapper) {
     HttpCommunicationFromHostLog newCommunicationLog;
     try {
-      newCommunicationLog = hostCommunicationLogService.logCommunicationFromHost(
-          null, null,
-          requestWrapper,
-          null,
-          startProcessingDateTime,
-          null,
-          "", null);
+      newCommunicationLog =
+          hostCommunicationLogService.logCommunicationFromHost(
+              null,
+              null,
+              forwardEwpApiEndpoint,
+              requestWrapper,
+              null,
+              startProcessingDateTime,
+              null,
+              "",
+              null);
     } catch (DomainException | IOException e) {
       throw new IllegalStateException(e);
     }
     return newCommunicationLog;
+  }
+
+  private Optional<ForwardEwpApiEndpoint> getForwardEwpApiEndpointOfHandlerMethod(
+      HttpServletRequest request) {
+    try {
+      if (!ServletRequestPathUtils.hasParsedRequestPath(request)) {
+        ServletRequestPathUtils.parseAndCache(request);
+      }
+      HandlerExecutionChain handlerExecutionChain =
+          requestMappingHandlerMapping.getHandler(request);
+      if (handlerExecutionChain == null) {
+        return Optional.empty();
+      }
+      Object handler = handlerExecutionChain.getHandler();
+      if (handler instanceof HandlerMethod) {
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        ForwardEwpApiEndpoint apiEndpoint =
+            handlerMethod.getMethodAnnotation(ForwardEwpApiEndpoint.class);
+        if (apiEndpoint == null) {
+          LOG.warn(
+              "Found handler method ({}) but could not find annotation @ForwardEwpApiEndpoint",
+              handlerMethod);
+          return Optional.empty();
+        }
+        return Optional.of(apiEndpoint);
+
+      } else {
+        LOG.warn(
+            "Failed to obtain the handler method (URL: {})", request.getRequestURL().toString());
+        return Optional.empty();
+      }
+    } catch (Exception e) {
+      LOG.warn(
+          "Failed to get Forward EWP API endpoint information for the request (URL: {}): {}",
+          request.getRequestURL().toString(),
+          e.getMessage());
+      return Optional.empty();
+    }
   }
 }
