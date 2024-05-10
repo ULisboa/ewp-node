@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
@@ -46,18 +47,26 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementsV1Controller extends
     this.client = client;
   }
 
-  @ForwardEwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "specification")
+  @ForwardEwpApiEndpoint(
+      api = "omobility-las",
+      apiMajorVersion = 1,
+      endpoint = "specification",
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<
           ForwardEwpApiResponseWithData<
               ForwardEwpApiOutgoingMobilityLearningAgreementsApiSpecificationResponseDTO>>
-      getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
+      getApiSpecification(@NotEmpty @RequestParam(EwpApiParamConstants.HEI_ID) String heiId) {
     return ResponseEntity.ok(
         ForwardEwpApiResponseUtils
             .createResponseWithMessagesAndData(client.getApiSpecification(heiId)));
   }
 
-  @ForwardEwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "index")
+  @ForwardEwpApiEndpoint(
+      api = "omobility-las",
+      apiMajorVersion = 1,
+      endpoint = "index",
+      targetHeiIdParameterName = EwpApiParamConstants.SENDING_HEI_ID)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
@@ -77,7 +86,11 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementsV1Controller extends
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
-  @ForwardEwpApiEndpoint(api = "omobility-las", apiMajorVersion = 1, endpoint = "get")
+  @ForwardEwpApiEndpoint(
+      api = "omobility-las",
+      apiMajorVersion = 1,
+      endpoint = "get",
+      targetHeiIdParameterName = EwpApiParamConstants.SENDING_HEI_ID)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,

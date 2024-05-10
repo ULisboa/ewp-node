@@ -26,6 +26,7 @@ public class HttpCommunicationFromHostLog extends HostHttpCommunicationLog {
   private String apiName;
   private Integer apiMajorVersion;
   private String endpointName;
+  private String targetHeiId;
 
   public HttpCommunicationFromHostLog() {
   }
@@ -36,6 +37,7 @@ public class HttpCommunicationFromHostLog extends HostHttpCommunicationLog {
       String apiName,
       Integer apiMajorVersion,
       String endpointName,
+      String targetHeiId,
       HttpRequestLog request,
       HttpResponseLog response,
       ZonedDateTime startProcessingDateTime,
@@ -52,6 +54,7 @@ public class HttpCommunicationFromHostLog extends HostHttpCommunicationLog {
         observations,
         parentCommunication);
     this.hostForwardEwpApiClient = hostForwardEwpApiClient;
+    this.targetHeiId = targetHeiId;
     this.apiName = apiName;
     this.apiMajorVersion = apiMajorVersion;
     this.endpointName = endpointName;
@@ -95,6 +98,15 @@ public class HttpCommunicationFromHostLog extends HostHttpCommunicationLog {
     this.endpointName = endpointName;
   }
 
+  @Column(name = "target_hei_id")
+  public String getTargetHeiId() {
+    return targetHeiId;
+  }
+
+  public void setTargetHeiId(String targetHeiId) {
+    this.targetHeiId = targetHeiId;
+  }
+
   @Override
   @Transient
   public String getSource() {
@@ -109,6 +121,12 @@ public class HttpCommunicationFromHostLog extends HostHttpCommunicationLog {
   public String getTarget() {
     if (!StringUtils.isEmpty(getApiName())) {
       StringBuilder stringBuilder = new StringBuilder();
+      if (!StringUtils.isEmpty(getTargetHeiId())) {
+        stringBuilder.append(getTargetHeiId());
+      }
+      if (stringBuilder.length() > 0) {
+        stringBuilder.append(":");
+      }
       stringBuilder.append(getApiName());
       if (getApiMajorVersion() != null) {
         stringBuilder.append("[").append(getApiMajorVersion()).append("]");

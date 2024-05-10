@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
@@ -42,7 +43,11 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
     this.client = client;
   }
 
-  @ForwardEwpApiEndpoint(api = "courses", apiMajorVersion = 0, endpoint = "specification")
+  @ForwardEwpApiEndpoint(
+      api = "courses",
+      apiMajorVersion = 0,
+      endpoint = "specification",
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Returns the specification for the API when considering a given HEI ID.",
@@ -51,13 +56,16 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
       tags = {"Courses"})
   public ResponseEntity<
           ForwardEwpApiResponseWithData<ForwardEwpApiCoursesApiSpecificationResponseDTO>>
-      getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
+      getApiSpecification(@NotEmpty @RequestParam(EwpApiParamConstants.HEI_ID) String heiId) {
     return ResponseEntity.ok(
         ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(
             client.getApiSpecification(heiId)));
   }
 
-  @ForwardEwpApiEndpoint(api = "courses", apiMajorVersion = 0)
+  @ForwardEwpApiEndpoint(
+      api = "courses",
+      apiMajorVersion = 0,
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Courses Forward API.",
@@ -68,7 +76,10 @@ public class ForwardEwpApiCoursesV0Controller extends AbstractForwardEwpApiContr
     return getCourses(requestDto);
   }
 
-  @ForwardEwpApiEndpoint(api = "courses", apiMajorVersion = 0)
+  @ForwardEwpApiEndpoint(
+      api = "courses",
+      apiMajorVersion = 0,
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)

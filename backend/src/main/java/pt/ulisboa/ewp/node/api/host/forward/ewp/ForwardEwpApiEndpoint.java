@@ -14,4 +14,11 @@ public @interface ForwardEwpApiEndpoint {
   int apiMajorVersion() default -1;
 
   String endpoint() default "";
+
+  /**
+   * The parameter name of the request from which is to be extracted the target HEI ID.
+   *
+   * @return The target HEI ID of the request.
+   */
+  String targetHeiIdParameterName() default "";
 }

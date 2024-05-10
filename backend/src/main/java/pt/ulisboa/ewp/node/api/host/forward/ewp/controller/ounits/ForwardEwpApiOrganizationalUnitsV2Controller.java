@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
@@ -42,7 +43,11 @@ public class ForwardEwpApiOrganizationalUnitsV2Controller extends AbstractForwar
     this.client = client;
   }
 
-  @ForwardEwpApiEndpoint(api = "ounits", apiMajorVersion = 2, endpoint = "specification")
+  @ForwardEwpApiEndpoint(
+      api = "ounits",
+      apiMajorVersion = 2,
+      endpoint = "specification",
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "Returns the specification for the API when considering a given HEI ID.",
@@ -52,13 +57,16 @@ public class ForwardEwpApiOrganizationalUnitsV2Controller extends AbstractForwar
   public ResponseEntity<
           ForwardEwpApiResponseWithData<
               ForwardEwpApiOrganizationalUnitsApiSpecificationResponseDTO>>
-      getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
+      getApiSpecification(@NotEmpty @RequestParam(EwpApiParamConstants.HEI_ID) String heiId) {
     return ResponseEntity.ok(
         ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(
             client.getApiSpecification(heiId)));
   }
 
-  @ForwardEwpApiEndpoint(api = "ounits", apiMajorVersion = 2)
+  @ForwardEwpApiEndpoint(
+      api = "ounits",
+      apiMajorVersion = 2,
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Organizational Units Forward API.",
@@ -69,7 +77,10 @@ public class ForwardEwpApiOrganizationalUnitsV2Controller extends AbstractForwar
     return getOrganizationalUnits(requestDto);
   }
 
-  @ForwardEwpApiEndpoint(api = "ounits", apiMajorVersion = 2)
+  @ForwardEwpApiEndpoint(
+      api = "ounits",
+      apiMajorVersion = 2,
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)

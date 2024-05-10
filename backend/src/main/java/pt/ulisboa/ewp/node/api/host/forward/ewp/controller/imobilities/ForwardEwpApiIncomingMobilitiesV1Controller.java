@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
@@ -40,17 +41,25 @@ public class ForwardEwpApiIncomingMobilitiesV1Controller extends AbstractForward
     this.client = client;
   }
 
-  @ForwardEwpApiEndpoint(api = "imobilities", apiMajorVersion = 1, endpoint = "specification")
+  @ForwardEwpApiEndpoint(
+      api = "imobilities",
+      apiMajorVersion = 1,
+      endpoint = "specification",
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<
           ForwardEwpApiResponseWithData<ForwardEwpApiIncomingMobilitiesApiSpecificationResponseDTO>>
-      getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
+      getApiSpecification(@NotEmpty @RequestParam(EwpApiParamConstants.HEI_ID) String heiId) {
     return ResponseEntity.ok(
         ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(
             client.getApiSpecification(heiId)));
   }
 
-  @ForwardEwpApiEndpoint(api = "imobilities", apiMajorVersion = 1, endpoint = "get")
+  @ForwardEwpApiEndpoint(
+      api = "imobilities",
+      apiMajorVersion = 1,
+      endpoint = "get",
+      targetHeiIdParameterName = EwpApiParamConstants.RECEIVING_HEI_ID)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,

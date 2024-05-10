@@ -7,6 +7,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -69,10 +70,17 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
 
     Optional<ForwardEwpApiEndpoint> forwardEwpApiEndpointOptional =
         getForwardEwpApiEndpointOfHandlerMethod(request);
+    ForwardEwpApiEndpoint forwardEwpApiEndpoint = forwardEwpApiEndpointOptional.orElse(null);
+
+    String targetHeiId = null;
+    if (forwardEwpApiEndpoint != null
+        && !StringUtils.isEmpty(forwardEwpApiEndpoint.targetHeiIdParameterName())) {
+      targetHeiId = request.getParameter(forwardEwpApiEndpoint.targetHeiIdParameterName());
+    }
 
     HttpCommunicationFromHostLog newCommunicationLog =
         createCommunicationLog(
-            forwardEwpApiEndpointOptional.orElse(null), startProcessingDateTime, requestWrapper);
+            forwardEwpApiEndpoint, targetHeiId, startProcessingDateTime, requestWrapper);
     CommunicationContextHolder.setContext(new CommunicationContext(null, newCommunicationLog));
 
     filterChain.doFilter(requestWrapper, responseWrapper);
@@ -108,6 +116,7 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
 
   private HttpCommunicationFromHostLog createCommunicationLog(
       ForwardEwpApiEndpoint forwardEwpApiEndpoint,
+      String targetHeiId,
       ZonedDateTime startProcessingDateTime,
       ContentCachingRequestWrapper requestWrapper) {
     HttpCommunicationFromHostLog newCommunicationLog;
@@ -117,6 +126,7 @@ public class ForwardEwpApiRequestFilter extends OncePerRequestFilter {
               null,
               null,
               forwardEwpApiEndpoint,
+              targetHeiId,
               requestWrapper,
               null,
               startProcessingDateTime,

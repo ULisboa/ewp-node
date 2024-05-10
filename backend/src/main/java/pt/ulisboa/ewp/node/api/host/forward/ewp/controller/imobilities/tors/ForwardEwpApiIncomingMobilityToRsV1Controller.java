@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
@@ -42,18 +43,26 @@ public class ForwardEwpApiIncomingMobilityToRsV1Controller extends AbstractForwa
     this.client = client;
   }
 
-  @ForwardEwpApiEndpoint(api = "imobility-tors", apiMajorVersion = 1, endpoint = "specification")
+  @ForwardEwpApiEndpoint(
+      api = "imobility-tors",
+      apiMajorVersion = 1,
+      endpoint = "specification",
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<
           ForwardEwpApiResponseWithData<
               ForwardEwpApiIncomingMobilityToRsApiSpecificationResponseDTO>>
-      getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
+      getApiSpecification(@NotEmpty @RequestParam(EwpApiParamConstants.HEI_ID) String heiId) {
     return ResponseEntity.ok(
         ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(
             client.getApiSpecification(heiId)));
   }
 
-  @ForwardEwpApiEndpoint(api = "imobility-tors", apiMajorVersion = 1, endpoint = "index")
+  @ForwardEwpApiEndpoint(
+      api = "imobility-tors",
+      apiMajorVersion = 1,
+      endpoint = "index",
+      targetHeiIdParameterName = EwpApiParamConstants.RECEIVING_HEI_ID)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
@@ -69,7 +78,11 @@ public class ForwardEwpApiIncomingMobilityToRsV1Controller extends AbstractForwa
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
-  @ForwardEwpApiEndpoint(api = "imobility-tors", apiMajorVersion = 1, endpoint = "get")
+  @ForwardEwpApiEndpoint(
+      api = "imobility-tors",
+      apiMajorVersion = 1,
+      endpoint = "get",
+      targetHeiIdParameterName = EwpApiParamConstants.RECEIVING_HEI_ID)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,

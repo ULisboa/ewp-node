@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
@@ -63,18 +64,26 @@ public class ForwardEwpApiInterInstitutionalAgreementsV7Controller
     this.hashService = hashService;
   }
 
-  @ForwardEwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "specification")
+  @ForwardEwpApiEndpoint(
+      api = "iias",
+      apiMajorVersion = 7,
+      endpoint = "specification",
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @GetMapping(value = "/specification", produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<
           ForwardEwpApiResponseWithData<
               ForwardEwpApiInterInstitutionalAgreementsApiSpecificationResponseDTO>>
-      getApiSpecification(@NotEmpty @RequestParam(value = "hei_id") String heiId) {
+      getApiSpecification(@NotEmpty @RequestParam(EwpApiParamConstants.HEI_ID) String heiId) {
     return ResponseEntity.ok(
         ForwardEwpApiResponseUtils.createResponseWithMessagesAndData(
             client.getApiSpecification(heiId)));
   }
 
-  @ForwardEwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "index")
+  @ForwardEwpApiEndpoint(
+      api = "iias",
+      apiMajorVersion = 7,
+      endpoint = "index",
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,
@@ -89,7 +98,11 @@ public class ForwardEwpApiInterInstitutionalAgreementsV7Controller
     return ForwardEwpApiResponseUtils.toSuccessResponseEntity(response);
   }
 
-  @ForwardEwpApiEndpoint(api = "iias", apiMajorVersion = 7, endpoint = "get")
+  @ForwardEwpApiEndpoint(
+      api = "iias",
+      apiMajorVersion = 7,
+      endpoint = "get",
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE,

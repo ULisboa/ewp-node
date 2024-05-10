@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
@@ -39,7 +40,10 @@ public class ForwardEwpApiFactsheetsV1Controller extends AbstractForwardEwpApiCo
     this.client = client;
   }
 
-  @ForwardEwpApiEndpoint(api = "factsheet", apiMajorVersion = 1)
+  @ForwardEwpApiEndpoint(
+      api = "factsheet",
+      apiMajorVersion = 1,
+      targetHeiIdParameterName = EwpApiParamConstants.HEI_ID)
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
       summary = "EWP Institutions Forward API.",
