@@ -29,6 +29,7 @@ public class HostHttpCommunicationLogService extends HttpCommunicationLogService
       Host host,
       HostForwardEwpApiClient hostForwardEwpApiClient,
       ForwardEwpApiEndpoint forwardEwpApiEndpoint,
+      String targetHeiId,
       ContentCachingRequestWrapper request,
       ContentCachingResponseWrapper response,
       ZonedDateTime startProcessingDateTime,
@@ -43,8 +44,11 @@ public class HostHttpCommunicationLogService extends HttpCommunicationLogService
         host,
         hostForwardEwpApiClient,
         forwardEwpApiEndpoint != null ? forwardEwpApiEndpoint.api() : null,
-        forwardEwpApiEndpoint != null ? forwardEwpApiEndpoint.apiMajorVersion() : null,
+        forwardEwpApiEndpoint != null && forwardEwpApiEndpoint.apiMajorVersion() != -1
+            ? forwardEwpApiEndpoint.apiMajorVersion()
+            : null,
         forwardEwpApiEndpoint != null ? forwardEwpApiEndpoint.endpoint() : null,
+        targetHeiId,
         requestLog,
         responseLog,
         startProcessingDateTime,
