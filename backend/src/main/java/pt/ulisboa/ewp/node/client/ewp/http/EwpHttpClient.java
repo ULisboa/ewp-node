@@ -2,7 +2,6 @@ package pt.ulisboa.ewp.node.client.ewp.http;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -255,19 +254,16 @@ public class EwpHttpClient {
   }
 
   private Entity<String> createFormDataEntity(EwpRequestFormDataUrlEncodedBody body) {
-    String charset = StandardCharsets.UTF_8.name();
     String formDataAsString = HttpUtils.serializeFormDataUrlEncoded(body.getFormData().asMap());
-    Variant variant = Variant.mediaTypes(
-            javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED_TYPE.withCharset(charset))
-        .encodings(charset).build().get(0);
+    Variant variant =
+        Variant.mediaTypes(javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+            .build()
+            .get(0);
     return Entity.entity(formDataAsString, variant);
   }
 
   private Entity<Serializable> createSerializableEntity(EwpRequestSerializableBody body) {
-    String charset = StandardCharsets.UTF_8.name();
-    Variant variant = Variant.mediaTypes(
-            javax.ws.rs.core.MediaType.TEXT_XML_TYPE.withCharset(charset)).encodings(charset).build()
-        .get(0);
+    Variant variant = Variant.mediaTypes(javax.ws.rs.core.MediaType.TEXT_XML_TYPE).build().get(0);
     return Entity.entity(body.serialize(), variant);
   }
 }
