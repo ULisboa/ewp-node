@@ -42,6 +42,9 @@ public class StringUtils {
 
   public static String truncateWithSuffix(
       String string, int maxLengthWithSuffix, String suffix) {
+    if (string == null) {
+      return null;
+    }
     if (string.length() + suffix.length() > maxLengthWithSuffix) {
       return string.substring(0, maxLengthWithSuffix - suffix.length()) + suffix;
     }

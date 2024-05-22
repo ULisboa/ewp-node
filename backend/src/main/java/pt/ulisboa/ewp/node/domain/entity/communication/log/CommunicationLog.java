@@ -121,7 +121,10 @@ public class CommunicationLog {
   }
 
   public void setExceptionStacktrace(String exceptionStacktrace) {
-    this.exceptionStacktrace = exceptionStacktrace;
+    this.exceptionStacktrace =
+        StringUtils.truncateWithSuffix(
+            exceptionStacktrace, DomainConstants.MAX_TEXT_COLUMN_TEXT_LENGTH, "====TRUNCATED====");
+    ;
   }
 
   @Column(name = "observations", nullable = true, columnDefinition = "TEXT")
