@@ -13,6 +13,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.HttpCommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog;
+import pt.ulisboa.ewp.node.domain.repository.HostRepository;
 import pt.ulisboa.ewp.node.domain.repository.communication.log.http.HttpCommunicationLogRepository;
 import pt.ulisboa.ewp.node.service.communication.log.http.ewp.EwpHttpCommunicationLogService;
 
@@ -24,14 +25,17 @@ public class EwpHttpClientLoggerInterceptor implements EwpHttpClientInterceptor 
 
   private final EwpHttpCommunicationLogService ewpHttpCommunicationLogService;
   private final HttpCommunicationLogRepository httpCommunicationLogRepository;
+  private final HostRepository hostRepository;
 
   private final WeakHashMap<EwpRequest, EwpCommunicationContext> requestToCommunicationContextMap = new WeakHashMap<>();
 
   public EwpHttpClientLoggerInterceptor(
       EwpHttpCommunicationLogService ewpHttpCommunicationLogService,
-      HttpCommunicationLogRepository httpCommunicationLogRepository) {
+      HttpCommunicationLogRepository httpCommunicationLogRepository,
+      HostRepository hostRepository) {
     this.ewpHttpCommunicationLogService = ewpHttpCommunicationLogService;
     this.httpCommunicationLogRepository = httpCommunicationLogRepository;
+    this.hostRepository = hostRepository;
   }
 
   @Override
@@ -65,8 +69,8 @@ public class EwpHttpClientLoggerInterceptor implements EwpHttpClientInterceptor 
       Optional<Long> ewpNodeCommunicationId =
           successOperationResult.getResponse().getEwpNodeCommunicationId();
       if (ewpNodeCommunicationId.isPresent()) {
-        ewpHttpCommunicationLogService.setParentCommunicationLogOf(
-            ewpNodeCommunicationId.get(), communicationLog.getId());
+        associateCommunicationLogToParent(
+            request, ewpNodeCommunicationId.get(), communicationLog.getId());
       }
 
     } catch (IOException e) {
@@ -98,13 +102,24 @@ public class EwpHttpClientLoggerInterceptor implements EwpHttpClientInterceptor 
       if (e.getResponse() != null) {
         Optional<Long> ewpNodeCommunicationId = e.getResponse().getEwpNodeCommunicationId();
         if (ewpNodeCommunicationId.isPresent()) {
-          ewpHttpCommunicationLogService.setParentCommunicationLogOf(
-              ewpNodeCommunicationId.get(), communicationLog.getId());
+          associateCommunicationLogToParent(
+              request, ewpNodeCommunicationId.get(), communicationLog.getId());
         }
       }
     } catch (IOException ex) {
       throw new IllegalStateException(ex);
     }
+  }
+
+  private void associateCommunicationLogToParent(
+      EwpRequest request, Long communicationId, Long parentCommunicationId) {
+    // NOTE: If the requested HEI ID is not locally covered then the request may have been sent to
+    // some other EWP Node that returns also a header with the communication ID.
+    if (hostRepository.findByCoveredHeiId(request.getEndpointInformation().getHeiId()).isEmpty()) {
+      return;
+    }
+    ewpHttpCommunicationLogService.setParentCommunicationLogOf(
+        communicationId, parentCommunicationId);
   }
 
   private static class EwpCommunicationContext {
