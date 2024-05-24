@@ -7,6 +7,8 @@ import pt.ulisboa.ewp.node.domain.dto.filter.FilterDto;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.http.ewp.HttpCommunicationToEwpNodeLog_;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HttpCommunicationFromHostLog;
+import pt.ulisboa.ewp.node.domain.entity.communication.log.http.host.HttpCommunicationFromHostLog_;
 
 public class HttpCommunicationToEwpNodeIsToHeiIdFilterDto extends FilterDto<CommunicationLog> {
 
@@ -29,10 +31,16 @@ public class HttpCommunicationToEwpNodeIsToHeiIdFilterDto extends FilterDto<Comm
   @Override
   public Predicate createPredicate(
       CriteriaBuilder criteriaBuilder, Root<CommunicationLog> selection) {
-    return criteriaBuilder.equal(
-        criteriaBuilder
-            .treat(selection, HttpCommunicationToEwpNodeLog.class)
-            .get(HttpCommunicationToEwpNodeLog_.targetHeiId),
-        criteriaBuilder.literal(value));
+    return criteriaBuilder.or(
+        criteriaBuilder.equal(
+            criteriaBuilder
+                .treat(selection, HttpCommunicationToEwpNodeLog.class)
+                .get(HttpCommunicationToEwpNodeLog_.targetHeiId),
+            criteriaBuilder.literal(value)),
+        criteriaBuilder.equal(
+            criteriaBuilder
+                .treat(selection, HttpCommunicationFromHostLog.class)
+                .get(HttpCommunicationFromHostLog_.targetHeiId),
+            criteriaBuilder.literal(value)));
   }
 }
