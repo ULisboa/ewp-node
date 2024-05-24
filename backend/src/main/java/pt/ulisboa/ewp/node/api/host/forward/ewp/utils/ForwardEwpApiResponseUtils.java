@@ -23,6 +23,14 @@ public class ForwardEwpApiResponseUtils {
   private ForwardEwpApiResponseUtils() {
   }
 
+  public static <T> ResponseEntity<ForwardEwpApiResponseWithData<T>> toAcceptedResponseEntity(
+      T dataObject) {
+    ForwardEwpApiResponseWithData<T> response = createResponseWithMessagesAndData(dataObject);
+    return ResponseEntity.status(HttpStatus.ACCEPTED)
+        .contentType(MediaType.APPLICATION_XML)
+        .body(response);
+  }
+
   public static ResponseEntity<ForwardEwpApiResponse> toAcceptedResponseEntity() {
     ForwardEwpApiResponse response = createResponseWithMessages();
     return ResponseEntity.status(HttpStatus.ACCEPTED)

@@ -1,5 +1,7 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.omobilities.las.cnr;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +13,8 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.cnr.ForwardEwpApiCnrSubmissionResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.las.cnr.ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
@@ -49,11 +52,12 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrController extends
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)
-  public ResponseEntity<ForwardEwpApiResponse> sendChangeNotification(
+  public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiCnrSubmissionResponseDTO>> sendChangeNotification(
       @Valid ForwardEwpApiOutgoingMobilityLearningAgreementCnrRequestDto requestDto) {
     CommunicationLog currentCommunicationLog =
         CommunicationContextHolder.getContext().getCurrentCommunicationLog();
     int index = 0;
+    Collection<Long> changeNotificationIds = new ArrayList<>();
     for (String outgoingMobilityId : requestDto.getOutgoingMobilityIds()) {
       EwpOutgoingMobilityLearningAgreementChangeNotification changeNotification =
           new EwpOutgoingMobilityLearningAgreementChangeNotification(
@@ -66,8 +70,11 @@ public class ForwardEwpApiOutgoingMobilityLearningAgreementCnrController extends
       outgoingMobilityMappingService.registerMapping(requestDto.getSendingHeiId(),
           requestDto.getSendingOunitId(), requestDto.getOutgoingMobilityIds().get(index));
 
+      changeNotificationIds.add(changeNotification.getId());
+
       index++;
     }
-    return ForwardEwpApiResponseUtils.toAcceptedResponseEntity();
+    return ForwardEwpApiResponseUtils.toAcceptedResponseEntity(
+        new ForwardEwpApiCnrSubmissionResponseDTO(changeNotificationIds));
   }
 }

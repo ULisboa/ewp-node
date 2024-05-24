@@ -1,5 +1,7 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.imobilities.cnr;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,8 @@ import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.cnr.ForwardEwpApiCnrSubmissionResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.imobilities.cnr.ForwardEwpApiIncomingMobilityCnrRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
@@ -44,10 +48,11 @@ public class ForwardEwpApiIncomingMobilityCnrController extends AbstractForwardE
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)
-  public ResponseEntity<ForwardEwpApiResponse> sendChangeNotification(
-      @Valid ForwardEwpApiIncomingMobilityCnrRequestDto requestDto) {
+  public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiCnrSubmissionResponseDTO>>
+      sendChangeNotification(@Valid ForwardEwpApiIncomingMobilityCnrRequestDto requestDto) {
     CommunicationLog currentCommunicationLog =
         CommunicationContextHolder.getContext().getCurrentCommunicationLog();
+    Collection<Long> changeNotificationIds = new ArrayList<>();
     for (String outgoingMobilityId : requestDto.getOutgoingMobilityIds()) {
       EwpIncomingMobilityChangeNotification changeNotification =
           new EwpIncomingMobilityChangeNotification(
@@ -56,7 +61,9 @@ public class ForwardEwpApiIncomingMobilityCnrController extends AbstractForwardE
               requestDto.getReceivingHeiId(),
               outgoingMobilityId);
       changeNotificationRepository.persist(changeNotification);
+      changeNotificationIds.add(changeNotification.getId());
     }
-    return ForwardEwpApiResponseUtils.toAcceptedResponseEntity();
+    return ForwardEwpApiResponseUtils.toAcceptedResponseEntity(
+        new ForwardEwpApiCnrSubmissionResponseDTO(changeNotificationIds));
   }
 }

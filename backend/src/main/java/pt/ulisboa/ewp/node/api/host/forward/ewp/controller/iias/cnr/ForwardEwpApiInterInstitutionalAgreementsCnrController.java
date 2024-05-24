@@ -1,5 +1,7 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.iias.cnr;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +13,8 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.ForwardEwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.AbstractForwardEwpApiController;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.controller.ForwardEwpApi;
-import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponse;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.ForwardEwpApiResponseWithData;
+import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.cnr.ForwardEwpApiCnrSubmissionResponseDTO;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.iias.cnr.ForwardEwpApiInterInstitutionalAgreementCnrRequestDto;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.security.ForwardEwpApiSecurityCommonConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.utils.ForwardEwpApiConstants;
@@ -49,10 +52,12 @@ public class ForwardEwpApiInterInstitutionalAgreementsCnrController extends
   @PostMapping(
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_XML_VALUE)
-  public ResponseEntity<ForwardEwpApiResponse> sendChangeNotification(
-      @Valid ForwardEwpApiInterInstitutionalAgreementCnrRequestDto requestDto) {
+  public ResponseEntity<ForwardEwpApiResponseWithData<ForwardEwpApiCnrSubmissionResponseDTO>>
+      sendChangeNotification(
+          @Valid ForwardEwpApiInterInstitutionalAgreementCnrRequestDto requestDto) {
     CommunicationLog currentCommunicationLog =
         CommunicationContextHolder.getContext().getCurrentCommunicationLog();
+    Collection<Long> changeNotificationIds = new ArrayList<>();
     for (String iiaId : requestDto.getIiaIds()) {
       EwpInterInstitutionalAgreementChangeNotification changeNotification =
           new EwpInterInstitutionalAgreementChangeNotification(
@@ -64,7 +69,10 @@ public class ForwardEwpApiInterInstitutionalAgreementsCnrController extends
 
       interInstitutionalAgreementMappingService.registerMapping(
           requestDto.getNotifierHeiId(), requestDto.getNotifierOunitId(), iiaId);
+
+      changeNotificationIds.add(changeNotification.getId());
     }
-    return ForwardEwpApiResponseUtils.toAcceptedResponseEntity();
+    return ForwardEwpApiResponseUtils.toAcceptedResponseEntity(
+        new ForwardEwpApiCnrSubmissionResponseDTO(changeNotificationIds));
   }
 }
