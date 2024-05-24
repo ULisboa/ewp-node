@@ -5,6 +5,7 @@ import pt.ulisboa.ewp.host.plugin.skeleton.provider.files.FileResponse;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient.ResponseBodySpecification;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
@@ -32,8 +33,8 @@ public class EwpFilesV1Client {
     queryParams.param(EwpApiParamConstants.FILE_ID, fileId);
 
     EwpRequest request = EwpRequest.createGet(api, "", api.getUrl(), queryParams);
-    EwpSuccessOperationResult<byte[]> successOperationResult = ewpHttpClient.execute(
-        request, byte[].class);
+    EwpSuccessOperationResult<byte[]> successOperationResult =
+        ewpHttpClient.execute(request, ResponseBodySpecification.createStrict(byte[].class));
 
     FileResponse fileResponse = createFileResponse(successOperationResult);
     return new EwpSuccessOperationResult.Builder<FileResponse>()

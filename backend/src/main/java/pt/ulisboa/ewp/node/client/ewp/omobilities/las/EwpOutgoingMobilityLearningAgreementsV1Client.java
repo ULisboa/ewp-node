@@ -12,6 +12,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.las.ForwardEwpApiOutgoingMobilityLearningAgreementsApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient.ResponseBodySpecification;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestSerializableBody;
@@ -65,7 +66,8 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client {
 
     EwpRequest request = EwpRequest.createPost(api, "index", api.getIndexUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpHttpClient.execute(request, OmobilityLasIndexResponseV1.class);
+    return ewpHttpClient.execute(
+        request, ResponseBodySpecification.createStrict(OmobilityLasIndexResponseV1.class));
   }
 
   public EwpSuccessOperationResult<OmobilityLasGetResponseV1> findBySendingHeiIdAndOutgoingMobilityIds(
@@ -79,7 +81,9 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client {
 
     EwpRequest request = EwpRequest.createPost(api, "get", api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    EwpSuccessOperationResult<OmobilityLasGetResponseV1> result = ewpHttpClient.execute(request, OmobilityLasGetResponseV1.class);
+    EwpSuccessOperationResult<OmobilityLasGetResponseV1> result =
+        ewpHttpClient.execute(
+            request, ResponseBodySpecification.createStrict(OmobilityLasGetResponseV1.class));
 
     this.mobilityMappingCacheService.cacheMappingsFrom(result.getResponseBody());
 
@@ -93,7 +97,8 @@ public class EwpOutgoingMobilityLearningAgreementsV1Client {
 
     EwpRequest request = EwpRequest.createPost(api, "update", api.getUpdateUrl(),
         new EwpRequestSerializableBody(updateData));
-    return ewpHttpClient.execute(request, OmobilityLasUpdateResponseV1.class);
+    return ewpHttpClient.execute(
+        request, ResponseBodySpecification.createStrict(OmobilityLasUpdateResponseV1.class));
   }
 
   protected EwpOutgoingMobilityLearningAgreementsApiConfiguration getApiConfigurationForHeiId(

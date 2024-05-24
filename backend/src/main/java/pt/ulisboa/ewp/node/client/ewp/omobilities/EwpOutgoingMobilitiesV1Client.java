@@ -10,6 +10,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.omobilities.ForwardEwpApiOutgoingMobilitiesApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient.ResponseBodySpecification;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -58,7 +59,8 @@ public class EwpOutgoingMobilitiesV1Client {
     EwpRequest request =
         EwpRequest.createPost(
             api, "index", api.getIndexUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpHttpClient.execute(request, OmobilitiesIndexResponseV1.class);
+    return ewpHttpClient.execute(
+        request, ResponseBodySpecification.createStrict(OmobilitiesIndexResponseV1.class));
   }
 
   public EwpSuccessOperationResult<OmobilitiesGetResponseV1> findBySendingHeiIdAndOmobilityIds(
@@ -71,8 +73,9 @@ public class EwpOutgoingMobilitiesV1Client {
 
     EwpRequest request = EwpRequest.createPost(api, "get", api.getGetUrl(),
         new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    EwpSuccessOperationResult<OmobilitiesGetResponseV1> result = ewpHttpClient.execute(
-        request, OmobilitiesGetResponseV1.class);
+    EwpSuccessOperationResult<OmobilitiesGetResponseV1> result =
+        ewpHttpClient.execute(
+            request, ResponseBodySpecification.createStrict(OmobilitiesGetResponseV1.class));
 
     this.mobilityMappingCacheService.cacheMappingsFrom(result.getResponseBody());
 

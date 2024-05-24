@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient.ResponseBodySpecification;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -59,7 +60,8 @@ public class EwpMonitoringV1Client {
 
     EwpRequest request =
         EwpRequest.createPost(api, "", api.getUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpHttpClient.execute(request, MonitoringResponseV1.class);
+    return ewpHttpClient.execute(
+        request, ResponseBodySpecification.createStrict(MonitoringResponseV1.class));
   }
 
   private boolean isErrorStatusCode(int httpCode) {

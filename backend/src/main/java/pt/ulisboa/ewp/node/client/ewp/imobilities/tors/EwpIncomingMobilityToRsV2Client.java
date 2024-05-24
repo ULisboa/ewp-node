@@ -9,6 +9,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.api.host.forward.ewp.dto.imobilities.tors.ForwardEwpApiIncomingMobilityToRsApiSpecificationResponseDTO;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient.ResponseBodySpecification;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -50,7 +51,8 @@ public class EwpIncomingMobilityToRsV2Client {
     EwpRequest request =
         EwpRequest.createPost(
             api, "index", api.getIndexUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpHttpClient.execute(request, ImobilityTorsIndexResponseV2.class);
+    return ewpHttpClient.execute(
+        request, ResponseBodySpecification.createStrict(ImobilityTorsIndexResponseV2.class));
   }
 
   public EwpSuccessOperationResult<ImobilityTorsGetResponseV2> findByReceivingHeiIdAndOutgoingMobilityIds(
@@ -66,7 +68,8 @@ public class EwpIncomingMobilityToRsV2Client {
     EwpRequest request =
         EwpRequest.createPost(
             api, "get", api.getGetUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpHttpClient.execute(request, ImobilityTorsGetResponseV2.class);
+    return ewpHttpClient.execute(
+        request, ResponseBodySpecification.createStrict(ImobilityTorsGetResponseV2.class));
   }
 
   protected EwpIncomingMobilityToRApiConfiguration getApiConfigurationForHeiId(

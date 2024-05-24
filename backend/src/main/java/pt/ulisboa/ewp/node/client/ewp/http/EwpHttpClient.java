@@ -76,16 +76,18 @@ public class EwpHttpClient {
    * request fails or the response obtained indicates an error then a corresponding exception is
    * thrown.
    *
-   * @param request          Request to send
-   * @param responseBodyType Expected response's body class type upon success.
+   * @param request Request to send
+   * @param responseBodySpecification Expected response's body specification upon success.
    * @return The result of a successful operation.
    * @throws EwpClientErrorException The request failed for some reason.
    */
-  public <T extends Serializable> EwpSuccessOperationResult<T> execute(EwpRequest request,
-      Class<T> responseBodyType) throws EwpClientErrorException {
+  public <T extends Serializable> EwpSuccessOperationResult<T> execute(
+      EwpRequest request, ResponseBodySpecification<T> responseBodySpecification)
+      throws EwpClientErrorException {
     this.interceptors.forEach(i -> i.onPreparing(request));
     try {
-      EwpSuccessOperationResult<T> operationResult = executeInternal(request, responseBodyType);
+      EwpSuccessOperationResult<T> operationResult =
+          executeInternal(request, responseBodySpecification);
       this.interceptors.forEach(i -> i.onSuccess(request, operationResult));
       return operationResult;
 
@@ -96,8 +98,8 @@ public class EwpHttpClient {
   }
 
   protected <T extends Serializable> EwpSuccessOperationResult<T> executeInternal(
-      EwpRequest request,
-      Class<T> expectedResponseBodyType) throws EwpClientErrorException {
+      EwpRequest request, ResponseBodySpecification<T> responseBodySpecification)
+      throws EwpClientErrorException {
     EwpResponse response = null;
     EwpAuthenticationResult responseAuthenticationResult = null;
     try {
@@ -120,8 +122,8 @@ public class EwpHttpClient {
             responseAuthenticationResult);
       }
 
-      return resolveResponseToSuccessOperationStatus(request, expectedResponseBodyType, response,
-          responseAuthenticationResult);
+      return resolveResponseToSuccessOperationStatus(
+          request, responseBodySpecification, response, responseAuthenticationResult);
 
     } catch (EwpServerAuthenticationFailedException | XmlCannotUnmarshallToTypeException e) {
       LOGGER.error("Invalid server's response", e);
@@ -137,16 +139,38 @@ public class EwpHttpClient {
     }
   }
 
-  private <T extends Serializable> EwpSuccessOperationResult<T> resolveResponseToSuccessOperationStatus(
-      EwpRequest request, Class<T> expectedResponseBodyType, EwpResponse response,
-      EwpAuthenticationResult responseAuthenticationResult)
-      throws XmlCannotUnmarshallToTypeException, EwpClientErrorException {
+  private <T extends Serializable>
+      EwpSuccessOperationResult<T> resolveResponseToSuccessOperationStatus(
+          EwpRequest request,
+          ResponseBodySpecification<T> responseBodySpecification,
+          EwpResponse response,
+          EwpAuthenticationResult responseAuthenticationResult)
+          throws XmlCannotUnmarshallToTypeException, EwpClientErrorException {
 
     if (response.isSuccess()) {
       if (response.isXmlResponse()) {
         // NOTE: deserialize as XML
-        T responseBody =
-            XmlUtils.unmarshall(jaxb2Marshaller, response.getRawBody(), expectedResponseBodyType);
+        T responseBody = null;
+        try {
+          responseBody =
+              XmlUtils.unmarshall(
+                  jaxb2Marshaller,
+                  response.getRawBody(),
+                  responseBodySpecification.getBodyClassType());
+
+        } catch (XmlCannotUnmarshallToTypeException e) {
+          if (responseBodySpecification.isBodyTypeStrict()) {
+            throw e;
+          }
+          LOGGER.warn(
+              "Response's body (related to request to HEI ID {}) was expected to be of type {} but failed to be deserialized as such. However, strict mode is disabled so this mismatch will be silently ignored",
+              request.getEndpointInformation() != null
+                  ? request.getEndpointInformation().getHeiId()
+                  : "undefined",
+              responseBodySpecification.getBodyClassType().getName(),
+              e);
+        }
+
         return new EwpSuccessOperationResult.Builder<T>()
             .request(request)
             .response(response)
@@ -154,7 +178,7 @@ public class EwpHttpClient {
             .responseBody(responseBody)
             .build();
 
-      } else if (byte[].class.isAssignableFrom(expectedResponseBodyType)) {
+      } else if (byte[].class.isAssignableFrom(responseBodySpecification.getBodyClassType())) {
         // NOTE: deserialize as byte array
         return new EwpSuccessOperationResult.Builder<T>()
             .request(request)
@@ -265,5 +289,41 @@ public class EwpHttpClient {
   private Entity<Serializable> createSerializableEntity(EwpRequestSerializableBody body) {
     Variant variant = Variant.mediaTypes(javax.ws.rs.core.MediaType.TEXT_XML_TYPE).build().get(0);
     return Entity.entity(body.serialize(), variant);
+  }
+
+  public static class ResponseBodySpecification<T> {
+
+    private final Class<T> bodyClassType;
+    private final boolean bodyTypeStrict;
+
+    ResponseBodySpecification(Class<T> bodyClassType, boolean bodyTypeStrict) {
+      this.bodyClassType = bodyClassType;
+      this.bodyTypeStrict = bodyTypeStrict;
+    }
+
+    public Class<T> getBodyClassType() {
+      return bodyClassType;
+    }
+
+    /**
+     * Indicates whether it is expected that the response's body must be exactly (can be
+     * deserialized to) a given type. If false, a response whose body cannot be correctly
+     * deserialized to the class type might still be considered of success (e.g. if the HTTP code is
+     * of success).
+     *
+     * @return Whether it is expected that the response's body must be exactly (can be deserialized
+     *     to) a given type.
+     */
+    public boolean isBodyTypeStrict() {
+      return bodyTypeStrict;
+    }
+
+    public static <T> ResponseBodySpecification<T> createStrict(Class<T> bodyClassType) {
+      return new ResponseBodySpecification<>(bodyClassType, true);
+    }
+
+    public static <T> ResponseBodySpecification<T> createWithOptionalType(Class<T> bodyClassType) {
+      return new ResponseBodySpecification<>(bodyClassType, false);
+    }
   }
 }

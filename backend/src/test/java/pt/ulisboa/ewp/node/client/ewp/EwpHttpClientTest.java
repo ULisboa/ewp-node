@@ -40,6 +40,7 @@ import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientInvalidResponseException;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientProcessorException;
 import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient.ResponseBodySpecification;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -104,8 +105,8 @@ class EwpHttpClientTest extends AbstractTest {
         .respond(response().withStatusCode(200).withContentType(MediaType.APPLICATION_XML)
             .withBody(XmlUtils.marshall(createJaxb2Marshaller(), expectedResponse)));
 
-    EwpSuccessOperationResult<ResponseV2> result = client
-        .execute(request, ResponseV2.class);
+    EwpSuccessOperationResult<ResponseV2> result =
+        client.execute(request, ResponseBodySpecification.createStrict(ResponseV2.class));
     assertThat(result, notNullValue());
     assertThat(result.getResponseBody().getHeiId(),
         equalTo(Collections.singletonList("test_heiid")));
@@ -141,8 +142,8 @@ class EwpHttpClientTest extends AbstractTest {
         .respond(response().withStatusCode(200).withContentType(MediaType.APPLICATION_XML)
             .withBody(XmlUtils.marshall(createJaxb2Marshaller(), expectedResponse)));
 
-    EwpSuccessOperationResult<ResponseV2> result = client
-        .execute(request, ResponseV2.class);
+    EwpSuccessOperationResult<ResponseV2> result =
+        client.execute(request, ResponseBodySpecification.createStrict(ResponseV2.class));
     assertThat(result, notNullValue());
     assertThat(result.getResponseBody().getHeiId(),
         equalTo(Collections.singletonList("test_heiid")));
@@ -175,11 +176,14 @@ class EwpHttpClientTest extends AbstractTest {
         .respond(response().withStatusCode(200).withContentType(MediaType.APPLICATION_XML)
             .withBody(XmlUtils.marshall(createJaxb2Marshaller(), expectedResponse)));
 
-    assertThatThrownBy(() -> client.execute(request, ResponseV2.class))
+    assertThatThrownBy(
+            () -> client.execute(request, ResponseBodySpecification.createStrict(ResponseV2.class)))
         .isInstanceOf(EwpClientInvalidResponseException.class)
         .hasMessage(
             "Server returned an invalid response: Server authentication failed for authentication method "
-                + authenticationResult.getMethod() + ": " + authenticationResult.getErrorMessage());
+                + authenticationResult.getMethod()
+                + ": "
+                + authenticationResult.getErrorMessage());
   }
 
   @Test
@@ -212,7 +216,8 @@ class EwpHttpClientTest extends AbstractTest {
         .respond(response().withStatusCode(400).withContentType(MediaType.APPLICATION_XML)
             .withBody(XmlUtils.marshall(createJaxb2Marshaller(), errorResponse)));
 
-    assertThatThrownBy(() -> client.execute(request, ResponseV2.class))
+    assertThatThrownBy(
+            () -> client.execute(request, ResponseBodySpecification.createStrict(ResponseV2.class)))
         .isInstanceOf(EwpClientErrorResponseException.class)
         .hasMessage(
             "Error response obtained: user message test [developer message: developer message test]");
@@ -248,7 +253,8 @@ class EwpHttpClientTest extends AbstractTest {
         .respond(response().withStatusCode(401).withContentType(MediaType.APPLICATION_XML)
             .withBody(XmlUtils.marshall(createJaxb2Marshaller(), errorResponse)));
 
-    assertThatThrownBy(() -> client.execute(request, ResponseV2.class))
+    assertThatThrownBy(
+            () -> client.execute(request, ResponseBodySpecification.createStrict(ResponseV2.class)))
         .isInstanceOf(EwpClientProcessorException.class)
         .hasMessage(
             "Processor error: Client authentication failed for authentication method HTTP_SIGNATURE: developer message");
@@ -276,7 +282,8 @@ class EwpHttpClientTest extends AbstractTest {
         .respond(response().withStatusCode(500).withContentType(MediaType.APPLICATION_XML)
             .withBody(""));
 
-    assertThatThrownBy(() -> client.execute(request, ResponseV2.class))
+    assertThatThrownBy(
+            () -> client.execute(request, ResponseBodySpecification.createStrict(ResponseV2.class)))
         .isInstanceOf(EwpClientInvalidResponseException.class)
         .hasMessage("Server returned an invalid response: Server exception: Internal Server Error");
   }
@@ -303,7 +310,8 @@ class EwpHttpClientTest extends AbstractTest {
         .respond(response().withStatusCode(600).withContentType(MediaType.APPLICATION_XML)
             .withBody(""));
 
-    assertThatThrownBy(() -> client.execute(request, ResponseV2.class))
+    assertThatThrownBy(
+            () -> client.execute(request, ResponseBodySpecification.createStrict(ResponseV2.class)))
         .isInstanceOf(EwpClientProcessorException.class)
         .hasMessage("Processor error: Unknown response status code: null");
   }

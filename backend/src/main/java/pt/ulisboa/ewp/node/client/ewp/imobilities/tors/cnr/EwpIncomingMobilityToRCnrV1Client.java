@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient;
+import pt.ulisboa.ewp.node.client.ewp.http.EwpHttpClient.ResponseBodySpecification;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.EwpRequest;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
@@ -39,7 +40,8 @@ public class EwpIncomingMobilityToRCnrV1Client {
     EwpRequest request =
         EwpRequest.createPost(
             api, "", api.getUrl(), new EwpRequestFormDataUrlEncodedBody(bodyParams));
-    return ewpHttpClient.execute(request, ImobilityTorCnrResponseV1.class);
+    return ewpHttpClient.execute(
+        request, ResponseBodySpecification.createWithOptionalType(ImobilityTorCnrResponseV1.class));
   }
 
   protected EwpIncomingMobilityToRCnrApiConfiguration getApiConfigurationForHeiId(
