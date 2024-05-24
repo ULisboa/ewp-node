@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -23,6 +24,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
@@ -40,6 +42,8 @@ public abstract class EwpChangeNotification {
   private int attemptNumber;
   private ZonedDateTime scheduledDateTime;
   private Status status;
+  private EwpChangeNotification mergedIntoChangeNotification;
+  private Collection<EwpChangeNotification> changeNotificationsAsAggregator = new HashSet<>();
 
   protected EwpChangeNotification() {}
 
@@ -160,6 +164,29 @@ public abstract class EwpChangeNotification {
     this.status = status;
   }
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "merged_into_change_notification_id")
+  public EwpChangeNotification getMergedIntoChangeNotification() {
+    return mergedIntoChangeNotification;
+  }
+
+  public void setMergedIntoChangeNotification(EwpChangeNotification mergedIntoChangeNotification) {
+    this.mergedIntoChangeNotification = mergedIntoChangeNotification;
+  }
+
+  @OneToMany(
+      fetch = FetchType.LAZY,
+      mappedBy = "mergedIntoChangeNotification",
+      cascade = CascadeType.ALL)
+  public Collection<EwpChangeNotification> getChangeNotificationsAsAggregator() {
+    return changeNotificationsAsAggregator;
+  }
+
+  public void setChangeNotificationsAsAggregator(
+      Collection<EwpChangeNotification> changeNotificationsAsAggregator) {
+    this.changeNotificationsAsAggregator = changeNotificationsAsAggregator;
+  }
+
   @Transient
   public void scheduleNewAttempt() {
     BigInteger newDelayInMinutes = BigInteger.TWO.pow(this.attemptNumber);
@@ -187,9 +214,10 @@ public abstract class EwpChangeNotification {
   }
 
   @Transient
-  public void markAsMerged() {
+  public void mergeInto(EwpChangeNotification mergedIntoChangeNotification) {
     this.status = Status.MERGED;
     this.scheduledDateTime = null;
+    this.mergedIntoChangeNotification = mergedIntoChangeNotification;
   }
 
   @Transient

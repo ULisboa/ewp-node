@@ -98,10 +98,11 @@ public class EwpChangeNotificationRepository
     if (entity.isPending()) {
       findAll().stream()
           .filter(i -> i != entity && i.canBeMergedInto(entity))
-          .forEach(i -> {
-            i.markAsMerged();
-            this.persist(i);
-          });
+          .forEach(
+              i -> {
+                i.mergeInto(entity);
+                this.persist(i);
+              });
     }
   }
 
