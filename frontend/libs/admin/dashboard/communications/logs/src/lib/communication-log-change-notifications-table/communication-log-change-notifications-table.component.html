@@ -54,6 +54,9 @@
                     Status
                 </div>
             </th>
+            <th style="width: 3rem">
+                <div class="flex align-items-center"></div>
+            </th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-changeNotification let-expanded="expanded">
@@ -89,6 +92,12 @@
                 }">
                 <b>{{ changeNotification.status }}</b>
             </td>
+            <td class="cell">
+                @if (changeNotification.isPending() || changeNotification.isFailure()) {
+                    <p-button [rounded]="true" icon="pi pi-replay" [text]="true" [raised]="true" 
+                        (click)="forceAttempt(changeNotification.id)"></p-button>
+                }
+            </td>
         </tr>
     </ng-template>
     <ng-template pTemplate="rowexpansion" let-changeNotification>
@@ -102,3 +111,5 @@
         </tr>
     </ng-template>
 </p-table>
+
+<p-confirmDialog />

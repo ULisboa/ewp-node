@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { EwpChangeNotification } from '@ewp-node-frontend/admin/shared/api-interfaces';
-import { Message, MessageService } from 'primeng/api';
+import { ConfirmationService, Message, MessageService } from 'primeng/api';
 import { AdminEwpChangeNotificationsService } from '../services/admin-ewp-change-notifications.service';
 import { MessageInput, convertMessagesToPrimengFormat } from '@ewp-node-frontend/admin/shared/util-primeng';
 import { TableLazyLoadEvent } from 'primeng/table';
@@ -10,7 +10,8 @@ import { take } from 'rxjs';
 @Component({
   selector: 'lib-admin-dashboard-communication-log-change-notifications-table',
   templateUrl: './communication-log-change-notifications-table.component.html',
-  styleUrls: ['./communication-log-change-notifications-table.component.scss']
+  styleUrls: ['./communication-log-change-notifications-table.component.scss'],
+  providers: [ConfirmationService]
 })
 export class AdminDashboardCommunicationLogChangeNotificationsTableComponent {
 
@@ -56,6 +57,8 @@ export class AdminDashboardCommunicationLogChangeNotificationsTableComponent {
   lastTableLazyLoadEvent?: TableLazyLoadEvent;
 
   adminEwpChangeNotificationsService = inject(AdminEwpChangeNotificationsService);
+
+  confirmationService = inject(ConfirmationService);
 
   constructor(private messageService: MessageService) {}
 
@@ -103,6 +106,32 @@ export class AdminDashboardCommunicationLogChangeNotificationsTableComponent {
           this.loading = false;
         }
       })
+  }
+
+  forceAttempt(changeNotificationId: number) {
+    this.confirmationService.confirm({
+      message:  'Are you sure that you want to force a new attempt?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon:"none",
+      rejectIcon:"none",
+      rejectButtonStyleClass:"p-button-text",
+      accept: () => {
+        this.loading = true;
+        this.adminEwpChangeNotificationsService.forceAttempt(changeNotificationId)
+        .pipe(take(1))
+        .subscribe({
+          next: () => {
+            this.loadEwpChangeNotifications();
+            this.loading = false;
+          },
+          error: error => {
+            this.messages = convertMessagesToPrimengFormat(error.messages as MessageInput[]);
+            this.loading = false;
+          }
+        })
+      }
+    })
   }
 
 }

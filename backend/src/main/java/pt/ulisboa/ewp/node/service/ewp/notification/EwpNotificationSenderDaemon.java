@@ -57,20 +57,28 @@ public class EwpNotificationSenderDaemon implements Runnable {
     Collection<EwpChangeNotification> changeNotifications =
         this.changeNotificationRepository.findAllPending();
     for (EwpChangeNotification changeNotification : changeNotifications) {
-      if (ZonedDateTime.now().isAfter(changeNotification.getNextAttemptDateTime())) {
-        try {
-          processChangeNotification(changeNotification);
-        } catch (Exception e) {
-          LOG.error(
-              String.format("Failed to process change notification: %s", changeNotification), e);
-          throw new RuntimeException(e);
-        }
+      try {
+        processChangeNotification(changeNotification, false);
+      } catch (Exception e) {
+        LOG.error(
+            String.format("Failed to process change notification: %s", changeNotification), e);
+        throw new RuntimeException(e);
       }
     }
   }
 
-  private void processChangeNotification(EwpChangeNotification ewpChangeNotification)
-      throws Exception {
+  public void processChangeNotification(
+      EwpChangeNotification ewpChangeNotification, boolean forceAttempt) throws Exception {
+    if (!forceAttempt) {
+      if (!ewpChangeNotification.isPending()) {
+        return;
+      }
+
+      if (ZonedDateTime.now().isBefore(ewpChangeNotification.getNextAttemptDateTime())) {
+        return;
+      }
+    }
+
     CommunicationContextHolder.runInNestedContext(
         context -> {
           context.setCurrentEwpChangeNotifications(List.of(ewpChangeNotification));

@@ -20,9 +20,24 @@ public class EwpChangeNotificationService {
   private static final Logger LOG = LoggerFactory.getLogger(EwpChangeNotificationService.class);
 
   private final EwpChangeNotificationRepository repository;
+  private final EwpNotificationSenderDaemon notificationSenderDaemon;
 
-  public EwpChangeNotificationService(EwpChangeNotificationRepository repository) {
+  public EwpChangeNotificationService(
+      EwpChangeNotificationRepository repository,
+      EwpNotificationSenderDaemon notificationSenderDaemon) {
     this.repository = repository;
+    this.notificationSenderDaemon = notificationSenderDaemon;
+  }
+
+  public EwpChangeNotificationDto forceAttempt(long id) throws Exception {
+    Optional<EwpChangeNotification> ewpChangeNotificationOptional = this.repository.findById(id);
+    if (ewpChangeNotificationOptional.isEmpty()) {
+      throw new IllegalArgumentException("There is no change notification with ID: " + id);
+    }
+    EwpChangeNotification ewpChangeNotification = ewpChangeNotificationOptional.get();
+    notificationSenderDaemon.processChangeNotification(ewpChangeNotification, true);
+    EwpChangeNotificationMapper mapper = EwpChangeNotificationMapper.INSTANCE;
+    return mapper.mapEwpChangeNotificationToEwpChangeNotificationDto(ewpChangeNotification);
   }
 
   public Optional<EwpChangeNotificationDto> findById(long id) {

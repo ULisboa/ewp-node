@@ -30,6 +30,19 @@ export class AdminEwpChangeNotificationsService {
             );
     }
 
+    forceAttempt(id: number): Observable<EwpChangeNotification> {
+        return this.http
+            .post<AdminApiResponseWithObjectData<EwpChangeNotification>>(`/api/admin/ewp/notifications/${id}/attempts/force`, {})
+            .pipe(
+                map(response => {
+                    return plainToClassFromExist(new EwpChangeNotification(), response.data );
+                }),
+                catchError((errorResponse: HttpErrorResponse) => {
+                    return this.throwErrorFromErrorResponse(errorResponse);
+                })
+            );
+    }
+
     throwErrorFromErrorResponse(errorResponse: HttpErrorResponse) {
         if (errorResponse.error && errorResponse.error.messages) {
             return throwError(() => errorResponse.error);

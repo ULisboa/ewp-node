@@ -30,6 +30,7 @@ import {PanelModule} from 'primeng/panel';
 import { AdminDashboardCommunicationLogChangeNotificationsTableComponent } from './communication-log-change-notifications-table/communication-log-change-notifications-table.component';
 import { AdminDashboardCommunicationLogChangeNotificationsDetailComponent } from './communication-log-change-notifications-detail/communication-log-change-notifications-detail.component';
 import { CalendarModule } from 'primeng/calendar';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   imports: [
@@ -37,6 +38,7 @@ import { CalendarModule } from 'primeng/calendar';
     ButtonModule,
     CalendarModule,
     CardModule,
+    ConfirmDialogModule,
     DialogModule,
     DropdownModule,
     InputTextModule,

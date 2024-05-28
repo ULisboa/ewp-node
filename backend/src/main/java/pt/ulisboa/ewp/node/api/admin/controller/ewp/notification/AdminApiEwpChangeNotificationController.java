@@ -48,7 +48,7 @@ public class AdminApiEwpChangeNotificationController {
       summary = "Retrieves EWP change notifications.",
       tags = {"Admin"})
   public ResponseEntity<AdminApiResponseWithDataDto<GetEwpChangeNotificationsResponseDto>>
-      getCommunicationLogs(@Valid @RequestBody GetEwpChangeNotificationsRequestDto requestDto) {
+      getChangeNotifications(@Valid @RequestBody GetEwpChangeNotificationsRequestDto requestDto) {
 
     FilterDto<EwpChangeNotification> filter = requestDto.getFilter();
 
@@ -65,14 +65,25 @@ public class AdminApiEwpChangeNotificationController {
   @Operation(
       summary = "Retrieves an EWP change notification.",
       tags = {"Admin"})
-  public ResponseEntity<AdminApiResponseWithDataDto<EwpChangeNotificationDto>> getCommunicationLogs(
-      @Min(1) @PathVariable(name = "id") long id) {
+  public ResponseEntity<AdminApiResponseWithDataDto<EwpChangeNotificationDto>>
+      getChangeNotification(@Min(1) @PathVariable(name = "id") long id) {
     Optional<EwpChangeNotificationDto> ewpChangeNotificationDtoOptional =
         this.ewpChangeNotificationService.findById(id);
     if (ewpChangeNotificationDtoOptional.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
     return AdminApiResponseUtils.toOkResponseEntity(ewpChangeNotificationDtoOptional.get());
+  }
+
+  @PostMapping(value = "/{id}/attempts/force", produces = MediaType.APPLICATION_JSON_VALUE)
+  @Operation(
+      summary = "Force an attempt of delivery of an EWP change notification.",
+      tags = {"Admin"})
+  public ResponseEntity<AdminApiResponseWithDataDto<EwpChangeNotificationDto>> forceAttempt(
+      @Min(1) @PathVariable(name = "id") long id) throws Exception {
+    EwpChangeNotificationDto ewpChangeNotificationDto =
+        this.ewpChangeNotificationService.forceAttempt(id);
+    return AdminApiResponseUtils.toOkResponseEntity(ewpChangeNotificationDto);
   }
 
   private static class GetEwpChangeNotificationsRequestDto implements Serializable {
