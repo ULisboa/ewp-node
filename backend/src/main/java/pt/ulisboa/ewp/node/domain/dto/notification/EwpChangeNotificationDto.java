@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import pt.ulisboa.ewp.node.domain.dto.communication.log.CommunicationLogSummaryDto;
+import pt.ulisboa.ewp.node.domain.entity.notification.EwpChangeNotification.Status;
 
 public class EwpChangeNotificationDto {
 
@@ -11,8 +12,9 @@ public class EwpChangeNotificationDto {
   private ZonedDateTime creationDateTime;
   private List<CommunicationLogSummaryDto> sortedCommunicationLogs;
   private int attemptNumber;
-  private ZonedDateTime scheduledDateTime;
-  private String status;
+  private ZonedDateTime nextAttemptDateTime;
+  private Status status;
+  private EwpChangeNotificationDto mergedInto;
 
   // NOTE: used to store actual CNR variables (e.g. iia_id)
   private List<ExtraVariableEntryDto> extraVariables = new ArrayList<>();
@@ -49,20 +51,34 @@ public class EwpChangeNotificationDto {
     this.attemptNumber = attemptNumber;
   }
 
-  public ZonedDateTime getScheduledDateTime() {
-    return scheduledDateTime;
+  public ZonedDateTime getNextAttemptDateTime() {
+    return nextAttemptDateTime;
   }
 
-  public void setScheduledDateTime(ZonedDateTime scheduledDateTime) {
-    this.scheduledDateTime = scheduledDateTime;
+  public void setNextAttemptDateTime(ZonedDateTime nextAttemptDateTime) {
+    this.nextAttemptDateTime = nextAttemptDateTime;
   }
 
-  public String getStatus() {
+  public Status getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(Status status) {
     this.status = status;
+  }
+
+  /**
+   * If the change notification was merged into some other change notification, then this provides
+   * that change notification.
+   *
+   * @return The change notification into which the current change notification was merged into.
+   */
+  public EwpChangeNotificationDto getMergedInto() {
+    return mergedInto;
+  }
+
+  public void setMergedInto(EwpChangeNotificationDto mergedInto) {
+    this.mergedInto = mergedInto;
   }
 
   public List<ExtraVariableEntryDto> getExtraVariables() {

@@ -25,14 +25,15 @@ public class EwpChangeNotificationService {
     this.repository = repository;
   }
 
-  public EwpChangeNotificationDto findById(long id) {
+  public Optional<EwpChangeNotificationDto> findById(long id) {
     EwpChangeNotificationMapper mapper = EwpChangeNotificationMapper.INSTANCE;
     Optional<EwpChangeNotification> ewpChangeNotificationOptional = this.repository.findById(id);
     if (ewpChangeNotificationOptional.isEmpty()) {
-      throw new IllegalArgumentException("There is no EWP change notification with ID: " + id);
+      return Optional.empty();
     }
-    return mapper.mapEwpChangeNotificationToEwpChangeNotificationDto(
-        ewpChangeNotificationOptional.get());
+    return Optional.of(
+        mapper.mapEwpChangeNotificationToEwpChangeNotificationDto(
+            ewpChangeNotificationOptional.get()));
   }
 
   public Collection<EwpChangeNotificationDto> findByFilter(

@@ -46,7 +46,7 @@
             </th>
             <th pResizableColumn>
                 <div class="flex align-items-center">
-                    Next Scheduled Attempt
+                    Next Attempt Date Time
                 </div>
             </th>
             <th pResizableColumn>
@@ -74,8 +74,8 @@
             </td>
             <td class="cell">{{ changeNotification.attemptNumber }}</td>
             <td class="cell">
-                @if (changeNotification.scheduledDateTime) {
-                    {{ changeNotification.scheduledDateTime | date:'medium' }}
+                @if (changeNotification.nextAttemptDateTime) {
+                    {{ changeNotification.nextAttemptDateTime | date:'medium' }}
                 }
                 @else {
                     <span>---</span>

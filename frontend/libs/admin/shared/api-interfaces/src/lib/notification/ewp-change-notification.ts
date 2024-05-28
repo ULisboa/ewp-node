@@ -9,7 +9,7 @@ export class EwpChangeNotification {
     sortedCommunicationLogs!: CommunicationLogSummary[];
 
     attemptNumber!: number;
-    scheduledDateTime!: Date;
+    nextAttemptDateTime!: Date;
     status!: string;
     extraVariables!: { key: string, value: string}[];
 

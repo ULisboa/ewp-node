@@ -3,6 +3,7 @@ package pt.ulisboa.ewp.node.api.admin.controller.ewp.notification;
 import io.swagger.v3.oas.annotations.Operation;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -66,9 +67,12 @@ public class AdminApiEwpChangeNotificationController {
       tags = {"Admin"})
   public ResponseEntity<AdminApiResponseWithDataDto<EwpChangeNotificationDto>> getCommunicationLogs(
       @Min(1) @PathVariable(name = "id") long id) {
-    EwpChangeNotificationDto ewpChangeNotificationDto =
+    Optional<EwpChangeNotificationDto> ewpChangeNotificationDtoOptional =
         this.ewpChangeNotificationService.findById(id);
-    return AdminApiResponseUtils.toOkResponseEntity(ewpChangeNotificationDto);
+    if (ewpChangeNotificationDtoOptional.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+    return AdminApiResponseUtils.toOkResponseEntity(ewpChangeNotificationDtoOptional.get());
   }
 
   private static class GetEwpChangeNotificationsRequestDto implements Serializable {
