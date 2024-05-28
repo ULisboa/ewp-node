@@ -57,7 +57,7 @@ public class EwpNotificationSenderDaemon implements Runnable {
     Collection<EwpChangeNotification> changeNotifications =
         this.changeNotificationRepository.findAllPending();
     for (EwpChangeNotification changeNotification : changeNotifications) {
-      if (ZonedDateTime.now().isAfter(changeNotification.getScheduledDateTime())) {
+      if (ZonedDateTime.now().isAfter(changeNotification.getNextAttemptDateTime())) {
         try {
           processChangeNotification(changeNotification);
         } catch (Exception e) {

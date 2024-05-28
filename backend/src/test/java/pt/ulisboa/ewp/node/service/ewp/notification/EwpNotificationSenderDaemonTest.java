@@ -189,15 +189,17 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
 
     changeNotificationRepository.persist(originalChangeNotification);
     await()
-        .atMost(
-            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
-        .until(() -> {
-          EwpChangeNotification changeNotification = changeNotificationRepository.findById(
-              originalChangeNotification.getId()).get();
-          return changeNotification.isPending() && changeNotification.getAttemptNumber()
-              == originalChangeNotification.getAttemptNumber() + 1 &&
-              changeNotification.getScheduledDateTime()
-                  .isAfter(originalChangeNotification.getScheduledDateTime());
-        });
+        .atMost(Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
+        .until(
+            () -> {
+              EwpChangeNotification changeNotification =
+                  changeNotificationRepository.findById(originalChangeNotification.getId()).get();
+              return changeNotification.isPending()
+                  && changeNotification.getAttemptNumber()
+                      == originalChangeNotification.getAttemptNumber() + 1
+                  && changeNotification
+                      .getNextAttemptDateTime()
+                      .isAfter(originalChangeNotification.getNextAttemptDateTime());
+            });
   }
 }

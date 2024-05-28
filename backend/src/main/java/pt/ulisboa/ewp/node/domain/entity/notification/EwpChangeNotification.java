@@ -40,7 +40,7 @@ public abstract class EwpChangeNotification {
   private CommunicationLog originCommunicationLog;
   private Collection<CommunicationLog> communications = new HashSet<>();
   private int attemptNumber;
-  private ZonedDateTime scheduledDateTime;
+  private ZonedDateTime nextAttemptDateTime;
   private Status status;
   private EwpChangeNotification mergedIntoChangeNotification;
   private Collection<EwpChangeNotification> changeNotificationsAsAggregator = new HashSet<>();
@@ -54,12 +54,12 @@ public abstract class EwpChangeNotification {
   protected EwpChangeNotification(
       CommunicationLog originCommunicationLog,
       int attemptNumber,
-      ZonedDateTime scheduledDateTime,
+      ZonedDateTime nextAttemptDateTime,
       Status status) {
     this.creationDateTime = ZonedDateTime.now();
     this.originCommunicationLog = originCommunicationLog;
     this.attemptNumber = attemptNumber;
-    this.scheduledDateTime = scheduledDateTime;
+    this.nextAttemptDateTime = nextAttemptDateTime;
     this.status = status;
   }
 
@@ -120,13 +120,13 @@ public abstract class EwpChangeNotification {
     this.attemptNumber = attemptNumber;
   }
 
-  @Column(name = "scheduled_date_time")
-  public ZonedDateTime getScheduledDateTime() {
-    return this.scheduledDateTime;
+  @Column(name = "next_attempt_date_time")
+  public ZonedDateTime getNextAttemptDateTime() {
+    return this.nextAttemptDateTime;
   }
 
-  public void setScheduledDateTime(ZonedDateTime scheduledDateTime) {
-    this.scheduledDateTime = scheduledDateTime;
+  public void setNextAttemptDateTime(ZonedDateTime nextAttemptDateTime) {
+    this.nextAttemptDateTime = nextAttemptDateTime;
   }
 
   @Transient
@@ -192,31 +192,32 @@ public abstract class EwpChangeNotification {
     BigInteger newDelayInMinutes = BigInteger.TWO.pow(this.attemptNumber);
 
     this.attemptNumber++;
-    this.scheduledDateTime = this.scheduledDateTime.plusMinutes(newDelayInMinutes.longValueExact());
+    this.nextAttemptDateTime =
+        this.nextAttemptDateTime.plusMinutes(newDelayInMinutes.longValueExact());
   }
 
   @Transient
   public void markAsSuccess() {
     this.status = Status.SUCCESS;
-    this.scheduledDateTime = null;
+    this.nextAttemptDateTime = null;
   }
 
   @Transient
   public void markAsFailedDueToMaxAttempts() {
     this.status = Status.FAILED_MAX_ATTEMPTS;
-    this.scheduledDateTime = null;
+    this.nextAttemptDateTime = null;
   }
 
   @Transient
   public void markAsFailedDueToNoCnrApiAvailable() {
     this.status = Status.FAILED_NO_CNR_API_AVAILABLE;
-    this.scheduledDateTime = null;
+    this.nextAttemptDateTime = null;
   }
 
   @Transient
   public void mergeInto(EwpChangeNotification mergedIntoChangeNotification) {
     this.status = Status.MERGED;
-    this.scheduledDateTime = null;
+    this.nextAttemptDateTime = null;
     this.mergedIntoChangeNotification = mergedIntoChangeNotification;
   }
 
@@ -242,14 +243,14 @@ public abstract class EwpChangeNotification {
         && attemptNumber == that.attemptNumber
         && Objects.equals(creationDateTime, that.creationDateTime)
         && Objects.equals(originCommunicationLog, that.originCommunicationLog)
-        && Objects.equals(scheduledDateTime, that.scheduledDateTime)
+        && Objects.equals(nextAttemptDateTime, that.nextAttemptDateTime)
         && status == that.status;
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(
-        id, creationDateTime, originCommunicationLog, attemptNumber, scheduledDateTime, status);
+        id, creationDateTime, originCommunicationLog, attemptNumber, nextAttemptDateTime, status);
   }
 
   @Override
@@ -264,7 +265,7 @@ public abstract class EwpChangeNotification {
         + ", attemptNumber="
         + attemptNumber
         + ", scheduledDateTime="
-        + scheduledDateTime
+        + nextAttemptDateTime
         + ", status="
         + status
         + '}';

@@ -22,7 +22,6 @@ public interface EwpChangeNotificationMapper {
       target = "sortedCommunicationLogs",
       qualifiedByName = "convertToSummaryDto")
   @Mapping(source = "mergedIntoChangeNotification", target = "mergedInto")
-  @Mapping(source = "scheduledDateTime", target = "nextAttemptDateTime")
   EwpChangeNotificationDto mapEwpChangeNotificationToEwpChangeNotificationDto(
       EwpChangeNotification ewpChangeNotification);
 
