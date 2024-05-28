@@ -84,6 +84,8 @@ public class EwpNotificationSenderDaemon implements Runnable {
           context.setCurrentEwpChangeNotifications(List.of(ewpChangeNotification));
 
           try {
+            ewpChangeNotification.incrementAttemptNumber();
+
             sendChangeNotification(ewpChangeNotification);
 
             ewpChangeNotification.markAsSuccess();

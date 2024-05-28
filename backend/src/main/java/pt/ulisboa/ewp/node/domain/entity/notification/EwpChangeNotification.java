@@ -48,7 +48,7 @@ public abstract class EwpChangeNotification {
   protected EwpChangeNotification() {}
 
   protected EwpChangeNotification(CommunicationLog originCommunicationLog) {
-    this(originCommunicationLog, 1, ZonedDateTime.now(), Status.PENDING);
+    this(originCommunicationLog, 0, ZonedDateTime.now(), Status.PENDING);
   }
 
   protected EwpChangeNotification(
@@ -114,6 +114,10 @@ public abstract class EwpChangeNotification {
   @Column(name = "attempt_number", nullable = false)
   public int getAttemptNumber() {
     return this.attemptNumber;
+  }
+
+  public void incrementAttemptNumber() {
+    this.attemptNumber++;
   }
 
   public void setAttemptNumber(int attemptNumber) {
@@ -191,7 +195,6 @@ public abstract class EwpChangeNotification {
   public void scheduleNewAttempt() {
     BigInteger newDelayInMinutes = BigInteger.TWO.pow(this.attemptNumber);
 
-    this.attemptNumber++;
     this.nextAttemptDateTime =
         this.nextAttemptDateTime.plusMinutes(newDelayInMinutes.longValueExact());
   }
