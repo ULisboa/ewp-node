@@ -93,10 +93,11 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
         .responseBody(new OmobilityLaCnrResponseV1())
         .build();
 
-    doNothing().when(
-        outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
-        originalChangeNotification);
+    doNothing()
+        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
+        .sendChangeNotification(Mockito.any());
 
+    changeNotificationRepository.deleteAll();
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
@@ -123,10 +124,11 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
             receivingHeiId,
             omobilityId);
 
-    doThrow(new NoEwpCnrAPIException(originalChangeNotification)).when(
-        outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
-        originalChangeNotification);
+    doThrow(new NoEwpCnrAPIException(originalChangeNotification))
+        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
+        .sendChangeNotification(Mockito.any());
 
+    changeNotificationRepository.deleteAll();
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
@@ -153,10 +155,11 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
             receivingHeiId,
             omobilityId);
 
-    doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
-        outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
-        originalChangeNotification);
+    doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST")))
+        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
+        .sendChangeNotification(Mockito.any());
 
+    changeNotificationRepository.deleteAll();
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(
@@ -183,10 +186,11 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
             receivingHeiId,
             omobilityId);
 
-    doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST"))).when(
-        outgoingMobilityLearningAgreementChangeNotificationHandler).sendChangeNotification(
-        originalChangeNotification);
+    doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST")))
+        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
+        .sendChangeNotification(Mockito.any());
 
+    changeNotificationRepository.deleteAll();
     changeNotificationRepository.persist(originalChangeNotification);
     await()
         .atMost(Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))

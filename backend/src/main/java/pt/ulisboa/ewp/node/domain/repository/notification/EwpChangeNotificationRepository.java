@@ -74,6 +74,11 @@ public class EwpChangeNotificationRepository
     return true;
   }
 
+  @Transactional
+  public void deleteAll() {
+    findAll().forEach(this::delete);
+  }
+
   public Optional<EwpChangeNotification> findById(long id) {
     return runInSession(
         session -> {
