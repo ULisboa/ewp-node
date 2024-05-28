@@ -90,9 +90,9 @@ public class EwpOutgoingMobilityLearningAgreementChangeNotification extends EwpC
   @Transient
   public List<ExtraVariableEntry> getExtraVariables() {
     List<ExtraVariableEntry> result = new ArrayList<>();
-    result.add(new ExtraVariableEntry("sendingHeiId", getSendingHeiId()));
-    result.add(new ExtraVariableEntry("receivingHeiId", getReceivingHeiId()));
-    result.add(new ExtraVariableEntry("outgoingMobilityId", getOutgoingMobilityId()));
+    result.add(new ExtraVariableEntry("sending_hei_id", getSendingHeiId()));
+    result.add(new ExtraVariableEntry("receiving_hei_id", getReceivingHeiId()));
+    result.add(new ExtraVariableEntry("omobility_id", getOutgoingMobilityId()));
     return result;
   }
 

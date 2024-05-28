@@ -106,10 +106,10 @@ public class EwpInterInstitutionalAgreementApprovalChangeNotification extends
   @Transient
   public List<ExtraVariableEntry> getExtraVariables() {
     List<ExtraVariableEntry> result = new ArrayList<>();
-    result.add(new ExtraVariableEntry("approvingHeiId", getApprovingHeiId()));
-    result.add(new ExtraVariableEntry("partnerHeiId", getPartnerHeiId()));
-    result.add(new ExtraVariableEntry("ownerHeiId", getOwnerHeiId()));
-    result.add(new ExtraVariableEntry("iiaId", getIiaId()));
+    result.add(new ExtraVariableEntry("approving_hei_id", getApprovingHeiId()));
+    result.add(new ExtraVariableEntry("partner_hei_id", getPartnerHeiId()));
+    result.add(new ExtraVariableEntry("owner_hei_id", getOwnerHeiId()));
+    result.add(new ExtraVariableEntry("iia_id", getIiaId()));
     return result;
   }
 

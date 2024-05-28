@@ -90,9 +90,9 @@ public class EwpInterInstitutionalAgreementChangeNotification extends EwpChangeN
   @Transient
   public List<ExtraVariableEntry> getExtraVariables() {
     List<ExtraVariableEntry> result = new ArrayList<>();
-    result.add(new ExtraVariableEntry("notifierHeiId", getNotifierHeiId()));
-    result.add(new ExtraVariableEntry("partnerHeiId", getPartnerHeiId()));
-    result.add(new ExtraVariableEntry("iiaId", getIiaId()));
+    result.add(new ExtraVariableEntry("notifier_hei_id", getNotifierHeiId()));
+    result.add(new ExtraVariableEntry("partner_hei_id", getPartnerHeiId()));
+    result.add(new ExtraVariableEntry("iia_id", getIiaId()));
     return result;
   }
 
