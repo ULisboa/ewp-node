@@ -2,6 +2,10 @@ package pt.ulisboa.ewp.node.utils.xml;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -74,20 +78,36 @@ public class XmlUtils {
     return unmarshall(jaxb2Marshaller, xml, classType);
   }
 
-  public static <T> T unmarshall(Jaxb2Marshaller jaxb2Marshaller, byte[] xml, Class<T> classType)
-      throws XmlCannotUnmarshallToTypeException {
-    return unmarshall(jaxb2Marshaller, new String(xml), classType);
-  }
-
   public static <T> T unmarshall(Jaxb2Marshaller jaxb2Marshaller, String xml, Class<T> classType)
       throws XmlCannotUnmarshallToTypeException {
     try {
-      Object object = jaxb2Marshaller.unmarshal(new StreamSource(new StringReader(xml)));
-      if (!classType.isAssignableFrom(object.getClass())) {
+      try {
+        return unmarshallInternal(jaxb2Marshaller.createUnmarshaller(), xml, classType);
+
+      } catch (XmlCannotUnmarshallToTypeException e) {
+        // NOTE: If the unmarshalling with the normal Unmarshaller fails then try unmarshall
+        // by creating a specific JAXBContext for the target class
+        JAXBContext jaxbContext = JAXBContext.newInstance(classType);
+        return unmarshallInternal(jaxbContext.createUnmarshaller(), xml, classType);
+      }
+
+    } catch (UnmarshallingFailureException | JAXBException e) {
+      throw new XmlCannotUnmarshallToTypeException(xml, classType);
+    }
+  }
+
+  private static <T> T unmarshallInternal(Unmarshaller unmarshaller, String xml, Class<T> classType)
+      throws XmlCannotUnmarshallToTypeException {
+    try {
+      JAXBElement<T> jaxbElement =
+          unmarshaller.unmarshal(new StreamSource(new StringReader(xml)), classType);
+      if (jaxbElement.getValue() == null) {
         throw new XmlCannotUnmarshallToTypeException(xml, classType);
       }
-      return classType.cast(object);
-    } catch (UnmarshallingFailureException e) {
+
+      return jaxbElement.getValue();
+
+    } catch (UnmarshallingFailureException | JAXBException e) {
       throw new XmlCannotUnmarshallToTypeException(xml, classType);
     }
   }

@@ -155,7 +155,7 @@ public class EwpHttpClient {
           responseBody =
               XmlUtils.unmarshall(
                   jaxb2Marshaller,
-                  response.getRawBody(),
+                  new String(response.getRawBody()),
                   responseBodySpecification.getBodyClassType());
 
         } catch (XmlCannotUnmarshallToTypeException e) {
@@ -205,8 +205,9 @@ public class EwpHttpClient {
       throws XmlCannotUnmarshallToTypeException {
 
     if (response.isClientError()) {
-      ErrorResponseV1 errorResponse = XmlUtils.unmarshall(jaxb2Marshaller, response.getRawBody(),
-          ErrorResponseV1.class);
+      ErrorResponseV1 errorResponse =
+          XmlUtils.unmarshall(
+              jaxb2Marshaller, new String(response.getRawBody()), ErrorResponseV1.class);
       if (HttpStatus.UNAUTHORIZED.equals(response.getStatus())
           || HttpStatus.FORBIDDEN.equals(response.getStatus())) {
         return new EwpClientProcessorException(
