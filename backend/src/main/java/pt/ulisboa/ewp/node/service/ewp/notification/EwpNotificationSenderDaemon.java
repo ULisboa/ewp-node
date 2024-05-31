@@ -55,7 +55,7 @@ public class EwpNotificationSenderDaemon implements Runnable {
   @Override
   public void run() {
     Collection<EwpChangeNotification> changeNotifications =
-        this.changeNotificationRepository.findAllPending();
+        this.changeNotificationRepository.findAllPendingProcessingNotLocked();
     for (EwpChangeNotification changeNotification : changeNotifications) {
       try {
         processChangeNotification(changeNotification, false);
@@ -69,6 +69,14 @@ public class EwpNotificationSenderDaemon implements Runnable {
 
   public void processChangeNotification(
       EwpChangeNotification ewpChangeNotification, boolean forceAttempt) throws Exception {
+    LOG.info("Preparing to process change notification: {}", ewpChangeNotification);
+
+    ZonedDateTime currentDateTime = ZonedDateTime.now();
+    if (ewpChangeNotification.getLockProcessingUntil() != null
+        && !ewpChangeNotification.getLockProcessingUntil().isBefore(currentDateTime)) {
+      return;
+    }
+
     if (!forceAttempt) {
       if (!ewpChangeNotification.isPending()) {
         return;
@@ -79,35 +87,46 @@ public class EwpNotificationSenderDaemon implements Runnable {
       }
     }
 
-    CommunicationContextHolder.runInNestedContext(
-        context -> {
-          context.setCurrentEwpChangeNotifications(List.of(ewpChangeNotification));
+    ewpChangeNotification.setLockProcessingUntil(
+        currentDateTime.plusSeconds(cnrProperties.getLockProcessingTimeInSeconds()));
+    changeNotificationRepository.persist(ewpChangeNotification);
 
-          try {
-            ewpChangeNotification.incrementAttemptNumber();
+    try {
+      CommunicationContextHolder.runInNestedContext(
+          context -> {
+            context.setCurrentEwpChangeNotifications(List.of(ewpChangeNotification));
 
-            sendChangeNotification(ewpChangeNotification);
+            try {
+              ewpChangeNotification.incrementAttemptNumber();
 
-            ewpChangeNotification.markAsSuccess();
-            changeNotificationRepository.persist(ewpChangeNotification);
+              sendChangeNotification(ewpChangeNotification);
 
-          } catch (NoEwpCnrAPIException e) {
-            LOG.error(
-                String.format(
-                    "Discarding change notification due to no CNR API available: %s",
-                    ewpChangeNotification),
-                e);
-            ewpChangeNotification.markAsFailedDueToNoCnrApiAvailable();
-            changeNotificationRepository.persist(ewpChangeNotification);
+              ewpChangeNotification.markAsSuccess();
+              changeNotificationRepository.persist(ewpChangeNotification);
 
-          } catch (Exception e) {
-            LOG.error(
-                String.format("Failed to send change notification: %s", ewpChangeNotification), e);
-            scheduleNewAttempt(ewpChangeNotification);
-          }
+            } catch (NoEwpCnrAPIException e) {
+              LOG.error(
+                  String.format(
+                      "Discarding change notification due to no CNR API available: %s",
+                      ewpChangeNotification),
+                  e);
+              ewpChangeNotification.markAsFailedDueToNoCnrApiAvailable();
+              changeNotificationRepository.persist(ewpChangeNotification);
 
-          return null;
-        });
+            } catch (Exception e) {
+              LOG.error(
+                  String.format("Failed to send change notification: %s", ewpChangeNotification),
+                  e);
+              scheduleNewAttempt(ewpChangeNotification);
+            }
+
+            return null;
+          });
+
+    } finally {
+      ewpChangeNotification.setLockProcessingUntil(null);
+      changeNotificationRepository.persist(ewpChangeNotification);
+    }
   }
 
   private void sendChangeNotification(EwpChangeNotification changeNotification)

@@ -27,6 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 @Entity
@@ -42,8 +43,11 @@ public abstract class EwpChangeNotification {
   private int attemptNumber;
   private ZonedDateTime nextAttemptDateTime;
   private Status status;
+  private ZonedDateTime lockProcessingUntil;
   private EwpChangeNotification mergedIntoChangeNotification;
   private Collection<EwpChangeNotification> changeNotificationsAsAggregator = new HashSet<>();
+
+  @Version private Long version;
 
   protected EwpChangeNotification() {}
 
@@ -166,6 +170,21 @@ public abstract class EwpChangeNotification {
 
   public void setStatus(Status status) {
     this.status = status;
+  }
+
+  /**
+   * Indicates until when the current instance is locked for processing by some process. Only when
+   * this value is null or in the past that some other process may process it.
+   *
+   * @return The datetime until which the instance is locked for processing.
+   */
+  @Column(name = "lock_processing_until")
+  public ZonedDateTime getLockProcessingUntil() {
+    return lockProcessingUntil;
+  }
+
+  public void setLockProcessingUntil(ZonedDateTime lockProcessingUntil) {
+    this.lockProcessingUntil = lockProcessingUntil;
   }
 
   @ManyToOne(fetch = FetchType.LAZY)

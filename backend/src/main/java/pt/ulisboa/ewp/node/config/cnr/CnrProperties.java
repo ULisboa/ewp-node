@@ -10,6 +10,7 @@ public class CnrProperties {
 
   private long intervalInMilliseconds;
   private int maxNumberAttempts;
+  private long lockProcessingTimeInSeconds;
 
   public long getIntervalInMilliseconds() {
     return intervalInMilliseconds;
@@ -25,5 +26,13 @@ public class CnrProperties {
 
   public void setMaxNumberAttempts(int maxNumberAttempts) {
     this.maxNumberAttempts = maxNumberAttempts;
+  }
+
+  public long getLockProcessingTimeInSeconds() {
+    return lockProcessingTimeInSeconds;
+  }
+
+  public void setLockProcessingTimeInSeconds(long lockProcessingTimeInSeconds) {
+    this.lockProcessingTimeInSeconds = lockProcessingTimeInSeconds;
   }
 }

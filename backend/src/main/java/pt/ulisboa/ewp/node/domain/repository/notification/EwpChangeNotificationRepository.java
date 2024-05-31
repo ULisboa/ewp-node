@@ -1,8 +1,10 @@
 package pt.ulisboa.ewp.node.domain.repository.notification;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.persistence.LockModeType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -83,19 +85,26 @@ public class EwpChangeNotificationRepository
     return runInSession(
         session -> {
           CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-          CriteriaQuery<EwpChangeNotification> query = criteriaBuilder.createQuery(
-              EwpChangeNotification.class);
+          CriteriaQuery<EwpChangeNotification> query =
+              criteriaBuilder.createQuery(EwpChangeNotification.class);
           Root<EwpChangeNotification> selection = query.from(EwpChangeNotification.class);
           return session
               .createQuery(
                   query.where(criteriaBuilder.equal(selection.get(EwpChangeNotification_.ID), id)))
+              .setLockMode(LockModeType.PESSIMISTIC_WRITE)
               .stream()
               .findFirst();
         });
   }
 
-  public Collection<EwpChangeNotification> findAllPending() {
-    return super.findAll().stream().filter(EwpChangeNotification::isPending)
+  public Collection<EwpChangeNotification> findAllPendingProcessingNotLocked() {
+    return super.findAll().stream()
+        .filter(EwpChangeNotification::isPending)
+        .filter(n -> n.getNextAttemptDateTime().isBefore(ZonedDateTime.now()))
+        .filter(
+            n ->
+                n.getLockProcessingUntil() == null
+                    || n.getLockProcessingUntil().isBefore(ZonedDateTime.now()))
         .collect(Collectors.toSet());
   }
 
