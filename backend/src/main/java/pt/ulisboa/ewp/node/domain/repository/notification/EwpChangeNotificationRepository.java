@@ -81,6 +81,21 @@ public class EwpChangeNotificationRepository
     findAll().forEach(this::delete);
   }
 
+  @Override
+  public Collection<EwpChangeNotification> findAll() {
+    return runInSession(
+        session -> {
+          CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+          CriteriaQuery<EwpChangeNotification> query =
+              criteriaBuilder.createQuery(EwpChangeNotification.class);
+          Root<EwpChangeNotification> selection = query.from(EwpChangeNotification.class);
+          return session
+              .createQuery(query.select(selection))
+              .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+              .getResultList();
+        });
+  }
+
   public Optional<EwpChangeNotification> findById(long id) {
     return runInSession(
         session -> {
@@ -98,7 +113,7 @@ public class EwpChangeNotificationRepository
   }
 
   public Collection<EwpChangeNotification> findAllPendingProcessingNotLocked() {
-    return super.findAll().stream()
+    return findAll().stream()
         .filter(EwpChangeNotification::isPending)
         .filter(n -> n.getNextAttemptDateTime().isBefore(ZonedDateTime.now()))
         .filter(
@@ -106,6 +121,17 @@ public class EwpChangeNotificationRepository
                 n.getLockProcessingUntil() == null
                     || n.getLockProcessingUntil().isBefore(ZonedDateTime.now()))
         .collect(Collectors.toSet());
+  }
+
+  public Optional<EwpChangeNotification> findNextPendingProcessingNotLocked() {
+    return findAll().stream()
+        .filter(EwpChangeNotification::isPending)
+        .filter(n -> n.getNextAttemptDateTime().isBefore(ZonedDateTime.now()))
+        .filter(
+            n ->
+                n.getLockProcessingUntil() == null
+                    || n.getLockProcessingUntil().isBefore(ZonedDateTime.now()))
+        .findFirst();
   }
 
   private void mergeOldChangeNotifications(EwpChangeNotification entity) {

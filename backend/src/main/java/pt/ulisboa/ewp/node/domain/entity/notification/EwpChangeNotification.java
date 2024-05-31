@@ -286,10 +286,14 @@ public abstract class EwpChangeNotification {
         + originCommunicationLog
         + ", attemptNumber="
         + attemptNumber
-        + ", scheduledDateTime="
+        + ", nextAttemptDateTime="
         + nextAttemptDateTime
         + ", status="
         + status
+        + ", lockProcessingUntil="
+        + lockProcessingUntil
+        + ", version="
+        + version
         + '}';
   }
 

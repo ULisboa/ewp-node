@@ -54,9 +54,11 @@ public class EwpNotificationSenderDaemon implements Runnable {
 
   @Override
   public void run() {
-    Collection<EwpChangeNotification> changeNotifications =
-        this.changeNotificationRepository.findAllPendingProcessingNotLocked();
-    for (EwpChangeNotification changeNotification : changeNotifications) {
+    Optional<EwpChangeNotification> changeNotificationOptional;
+    while ((changeNotificationOptional =
+            this.changeNotificationRepository.findNextPendingProcessingNotLocked())
+        .isPresent()) {
+      EwpChangeNotification changeNotification = changeNotificationOptional.get();
       try {
         processChangeNotification(changeNotification, false);
       } catch (Exception e) {
@@ -90,6 +92,7 @@ public class EwpNotificationSenderDaemon implements Runnable {
     ewpChangeNotification.setLockProcessingUntil(
         currentDateTime.plusSeconds(cnrProperties.getLockProcessingTimeInSeconds()));
     changeNotificationRepository.persist(ewpChangeNotification);
+    LOG.info("Locked change notification: {}", ewpChangeNotification);
 
     try {
       CommunicationContextHolder.runInNestedContext(
