@@ -45,14 +45,14 @@
                                 </div>
                             }
 
-                            @case (FILTER_TYPE_HTTP_COMMUNICATION_TO_FORWARD_EWP_API_ENDPOINT) {
+                            @case (FILTER_TYPE_HTTP_COMMUNICATION_TO_API_ENDPOINT) {
                                 <div class="field col-12 md:col-4">
                                     <label for="apiName">API Name</label>
                                     <input formControlName="apiName" id="apiName" type="text" pInputText>
                                 </div>
                                 <div class="field col-12 md:col-4">
-                                    <label for="apiMajorVersion">API Major Version</label>
-                                    <input formControlName="apiMajorVersion" id="apiMajorVersion" type="number" min="0" max="999" pInputText>
+                                    <label for="apiVersion">API Version</label>
+                                    <input formControlName="apiVersion" id="apiVersion" type="text" pInputText>
                                 </div>
                                 <div class="field col-12 md:col-4">
                                     <label for="endpointName">Endpoint Name</label>

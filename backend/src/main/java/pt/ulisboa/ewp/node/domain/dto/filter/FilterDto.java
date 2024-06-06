@@ -13,9 +13,9 @@ import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogS
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogTypeIsOneOfSetFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.HttpCommunicationFormParameterStartsWithValueFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.HttpCommunicationResponseWithStatusCodeFilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.HttpCommunicationToApiEndpointFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationFromEwpNodeIsFromHeiIdFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.ewp.HttpCommunicationToEwpNodeIsToHeiIdFilterDto;
-import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.http.host.HttpCommunicationToForwardEwpApiEndpointFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.EqualsFieldFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.GreaterThanFieldFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.field.GreaterThanOrEqualFieldFilterDto;
@@ -50,8 +50,8 @@ import pt.ulisboa.ewp.node.domain.dto.filter.field.LessThanOrEqualFieldFilterDto
           value = HttpCommunicationToEwpNodeIsToHeiIdFilterDto.class,
           name = "HTTP-COMMUNICATION-TO-EWP-NODE-IS-TO-HEI-ID"),
       @JsonSubTypes.Type(
-          value = HttpCommunicationToForwardEwpApiEndpointFilterDto.class,
-          name = "HTTP-COMMUNICATION-TO-FORWARD-EWP-API-ENDPOINT"),
+          value = HttpCommunicationToApiEndpointFilterDto.class,
+          name = "HTTP-COMMUNICATION-TO-API-ENDPOINT"),
       @JsonSubTypes.Type(
           value = HttpCommunicationFormParameterStartsWithValueFilterDto.class,
           name = "HTTP-COMMUNICATION-FORM-PARAMETER-STARTS-WITH-VALUE"),

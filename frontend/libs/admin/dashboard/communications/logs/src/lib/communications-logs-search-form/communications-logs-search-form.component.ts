@@ -11,7 +11,7 @@ export class CommunicationsLogsSearchFormComponent implements AfterViewInit {
   FILTER_TYPE_COMMUNICATION_LOG_IS_ROOT = 'COMMUNICATION-LOG-IS-ROOT';
   FILTER_TYPE_HTTP_COMMUNICATION_FORM_PARAMETER_STARTS_WITH_VALUE = 'HTTP-COMMUNICATION-FORM-PARAMETER-STARTS-WITH-VALUE';
   FILTER_TYPE_HTTP_COMMUNICATION_RESPONSE_WITH_STATUS_CODE = 'HTTP-COMMUNICATION-RESPONSE-WITH-STATUS-CODE';
-  FILTER_TYPE_HTTP_COMMUNICATION_TO_FORWARD_EWP_API_ENDPOINT = 'HTTP-COMMUNICATION-TO-FORWARD-EWP-API-ENDPOINT';
+  FILTER_TYPE_HTTP_COMMUNICATION_TO_API_ENDPOINT = 'HTTP-COMMUNICATION-TO-API-ENDPOINT';
 
   @Output()
   filterHandler = new EventEmitter<object>();
@@ -25,7 +25,7 @@ export class CommunicationsLogsSearchFormComponent implements AfterViewInit {
     { name: 'Communication log is a root (has no parent communication defined)', value: this.FILTER_TYPE_COMMUNICATION_LOG_IS_ROOT },
     { name: 'HTTP Request has form parameter with value', value: this.FILTER_TYPE_HTTP_COMMUNICATION_FORM_PARAMETER_STARTS_WITH_VALUE },
     { name: 'HTTP Response has a specific status code', value: this.FILTER_TYPE_HTTP_COMMUNICATION_RESPONSE_WITH_STATUS_CODE },
-    { name: 'Target is a Forward EWP API Endpoint', value: this.FILTER_TYPE_HTTP_COMMUNICATION_TO_FORWARD_EWP_API_ENDPOINT }
+    { name: 'Target is an API Endpoint', value: this.FILTER_TYPE_HTTP_COMMUNICATION_TO_API_ENDPOINT }
   ];
 
   parameterNames = [
@@ -60,7 +60,7 @@ export class CommunicationsLogsSearchFormComponent implements AfterViewInit {
       parameter: this.formBuilder.control('', []),
       value: this.formBuilder.control('', []),
       apiName: this.formBuilder.control('', []),
-      apiMajorVersion: this.formBuilder.control('', []),
+      apiVersion: this.formBuilder.control('', []),
       endpointName: this.formBuilder.control('', [])
     });
     filterForm.patchValue({
