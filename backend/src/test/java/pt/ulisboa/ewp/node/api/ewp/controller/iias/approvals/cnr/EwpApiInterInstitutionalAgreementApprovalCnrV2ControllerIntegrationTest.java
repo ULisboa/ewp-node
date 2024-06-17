@@ -13,7 +13,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.approval.cnr.InterInstitutionalAgreementApprovalCnrV2HostProvider;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.iias.approvals.cnr.MockInterInstitutionalAgreementApprovalCnrV2HostProvider;
@@ -52,7 +51,6 @@ class EwpApiInterInstitutionalAgreementApprovalCnrV2ControllerIntegrationTest
         .getAllProvidersOfType(InterInstitutionalAgreementApprovalCnrV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
-    queryParams.param(EwpApiParamConstants.OWNER_HEI_ID, ownerHeiId);
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaId);
 
     String responseXml =
@@ -60,7 +58,7 @@ class EwpApiInterInstitutionalAgreementApprovalCnrV2ControllerIntegrationTest
                 registryClient,
                 method,
                 EwpApiConstants.API_BASE_URI
-                    + EwpApiInterInstitutionalAgreementApprovalCnrV2Controller.BASE_PATH,
+                    + EwpApiInterInstitutionalAgreementApprovalCnrV2Controller.BASE_PATH + "/" + ownerHeiId,
                 queryParams,
                 approvingHeiId)
             .andExpect(status().isOk())

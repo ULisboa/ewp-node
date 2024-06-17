@@ -30,12 +30,7 @@ public class EwpApiInterInstitutionalAgreementApprovalCnrManifestEntryProvider
     manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
     manifestEntry.setAdminNotes(null);
     manifestEntry.setUrl(
-        baseUrl
-            + EwpApiInterInstitutionalAgreementApprovalCnrV2Controller.BASE_PATH
-            + "?"
-            + EwpApiParamConstants.OWNER_HEI_ID
-            + "="
-            + heiId);
+        baseUrl + EwpApiInterInstitutionalAgreementApprovalCnrV2Controller.BASE_PATH + "/" + heiId);
     manifestEntry.setHttpSecurity(getDefaultHttpSecurityOptions());
     return manifestEntry;
   }

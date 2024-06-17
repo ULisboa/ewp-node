@@ -4,8 +4,10 @@ import eu.erasmuswithoutpaper.api.architecture.v1.EmptyV1;
 import eu.erasmuswithoutpaper.api.iias.approval.cnr.v2.IiaApprovalCnrResponseV2;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Collection;
+import javax.validation.constraints.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +38,7 @@ public class EwpApiInterInstitutionalAgreementApprovalCnrV2Controller {
 
   @EwpApiEndpoint(api = "iia-approval-cnr", apiMajorVersion = 2)
   @RequestMapping(
+      path = "/{ownerHeiId}",
       method = {RequestMethod.GET, RequestMethod.POST},
       produces = MediaType.APPLICATION_XML_VALUE)
   @Operation(
@@ -43,8 +46,8 @@ public class EwpApiInterInstitutionalAgreementApprovalCnrV2Controller {
       tags = {"ewp"})
   public ResponseEntity<IiaApprovalCnrResponseV2> iiaApprovalCnr(
       EwpApiHostAuthenticationToken authenticationToken,
-      @RequestParam(value = EwpApiParamConstants.OWNER_HEI_ID) String ownerHeiId,
-      @RequestParam(value = EwpApiParamConstants.IIA_ID) String iiaId) {
+      @NotNull @PathVariable String ownerHeiId,
+      @NotNull @RequestParam(value = EwpApiParamConstants.IIA_ID) String iiaId) {
 
     String approvingHeiId =
         authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next();
