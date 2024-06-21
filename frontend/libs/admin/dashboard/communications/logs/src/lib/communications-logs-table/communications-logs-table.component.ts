@@ -41,6 +41,8 @@ export class AdminDashboardCommunicationsLogsTableComponent implements AfterCont
     this.loading = false;
   }
 
+  freeTextSearchValue: string | undefined;
+
   private _additionalFilter: object | undefined;
 
   @Input()
@@ -226,6 +228,10 @@ export class AdminDashboardCommunicationsLogsTableComponent implements AfterCont
     }
   }
 
+  onFreeTextSearch() {
+    this.loadCommunicationsLogs(this.lastTableLazyLoadEvent || { filters: {} });
+  }
+
   loadCommunicationsLogs(event: TableLazyLoadEvent) {
     this.lastTableLazyLoadEvent = event;
     this.loading = true;
@@ -238,6 +244,12 @@ export class AdminDashboardCommunicationsLogsTableComponent implements AfterCont
       }
       if (this.additionalFilter) {
         subFilters.push(this.additionalFilter);
+      }
+      if (this.freeTextSearchValue && this.freeTextSearchValue.length > 0) {
+        subFilters.push({
+          type: 'COMMUNICATION-LOG-FREE-TEXT',
+          value: this.freeTextSearchValue
+        });
       }
     }
     const filter = {

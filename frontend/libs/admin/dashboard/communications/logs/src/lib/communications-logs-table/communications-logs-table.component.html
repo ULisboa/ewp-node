@@ -16,6 +16,16 @@
     [resizableColumns]="true"
     styleClass="p-datatable-gridlines"
     [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="caption">
+        <div class="flex" *ngIf="allowFiltering">
+            <span class="ml-auto">
+                <form (submit)="onFreeTextSearch()">
+                    <input pInputText type="text" name="freeTextSearchValue" [(ngModel)]="freeTextSearchValue" placeholder="Search keyword" />
+                    <p-button [outlined]="true" icon="pi pi-search" (click)="onFreeTextSearch()" />
+                </form>
+            </span>
+        </div>
+    </ng-template>
     <ng-template pTemplate="header">
         <tr>
             <th style="width: 3rem"></th>

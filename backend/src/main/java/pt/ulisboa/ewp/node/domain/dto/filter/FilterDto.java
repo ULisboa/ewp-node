@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogEndProcessingBeforeOrEqualDateTimeFilterDto;
+import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogFreeTextFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogIsRootFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogStartProcessingAfterOrEqualDateTimeFilterDto;
 import pt.ulisboa.ewp.node.domain.dto.filter.communication.log.CommunicationLogTypeIsOneOfSetFilterDto;
@@ -63,7 +64,10 @@ import pt.ulisboa.ewp.node.domain.dto.filter.field.LessThanOrEqualFieldFilterDto
           name = "COMMUNICATION-LOG-START-PROCESSING-AFTER-OR-EQUAL-DATE-TIME"),
       @JsonSubTypes.Type(
           value = CommunicationLogEndProcessingBeforeOrEqualDateTimeFilterDto.class,
-          name = "COMMUNICATION-LOG-END-PROCESSING-BEFORE-OR-EQUAL-DATE-TIME")
+          name = "COMMUNICATION-LOG-END-PROCESSING-BEFORE-OR-EQUAL-DATE-TIME"),
+      @JsonSubTypes.Type(
+          value = CommunicationLogFreeTextFilterDto.class,
+          name = "COMMUNICATION-LOG-FREE-TEXT")
     })
 public abstract class FilterDto<T> {
 
