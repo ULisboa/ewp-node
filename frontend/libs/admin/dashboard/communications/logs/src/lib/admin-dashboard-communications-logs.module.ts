@@ -31,6 +31,7 @@ import { AdminDashboardCommunicationLogChangeNotificationsTableComponent } from 
 import { AdminDashboardCommunicationLogChangeNotificationsDetailComponent } from './communication-log-change-notifications-detail/communication-log-change-notifications-detail.component';
 import { CalendarModule } from 'primeng/calendar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TabViewModule } from 'primeng/tabview';
 
 @NgModule({
   imports: [
@@ -49,6 +50,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     PanelModule,
     ProgressSpinnerModule,
     TableModule,
+    TabViewModule,
     ToastModule,
     SharedUtilAngularModule,
 
