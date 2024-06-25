@@ -131,6 +131,14 @@
                                     </ng-container>
                                 </ng-container>
                             </p-tabPanel>
+                            <p-tabPanel header="Formatted XML" *ngIf="httpCommunicationLog.response.isXmlResponse()">
+                                <lib-prism [language]="'markup'" [code]="httpCommunicationLog.response.getBodyAsFormattedXml()"
+                                    [showLineNumbers]="false"></lib-prism>
+                                <div>
+                                    <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.response.getBodyAsFormattedXml()" 
+                                        (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
+                                </div>
+                            </p-tabPanel>
                         </p-tabView>
                     </p-card>
                 </p-accordionTab>
