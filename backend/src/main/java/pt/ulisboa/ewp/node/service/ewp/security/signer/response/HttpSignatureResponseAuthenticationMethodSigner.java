@@ -44,9 +44,11 @@ public class HttpSignatureResponseAuthenticationMethodSigner
 
   @Override
   public boolean supports(HttpServletRequest request) {
-    return request.getHeader(HttpConstants.HEADER_ACCEPT_SIGNATURE) != null
-        && Arrays.stream(request.getHeader(HttpConstants.HEADER_ACCEPT_SIGNATURE).split(",\\s?"))
-        .anyMatch(m -> Algorithm.RSA_SHA256.getPortableName().equalsIgnoreCase(m));
+    // NOTE: Consider HTTP Signature response signing if header Accept-Signature is not present
+    // or, if present, the requested algorithm is supported.
+    return request.getHeader(HttpConstants.HEADER_ACCEPT_SIGNATURE) == null
+        || Arrays.stream(request.getHeader(HttpConstants.HEADER_ACCEPT_SIGNATURE).split(",\\s?"))
+            .anyMatch(m -> Algorithm.RSA_SHA256.getPortableName().equalsIgnoreCase(m));
   }
 
   @Override
