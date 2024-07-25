@@ -31,11 +31,13 @@ public class DecodedKeystore {
     Enumeration<String> aliases = keyStore.aliases();
     while (aliases.hasMoreElements()) {
       String alias = aliases.nextElement();
-      this.decodedCertificateAndKeys.put(
-          alias,
-          new DecodedCertificateAndKey(
-              keyStore.getCertificate(alias),
-              keyStore.getKey(alias, keyStorePassword.toCharArray())));
+      if (keyStore.getKey(alias, keyStorePassword.toCharArray()) != null) {
+        this.decodedCertificateAndKeys.put(
+            alias,
+            new DecodedCertificateAndKey(
+                keyStore.getCertificate(alias),
+                keyStore.getKey(alias, keyStorePassword.toCharArray())));
+      }
     }
   }
 
