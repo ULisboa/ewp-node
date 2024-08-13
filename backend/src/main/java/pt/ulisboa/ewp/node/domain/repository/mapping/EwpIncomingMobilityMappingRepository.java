@@ -58,7 +58,7 @@ public class EwpIncomingMobilityMappingRepository extends
   @Override
   protected boolean checkDomainConstraints(EwpIncomingMobilityMapping entity)
       throws DomainException {
-    if (Strings.isNullOrEmpty(entity.getReceivingOunitId())) {
+    if (Strings.isNullOrEmpty(entity.getReceivingHeiId())) {
       throw new DomainException(
           messages.get("error.incomingMobilityMapping.receivingHeiId.must.be.defined"));
     }
