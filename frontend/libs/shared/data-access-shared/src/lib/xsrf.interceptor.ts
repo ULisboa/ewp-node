@@ -1,9 +1,4 @@
-import {
-  HttpRequest,
-  HttpInterceptorFn,
-  HttpHandlerFn,
-  HttpXsrfTokenExtractor
-} from '@angular/common/http';
+import { HttpRequest, HttpInterceptorFn, HttpHandlerFn, HttpXsrfTokenExtractor } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 

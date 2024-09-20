@@ -43,3 +43,4 @@ Thumbs.db
 # Maven
 target/
 .nx/cache
+.nx/workspace-data

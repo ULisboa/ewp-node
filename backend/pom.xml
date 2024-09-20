@@ -386,7 +386,7 @@
   <parent>
     <artifactId>ewp-node-parent</artifactId>
     <groupId>pt.ulisboa</groupId>
-    <version>0.33.0</version>
+    <version>0.34.0</version>
   </parent>
 
   <properties>

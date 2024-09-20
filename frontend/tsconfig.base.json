@@ -43,7 +43,9 @@
       "@ewp-node-frontend/shared/util-angular": [
         "libs/shared/util-angular/src/index.ts"
       ],
-      "@ewp-node-frontend/shared/util-primeng": ["libs/shared/util-primeng/src/index.ts"]
+      "@ewp-node-frontend/shared/util-primeng": [
+        "libs/shared/util-primeng/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
