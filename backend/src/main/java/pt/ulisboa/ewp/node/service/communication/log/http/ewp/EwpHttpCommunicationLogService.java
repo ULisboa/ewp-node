@@ -210,7 +210,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
 
     HttpCommunicationFromEwpNodeLog childCommunicationLog = communicationLogOptional.get();
     HttpCommunicationToEwpNodeLog parentCommunicationLog = parentCommunicationLogOptional.get();
-    childCommunicationLog.setParentCommunication(parentCommunicationLog);
+    parentCommunicationLog.addChildCommunication(childCommunicationLog);
     httpCommunicationFromEwpNodeLogRepository.persist(childCommunicationLog);
   }
 

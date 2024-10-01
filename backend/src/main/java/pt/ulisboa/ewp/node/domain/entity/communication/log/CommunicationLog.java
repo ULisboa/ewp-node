@@ -65,7 +65,9 @@ public class CommunicationLog {
     this.startProcessingDateTime = startProcessingDateTime;
     this.endProcessingDateTime = endProcessingDateTime;
     setObservations(observations);
-    setParentCommunication(parentCommunication);
+    if (parentCommunication != null) {
+      parentCommunication.addChildCommunication(this);
+    }
   }
 
   @Id
@@ -146,9 +148,6 @@ public class CommunicationLog {
 
   public void setParentCommunication(CommunicationLog parentCommunication) {
     this.parentCommunication = parentCommunication;
-    if (this.parentCommunication != null) {
-      this.parentCommunication.getChildrenCommunications().add(this);
-    }
   }
 
   @Transient
@@ -167,6 +166,11 @@ public class CommunicationLog {
 
   public void setChildrenCommunications(Set<CommunicationLog> childrenCommunications) {
     this.childrenCommunications = childrenCommunications;
+  }
+
+  public void addChildCommunication(CommunicationLog childCommunication) {
+    this.childrenCommunications.add(childCommunication);
+    childCommunication.setParentCommunication(this);
   }
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "originCommunicationLog", cascade = CascadeType.ALL)
