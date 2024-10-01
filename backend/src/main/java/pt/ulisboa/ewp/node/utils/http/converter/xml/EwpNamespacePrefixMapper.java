@@ -1,9 +1,9 @@
 package pt.ulisboa.ewp.node.utils.http.converter.xml;
 
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.glassfish.jaxb.runtime.marshaller.NamespacePrefixMapper;
 
 /**
  * Namespace prefix mapper that maps EWP namespaces into predefined prefixes.

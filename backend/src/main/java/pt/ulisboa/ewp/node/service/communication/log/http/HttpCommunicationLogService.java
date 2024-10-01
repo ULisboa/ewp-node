@@ -1,11 +1,11 @@
 package pt.ulisboa.ewp.node.service.communication.log.http;
 
+import jakarta.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
-import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

@@ -1,12 +1,12 @@
 package pt.ulisboa.ewp.node.domain.entity.communication.log.function.call;
 
+import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.*;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 
 @Entity

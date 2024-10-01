@@ -16,11 +16,10 @@ import java.util.UUID;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
@@ -34,6 +33,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 @TestPropertySource(properties = {
@@ -48,7 +48,7 @@ class EwpApiOutgoingMobilityLearningAgreementCnrV1ControllerIntegrationTest exte
   @MockBean private RegistryClient registryClient;
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   void testOutgoingMobilityLearningAgreementCnr_TwoAdmissibleHostProviders_BothHostProvidersInvoked(
       HttpMethod method) throws Exception {
     String sendingHeiId = "test";

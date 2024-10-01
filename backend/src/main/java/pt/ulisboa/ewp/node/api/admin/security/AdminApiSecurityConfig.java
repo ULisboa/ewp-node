@@ -56,14 +56,16 @@ public class AdminApiSecurityConfig {
   public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
     LOG.info("Initializing security for Admin endpoints");
 
-    http.antMatcher(AdminApiConstants.API_BASE_URI + "**")
-        .authorizeRequests()
-        .antMatchers(AdminApiConstants.API_BASE_URI + "auth/login")
-        .permitAll()
-        .anyRequest()
-        .hasRole(ROLE_ADMIN)
-        .and()
+    // @formatter:off
+    http.securityMatcher(AdminApiConstants.API_BASE_URI + "**")
+
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(AdminApiConstants.API_BASE_URI + "auth/login").permitAll()
+            .anyRequest().hasRole(ROLE_ADMIN)
+        )
+
         .userDetailsService(inMemoryUserDetailsManager())
+
         .formLogin(
             formLogin ->
                 formLogin
@@ -85,6 +87,7 @@ public class AdminApiSecurityConfig {
                     new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
         .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+    // @formatter:on
 
     return http.build();
   }

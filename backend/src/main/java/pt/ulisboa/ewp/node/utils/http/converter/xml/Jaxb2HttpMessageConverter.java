@@ -1,19 +1,19 @@
 package pt.ulisboa.ewp.node.utils.http.converter.xml;
 
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+import jakarta.persistence.spi.TransformerException;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import org.glassfish.jaxb.runtime.marshaller.NamespacePrefixMapper;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -65,14 +65,14 @@ public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConver
       headers.put(HttpHeaders.CONTENT_TYPE,
           Collections.singletonList(MediaType.APPLICATION_XML_VALUE));
       writeToResult(object, headers, result);
-    } catch (TransformerException e) {
+    } catch (TransformerException | javax.xml.transform.TransformerException e) {
       throw new MarshallingFailureException("Failed to write XML result", e);
     }
   }
 
   @Override
   public void writeToResult(Object object, HttpHeaders headers, Result result)
-      throws TransformerException {
+      throws TransformerException, javax.xml.transform.TransformerException {
     try {
       // NOTE: try marshall object without other classes scanned by marshaller
       // If successful, it ensures that the main namespace uses an empty namespace prefix.
@@ -80,7 +80,7 @@ public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConver
       Jaxb2Marshaller marshaller = createJaxb2Marshaller(clazz);
       marshal(marshaller, object, result);
 
-    } catch (XmlMappingException e) {
+    } catch (XmlMappingException | javax.xml.transform.TransformerException e) {
       // NOTE: If the marshalling failed, then marshall using all known packages as context.
       Jaxb2Marshaller marshaller = createJaxb2Marshaller(null);
       marshal(marshaller, object, result);
@@ -88,7 +88,7 @@ public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConver
   }
 
   private void marshal(Jaxb2Marshaller marshaller, Object object, Result result)
-      throws TransformerException {
+      throws javax.xml.transform.TransformerException {
     TransformerFactory tf = TransformerFactory.newInstance();
     StreamSource xslt = new StreamSource(
         getClass().getClassLoader().getResourceAsStream("xsl/remove-unused-namespaces.xsl"));
@@ -117,9 +117,9 @@ public class Jaxb2HttpMessageConverter extends Jaxb2RootElementHttpMessageConver
     marshaller.setSupportJaxbElementClass(this.supportJaxbElementClass);
 
     Map<String, Object> jaxbProperties = new HashMap<>();
-    jaxbProperties.put(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
+    jaxbProperties.put(jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
     if (this.namespacePrefixMapper != null) {
-      jaxbProperties.put("com.sun.xml.bind.namespacePrefixMapper", this.namespacePrefixMapper);
+      jaxbProperties.put("org.glassfish.jaxb.namespacePrefixMapper", this.namespacePrefixMapper);
     }
 
     marshaller.setMarshallerProperties(jaxbProperties);

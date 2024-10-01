@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.utils;
 
+import jakarta.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,7 +10,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Locale;
-import javax.xml.bind.DatatypeConverter;
 
 public class CertificateUtils {
 

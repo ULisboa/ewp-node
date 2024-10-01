@@ -1,6 +1,7 @@
 package pt.ulisboa.ewp.host.plugin.skeleton.provider.imobilities.tors;
 
 import eu.erasmuswithoutpaper.api.imobilities.tors.v1.endpoints.ImobilityTorsGetResponseV1.Tor;
+import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class MockIncomingMobilityToRsV1HostProvider extends

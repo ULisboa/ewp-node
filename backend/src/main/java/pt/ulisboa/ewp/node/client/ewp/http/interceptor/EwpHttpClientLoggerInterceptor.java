@@ -1,10 +1,10 @@
 package pt.ulisboa.ewp.node.client.ewp.http.interceptor;
 
+import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.WeakHashMap;
-import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

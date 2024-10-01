@@ -1,9 +1,9 @@
 package pt.ulisboa.ewp.node.domain.dto.filter.field;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.util.Objects;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 public class LessThanFieldFilterDto<T> extends FieldFilterDto<T> {
 

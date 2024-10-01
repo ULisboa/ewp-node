@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,6 +24,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 class EwpApiSimpleCourseReplicationV1ControllerTest extends AbstractEwpControllerIntegrationTest {
@@ -33,9 +35,9 @@ class EwpApiSimpleCourseReplicationV1ControllerTest extends AbstractEwpControlle
   @MockBean private RegistryClient registryClient;
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testSimpleCourseReplicationRetrieval_UnknownHeiId_ErrorReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void testSimpleCourseReplicationRetrieval_UnknownHeiId_ErrorReturned(HttpMethod method)
+      throws Exception {
     String heiId = "test";
     List<String> losIds = Arrays.asList("a1", "b2", "c3");
 
@@ -52,9 +54,10 @@ class EwpApiSimpleCourseReplicationV1ControllerTest extends AbstractEwpControlle
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testSimpleCourseReplicationRetrieval_ValidHeiIdAndThreeValidOunitCodesDividedIntoTwoHosts_AllLosIdsReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testSimpleCourseReplicationRetrieval_ValidHeiIdAndThreeValidOunitCodesDividedIntoTwoHosts_AllLosIdsReturned(
+          HttpMethod method) throws Exception {
     String heiId = "test";
     List<String> losIds = Arrays.asList("a1", "b2", "c3");
 

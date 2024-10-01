@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -31,6 +31,7 @@ import pt.ulisboa.ewp.node.domain.entity.mapping.EwpInterInstitutionalAgreementM
 import pt.ulisboa.ewp.node.domain.repository.mapping.EwpInterInstitutionalAgreementMappingRepository;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
@@ -43,9 +44,7 @@ class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
   @SpyBean private EwpInterInstitutionalAgreementMappingRepository mappingRepository;
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void
       testInterInstitutionalAgreementApprovalsRetrieval_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllApprovalsReturned(
           HttpMethod method) throws Exception {
@@ -142,9 +141,7 @@ class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
   }
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void
       testInterInstitutionalAgreementApprovalsRetrieval_ValidHeiIdDividedIntoTwoHostsWithNoMappingsButProviderHasAll_AllApprovalsReturned(
           HttpMethod method) throws Exception {

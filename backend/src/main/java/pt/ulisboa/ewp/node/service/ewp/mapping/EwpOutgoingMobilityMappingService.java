@@ -1,7 +1,7 @@
 package pt.ulisboa.ewp.node.service.ewp.mapping;
 
+import jakarta.transaction.Transactional;
 import java.util.Optional;
-import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping;
 import pt.ulisboa.ewp.node.domain.repository.mapping.EwpOutgoingMobilityMappingRepository;

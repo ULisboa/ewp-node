@@ -1,7 +1,7 @@
 package pt.ulisboa.ewp.node.utils.bean;
 
+import jakarta.servlet.ServletRequest;
 import java.util.Map;
-import javax.servlet.ServletRequest;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.web.servlet.mvc.method.annotation.ExtendedServletRequestDataBinder;
 

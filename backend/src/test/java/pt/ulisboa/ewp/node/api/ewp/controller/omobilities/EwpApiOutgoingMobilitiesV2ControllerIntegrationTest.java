@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,6 +32,7 @@ import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping;
 import pt.ulisboa.ewp.node.domain.repository.mapping.EwpOutgoingMobilityMappingRepository;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 class EwpApiOutgoingMobilitiesV2ControllerIntegrationTest extends
@@ -46,9 +47,7 @@ class EwpApiOutgoingMobilitiesV2ControllerIntegrationTest extends
   private EwpOutgoingMobilityMappingRepository mappingRepository;
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOutgoingMobilityIdsRetrieval_UnknownSendingHeiId_ErrorReturned(HttpMethod method)
       throws Exception {
     String unknownHeiId = UUID.randomUUID().toString();
@@ -67,9 +66,10 @@ class EwpApiOutgoingMobilitiesV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testOutgoingMobilityIdsRetrieval_ValidSendingHeiIdDividedIntoTwoHosts_AllOmobilityIdsReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testOutgoingMobilityIdsRetrieval_ValidSendingHeiIdDividedIntoTwoHosts_AllOmobilityIdsReturned(
+          HttpMethod method) throws Exception {
     String sendingHeiId = "test";
     List<String> omobilityIds = Arrays.asList("a1", "b2", "c3");
 
@@ -107,9 +107,10 @@ class EwpApiOutgoingMobilitiesV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testOutgoingMobilitiesGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllOutgoingMobilitiesReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testOutgoingMobilitiesGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllOutgoingMobilitiesReturned(
+          HttpMethod method) throws Exception {
     String sendingHeiId = "test";
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");
     List<String> omobilityIds = Arrays.asList("a1", "b2", "c3");
@@ -185,7 +186,7 @@ class EwpApiOutgoingMobilitiesV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOutgoingMobilitiesGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownIiasReturned(
       HttpMethod method) throws Exception {
     String sendingHeiId = "test";

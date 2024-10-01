@@ -1,8 +1,8 @@
 package pt.ulisboa.ewp.node.domain.repository.communication.log.http.host;
 
+import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import javax.transaction.Transactional;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

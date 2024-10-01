@@ -5,7 +5,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -28,18 +30,18 @@ public class ActuatorApiSecurityConfig {
   @Bean
   @Order(5)
   public SecurityFilterChain actuatorFilterChain(HttpSecurity http) throws Exception {
-    http.antMatcher(BASE_PATH_URI + "/**")
-        .authorizeRequests()
-        .antMatchers(BASE_PATH_URI + "/**")
-        .hasRole(ROLE_ACTUATOR)
-        .anyRequest()
-        .authenticated()
-        .and()
+    // @formatter:off
+    http.securityMatcher(BASE_PATH_URI + "/**")
+
+        .authorizeHttpRequests(auth -> auth
+            .anyRequest().hasRole(ROLE_ACTUATOR))
+
         .userDetailsService(inMemoryUserDetailsManager())
-        .httpBasic()
-        .and()
-        .csrf()
-        .disable();
+
+        .httpBasic(Customizer.withDefaults())
+        .csrf(AbstractHttpConfigurer::disable);
+    // @formatter:on
+
     return http.build();
   }
 

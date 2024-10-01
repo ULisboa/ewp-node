@@ -1,5 +1,5 @@
 # Build and package
-FROM maven:3-eclipse-temurin-11 as builder-backend
+FROM maven:3-eclipse-temurin-17 as builder-backend
 
 WORKDIR /opt/ewp-node
 

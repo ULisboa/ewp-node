@@ -13,4 +13,4 @@ if test -f "$DOCKER_COMPOSE_ENV_DEV_FILE"; then
     DOCKER_COMPOSE_EXTRA_FLAGS="$DOCKER_COMPOSE_EXTRA_FLAGS --env-file $DOCKER_COMPOSE_ENV_DEV_FILE"
 fi
 
-docker-compose -f docker-compose.dev.yml $DOCKER_COMPOSE_EXTRA_FLAGS down
+docker compose -f docker-compose.dev.yml $DOCKER_COMPOSE_EXTRA_FLAGS down

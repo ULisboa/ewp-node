@@ -23,7 +23,7 @@ import java.util.UUID;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,6 +44,7 @@ import pt.ulisboa.ewp.node.domain.repository.mapping.EwpInterInstitutionalAgreem
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.service.ewp.iia.hash.v7.IiaHashServiceV7;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 @TestPropertySource(properties = {
@@ -64,7 +65,7 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
   private IiaHashServiceV7 iiaHashService;
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testInterInstitutionalAgreementsIndexRetrieval_UnknownHeiId_ErrorReturned(
       HttpMethod method) throws Exception {
     String heiId = "test";
@@ -87,9 +88,10 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testInterInstitutionalAgreementsIndexRetrieval_ValidHeiIdDividedIntoTwoHosts_AllIiaIdsReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testInterInstitutionalAgreementsIndexRetrieval_ValidHeiIdDividedIntoTwoHosts_AllIiaIdsReturned(
+          HttpMethod method) throws Exception {
     String heiId = "test";
     List<String> iiaIds = Arrays.asList("a1", "b2", "c3");
 
@@ -132,9 +134,10 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testInterInstitutionalAgreementsGetRetrievalByIiaIds_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllIiasReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testInterInstitutionalAgreementsGetRetrievalByIiaIds_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllIiasReturned(
+          HttpMethod method) throws Exception {
     String heiId = "test";
     List<String> iiaIds = Arrays.asList("a1", "b2", "c3");
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");
@@ -231,9 +234,10 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testInterInstitutionalAgreementsGetRetrievalByIiaIds_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownIiasReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testInterInstitutionalAgreementsGetRetrievalByIiaIds_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownIiasReturned(
+          HttpMethod method) throws Exception {
     String heiId = "test";
     List<String> iiaIds = Arrays.asList("a1", "b2", "c3");
     List<String> knownIiaIds = Arrays.asList("a1", "b2");
@@ -305,9 +309,7 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void
       testInterInstitutionalAgreementsGetRetrievalByIiaId_ValidHeiIdDividedIntoTwoHostsWithNoExistingMappingsButPrimaryProviderHasIia_IiaReturned(
           HttpMethod method) throws Exception {
@@ -366,9 +368,7 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void
       testInterInstitutionalAgreementsGetRetrievalByIiaId_ValidHeiIdDividedIntoTwoHostsWithNoExistingMappingsButNonPrimaryProviderHasIia_IiaReturned(
           HttpMethod method) throws Exception {
@@ -427,9 +427,7 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void
       testInterInstitutionalAgreementsGetRetrievalByIiaId_ValidHeiIdDividedIntoTwoHostsWithNoExistingMappingsAndNoProviderHasIia_NoIiaReturned(
           HttpMethod method) throws Exception {

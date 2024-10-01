@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.service.bootstrap;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;

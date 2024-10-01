@@ -1,8 +1,8 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.files;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import java.util.Base64;
-import javax.validation.Valid;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;

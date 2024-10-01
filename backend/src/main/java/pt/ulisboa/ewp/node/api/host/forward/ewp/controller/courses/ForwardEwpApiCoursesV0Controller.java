@@ -2,8 +2,8 @@ package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.courses;
 
 import eu.erasmuswithoutpaper.api.courses.v0.CoursesResponseV0;
 import io.swagger.v3.oas.annotations.Operation;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

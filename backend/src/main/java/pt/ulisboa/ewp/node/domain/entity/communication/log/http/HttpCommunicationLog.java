@@ -1,8 +1,8 @@
 package pt.ulisboa.ewp.node.domain.entity.communication.log.http;
 
+import jakarta.persistence.*;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import javax.persistence.*;
 import org.springframework.http.HttpStatus;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 

@@ -1,8 +1,8 @@
 package pt.ulisboa.ewp.node.service.communication.log.http.host;
 
+import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.ContentCachingRequestWrapper;

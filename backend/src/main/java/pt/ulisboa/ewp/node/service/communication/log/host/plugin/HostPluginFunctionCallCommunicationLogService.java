@@ -1,8 +1,8 @@
 package pt.ulisboa.ewp.node.service.communication.log.host.plugin;
 
+import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
-import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.CommunicationLog;
 import pt.ulisboa.ewp.node.domain.entity.communication.log.host.plugin.HostPluginFunctionCallCommunicationLog;

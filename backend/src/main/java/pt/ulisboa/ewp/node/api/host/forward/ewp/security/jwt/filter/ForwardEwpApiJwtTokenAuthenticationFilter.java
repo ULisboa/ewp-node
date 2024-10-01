@@ -3,15 +3,15 @@ package pt.ulisboa.ewp.node.api.host.forward.ewp.security.jwt.filter;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.spi.TransformerException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.xml.bind.JAXBException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -95,13 +95,20 @@ public class ForwardEwpApiJwtTokenAuthenticationFilter
           .write(serialize(ForwardEwpApiResponseUtils.createResponseWithMessages(),
               MediaType.APPLICATION_XML));
 
-    } catch (IOException | JAXBException | TransformerException e) {
+    } catch (IOException
+        | JAXBException
+        | TransformerException
+        | javax.xml.transform.TransformerException e) {
       logger.error("Failed to write response's body", e);
     }
   }
 
   public String serialize(Object object, MediaType mediaType)
-      throws JsonProcessingException, JAXBException, UnsupportedEncodingException, TransformerException {
+      throws JsonProcessingException,
+          JAXBException,
+          UnsupportedEncodingException,
+          TransformerException,
+          javax.xml.transform.TransformerException {
     if (mediaType.equals(MediaType.APPLICATION_JSON)) {
       return new ObjectMapper().writeValueAsString(object);
 

@@ -1,8 +1,8 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;

@@ -1,18 +1,15 @@
 package pt.ulisboa.ewp.node.config.domain;
 
+import jakarta.persistence.EntityManagerFactory;
 import java.util.Properties;
-
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
-import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import pt.ulisboa.ewp.node.domain.utils.DatabaseProperties;
 
 @Configuration

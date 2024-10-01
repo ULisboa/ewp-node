@@ -1,14 +1,16 @@
 package pt.ulisboa.ewp.node.api.ewp.security;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collection;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -49,22 +51,25 @@ public class EwpApiSecurityConfig {
   @Bean
   @Order(3)
   public SecurityFilterChain ewpFilterChain(HttpSecurity http) throws Exception {
-    http.antMatcher(EwpApiConstants.API_BASE_URI + "**")
-        .cors()
-        .and()
-        .csrf()
-        .disable()
-        .authorizeRequests()
-        .antMatchers(EwpApiConstants.API_BASE_URI + "manifest")
-        .permitAll()
-        .antMatchers(EwpApiConstants.API_BASE_URI + "**")
-        .authenticated()
-        .and()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .exceptionHandling()
-        .authenticationEntryPoint(new UnauthorizedAuthenticationEntryPoint());
+    // @formatter:off
+    http.securityMatcher(EwpApiConstants.API_BASE_URI + "**")
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers(EwpApiConstants.API_BASE_URI + "manifest")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
+        .httpBasic(Customizer.withDefaults())
+        .cors(Customizer.withDefaults())
+        .csrf(AbstractHttpConfigurer::disable)
+        .exceptionHandling(
+            exceptionHandling ->
+                exceptionHandling.authenticationEntryPoint(
+                    new UnauthorizedAuthenticationEntryPoint()))
+        .sessionManagement(
+            sessionManagement ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    // @formatter:on
 
     http.addFilterBefore(new EwpApiResponseSignerFilter(responseSigner), HeaderWriterFilter.class);
     http.addFilterBefore(

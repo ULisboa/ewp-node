@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,6 +28,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
@@ -39,7 +40,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   @MockBean private RegistryClient registryClient;
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_UnknownHeiId(HttpMethod method) throws Exception {
     String unknownHeiId = "test";
 
@@ -56,7 +57,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_ValidHeiIdAndNeitherOunitIdsNorCodes(HttpMethod method)
       throws Exception {
     String heiId = "test";
@@ -77,9 +78,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_ValidHeiIdAndUnknownOunitIdProvided_EmptyResponseReturned(
       HttpMethod method) throws Exception {
     String heiId = "test";
@@ -109,9 +108,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_ValidHeiIdAndUnknownOunitCodeProvided_EmptyResponseReturned(
       HttpMethod method) throws Exception {
     String heiId = "test";
@@ -141,10 +138,9 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_ValidHeiIdAndBothOunitIdsAndCodesProvidedSimultaneously(
-      HttpMethod method)
-      throws Exception {
+      HttpMethod method) throws Exception {
     String heiId = "test";
 
     Mockito
@@ -162,7 +158,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_ValidHeiIdAndExceedingNumberOunitIds(HttpMethod method)
       throws Exception {
     String heiId = "test";
@@ -196,7 +192,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_ValidHeiIdAndExceedingNumberOunitCodes(HttpMethod method)
       throws Exception {
     String heiId = "test";
@@ -234,7 +230,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_ValidHeiIdAndTwoValidOunitIds(HttpMethod method) throws Exception {
     String validHeiId = "test";
     List<String> validOunitIds = Arrays.asList("a1", "b2");
@@ -287,7 +283,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_ValidHeiIdAndTwoValidOunitCodes(HttpMethod method)
       throws Exception {
     String validHeiId = "test";
@@ -342,7 +338,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_ValidHeiIdAndThreeValidOunitIdsDividedIntoTwoHosts(
       HttpMethod method) throws Exception {
     String validHeiId = "test";
@@ -405,7 +401,7 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOunitRetrieval_ValidHeiIdAndThreeValidOunitCodesDividedIntoTwoHosts(
       HttpMethod method) throws Exception {
     String validHeiId = "test";

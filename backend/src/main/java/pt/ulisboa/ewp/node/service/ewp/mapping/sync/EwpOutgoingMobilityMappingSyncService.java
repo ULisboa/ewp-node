@@ -114,11 +114,10 @@ public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncServ
         outgoingMobility.getOmobilityId());
   }
 
-  public Date getNextExecutionTime(TriggerContext context) {
-    Optional<Date> lastCompletionTime =
-            Optional.ofNullable(context.lastCompletionTime());
-    Instant nextExecutionTime = lastCompletionTime.orElseGet(Date::new).toInstant()
-            .plusMillis(syncProperties.getMappings().getIntervalInMilliseconds());
-    return Date.from(nextExecutionTime);
+  public Instant getNextExecutionInstant(TriggerContext context) {
+    Optional<Instant> lastCompletionTime = Optional.ofNullable(context.lastCompletion());
+    return lastCompletionTime
+        .orElseGet(Instant::now)
+        .plusMillis(syncProperties.getMappings().getIntervalInMilliseconds());
   }
 }

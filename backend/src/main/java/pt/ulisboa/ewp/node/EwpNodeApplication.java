@@ -1,12 +1,12 @@
 package pt.ulisboa.ewp.node;
 
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

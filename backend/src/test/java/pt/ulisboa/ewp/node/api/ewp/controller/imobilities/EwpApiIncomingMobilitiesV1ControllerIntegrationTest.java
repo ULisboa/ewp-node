@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -27,6 +27,7 @@ import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping;
 import pt.ulisboa.ewp.node.domain.repository.mapping.EwpOutgoingMobilityMappingRepository;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 class EwpApiIncomingMobilitiesV1ControllerIntegrationTest extends
@@ -41,9 +42,10 @@ class EwpApiIncomingMobilitiesV1ControllerIntegrationTest extends
   private EwpOutgoingMobilityMappingRepository mappingRepository;
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testIncomingMobilitiesGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllIncomingMobilitiesReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testIncomingMobilitiesGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllIncomingMobilitiesReturned(
+          HttpMethod method) throws Exception {
     String receivingHeiId = "test";
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");
     List<String> omobilityIds = Arrays.asList("a1", "b2", "c3");
@@ -115,7 +117,7 @@ class EwpApiIncomingMobilitiesV1ControllerIntegrationTest extends
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testIncomingMobilitiesGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownIiasReturned(
       HttpMethod method) throws Exception {
     String receivingHeiId = "test";

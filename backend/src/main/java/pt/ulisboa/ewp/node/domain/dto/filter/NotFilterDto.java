@@ -1,8 +1,8 @@
 package pt.ulisboa.ewp.node.domain.dto.filter;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 public class NotFilterDto<T> extends FilterDto<T> {
 

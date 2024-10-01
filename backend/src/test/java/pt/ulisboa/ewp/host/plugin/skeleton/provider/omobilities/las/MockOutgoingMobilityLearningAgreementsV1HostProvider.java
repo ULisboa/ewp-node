@@ -4,6 +4,7 @@ import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.LasOutgoingStatsR
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.LearningAgreementV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasUpdateRequestV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.endpoints.OmobilityLasUpdateResponseV1;
+import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 import pt.ulisboa.ewp.host.plugin.skeleton.exceptions.EditConflictException;
 

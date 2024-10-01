@@ -1,8 +1,8 @@
 package pt.ulisboa.ewp.node.domain.repository.communication.log.host.plugin;
 
+import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
-import javax.transaction.Transactional;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

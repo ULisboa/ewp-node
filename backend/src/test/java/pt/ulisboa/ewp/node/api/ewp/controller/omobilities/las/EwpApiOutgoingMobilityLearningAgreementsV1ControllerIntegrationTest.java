@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,6 +44,8 @@ import pt.ulisboa.ewp.node.domain.entity.mapping.EwpOutgoingMobilityMapping;
 import pt.ulisboa.ewp.node.domain.repository.mapping.EwpOutgoingMobilityMappingRepository;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpPostArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 @TestPropertySource(properties = {
@@ -61,9 +63,7 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
   private EwpOutgoingMobilityMappingRepository mappingRepository;
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOutgoingMobilityIdsRetrieval_UnknownSendingHeiId_ErrorReturned(HttpMethod method)
       throws Exception {
     String unknownHeiId = UUID.randomUUID().toString();
@@ -83,7 +83,7 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testOutgoingMobilityIdsRetrieval_ValidSendingHeiIdDividedIntoTwoHosts_AllOmobilityIdsReturned(
       HttpMethod method) throws Exception {
     String sendingHeiId = "test";
@@ -125,9 +125,10 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testOutgoingMobilityLearningAgreementsGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllOutgoingMobilitiesReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testOutgoingMobilityLearningAgreementsGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithExistingMappings_AllOutgoingMobilitiesReturned(
+          HttpMethod method) throws Exception {
     String sendingHeiId = "test";
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");
     List<String> omobilityIds = Arrays.asList("a1", "b2", "c3");
@@ -207,9 +208,10 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testOutgoingMobilityLearningAgreementsGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownLearningAgreementsReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testOutgoingMobilityLearningAgreementsGetRetrievalByOmobilityIds_ValidHeiIdDividedIntoTwoHostsWithAllButOneExistingMappings_AllKnownLearningAgreementsReturned(
+          HttpMethod method) throws Exception {
     String sendingHeiId = "test";
     List<String> ounitIds = Arrays.asList("o1", "o2", "o3");
     List<String> omobilityIds = Arrays.asList("a1", "b2", "c3");
@@ -288,9 +290,10 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"POST"})
-  public void testOutgoingMobilityLearningAgreementsUpdate_ValidHeiIdDividedIntoTwoHostsWithExistingMapping_CorrectHostProviderIsCalled(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpPostArgumentProvider.class)
+  public void
+      testOutgoingMobilityLearningAgreementsUpdate_ValidHeiIdDividedIntoTwoHostsWithExistingMapping_CorrectHostProviderIsCalled(
+          HttpMethod method) throws Exception {
     String sendingHeiId = "test";
     String ounitId = "o1";
     String omobilityId = "om1";

@@ -43,8 +43,6 @@ bootstrap:
           names:
             - locale: en
               value: Sample institution
-            - locale: pt-PT
-              value: Instituição de exemplo
           otherHeiIds:
             - type: pic
               value: 123456789

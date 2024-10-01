@@ -1,7 +1,5 @@
 package pt.ulisboa.ewp.node.service.ewp.mapping.sync;
 
-import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia;
-import eu.erasmuswithoutpaper.api.iias.v6.endpoints.IiasGetResponseV6.Iia.Partner;
 import eu.erasmuswithoutpaper.api.iias.v7.endpoints.IiasGetResponseV7;
 import java.time.Instant;
 import java.util.*;
@@ -69,15 +67,6 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
     }
   }
 
-  private void registerMappingV6(String heiId, Iia iia) {
-    Partner partner = iia.getPartner().stream()
-        .filter(p -> heiId.equals(p.getHeiId()))
-        .findFirst()
-        .orElse(null);
-    assert partner != null;
-    this.mappingService.registerMapping(heiId, partner.getOunitId(), partner.getIiaId());
-  }
-
   private void registerMappingV7(String heiId, IiasGetResponseV7.Iia iia) {
     IiasGetResponseV7.Iia.Partner partner = iia.getPartner().stream()
         .filter(p -> heiId.equals(p.getHeiId()))
@@ -87,13 +76,10 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
     this.mappingService.registerMapping(heiId, partner.getOunitId(), partner.getIiaId());
   }
 
-  public Date getNextExecutionTime(TriggerContext context) {
-    Optional<Date> lastCompletionTime = Optional.ofNullable(context.lastCompletionTime());
-    Instant nextExecutionTime =
-        lastCompletionTime
-            .orElseGet(Date::new)
-            .toInstant()
-            .plusMillis(syncProperties.getMappings().getIntervalInMilliseconds());
-    return Date.from(nextExecutionTime);
+  public Instant getNextExecutionInstant(TriggerContext context) {
+    Optional<Instant> lastCompletionTime = Optional.ofNullable(context.lastCompletion());
+    return lastCompletionTime
+        .orElseGet(Instant::now)
+        .plusMillis(syncProperties.getMappings().getIntervalInMilliseconds());
   }
 }

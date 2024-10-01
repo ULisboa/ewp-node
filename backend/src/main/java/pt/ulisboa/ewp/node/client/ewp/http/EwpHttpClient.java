@@ -1,6 +1,17 @@
 package pt.ulisboa.ewp.node.client.ewp.http;
 
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
+
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Variant;
 import java.io.Serializable;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -9,12 +20,6 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.util.Collection;
 import javax.net.ssl.SSLContext;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Variant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -59,7 +64,8 @@ public class EwpHttpClient {
   private final ResponseAuthenticationVerifier responseVerifier;
   private final Jaxb2Marshaller jaxb2Marshaller;
 
-  public EwpHttpClient(Collection<EwpHttpClientInterceptor> interceptors,
+  public EwpHttpClient(
+      Collection<EwpHttpClientInterceptor> interceptors,
       KeyStoreService keystoreService,
       RequestAuthenticationSigner requestSigner,
       ResponseAuthenticationVerifier responseVerifier,
@@ -118,8 +124,8 @@ public class EwpHttpClient {
 
       responseAuthenticationResult = responseVerifier.verifyAgainstMethod(request, response);
       if (!responseAuthenticationResult.isValid()) {
-        throw new EwpServerAuthenticationFailedException(request, response,
-            responseAuthenticationResult);
+        throw new EwpServerAuthenticationFailedException(
+            request, response, responseAuthenticationResult);
       }
 
       return resolveResponseToSuccessOperationStatus(
@@ -127,8 +133,8 @@ public class EwpHttpClient {
 
     } catch (EwpServerAuthenticationFailedException | XmlCannotUnmarshallToTypeException e) {
       LOGGER.error("Invalid server's response", e);
-      throw new EwpClientInvalidResponseException(request, response, responseAuthenticationResult,
-          e);
+      throw new EwpClientInvalidResponseException(
+          request, response, responseAuthenticationResult, e);
 
     } catch (EwpClientErrorException e) {
       throw e;
@@ -200,8 +206,10 @@ public class EwpHttpClient {
     }
   }
 
-  private EwpClientErrorException createClientErrorExceptionFromResponse(EwpRequest request,
-      EwpResponse response, EwpAuthenticationResult responseAuthenticationResult)
+  private EwpClientErrorException createClientErrorExceptionFromResponse(
+      EwpRequest request,
+      EwpResponse response,
+      EwpAuthenticationResult responseAuthenticationResult)
       throws XmlCannotUnmarshallToTypeException {
 
     if (response.isClientError()) {
@@ -226,20 +234,31 @@ public class EwpHttpClient {
       }
 
     } else if (response.isServerError()) {
-      return new EwpClientInvalidResponseException(request, response, responseAuthenticationResult,
+      return new EwpClientInvalidResponseException(
+          request,
+          response,
+          responseAuthenticationResult,
           new EwpServerException(request, response));
     }
 
-    return new EwpClientProcessorException(request, response,
+    return new EwpClientProcessorException(
+        request,
+        response,
         new IllegalStateException("Unknown response status code: " + response.getStatus()));
   }
 
   private Client getClient()
-      throws NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, UnrecoverableKeyException, KeyManagementException {
+      throws NoSuchAlgorithmException,
+          NoSuchProviderException,
+          KeyStoreException,
+          UnrecoverableKeyException,
+          KeyManagementException {
     DecodedKeystore decodedKeystore = keystoreService.getDecodedKeyStoreFromStorage();
-    SSLContext sslContext = SecurityUtils.createSecurityContext(decodedKeystore.getKeyStore(), null,
-        decodedKeystore.getKeyStorePassword());
-    return ClientBuilder.newBuilder().sslContext(sslContext)
+    SSLContext sslContext =
+        SecurityUtils.createSecurityContext(
+            decodedKeystore.getKeyStore(), null, decodedKeystore.getKeyStorePassword());
+    return ClientBuilder.newBuilder()
+        .sslContext(sslContext)
         .hostnameVerifier((hostname, session) -> hostname.equalsIgnoreCase(session.getPeerHost()))
         .build();
   }
@@ -248,18 +267,12 @@ public class EwpHttpClient {
     Invocation.Builder requestBuilder = target.request();
     setRequestHeaders(requestBuilder, request);
 
-    switch (request.getMethod()) {
-      case GET:
-      case DELETE:
-        return requestBuilder.build(request.getMethod().name());
-
-      case POST:
-      case PUT:
-        return requestBuilder.build(request.getMethod().name(),
-            createBodyEntity(request.getBody()));
-
-      default:
-        throw new IllegalArgumentException("Unsupported method: " + request.getMethod().name());
+    if (request.getMethod().equals(GET) || request.getMethod().equals(DELETE)) {
+      return requestBuilder.build(request.getMethod().name());
+    } else if (request.getMethod().equals(POST) || request.getMethod().equals(PUT)) {
+      return requestBuilder.build(request.getMethod().name(), createBodyEntity(request.getBody()));
+    } else {
+      throw new IllegalArgumentException("Unsupported method: " + request.getMethod().name());
     }
   }
 
@@ -281,14 +294,14 @@ public class EwpHttpClient {
   private Entity<String> createFormDataEntity(EwpRequestFormDataUrlEncodedBody body) {
     String formDataAsString = HttpUtils.serializeFormDataUrlEncoded(body.getFormData().asMap());
     Variant variant =
-        Variant.mediaTypes(javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+        Variant.mediaTypes(jakarta.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED_TYPE)
             .build()
             .get(0);
     return Entity.entity(formDataAsString, variant);
   }
 
   private Entity<Serializable> createSerializableEntity(EwpRequestSerializableBody body) {
-    Variant variant = Variant.mediaTypes(javax.ws.rs.core.MediaType.TEXT_XML_TYPE).build().get(0);
+    Variant variant = Variant.mediaTypes(jakarta.ws.rs.core.MediaType.TEXT_XML_TYPE).build().get(0);
     return Entity.entity(body.serialize(), variant);
   }
 

@@ -1,12 +1,12 @@
 package pt.ulisboa.ewp.node.client.ewp.operation.request;
 
 import com.google.common.base.Strings;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpMethod;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestBody;
 import pt.ulisboa.ewp.node.client.ewp.operation.request.body.EwpRequestFormDataUrlEncodedBody;

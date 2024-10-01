@@ -1,5 +1,5 @@
 # Build and package
-FROM maven:3-eclipse-temurin-11 as builder
+FROM maven:3-eclipse-temurin-17 as builder
 
 WORKDIR /build
 
@@ -32,7 +32,7 @@ COPY delivery delivery
 RUN mvn -B install -DskipTests=true -Ddependency-check.skip=true
 
 # Deploy
-FROM eclipse-temurin:11-jre
+FROM eclipse-temurin:17-jre
 
 RUN apt-get update && apt-get install -y --no-install-recommends wget
 

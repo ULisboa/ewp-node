@@ -1,9 +1,9 @@
 package pt.ulisboa.ewp.node.api.host.forward.ewp.handler;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.ErrorResponseV1;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.util.Set;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

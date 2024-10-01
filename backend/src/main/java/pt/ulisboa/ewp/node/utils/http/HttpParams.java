@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.utils.http;
 
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -9,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import javax.validation.constraints.NotNull;
 import org.springframework.web.util.UriUtils;
 
 public class HttpParams implements Serializable {

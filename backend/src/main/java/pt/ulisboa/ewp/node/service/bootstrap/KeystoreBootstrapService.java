@@ -1,5 +1,6 @@
 package pt.ulisboa.ewp.node.service.bootstrap;
 
+import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -11,7 +12,6 @@ import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import javax.transaction.Transactional;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.tomcat.util.net.SSLHostConfig;
 import org.apache.tomcat.util.net.SSLHostConfigCertificate;

@@ -1,10 +1,10 @@
 package pt.ulisboa.ewp.node.utils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Path;
 import java.lang.reflect.Field;
 import java.util.Iterator;
-import javax.validation.ConstraintViolation;
-import javax.validation.Path;
 import org.springframework.validation.FieldError;
 import pt.ulisboa.ewp.node.utils.bean.ParamName;
 

@@ -3,14 +3,14 @@ package pt.ulisboa.ewp.node.api.host.forward.ewp.controller.iias;
 import eu.erasmuswithoutpaper.api.iias.v7.endpoints.IiasGetResponseV7;
 import eu.erasmuswithoutpaper.api.iias.v7.endpoints.IiasGetResponseV7.Iia;
 import eu.erasmuswithoutpaper.api.iias.v7.endpoints.IiasIndexResponseV7;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -118,7 +118,7 @@ public class ForwardEwpApiInterInstitutionalAgreementsV7Controller
     ForwardEwpApiInterInstitutionalAgreementsV7GetResponseDto getResponse =
         new ForwardEwpApiInterInstitutionalAgreementsV7GetResponseDto();
     byte[] rawBody = response.getResponse().getRawBody();
-    getResponse.setRawXmlInBase64(Base64Utils.encode(rawBody));
+    getResponse.setRawXmlInBase64(Base64.getEncoder().encode(rawBody));
     List<HashComparisonResult> hashComparisonResults = this.hashService.checkIiaHashes(rawBody);
     int index = 0;
     for (Iia iia : response.getResponseBody().getIia()) {

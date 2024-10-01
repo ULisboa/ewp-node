@@ -1,13 +1,13 @@
 package pt.ulisboa.ewp.host.plugin.skeleton.provider.courses;
 
 import eu.erasmuswithoutpaper.api.courses.v0.CoursesResponseV0.LearningOpportunitySpecification;
+import jakarta.annotation.Nullable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class MockCoursesV0HostProvider extends CoursesV0HostProvider {

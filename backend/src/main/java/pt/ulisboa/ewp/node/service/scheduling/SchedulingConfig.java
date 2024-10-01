@@ -41,10 +41,11 @@ public class SchedulingConfig implements SchedulingConfigurer {
     taskRegistrar.setScheduler(taskExecutor());
 
     taskRegistrar.addTriggerTask(
-        this.ewpNotificationSenderDaemon, this.ewpNotificationSenderDaemon::getNextExecutionTime);
+        this.ewpNotificationSenderDaemon,
+        this.ewpNotificationSenderDaemon::getNextExecutionInstant);
 
     for (EwpMappingSyncService mappingSyncService : mappingSyncServices) {
-      taskRegistrar.addTriggerTask(mappingSyncService, mappingSyncService::getNextExecutionTime);
+      taskRegistrar.addTriggerTask(mappingSyncService, mappingSyncService::getNextExecutionInstant);
     }
   }
 }

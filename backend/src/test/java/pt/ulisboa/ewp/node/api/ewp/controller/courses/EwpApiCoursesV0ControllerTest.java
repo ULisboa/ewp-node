@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 class EwpApiCoursesV0ControllerTest extends AbstractEwpControllerIntegrationTest {
@@ -33,7 +35,7 @@ class EwpApiCoursesV0ControllerTest extends AbstractEwpControllerIntegrationTest
   @MockBean private RegistryClient registryClient;
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testLearningOpportunitySpecificationsRetrieval_UnknownHeiId_ErrorReturned(
       HttpMethod method) throws Exception {
     String heiId = "test";
@@ -51,9 +53,10 @@ class EwpApiCoursesV0ControllerTest extends AbstractEwpControllerIntegrationTest
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testLearningOpportunitySpecificationsRetrieval_ValidHeiIdAndThreeValidAndOneUnknownLosIdsDividedIntoTwoHosts_AllKnownLosReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testLearningOpportunitySpecificationsRetrieval_ValidHeiIdAndThreeValidAndOneUnknownLosIdsDividedIntoTwoHosts_AllKnownLosReturned(
+          HttpMethod method) throws Exception {
     Mockito.reset(this.hostPluginManager);
 
     String heiId = "test";
@@ -107,9 +110,10 @@ class EwpApiCoursesV0ControllerTest extends AbstractEwpControllerIntegrationTest
   }
 
   @ParameterizedTest
-  @EnumSource(value = HttpMethod.class, names = {"GET", "POST"})
-  public void testLearningOpportunitySpecificationsRetrieval_ValidHeiIdAndThreeValidAndOneUnknownLosCodesDividedIntoTwoHosts_AllKnownLosReturned(
-      HttpMethod method) throws Exception {
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
+  public void
+      testLearningOpportunitySpecificationsRetrieval_ValidHeiIdAndThreeValidAndOneUnknownLosCodesDividedIntoTwoHosts_AllKnownLosReturned(
+          HttpMethod method) throws Exception {
     Mockito.reset(this.hostPluginManager);
     
     String heiId = "test";

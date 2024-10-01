@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,6 +25,8 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpPutAndDeleteArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 public class EwpApiInstitutionsV2ControllerIntegrationTest
@@ -36,9 +38,7 @@ public class EwpApiInstitutionsV2ControllerIntegrationTest
   @MockBean private RegistryClient registryClient;
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testInstitutionRetrieval_OneUnknownHeiId(HttpMethod method) throws Exception {
     String unknownHeiId = UUID.randomUUID().toString();
 
@@ -66,9 +66,7 @@ public class EwpApiInstitutionsV2ControllerIntegrationTest
   }
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testInstitutionRetrieval_OneValidHeiId(HttpMethod method) throws Exception {
     String validHeiId = UUID.randomUUID().toString();
 
@@ -103,9 +101,7 @@ public class EwpApiInstitutionsV2ControllerIntegrationTest
   }
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testInstitutionRetrieval_MoreThanLimit(HttpMethod method) throws Exception {
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, UUID.randomUUID().toString());
@@ -119,9 +115,7 @@ public class EwpApiInstitutionsV2ControllerIntegrationTest
   }
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"PUT", "DELETE"})
+  @ArgumentsSource(HttpPutAndDeleteArgumentProvider.class)
   public void testInstitutionRetrieval_UnsupportedHttpMethod(HttpMethod method) throws Exception {
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, UUID.randomUUID().toString());

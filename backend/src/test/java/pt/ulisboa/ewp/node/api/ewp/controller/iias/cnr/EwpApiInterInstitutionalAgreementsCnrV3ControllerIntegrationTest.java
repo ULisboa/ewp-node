@@ -13,7 +13,7 @@ import eu.erasmuswithoutpaper.api.iias.v7.endpoints.IiasGetResponseV7.Iia.Partne
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,6 +29,7 @@ import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult
 import pt.ulisboa.ewp.node.client.ewp.registry.RegistryClient;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 import pt.ulisboa.ewp.node.utils.http.HttpParams;
+import pt.ulisboa.ewp.node.utils.tests.provider.argument.HttpGetAndPostArgumentProvider;
 import pt.ulisboa.ewp.node.utils.xml.XmlUtils;
 
 class EwpApiInterInstitutionalAgreementsCnrV3ControllerIntegrationTest
@@ -41,9 +42,7 @@ class EwpApiInterInstitutionalAgreementsCnrV3ControllerIntegrationTest
   @MockBean private EwpInterInstitutionalAgreementsV7Client iiaClient;
 
   @ParameterizedTest
-  @EnumSource(
-      value = HttpMethod.class,
-      names = {"GET", "POST"})
+  @ArgumentsSource(HttpGetAndPostArgumentProvider.class)
   public void testIiaCnr_ExistingIiaAndTwoHostProviders_CorrectHostProviderInvoked(
       HttpMethod method) throws Exception {
     String notifierHeiId = "notifierHeiId";

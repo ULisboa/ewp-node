@@ -1,12 +1,12 @@
 package pt.ulisboa.ewp.node.api.ewp.security.filter;
 
+import jakarta.persistence.spi.TransformerException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +87,7 @@ public class EwpApiPreAuthenticationFilter extends OncePerRequestFilter {
 
       this.jaxb2HttpMessageConverter.writeToResult(object, headers, streamResult);
 
-    } catch (IOException | TransformerException e) {
+    } catch (IOException | TransformerException | javax.xml.transform.TransformerException e) {
       throw new IllegalStateException(e);
     }
   }

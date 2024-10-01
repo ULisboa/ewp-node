@@ -1,6 +1,6 @@
 package pt.ulisboa.ewp.node.domain.dto.validation;
 
-import javax.xml.bind.ValidationEvent;
+import jakarta.xml.bind.ValidationEvent;
 import org.xml.sax.SAXParseException;
 
 public class ValidationEntryDto {

@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -28,7 +29,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -90,7 +90,9 @@ public class EchoControllerIntegrationTest extends AbstractEwpControllerIntegrat
   public void testEchoPutWithTLS() throws Exception {
     assertUnsuccessfulEchoRequest(
         InvalidEchoHttpSignatureTestDataWrapper.create(
-            this::putRequest, HttpStatus.METHOD_NOT_ALLOWED, "Request method 'PUT' not supported"));
+            this::putRequest,
+            HttpStatus.METHOD_NOT_ALLOWED,
+            "Request method 'PUT' is not supported"));
   }
 
   @Test
