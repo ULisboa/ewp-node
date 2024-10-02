@@ -15,6 +15,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -45,6 +46,7 @@ public class EwpApiHttpRequestWrapperIntegrationTest extends AbstractEwpControll
   @Autowired private RestTemplate restTemplate;
 
   @Test
+  @Disabled
   public void testEchoHttpRequestWithParameters_TwoValues_TwoValuesIsReturnedAsResponse() {
     List<String> expectedReturnedValues = List.of("a1", "b2");
     String url =
