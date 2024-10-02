@@ -7,20 +7,29 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.List;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UriComponentsBuilder;
 import pt.ulisboa.ewp.node.api.ewp.AbstractEwpControllerIntegrationTest;
@@ -33,13 +42,13 @@ public class EwpApiHttpRequestWrapperIntegrationTest extends AbstractEwpControll
 
   @LocalServerPort private int port;
 
-  @Autowired private TestRestTemplate restTemplate;
+  @Autowired private RestTemplate restTemplate;
 
   @Test
   public void testEchoHttpRequestWithParameters_TwoValues_TwoValuesIsReturnedAsResponse() {
     List<String> expectedReturnedValues = List.of("a1", "b2");
     String url =
-        UriComponentsBuilder.fromHttpUrl("https://ewp-node:" + port + "/echo")
+        UriComponentsBuilder.fromHttpUrl("https://localhost:" + port + "/echo")
             .queryParam("echo", expectedReturnedValues.get(0))
             .queryParam("echo", expectedReturnedValues.get(1))
             .toUriString();
@@ -49,6 +58,34 @@ public class EwpApiHttpRequestWrapperIntegrationTest extends AbstractEwpControll
 
   @Configuration
   static class TestConfig {
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder)
+        throws NoSuchAlgorithmException, KeyManagementException {
+      SSLContext sslContext = SSLContext.getInstance("TLS");
+
+      TrustManager[] trustManagers =
+          new TrustManager[] {
+            new X509TrustManager() {
+
+              public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {}
+
+              public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {}
+
+              public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+              }
+            }
+          };
+
+      sslContext.init(null, trustManagers, null);
+
+      HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+
+      HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+
+      return new RestTemplateBuilder().requestFactory(SimpleClientHttpRequestFactory.class).build();
+    }
 
     @Bean
     public EchoRestController echoRestController() {
