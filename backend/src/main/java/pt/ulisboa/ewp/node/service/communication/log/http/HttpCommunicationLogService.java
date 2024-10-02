@@ -1,5 +1,7 @@
 package pt.ulisboa.ewp.node.service.communication.log.http;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -63,7 +65,7 @@ public class HttpCommunicationLogService {
     return responseLog;
   }
 
-  protected Collection<HttpHeaderLog> toHttpHeaderCollection(ContentCachingRequestWrapper request) {
+  protected Collection<HttpHeaderLog> toHttpHeaderCollection(HttpServletRequest request) {
     Collection<HttpHeaderLog> headers = new ArrayList<>();
     Enumeration<String> headerNames = request.getHeaderNames();
     while (headerNames.hasMoreElements()) {
@@ -77,7 +79,7 @@ public class HttpCommunicationLogService {
     return headers;
   }
 
-  protected Collection<HttpHeaderLog> toHttpHeaderCollection(ContentCachingResponseWrapper response) {
+  protected Collection<HttpHeaderLog> toHttpHeaderCollection(HttpServletResponse response) {
     Collection<HttpHeaderLog> headers = new ArrayList<>();
     Collection<String> headerNames = response.getHeaderNames();
     headerNames.forEach(
