@@ -10,6 +10,6 @@ public class HttpPutAndDeleteArgumentProvider implements ArgumentsProvider {
 
   @Override
   public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
-    return Stream.of(Arguments.of(HttpMethod.PUT, HttpMethod.DELETE));
+    return Stream.of(Arguments.of(HttpMethod.PUT), Arguments.of(HttpMethod.DELETE));
   }
 }

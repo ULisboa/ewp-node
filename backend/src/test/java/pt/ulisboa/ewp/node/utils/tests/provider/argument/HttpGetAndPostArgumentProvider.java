@@ -10,6 +10,6 @@ public class HttpGetAndPostArgumentProvider implements ArgumentsProvider {
 
   @Override
   public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
-    return Stream.of(Arguments.of(HttpMethod.GET, HttpMethod.POST));
+    return Stream.of(Arguments.of(HttpMethod.GET), Arguments.of(HttpMethod.POST));
   }
 }

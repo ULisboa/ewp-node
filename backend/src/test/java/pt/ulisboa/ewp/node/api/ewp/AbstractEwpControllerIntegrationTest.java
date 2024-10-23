@@ -225,7 +225,7 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
           request.setContentType(MediaType.APPLICATION_FORM_URLENCODED.toString());
         }
 
-        if (List.of("GET", "POST").contains(request.getMethod())) {
+        if (Objects.equals("GET", request.getMethod())) {
           for (Map.Entry<String, List<String>> paramEntry : params.asMap().entrySet()) {
             for (String paramValue : paramEntry.getValue()) {
               request.addParameter(paramEntry.getKey(), paramValue);
