@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -21,6 +22,7 @@ import java.util.function.Predicate;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.RequestFacade;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -94,6 +96,10 @@ public class EwpApiHttpRequestWrapper extends ContentCachingRequestWrapper {
         StringHttpMessageConverter converter =
             new StringHttpMessageConverter(StandardCharsets.UTF_8);
         this.cachedBody = converter.read(String.class, new ServletServerHttpRequest(request));
+        if (StringUtils.isEmpty(this.cachedBody)) {
+          this.cachedBody =
+              new String(request.getInputStream().readAllBytes(), Charset.defaultCharset());
+        }
       } else {
         this.cachedBody = "";
       }
