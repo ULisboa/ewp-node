@@ -108,7 +108,7 @@ public class EwpNodeApplication {
 
   /**
    * Custom {@link BeanPostProcessor} for adding {@link ParamNameProcessor} into the first of {@link
-   * RequestMappingHandlerAdapter#argumentResolvers}.
+   * RequestMappingHandlerAdapter#getArgumentResolvers()}.
    *
    * @return BeanPostProcessor
    */
@@ -136,11 +136,11 @@ public class EwpNodeApplication {
   }
 
   /**
-   * A processor for {@link pt.ulisboa.ewp.node.utils.bean.ParamName} annotations. Reference:
-   * https://stackoverflow.com/questions/8986593/how-to-customize-parameter-names-when-binding-spring-mvc-command-objects
+   * A processor for {@link pt.ulisboa.ewp.node.utils.bean.ParamName} annotations. Reference: <a
+   * href="https://stackoverflow.com/questions/8986593/how-to-customize-parameter-names-when-binding-spring-mvc-command-objects">Original
+   * reference</a>
    */
-  @Bean
-  public ParamNameProcessor paramNameProcessor(
+  private ParamNameProcessor paramNameProcessor(
       RequestMappingHandlerAdapter requestMappingHandlerAdapter) {
     return new ParamNameProcessor(requestMappingHandlerAdapter);
   }

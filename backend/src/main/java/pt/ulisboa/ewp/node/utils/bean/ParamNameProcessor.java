@@ -8,12 +8,18 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttributeMethodProcessor;
 
-/** Method processor that supports {@link ParamName} parameters renaming */
+/**
+ * Method processor that supports {@link ParamName} parameters renaming. <a
+ * href="https://stackoverflow.com/questions/8986593/how-to-customize-parameter-names-when-binding-spring-mvc-command-objects">Original
+ * reference</a>
+ */
+@Service
 public class ParamNameProcessor extends ServletModelAttributeMethodProcessor {
 
   private final RequestMappingHandlerAdapter requestMappingHandlerAdapter;
