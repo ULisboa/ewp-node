@@ -86,6 +86,10 @@ scheduling:
   # If true, scheduling services, such as Notification Daemon (to deliver CNR messages) and mapping synchronization,
   # are enabled.
   enabled: true
+  # If defined, and enabled flag is true then this specifies the hostname on which the scheduling tasks must be executed on.
+  # If not defined, any node instance will run scheduling tasks, possibly with concurrency interferences.
+  # It should be specified if there are multiple node replicas.
+  enableOnHostname: localhost
 
 cnr:
   # Frequency on which notification daemon runs to process new/pending notifications
