@@ -70,7 +70,8 @@ public class SchedulingConfigTest {
   }
 
   @Test
-  public void testConfigureTasks_CurrentHostnameNotMatchesHostnameRestriction_TasksAreScheduled() {
+  public void
+      testConfigureTasks_CurrentHostnameNotMatchesHostnameRestriction_TasksAreNotScheduled() {
     EwpNotificationSenderDaemon mockEwpNotificationSenderDaemon =
         Mockito.mock(EwpNotificationSenderDaemon.class);
     List<EwpMappingSyncService> mockEwpMappingSyncServices =
