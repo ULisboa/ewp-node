@@ -19,7 +19,7 @@ COPY frontend/pom.xml frontend/pom.xml
 RUN mvn -pl backend,frontend dependency:resolve
 
 # Disable NX build cache
-ENV NX_SKIP_NX_CACHE true
+ENV NX_SKIP_NX_CACHE=true
 
 # Package modules individually
 COPY frontend frontend
@@ -38,7 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget
 
 COPY --from=builder /build/delivery/target/ewp-node-*-full.jar /opt/app.jar
 
-ENV SPRING_CONFIG_LOCATION /config/application.yml
+ENV SPRING_CONFIG_LOCATION=/config/application.yml
 VOLUME /config
 
 VOLUME /logs
