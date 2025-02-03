@@ -40,7 +40,8 @@ public class EwpApiConfiguration {
    * authentication methods order.
    */
   public EwpAuthenticationMethod getBestClientSupportedAuthenticationMethod() {
-    for (EwpAuthenticationMethod authenticationMethod : EwpAuthenticationMethod.AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER) {
+    for (EwpAuthenticationMethod authenticationMethod :
+        EwpAuthenticationMethod.CLIENT_AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER) {
       if (supportsClientAuthenticationMethod(authenticationMethod)) {
         return authenticationMethod;
       }
