@@ -26,6 +26,7 @@ import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
 import pt.ulisboa.ewp.node.client.ewp.exception.EwpClientErrorException;
 import pt.ulisboa.ewp.node.client.ewp.iias.EwpInterInstitutionalAgreementsV7Client;
 import pt.ulisboa.ewp.node.client.ewp.operation.result.EwpSuccessOperationResult;
+import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 import pt.ulisboa.ewp.node.domain.entity.Host;
 import pt.ulisboa.ewp.node.domain.repository.HostRepository;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
@@ -44,14 +45,17 @@ public class EwpApiInterInstitutionalAgreementsCnrV3Controller {
 
   private final EwpInterInstitutionalAgreementsV7Client iiaClient;
   private final HostRepository hostRepository;
+  private final RegistryProperties registryProperties;
 
   public EwpApiInterInstitutionalAgreementsCnrV3Controller(
       HostPluginManager hostPluginManager,
       EwpInterInstitutionalAgreementsV7Client iiaClient,
-      HostRepository hostRepository) {
+      HostRepository hostRepository,
+      RegistryProperties registryProperties) {
     this.hostPluginManager = hostPluginManager;
     this.iiaClient = iiaClient;
     this.hostRepository = hostRepository;
+    this.registryProperties = registryProperties;
   }
 
   @EwpApiEndpoint(api = "iia-cnr", apiMajorVersion = 3)
@@ -68,6 +72,12 @@ public class EwpApiInterInstitutionalAgreementsCnrV3Controller {
       @NotNull @RequestParam(value = EwpApiParamConstants.IIA_ID) String iiaId) {
 
     String requesterCoveredHeiId = authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next();
+
+    // Note: IF request came from the EWP registry's validator,
+    // then do not propagate the CNR requests, as they do not exist in reality.
+    if (requesterCoveredHeiId.matches(this.registryProperties.getValidatorHeiIdsRegex())) {
+      return ResponseEntity.ok(new IiaCnrResponseV3(new EmptyV1()));
+    }
 
     Iia iia = null;
     try {

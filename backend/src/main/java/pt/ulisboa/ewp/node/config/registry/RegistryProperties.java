@@ -12,6 +12,7 @@ public class RegistryProperties {
   private boolean autoRefresh;
   private long timeBetweenRetriesInMilliseconds;
   private long minTimeBetweenQueriesInMilliseconds;
+  private String validatorHeiIdsRegex;
 
   public String getUrl() {
     return url;
@@ -43,5 +44,13 @@ public class RegistryProperties {
 
   public void setMinTimeBetweenQueriesInMilliseconds(long minTimeBetweenQueriesInMilliseconds) {
     this.minTimeBetweenQueriesInMilliseconds = minTimeBetweenQueriesInMilliseconds;
+  }
+
+  public String getValidatorHeiIdsRegex() {
+    return validatorHeiIdsRegex;
+  }
+
+  public void setValidatorHeiIdsRegex(String validatorHeiIdsRegex) {
+    this.validatorHeiIdsRegex = validatorHeiIdsRegex;
   }
 }

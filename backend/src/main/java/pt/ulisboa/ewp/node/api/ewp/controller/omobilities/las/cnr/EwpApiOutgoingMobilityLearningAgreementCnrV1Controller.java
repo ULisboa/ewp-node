@@ -24,6 +24,7 @@ import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
+import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 import pt.ulisboa.ewp.node.exception.ewp.EwpBadRequestException;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
@@ -38,12 +39,15 @@ public class EwpApiOutgoingMobilityLearningAgreementCnrV1Controller {
   private final HostPluginManager hostPluginManager;
 
   private final String statsPortalHeiId;
+  private final RegistryProperties registryProperties;
 
   public EwpApiOutgoingMobilityLearningAgreementCnrV1Controller(
       HostPluginManager hostPluginManager,
-      @Value("${stats.portal.heiId}") String statsPortalHeiId) {
+      @Value("${stats.portal.heiId}") String statsPortalHeiId,
+      RegistryProperties registryProperties) {
     this.hostPluginManager = hostPluginManager;
     this.statsPortalHeiId = statsPortalHeiId;
+    this.registryProperties = registryProperties;
   }
 
   @EwpApiEndpoint(api = "omobility-la-cnr", apiMajorVersion = 1)
@@ -54,8 +58,18 @@ public class EwpApiOutgoingMobilityLearningAgreementCnrV1Controller {
       summary = "Outgoing Mobility Learning Agreement CNR API.",
       tags = {"ewp"})
   public ResponseEntity<OmobilityLaCnrResponseV1> outgoingMobilityLearningAgreementCnr(
+      EwpApiHostAuthenticationToken authenticationToken,
       @RequestParam(value = EwpApiParamConstants.SENDING_HEI_ID) String sendingHeiId,
       @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID) List<String> omobilityIds) {
+
+    String requesterCoveredHeiId =
+        authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next();
+
+    // Note: IF request came from the EWP registry's validator,
+    // then do not propagate the CNR requests, as they do not exist in reality.
+    if (requesterCoveredHeiId.matches(this.registryProperties.getValidatorHeiIdsRegex())) {
+      return ResponseEntity.ok(new OmobilityLaCnrResponseV1(new EmptyV1()));
+    }
 
     Collection<OutgoingMobilityLearningAgreementCnrV1HostProvider> providers = hostPluginManager.getAllProvidersOfType(
         OutgoingMobilityLearningAgreementCnrV1HostProvider.class);

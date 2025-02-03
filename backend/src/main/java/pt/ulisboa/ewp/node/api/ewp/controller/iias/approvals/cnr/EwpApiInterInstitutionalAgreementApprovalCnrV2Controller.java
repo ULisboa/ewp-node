@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.api.ewp.controller.iias.approvals.cnr;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.EmptyV1;
 import eu.erasmuswithoutpaper.api.iias.approval.cnr.v2.IiaApprovalCnrResponseV2;
+import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.OmobilityLaCnrResponseV1;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
 import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
+import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
@@ -30,10 +32,12 @@ public class EwpApiInterInstitutionalAgreementApprovalCnrV2Controller {
   public static final String BASE_PATH = "iias/approvals/cnr/v2";
 
   private final HostPluginManager hostPluginManager;
+  private final RegistryProperties registryProperties;
 
   public EwpApiInterInstitutionalAgreementApprovalCnrV2Controller(
-      HostPluginManager hostPluginManager) {
+      HostPluginManager hostPluginManager, RegistryProperties registryProperties) {
     this.hostPluginManager = hostPluginManager;
+    this.registryProperties = registryProperties;
   }
 
   @EwpApiEndpoint(api = "iia-approval-cnr", apiMajorVersion = 2)
@@ -51,6 +55,12 @@ public class EwpApiInterInstitutionalAgreementApprovalCnrV2Controller {
 
     String approvingHeiId =
         authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next();
+
+    // Note: IF request came from the EWP registry's validator,
+    // then do not propagate the CNR requests, as they do not exist in reality.
+    if (approvingHeiId.matches(this.registryProperties.getValidatorHeiIdsRegex())) {
+      return ResponseEntity.ok(new IiaApprovalCnrResponseV2(new EmptyV1()));
+    }
 
     Collection<InterInstitutionalAgreementApprovalCnrV2HostProvider> providers =
         hostPluginManager.getAllProvidersOfType(

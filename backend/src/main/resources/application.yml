@@ -27,6 +27,7 @@ registry:
   autoRefresh: true
   timeBetweenRetriesInMilliseconds: 180000
   minTimeBetweenQueries: 60000
+  validatorHeiIdsRegex: "validator-hei0[12]\\.developers\\.erasmuswithoutpaper\\.eu"
 
 # Security configuration
 security:

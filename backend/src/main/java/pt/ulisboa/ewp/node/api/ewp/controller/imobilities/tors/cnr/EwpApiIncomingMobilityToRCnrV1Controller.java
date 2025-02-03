@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.ewp.host.plugin.skeleton.provider.imobilities.tors.cnr.IncomingMobilityToRCnrV1HostProvider;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApi;
 import pt.ulisboa.ewp.node.api.ewp.controller.EwpApiEndpoint;
+import pt.ulisboa.ewp.node.api.ewp.security.EwpApiHostAuthenticationToken;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiConstants;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiParamConstants;
+import pt.ulisboa.ewp.node.config.registry.RegistryProperties;
 import pt.ulisboa.ewp.node.plugin.manager.host.HostPluginManager;
 
 @RestController
@@ -27,10 +29,12 @@ public class EwpApiIncomingMobilityToRCnrV1Controller {
   public static final String BASE_PATH = "imobilities/tors/cnr/v1";
 
   private final HostPluginManager hostPluginManager;
+  private final RegistryProperties registryProperties;
 
   public EwpApiIncomingMobilityToRCnrV1Controller(
-      HostPluginManager hostPluginManager) {
+      HostPluginManager hostPluginManager, RegistryProperties registryProperties) {
     this.hostPluginManager = hostPluginManager;
+    this.registryProperties = registryProperties;
   }
 
   @EwpApiEndpoint(api = "imobility-tor-cnr", apiMajorVersion = 1)
@@ -41,8 +45,18 @@ public class EwpApiIncomingMobilityToRCnrV1Controller {
       summary = "Incoming Mobility Transcript Of Records CNR API.",
       tags = {"ewp"})
   public ResponseEntity<ImobilityTorCnrResponseV1> outgoingMobilityLearningAgreementCnr(
+      EwpApiHostAuthenticationToken authenticationToken,
       @RequestParam(value = EwpApiParamConstants.RECEIVING_HEI_ID) String receivingHeiId,
       @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID) List<String> omobilityIds) {
+
+    String requesterCoveredHeiId =
+        authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next();
+
+    // Note: IF request came from the EWP registry's validator,
+    // then do not propagate the CNR requests, as they do not exist in reality.
+    if (requesterCoveredHeiId.matches(this.registryProperties.getValidatorHeiIdsRegex())) {
+      return ResponseEntity.ok(new ImobilityTorCnrResponseV1(new EmptyV1()));
+    }
 
     Collection<IncomingMobilityToRCnrV1HostProvider> providers = hostPluginManager.getAllProvidersOfType(
         IncomingMobilityToRCnrV1HostProvider.class);
