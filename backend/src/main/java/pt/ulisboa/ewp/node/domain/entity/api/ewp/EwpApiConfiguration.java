@@ -36,12 +36,12 @@ public class EwpApiConfiguration {
   }
 
   /**
-   * Returns the "best" supported API authentication method using a predefined list of
+   * Returns the "best" supported client API authentication method using a predefined list of
    * authentication methods order.
    */
-  public EwpAuthenticationMethod getBestSupportedAuthenticationMethod() {
+  public EwpAuthenticationMethod getBestClientSupportedAuthenticationMethod() {
     for (EwpAuthenticationMethod authenticationMethod : EwpAuthenticationMethod.AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER) {
-      if (supportsAuthenticationMethod(authenticationMethod)) {
+      if (supportsClientAuthenticationMethod(authenticationMethod)) {
         return authenticationMethod;
       }
     }
@@ -66,11 +66,6 @@ public class EwpApiConfiguration {
   public void setSupportedServerAuthenticationMethods(
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods) {
     this.supportedServerAuthenticationMethods = supportedServerAuthenticationMethods;
-  }
-
-  public boolean supportsAuthenticationMethod(EwpAuthenticationMethod authenticationMethod) {
-    return supportsClientAuthenticationMethod(authenticationMethod)
-        && supportsServerAuthenticationMethod(authenticationMethod);
   }
 
   public boolean supportsServerAuthenticationMethod(EwpAuthenticationMethod authenticationMethod) {

@@ -62,7 +62,7 @@ public class EwpRequest implements Serializable {
         new EwpRequest(
             method, urlWithoutQueryParams, new EwpEndpointInformation(api.getHeiId(), api.getApiName(),
             api.getVersion(), endpointName));
-    request.authenticationMethod(api.getBestSupportedAuthenticationMethod());
+    request.authenticationMethod(api.getBestClientSupportedAuthenticationMethod());
     request.queryParams(queryParams);
     request.body(body);
     return request;
