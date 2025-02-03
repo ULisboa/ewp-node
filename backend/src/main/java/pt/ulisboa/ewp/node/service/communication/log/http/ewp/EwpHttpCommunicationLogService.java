@@ -180,7 +180,7 @@ public class EwpHttpCommunicationLogService extends HttpCommunicationLogService 
         request.getEndpointInformation().getApiName(),
         request.getEndpointInformation().getApiVersion(),
         request.getEndpointInformation().getEndpointName(),
-        request.getAuthenticationMethod(),
+        request.getClientAuthenticationMethod(),
         requestLog,
         responseLog,
         startProcessingDateTime,

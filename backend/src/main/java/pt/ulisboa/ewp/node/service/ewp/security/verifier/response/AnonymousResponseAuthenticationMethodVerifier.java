@@ -11,8 +11,10 @@ public class AnonymousResponseAuthenticationMethodVerifier
     implements AbstractResponseAuthenticationMethodVerifier {
 
   @Override
-  public boolean verifiesAgainstMethod(EwpAuthenticationMethod method) {
-    return EwpAuthenticationMethod.ANONYMOUS.equals(method);
+  public boolean canBeVerified(EwpRequest request, EwpResponse response) {
+    return request
+        .getSupportedServerAuthenticationMethods()
+        .contains(EwpAuthenticationMethod.ANONYMOUS);
   }
 
   @Override

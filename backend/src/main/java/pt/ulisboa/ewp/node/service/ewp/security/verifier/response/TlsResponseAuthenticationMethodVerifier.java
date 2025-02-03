@@ -14,8 +14,10 @@ public class TlsResponseAuthenticationMethodVerifier
     implements AbstractResponseAuthenticationMethodVerifier {
 
   @Override
-  public boolean verifiesAgainstMethod(EwpAuthenticationMethod method) {
-    return EwpAuthenticationMethod.TLS_CERTIFICATE.equals(method);
+  public boolean canBeVerified(EwpRequest request, EwpResponse response) {
+    return request
+        .getSupportedServerAuthenticationMethods()
+        .contains(EwpAuthenticationMethod.TLS_CERTIFICATE);
   }
 
   @Override

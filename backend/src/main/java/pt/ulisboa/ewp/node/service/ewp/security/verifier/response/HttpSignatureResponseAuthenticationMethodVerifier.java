@@ -27,8 +27,10 @@ public class HttpSignatureResponseAuthenticationMethodVerifier
   }
 
   @Override
-  public boolean verifiesAgainstMethod(EwpAuthenticationMethod method) {
-    return EwpAuthenticationMethod.HTTP_SIGNATURE.equals(method);
+  public boolean canBeVerified(EwpRequest request, EwpResponse response) {
+    return request
+        .getSupportedServerAuthenticationMethods()
+        .contains(EwpAuthenticationMethod.HTTP_SIGNATURE);
   }
 
   @Override

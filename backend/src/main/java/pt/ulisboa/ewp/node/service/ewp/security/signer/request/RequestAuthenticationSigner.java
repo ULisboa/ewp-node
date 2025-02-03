@@ -16,7 +16,7 @@ public class RequestAuthenticationSigner {
 
   public void sign(EwpRequest request) {
     signers.stream()
-        .filter(s -> s.supports(request.getAuthenticationMethod()))
+        .filter(s -> s.supports(request.getClientAuthenticationMethod()))
         .findFirst()
         .ifPresent(s -> s.sign(request));
   }

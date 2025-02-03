@@ -31,7 +31,7 @@ public class EwpClientAuthenticationFailedException extends Exception {
   @Override
   public String getMessage() {
     return "Client authentication failed for authentication method "
-        + request.getAuthenticationMethod()
+        + request.getClientAuthenticationMethod()
         + ": "
         + errorMessage;
   }

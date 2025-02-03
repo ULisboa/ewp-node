@@ -122,7 +122,7 @@ public class EwpHttpClient {
 
       response = EwpResponse.create(invocation.invoke());
 
-      responseAuthenticationResult = responseVerifier.verifyAgainstMethod(request, response);
+      responseAuthenticationResult = responseVerifier.verify(request, response);
       if (!responseAuthenticationResult.isValid()) {
         throw new EwpServerAuthenticationFailedException(
             request, response, responseAuthenticationResult);

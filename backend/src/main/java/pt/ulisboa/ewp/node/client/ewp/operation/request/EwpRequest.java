@@ -27,7 +27,9 @@ public class EwpRequest implements Serializable {
   private ExtendedHttpHeaders headers = new ExtendedHttpHeaders();
   private HttpParams queryParams = new HttpParams();
   private EwpRequestBody body = new EwpRequestFormDataUrlEncodedBody(new HttpParams());
-  private EwpAuthenticationMethod authenticationMethod = EwpAuthenticationMethod.HTTP_SIGNATURE;
+  private EwpAuthenticationMethod clientAuthenticationMethod =
+      EwpAuthenticationMethod.HTTP_SIGNATURE;
+  private List<EwpAuthenticationMethod> supportedServerAuthenticationMethods = List.of();
   private Long parentCommunicationId;
   private Collection<EwpChangeNotification> ewpChangeNotifications = new HashSet<>();
   private final EwpEndpointInformation endpointInformation;
@@ -62,7 +64,9 @@ public class EwpRequest implements Serializable {
         new EwpRequest(
             method, urlWithoutQueryParams, new EwpEndpointInformation(api.getHeiId(), api.getApiName(),
             api.getVersion(), endpointName));
-    request.authenticationMethod(api.getBestClientSupportedAuthenticationMethod());
+    request.clientAuthenticationMethod(api.getBestClientSupportedAuthenticationMethod());
+    request.supportedServerAuthenticationMethods(
+        api.getSupportedClientAuthenticationMethodsOrderedByPreference());
     request.queryParams(queryParams);
     request.body(body);
     return request;
@@ -122,12 +126,22 @@ public class EwpRequest implements Serializable {
     return this;
   }
 
-  public EwpAuthenticationMethod getAuthenticationMethod() {
-    return authenticationMethod;
+  public EwpAuthenticationMethod getClientAuthenticationMethod() {
+    return clientAuthenticationMethod;
   }
 
-  public EwpRequest authenticationMethod(EwpAuthenticationMethod authenticationMethod) {
-    this.authenticationMethod = authenticationMethod;
+  public EwpRequest clientAuthenticationMethod(EwpAuthenticationMethod authenticationMethod) {
+    this.clientAuthenticationMethod = authenticationMethod;
+    return this;
+  }
+
+  public List<EwpAuthenticationMethod> getSupportedServerAuthenticationMethods() {
+    return supportedServerAuthenticationMethods;
+  }
+
+  public EwpRequest supportedServerAuthenticationMethods(
+      List<EwpAuthenticationMethod> supportedServerAuthenticationMethods) {
+    this.supportedServerAuthenticationMethods = supportedServerAuthenticationMethods;
     return this;
   }
 

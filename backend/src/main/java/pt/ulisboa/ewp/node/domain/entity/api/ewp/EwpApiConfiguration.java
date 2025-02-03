@@ -1,6 +1,8 @@
 package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.EwpAuthenticationMethod;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.client.EwpClientAuthenticationConfiguration;
 import pt.ulisboa.ewp.node.domain.entity.api.ewp.auth.server.EwpServerAuthenticationConfiguration;
@@ -58,6 +60,16 @@ public class EwpApiConfiguration {
   public void setSupportedClientAuthenticationMethods(
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods) {
     this.supportedClientAuthenticationMethods = supportedClientAuthenticationMethods;
+  }
+
+  public List<EwpAuthenticationMethod>
+      getSupportedClientAuthenticationMethodsOrderedByPreference() {
+    return EwpAuthenticationMethod.SERVER_AUTHENTICATION_METHODS_BY_PREFERENTIAL_ORDER.stream()
+        .filter(
+            m ->
+                this.supportedServerAuthenticationMethods.stream()
+                    .anyMatch(sm -> sm.getAuthenticationMethod().equals(m)))
+        .collect(Collectors.toList());
   }
 
   public Collection<EwpServerAuthenticationConfiguration> getSupportedServerAuthenticationMethods() {
