@@ -1,5 +1,5 @@
 # Build and package
-FROM maven:3-eclipse-temurin-17 as builder
+FROM maven:3-eclipse-temurin-17 AS builder
 
 WORKDIR /build
 
@@ -38,7 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget
 
 COPY --from=builder /build/delivery/target/ewp-node-*-full.jar /opt/app.jar
 
-ENV SPRING_CONFIG_LOCATION=/config/application.yml
+ENV SPRING_CONFIG_LOCATION /config/application.yml
 VOLUME /config
 
 VOLUME /logs
