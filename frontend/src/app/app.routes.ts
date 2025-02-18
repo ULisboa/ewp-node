@@ -1,7 +1,6 @@
 import { Route } from '@angular/router';
 import { AppLayoutComponent } from './layout/app.layout.component';
-import { adminAuthCanMatchGuard } from '@ewp-node-frontend/admin/auth/data-access';
-import { NotFoundComponent } from '@ewp-node-frontend/not-found';
+import { adminAuthCanMatchGuard } from './shared/guards/admin/admin-auth.guard';
 
 export const appRoutes: Route[] = [
     {
@@ -16,13 +15,13 @@ export const appRoutes: Route[] = [
                 path: 'communications/logs',
                 pathMatch: 'full',
                 component: AppLayoutComponent,
-                loadChildren: () => import("@ewp-node-frontend/admin/dashboard/communications/logs").then(m => m.AdminDashboardCommunicationsLogsModule),
+                loadChildren: () => import("./modules/admin/dashboard/admin-dashboard.module").then(m => m.AdminDashboardModule),
                 canMatch: [adminAuthCanMatchGuard]
             }, 
             {
                 path: 'auth',
                 pathMatch: 'full',
-                loadChildren: () => import("@ewp-node-frontend/admin/auth/feature-login").then(m => m.AdminAuthFeatureLoginModule)
+                loadChildren: () => import("./modules/admin/auth/admin-auth.module").then(m => m.AdminAuthModule)
             },
             {
                 path: '**',
@@ -31,7 +30,11 @@ export const appRoutes: Route[] = [
         ]
     },
     {
+        path: 'error',
+        loadChildren: () => import("./modules/error/error.module").then(m => m.ErrorModule)
+    },
+    {
         path: '**',
-        component: NotFoundComponent
+        redirectTo: '/error/not-found'
     }
 ];

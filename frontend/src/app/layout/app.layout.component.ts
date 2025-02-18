@@ -1,12 +1,13 @@
-import { Component, OnDestroy, Renderer2, ViewChild } from '@angular/core';
+import { Component, Renderer2, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { filter, Observable, Subscription } from 'rxjs';
+import { filter, Observable } from 'rxjs';
 import { LayoutService } from "./service/app.layout.service";
 import { AppTopBarComponent } from './app.topbar.component';
 import { CommonModule, NgClass } from '@angular/common';
 import { AppFooterComponent } from './app.footer.component';
-import { AdminAuthState, selectAdminAuthState } from '@ewp-node-frontend/admin/auth/data-access';
 import { Store } from '@ngrx/store';
+import { AdminAuthState } from '../shared/states/admin-auth/admin-auth.reducer';
+import { selectAdminAuthState } from '../shared/states/admin-auth/admin-auth.selectors';
 
 @Component({
     selector: 'app-layout',

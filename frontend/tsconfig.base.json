@@ -15,37 +15,24 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@ewp-node-frontend/admin/auth/data-access": [
-        "libs/admin/auth/data-access/src/index.ts"
+      "@ewp-node-frontend/core": [
+        "src/app/core/index.ts"
       ],
-      "@ewp-node-frontend/admin/auth/feature-login": [
-        "libs/admin/auth/feature-login/src/index.ts"
+      "@ewp-node-frontend/shared/components": [
+        "src/app/shared/components/index.ts"
       ],
-      "@ewp-node-frontend/admin/dashboard/communications/logs": [
-        "libs/admin/dashboard/communications/logs/src/index.ts"
+      "@ewp-node-frontend/shared/models": [
+        "src/app/shared/models/index.ts"
       ],
-      "@ewp-node-frontend/admin/dashboard/home": [
-        "libs/admin/dashboard/home/src/index.ts"
+      "@ewp-node-frontend/shared/states": [
+        "src/app/shared/states/index.ts"
       ],
-      "@ewp-node-frontend/admin/shared/api-interfaces": [
-        "libs/admin/shared/api-interfaces/src/index.ts"
+      "@ewp-node-frontend/shared/utils/message": [
+        "src/app/shared/utils/message/index.ts"
       ],
-      "@ewp-node-frontend/admin/shared/util-primeng": [
-        "libs/admin/shared/util-primeng/src/index.ts"
+      "@ewp-node-frontend/shared/utils/primeng": [
+        "src/app/shared/utils/primeng/index.ts"
       ],
-      "@ewp-node-frontend/not-found": ["libs/not-found/src/index.ts"],
-      "@ewp-node-frontend/shared/data-access-shared": [
-        "libs/shared/data-access-shared/src/index.ts"
-      ],
-      "@ewp-node-frontend/shared/ui-prism": [
-        "libs/shared/ui-prism/src/index.ts"
-      ],
-      "@ewp-node-frontend/shared/util-angular": [
-        "libs/shared/util-angular/src/index.ts"
-      ],
-      "@ewp-node-frontend/shared/util-primeng": [
-        "libs/shared/util-primeng/src/index.ts"
-      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

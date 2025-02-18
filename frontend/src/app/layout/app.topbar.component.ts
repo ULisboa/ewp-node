@@ -3,10 +3,11 @@ import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
 import { RouterLink } from '@angular/router';
 import { CommonModule, NgClass, NgIf } from '@angular/common';
-import { AdminAuthState, adminAuthActions } from '@ewp-node-frontend/admin/auth/data-access';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { MenubarModule } from 'primeng/menubar';
+import { adminAuthActions } from '../shared/states/admin-auth/admin-auth.actions';
+import { AdminAuthState } from '../shared/states/admin-auth/admin-auth.reducer';
 
 @Component({
     selector: 'app-topbar',
