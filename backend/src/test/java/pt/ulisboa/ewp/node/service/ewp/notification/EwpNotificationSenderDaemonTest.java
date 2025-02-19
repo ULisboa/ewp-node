@@ -101,6 +101,8 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
     executorService.submit(
         () -> {
           try {
+            // NOTE: delay a little the start of one executor
+            Thread.sleep(100L);
             notificationSenderDaemon.processChangeNotification(changeNotifications[0], true);
           } catch (Exception e) {
             throw new RuntimeException(e);
