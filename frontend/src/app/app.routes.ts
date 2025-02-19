@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
-import { AppLayoutComponent } from './layout/app.layout.component';
 import { adminAuthCanMatchGuard } from './shared/guards/admin/admin-auth.guard';
+import { AppLayout } from './layout/component/app.layout';
 
 export const appRoutes: Route[] = [
     {
@@ -14,7 +14,7 @@ export const appRoutes: Route[] = [
             {
                 path: 'communications/logs',
                 pathMatch: 'full',
-                component: AppLayoutComponent,
+                component: AppLayout,
                 loadChildren: () => import("./modules/admin/dashboard/admin-dashboard.module").then(m => m.AdminDashboardModule),
                 canMatch: [adminAuthCanMatchGuard]
             }, 

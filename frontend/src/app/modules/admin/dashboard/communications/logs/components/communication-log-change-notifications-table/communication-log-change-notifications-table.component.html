@@ -20,7 +20,7 @@
     [resizableColumns]="true"
     styleClass="p-datatable-gridlines"
     [tableStyle]="{ 'min-width': '50rem' }">
-    <ng-template pTemplate="header">
+    <ng-template #header>
         <tr>
             <th style="width: 3rem"></th>
             <th pResizableColumn>
@@ -59,7 +59,7 @@
             </th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-changeNotification let-expanded="expanded">
+    <ng-template #body let-changeNotification let-expanded="expanded">
         <tr>
             <td class="cell">
                 <button type="button" pButton pRipple [pRowToggler]="changeNotification" 
@@ -100,7 +100,7 @@
             </td>
         </tr>
     </ng-template>
-    <ng-template pTemplate="rowexpansion" let-changeNotification>
+    <ng-template #expandedrow let-changeNotification>
         <tr>
             <td colspan="9">
                 <div class="p-3">

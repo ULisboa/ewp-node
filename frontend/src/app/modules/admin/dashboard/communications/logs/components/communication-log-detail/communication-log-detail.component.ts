@@ -1,12 +1,13 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
-import { Message, MessageService } from 'primeng/api';
+import { ToastMessageOptions, MessageService } from 'primeng/api';
 import { CommunicationLogDetail, EwpHttpCommunicationLogDetail, FunctionCallCommunicationLogDetail, HostPluginFunctionCallCommunicationLogDetail, HttpCommunicationFromEwpNodeLogDetail, HttpCommunicationLogDetail, HttpCommunicationToEwpNodeLogDetail } from '@ewp-node-frontend/shared/models';
 import { convertMessagesToPrimengFormat, MessageInput } from '@ewp-node-frontend/shared/utils/message';
 import { AdminCommunicationsLogsService } from '@ewp-node-frontend/core';
 
 @Component({
-  selector: 'app-admin-dashboard-communication-log-detail',
-  templateUrl: './communication-log-detail.component.html'
+    selector: 'app-admin-dashboard-communication-log-detail',
+    templateUrl: './communication-log-detail.component.html',
+    standalone: false
 })
 export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
   public readonly EwpHttpCommunicationLogDetail = EwpHttpCommunicationLogDetail;
@@ -30,7 +31,7 @@ export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
   communicationLog?: CommunicationLogDetail | HostPluginFunctionCallCommunicationLogDetail;
 
   loading = true;
-  messages: Message[] = [];
+  messages: ToastMessageOptions[] = [];
 
   constructor(private messageService: MessageService) {}
 

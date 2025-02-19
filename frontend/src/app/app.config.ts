@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer } from '@angular/core';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -14,6 +14,27 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { adminAuthActions, adminAuthFeature, adminAuthFunctionalEffects } from './shared/states';
 import { xsrfInterceptor } from './core/interceptors/xsrf.interceptor';
+import { providePrimeNG } from 'primeng/config';
+import Lara from '@primeng/themes/lara';
+import { definePreset } from '@primeng/themes';
+
+const PrimengPreset = definePreset(Lara, {
+  semantic: {
+      primary: {
+          50: '{indigo.50}',
+          100: '{indigo.100}',
+          200: '{indigo.200}',
+          300: '{indigo.300}',
+          400: '{indigo.400}',
+          500: '{indigo.500}',
+          600: '{indigo.600}',
+          700: '{indigo.700}',
+          800: '{indigo.800}',
+          900: '{indigo.900}',
+          950: '{indigo.950}'
+      }
+  }
+});
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,15 +47,21 @@ export const appConfig: ApplicationConfig = {
     provideEffects(adminAuthFunctionalEffects),
     provideRouterStore(),
     !environment.production ? provideStoreDevtools({connectInZone: true}) : [],
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (store: Store) => {
+    providePrimeNG({
+      theme: { 
+        preset: PrimengPreset, 
+        options: { 
+          darkModeSelector: '.app-dark' 
+        } 
+      }
+    }),
+    provideAppInitializer(() => {
+        const initializerFn = ((store: Store) => {
         return () => {
           store.dispatch(adminAuthActions.init());
         };
-      },
-      multi: true,
-      deps: [Store]
-    }
+      })(inject(Store));
+        return initializerFn();
+      })
   ],
 };

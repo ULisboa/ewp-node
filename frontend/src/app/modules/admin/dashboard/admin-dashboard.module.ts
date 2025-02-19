@@ -11,13 +11,13 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MessageModule } from 'primeng/message';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PanelModule } from 'primeng/panel';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
+import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 import { AdminDashboardCommunicationsLogsSearchFormComponent } from './communications/logs/components/communications-logs-search-form/communications-logs-search-form.component';
 import { AdminDashboardCommunicationLogChangeNotificationsDetailComponent } from './communications/logs/components/communication-log-change-notifications-detail/communication-log-change-notifications-detail.component';
@@ -50,7 +50,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
     DialogModule,
     DropdownModule,
     InputTextModule,
-    InputTextareaModule,
     MessageModule,
     MessagesModule,
     MultiSelectModule,
@@ -58,6 +57,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     ProgressSpinnerModule,
     TableModule,
     TabViewModule,
+    TextareaModule,
     ToastModule,
 
     ClipboardModule,

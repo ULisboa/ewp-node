@@ -15,24 +15,18 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@ewp-node-frontend/core": [
-        "src/app/core/index.ts"
-      ],
+      "@ewp-node-frontend/core": ["src/app/core/index.ts"],
       "@ewp-node-frontend/shared/components": [
         "src/app/shared/components/index.ts"
       ],
-      "@ewp-node-frontend/shared/models": [
-        "src/app/shared/models/index.ts"
-      ],
-      "@ewp-node-frontend/shared/states": [
-        "src/app/shared/states/index.ts"
-      ],
+      "@ewp-node-frontend/shared/models": ["src/app/shared/models/index.ts"],
+      "@ewp-node-frontend/shared/states": ["src/app/shared/states/index.ts"],
       "@ewp-node-frontend/shared/utils/message": [
         "src/app/shared/utils/message/index.ts"
       ],
       "@ewp-node-frontend/shared/utils/primeng": [
         "src/app/shared/utils/primeng/index.ts"
-      ],
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

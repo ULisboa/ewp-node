@@ -1,5 +1,5 @@
 import { AfterContentInit, Component, Input, ViewChild, inject } from '@angular/core';
-import { FilterService, Message, MessageService, SelectItem } from 'primeng/api';
+import { FilterService, ToastMessageOptions, MessageService, SelectItem } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { take } from 'rxjs';
 import { CommunicationLogSummary, HttpCommunicationFromEwpNodeLogDetail } from '../../../../../../../shared/models';
@@ -14,9 +14,10 @@ const CUSTOM_FILTER_COMMUNICATION_LOG_START_PROCESSING_AFTER_OR_EQUAL_DATE_TIME_
 const CUSTOM_FILTER_COMMUNICATION_LOG_END_PROCESSING_BEFORE_OR_EQUAL_DATE_TIME_NAME = 'COMMUNICATION-LOG-END-PROCESSING-BEFORE-OR-EQUAL-DATE-TIME';
 
 @Component({
-  selector: 'app-admin-dashboard-communications-logs-table',
-  templateUrl: './communications-logs-table.component.html',
-  styleUrls: ['./communications-logs-table.component.scss'],
+    selector: 'app-admin-dashboard-communications-logs-table',
+    templateUrl: './communications-logs-table.component.html',
+    styleUrls: ['./communications-logs-table.component.scss'],
+    standalone: false
 })
 export class AdminDashboardCommunicationsLogsTableComponent implements AfterContentInit {
 
@@ -89,7 +90,7 @@ export class AdminDashboardCommunicationsLogsTableComponent implements AfterCont
   totalResults = 0;
 
   loading = true;
-  messages: Message[] = [];
+  messages: ToastMessageOptions[] = [];
   lastTableLazyLoadEvent?: TableLazyLoadEvent;
 
   constructor() {

@@ -1,13 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 
 /* Primefaces Sakai NG template */
-@import "assets/layout/styles/layout/layout.scss";
-@import "assets/layout/styles/theme/fluent-light/theme.css";
+@use "assets/layout/layout.scss";
 
 /* PrimeNG */
-@import "primeng/resources/primeng.min.css";
-@import "primeicons/primeicons.css";
-@import "primeflex/primeflex.css";
+@use "primeicons/primeicons.css";
+@use "primeflex/primeflex.css";
 
 .layout-main-container {
     padding: 7rem 2rem 2rem 2rem;

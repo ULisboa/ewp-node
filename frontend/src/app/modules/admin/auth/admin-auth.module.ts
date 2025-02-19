@@ -5,6 +5,7 @@ import { AdminAuthLoginPageComponent } from './pages/admin-auth-login-page/admin
 import { SharedModule } from '../../../../../src/app/shared/shared.module';
 import { MessagesModule } from 'primeng/messages';
 import { PasswordModule } from 'primeng/password';
+import { ButtonModule } from 'primeng/button';
 
 
 @NgModule({
@@ -12,6 +13,7 @@ import { PasswordModule } from 'primeng/password';
     AdminAuthLoginPageComponent
   ],
   imports: [
+    ButtonModule,
     MessagesModule,
     PasswordModule,
 

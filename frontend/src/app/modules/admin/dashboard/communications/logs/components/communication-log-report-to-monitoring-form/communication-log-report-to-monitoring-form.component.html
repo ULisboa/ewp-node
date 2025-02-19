@@ -23,7 +23,7 @@
     
     <h5>Client Message</h5>
     <div class="field p-fluid mt-4">
-        <textarea rows="5" cols="120" pInputTextarea [autoResize]="true" formControlName="clientMessage"></textarea>
+        <textarea rows="5" cols="120" pTextarea [autoResize]="true" formControlName="clientMessage"></textarea>
         <span *ngIf="form.controls.clientMessage.errors?.['required']" class="p-error">This field is required!</span>
     </div>
     

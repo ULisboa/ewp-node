@@ -9,11 +9,10 @@ import 'prismjs/components/prism-markup';
 import 'prismjs/components/prism-javastacktrace';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule],
-  selector: 'app-prism',
-  templateUrl: './prism.component.html',
-  styleUrl: './prism.component.css',
+    imports: [CommonModule],
+    selector: 'app-prism',
+    templateUrl: './prism.component.html',
+    styleUrl: './prism.component.css'
 })
 export class PrismComponent implements AfterViewInit, OnChanges {
 

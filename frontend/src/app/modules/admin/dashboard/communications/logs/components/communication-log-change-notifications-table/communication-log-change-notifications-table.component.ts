@@ -1,5 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
-import { ConfirmationService, Message, MessageService } from 'primeng/api';
+import { ConfirmationService, ToastMessageOptions, MessageService } from 'primeng/api';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { take } from 'rxjs';
 import { convertFilters } from '@ewp-node-frontend/shared/utils/primeng';
@@ -8,10 +8,11 @@ import { EwpChangeNotification } from '@ewp-node-frontend/shared/models';
 import { convertMessagesToPrimengFormat, MessageInput } from '@ewp-node-frontend/shared/utils/message';
 
 @Component({
-  selector: 'app-admin-dashboard-communication-log-change-notifications-table',
-  templateUrl: './communication-log-change-notifications-table.component.html',
-  styleUrls: ['./communication-log-change-notifications-table.component.scss'],
-  providers: [ConfirmationService]
+    selector: 'app-admin-dashboard-communication-log-change-notifications-table',
+    templateUrl: './communication-log-change-notifications-table.component.html',
+    styleUrls: ['./communication-log-change-notifications-table.component.scss'],
+    providers: [ConfirmationService],
+    standalone: false
 })
 export class AdminDashboardCommunicationLogChangeNotificationsTableComponent {
 
@@ -53,7 +54,7 @@ export class AdminDashboardCommunicationLogChangeNotificationsTableComponent {
   totalResults = 0;
 
   loading = true;
-  messages: Message[] = [];
+  messages: ToastMessageOptions[] = [];
   lastTableLazyLoadEvent?: TableLazyLoadEvent;
 
   adminEwpChangeNotificationsService = inject(AdminEwpChangeNotificationsService);

@@ -2,8 +2,9 @@ import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, UntypedFormArray, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-admin-communications-logs-search-form',
-  templateUrl: './communications-logs-search-form.component.html'
+    selector: 'app-admin-communications-logs-search-form',
+    templateUrl: './communications-logs-search-form.component.html',
+    standalone: false
 })
 export class AdminDashboardCommunicationsLogsSearchFormComponent implements AfterViewInit {
 
