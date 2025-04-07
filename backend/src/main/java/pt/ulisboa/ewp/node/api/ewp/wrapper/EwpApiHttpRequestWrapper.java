@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
@@ -114,7 +115,8 @@ public class EwpApiHttpRequestWrapper extends ContentCachingRequestWrapper {
     // NOTE: Only try to parse parameters if the original map is empty
     if (this.parameterMap.isEmpty()) {
       // Populate parameter map if content type is application/x-www-form-urlencoded
-      if ("application/x-www-form-urlencoded".equals(request.getContentType())) {
+      if (request.getContentType() != null
+          && request.getContentType().startsWith(MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
         parseParameters(this.cachedBody);
       }
     }

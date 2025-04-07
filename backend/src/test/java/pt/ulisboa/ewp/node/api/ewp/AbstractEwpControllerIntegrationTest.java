@@ -222,7 +222,8 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
         request.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
         if (List.of("POST", "PUT", "PATCH").contains(request.getMethod())) {
-          request.setContentType(MediaType.APPLICATION_FORM_URLENCODED.toString());
+          request.setContentType(
+              MediaType.APPLICATION_FORM_URLENCODED + ";charset=" + StandardCharsets.UTF_8.name());
         }
 
         if (Objects.equals("GET", request.getMethod())) {
