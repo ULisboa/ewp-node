@@ -8,6 +8,7 @@ public class EwpApiParamConstants {
   // It allows to identify which local host the client is interested on.
   public static final String HOST_CODE = "host_code";
 
+  public static final String ACTIVITY_ATTRIBUTES = "activity_attributes";
   public static final String API_NAME = "api_name";
   public static final String APPROVING_HEI_ID = "approving_hei_id";
   public static final String CLIENT_MESSAGE = "client_message";

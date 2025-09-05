@@ -116,6 +116,11 @@ public class XmlValidator {
       try {
         for (Element element : $(xmlCatalogInputStream).find("uri")) {
           String relativePath = $(element).attr("uri");
+          // NOTE: these schema files are known to have some XML schema error,
+          // but they are not necessary so they are ignored here.
+          if (relativePath.equals("elmo-schemas-v2.1.1/schema.xsd")) {
+            continue;
+          }
           InputStream xsdInputStream = getClass().getResourceAsStream("/schemas/" + relativePath);
           StreamSource xsdSource = new StreamSource(xsdInputStream);
           xsdSources.add(xsdSource);

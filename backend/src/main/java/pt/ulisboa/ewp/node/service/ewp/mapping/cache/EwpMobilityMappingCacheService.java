@@ -6,6 +6,9 @@ import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.OmobilitiesGetRespons
 import eu.erasmuswithoutpaper.api.omobilities.v1.endpoints.StudentMobilityForStudiesV1;
 import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.OmobilitiesGetResponseV2;
 import eu.erasmuswithoutpaper.api.omobilities.v2.endpoints.StudentMobilityV2;
+import eu.erasmuswithoutpaper.api.omobilities.v3.endpoints.NominationTypeV3.ReceivingHei;
+import eu.erasmuswithoutpaper.api.omobilities.v3.endpoints.OmobilitiesGetResponseV3;
+import eu.erasmuswithoutpaper.api.omobilities.v3.endpoints.StudentMobilityV3;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.ewp.node.service.ewp.mapping.EwpIncomingMobilityMappingService;
 
@@ -36,6 +39,18 @@ public class EwpMobilityMappingCacheService {
       if (mobility.getReceivingHei() != null) {
         this.incomingMobilityMappingService.registerMapping(mobility.getReceivingHei().getHeiId(),
                 mobility.getReceivingHei().getOunitId(), mobility.getOmobilityId());
+      }
+    }
+  }
+
+  public void cacheMappingsFrom(OmobilitiesGetResponseV3 omobilitiesGetResponseV3) {
+    for (StudentMobilityV3 mobility : omobilitiesGetResponseV3.getSingleMobilityObject()) {
+      if (mobility.getNomination() != null && mobility.getNomination().getReceivingHei() != null) {
+        ReceivingHei receivingHeiId = mobility.getNomination().getReceivingHei();
+        if (receivingHeiId != null) {
+          this.incomingMobilityMappingService.registerMapping(
+              receivingHeiId.getHeiId(), receivingHeiId.getOunitId(), mobility.getOmobilityId());
+        }
       }
     }
   }

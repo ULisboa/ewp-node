@@ -2,6 +2,7 @@ package pt.ulisboa.ewp.node.domain.entity.api.ewp;
 
 import eu.erasmuswithoutpaper.api.omobilities.v1.OmobilitiesV1;
 import eu.erasmuswithoutpaper.api.omobilities.v2.OmobilitiesV2;
+import eu.erasmuswithoutpaper.api.omobilities.v3.OmobilitiesV3;
 import java.math.BigInteger;
 import java.util.Collection;
 import pt.ulisboa.ewp.node.api.ewp.utils.EwpApiUtils;
@@ -15,6 +16,7 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
 
   private String indexUrl;
   private String getUrl;
+  private String updateUrl;
   private BigInteger maxOmobilityIds;
   private boolean sendsNotifications;
 
@@ -23,6 +25,7 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
       String version,
       String indexUrl,
       String getUrl,
+      String updateUrl,
       Collection<EwpClientAuthenticationConfiguration> supportedClientAuthenticationMethods,
       Collection<EwpServerAuthenticationConfiguration> supportedServerAuthenticationMethods,
       BigInteger maxOmobilityIds,
@@ -55,6 +58,14 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
     this.getUrl = getUrl;
   }
 
+  public String getUpdateUrl() {
+    return updateUrl;
+  }
+
+  public void setUpdateUrl(String updateUrl) {
+    this.updateUrl = updateUrl;
+  }
+
   public BigInteger getMaxOmobilityIds() {
     return maxOmobilityIds;
   }
@@ -77,6 +88,7 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
         apiElement.getVersion(),
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
+        null,
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
         apiElement.getMaxOmobilityIds(),
@@ -89,10 +101,25 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
         apiElement.getVersion(),
         apiElement.getIndexUrl(),
         apiElement.getGetUrl(),
+        null,
         EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
         EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
         apiElement.getMaxOmobilityIds(),
         apiElement.getSendsNotifications() != null);
+  }
+
+  public static EwpOutgoingMobilitiesApiConfiguration create(
+      String heiId, OmobilitiesV3 apiElement) {
+    return new EwpOutgoingMobilitiesApiConfiguration(
+        heiId,
+        apiElement.getVersion(),
+        apiElement.getIndexUrl(),
+        apiElement.getGetUrl(),
+        apiElement.getUpdateUrl(),
+        EwpApiUtils.getSupportedClientAuthenticationMethods(apiElement.getHttpSecurity()),
+        EwpApiUtils.getSupportedServerAuthenticationMethods(apiElement.getHttpSecurity()),
+        apiElement.getMaxOmobilityIds(),
+        true);
   }
 
   @Override

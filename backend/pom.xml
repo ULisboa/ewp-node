@@ -69,12 +69,12 @@
     <dependency>
       <groupId>pt.ulisboa</groupId>
       <artifactId>ewp-connector-api</artifactId>
-      <version>3.16.0</version>
+      <version>4.1.7</version>
     </dependency>
     <dependency>
       <groupId>pt.ulisboa</groupId>
       <artifactId>ewp-host-plugin-skeleton</artifactId>
-      <version>0.25.0</version>
+      <version>0.28.0</version>
     </dependency>
 
     <dependency>

@@ -1,4 +1,5 @@
-FROM ghcr.io/erasmus-without-paper/ewp-registry-service/ewp-registry-service:latest
+# NOTE: currently it needs to be this version, otherwise it complains the URLs of ewp-node are not valid
+FROM ghcr.io/erasmus-without-paper/ewp-registry-service/ewp-registry-service@sha256:916d4db005511b7aafa8d514ea3269a3017db86424b47faa6f6acd802eb8ba08
 
 # Initialize empty GIT repo
 WORKDIR /root/repo
