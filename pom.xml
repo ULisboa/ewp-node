@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.0</version>
+		<version>3.4.11</version>
 	</parent>
 
 	<groupId>pt.ulisboa</groupId>
 	<artifactId>ewp-node-parent</artifactId>
-	<version>0.38.0</version>
+	<version>0.38.1</version>
 	<packaging>pom</packaging>
 	<name>EWP Node</name>
 	<description>A generic and flexible EWP node implementation.</description>
