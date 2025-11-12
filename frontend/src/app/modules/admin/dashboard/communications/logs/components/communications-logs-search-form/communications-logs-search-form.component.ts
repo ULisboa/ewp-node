@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormBuilder, UntypedFormArray, Validators } from '@angular/forms';
 
 @Component({
@@ -15,6 +15,8 @@ export class AdminDashboardCommunicationsLogsSearchFormComponent implements Afte
 
   @Output()
   filterHandler = new EventEmitter<object>();
+
+  formBuilder = inject(FormBuilder);
 
   searchForm = this.formBuilder.group({
     type: this.formBuilder.control('CONJUNCTION', [Validators.required]),
@@ -38,8 +40,6 @@ export class AdminDashboardCommunicationsLogsSearchFormComponent implements Afte
   ];
 
   filterTypeSelected?: { name: string, value: string };
-
-  constructor(private formBuilder: FormBuilder) {}
 
   ngAfterViewInit() {
     // NOTE setTimeout is used to skip a tick so there is no error of component changed on rendering

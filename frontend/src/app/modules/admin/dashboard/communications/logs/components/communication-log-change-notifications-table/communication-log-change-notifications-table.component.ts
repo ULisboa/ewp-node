@@ -1,5 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
-import { ConfirmationService, ToastMessageOptions, MessageService } from 'primeng/api';
+import { ConfirmationService, ToastMessageOptions } from 'primeng/api';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { take } from 'rxjs';
 import { convertFilters } from '@ewp-node-frontend/shared/utils/primeng';
@@ -60,8 +60,6 @@ export class AdminDashboardCommunicationLogChangeNotificationsTableComponent {
   adminEwpChangeNotificationsService = inject(AdminEwpChangeNotificationsService);
 
   confirmationService = inject(ConfirmationService);
-
-  constructor(private messageService: MessageService) {}
 
   loadEwpChangeNotifications() {
     this.onLoadEwpChangeNotifications(this.lastTableLazyLoadEvent || {});

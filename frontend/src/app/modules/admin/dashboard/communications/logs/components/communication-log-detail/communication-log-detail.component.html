@@ -1,18 +1,19 @@
 <ng-container *ngIf="!loading">
-    <p-messages [(value)]="messages" [enableService]="false"></p-messages>
+    <app-messages [messages]="messages"></app-messages>
     <ng-container *ngIf="communicationLog">
         <p-accordion [multiple]="true">
 
             <!--- Warning messages -->
-            <ng-container *ngIf="communicationLog.warningCodes.length > 0">
+            <ng-container *ngIf="communicationLog.warningMessages and communicationLog.warningCodes.length > 0">
                 <!-- EWP Monitoring -->
-                <p-messages *ngFor="let warningMessage of communicationLog.warningMessages" 
-                    [value]="[{ 'severity': 'warn', 'summary': warningMessage }]" [closable]="false"></p-messages>
+                 @for (warningMessage of communicationLog.warningMessages; track warningMessage) {
+                    <p-message [severity]="'warn'" [closable]="false"> {{ warningMessage }}</p-message>
+                 }
             </ng-container>
 
             <ng-container *ngIf="communicationLog | instanceof: EwpHttpCommunicationLogDetail as ewpHttpCommunicationLogDetail">
                 <!-- EWP HTTP Communication -->
-                <p-accordionTab header="EWP Communication">
+                <p-accordion-panel header="EWP Communication">
                     <ng-container *ngIf="ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationToEwpNodeLogDetail as httpCommunicationToEwpNodeLogDetail">
                         <p-card header="Target HEI ID">{{ httpCommunicationToEwpNodeLogDetail.targetHeiId }}</p-card>
                         <p-card header="API Name">{{ httpCommunicationToEwpNodeLogDetail.apiName }}</p-card>
@@ -23,14 +24,15 @@
                     <ng-container *ngIf="ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationFromEwpNodeLogDetail as httpCommunicationFromEwpNodeLogDetail">
                         <p-card header="HEI IDs covered by requester">{{ httpCommunicationFromEwpNodeLogDetail.heiIdsCoveredByClient }}</p-card>
                     </ng-container>
-                </p-accordionTab>
+                </p-accordion-panel>
             </ng-container>
 
             <ng-container *ngIf="communicationLog | instanceof: HttpCommunicationToEwpNodeLogDetail as httpCommunicationToEwpNodeLogDetail">
                 <!-- EWP Monitoring -->
-                <p-accordionTab header="EWP Monitoring">
+                <p-accordion-panel header="EWP Monitoring">
                     <ng-container *ngIf="httpCommunicationToEwpNodeLogDetail.reportedToMonitoring">
-                        <p-messages [value]="[{'severity': 'success', 'summary': 'Communication was previously reported to monitoring'}]" [closable]="false"></p-messages>
+                        <app-messages [messages]="[{'severity': 'success', 'summary': 'Communication was previously reported to monitoring'}]" 
+                            [closable]="false"></app-messages>
                     </ng-container>
                     <ng-container *ngIf="!httpCommunicationToEwpNodeLogDetail.reportedToMonitoring">
                         <p-card header="Report to Monitoring Form">
@@ -39,17 +41,16 @@
                                 (communicationReportedToMonitoring)="onCommunicationReportedToMonitoring()"></app-admin-dashboard-communication-log-report-to-monitoring-form>
                         </p-card>
                     </ng-container>
-                </p-accordionTab>
+                </p-accordion-panel>
             </ng-container>
 
             <ng-container *ngIf="communicationLog | instanceof: HttpCommunicationLogDetail as httpCommunicationLog">
                 <!-- HTTP Request -->
-                <p-accordionTab header="HTTP Request" *ngIf="httpCommunicationLog.request">
+                <p-accordion-panel header="HTTP Request" *ngIf="httpCommunicationLog.request">
                     <p-card header="URL" class="wrap-text">{{httpCommunicationLog.request.url}}</p-card>
                     <p-card header="Method">{{httpCommunicationLog.request.method}}</p-card>
                     <p-card header="Headers">
-                        <p-table [autoLayout]="true" [value]="httpCommunicationLog.request.headers"
-                            [scrollable]='true' scrollHeight='flex' [autoLayout]="true">
+                        <p-table [value]="httpCommunicationLog.request.headers" [scrollable]='true' scrollHeight='flex'>
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th pResizableColumn>Name</th>
@@ -72,10 +73,10 @@
                                 (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
                         </div>
                     </p-card>
-                </p-accordionTab>
+                </p-accordion-panel>
 
                 <!-- HTTP Response -->
-                <p-accordionTab header="HTTP Response" *ngIf="httpCommunicationLog.response">
+                <p-accordion-panel header="HTTP Response" *ngIf="httpCommunicationLog.response">
                     <p-card header="Status Code">{{ httpCommunicationLog.response.statusCode }}</p-card>
                     <p-card header="Headers">
                         <p-table [value]="httpCommunicationLog.response.headers">
@@ -94,9 +95,9 @@
                         </p-table>
                     </p-card>
                     <p-card header="Body" *ngIf="httpCommunicationLog.response.body">
-                        <p-tabView>
+                        <p-tabs>
                             <!-- Raw Body -->
-                            <p-tabPanel>
+                            <p-tabpanel>
                                 <ng-template pTemplate="header">
                                     <div class="flex align-items-center gap-2">
                                         <span class="font-bold white-space-nowrap m-0">
@@ -118,43 +119,42 @@
                                         <p-message [severity]="'success'" [text]="'Valid'"></p-message>
                                     </ng-container>
                                     <ng-container *ngIf="!httpCommunicationLog.response.bodyValidation.valid">
-                                        <ng-container *ngFor="let item of httpCommunicationLog.response.bodyValidation?.validationEntries">
+                                        @for (item of httpCommunicationLog.response.bodyValidation.validationEntries; track item) {
                                             <p class="wrap-text">
                                                 <ng-container *ngIf="item.lineNumber">
-                                                    <p-message [severity]="item.severity.toLowerCase()" [text]="'[Line #' + item.lineNumber + '] ' + item.message"></p-message>
+                                                    <p-message [severity]="convertSeverityToPrimengFormat(item.severity)">{{ '[Line #' + item.lineNumber + '] ' + item.message }}</p-message>
                                                 </ng-container>
                                                 <ng-container *ngIf="!item.lineNumber">
-                                                    <p-message [severity]="item.severity.toLowerCase()" [text]="item.message"></p-message>
+                                                    <p-message [severity]="convertSeverityToPrimengFormat(item.severity)">{{ item.message }}</p-message>
                                                 </ng-container>
                                             </p>
-                                        </ng-container>
+                                        }
                                     </ng-container>
                                 </ng-container>
-                            </p-tabPanel>
-                            <p-tabPanel header="Formatted XML" *ngIf="httpCommunicationLog.response.isXmlResponse()">
+                            </p-tabpanel>
+                            <p-tabpanel header="Formatted XML" *ngIf="httpCommunicationLog.response.isXmlResponse()">
                                 <app-prism [language]="'markup'" [code]="httpCommunicationLog.response.getBodyAsFormattedXml()"
                                     [showLineNumbers]="false"></app-prism>
                                 <div>
                                     <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.response.getBodyAsFormattedXml()" 
                                         (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
                                 </div>
-                            </p-tabPanel>
-                        </p-tabView>
+                            </p-tabpanel>
+                        </p-tabs>
                     </p-card>
-                </p-accordionTab>
+                </p-accordion-panel>
             </ng-container>
 
             <!-- Function Call -->
             <ng-container *ngIf="communicationLog | instanceof: FunctionCallCommunicationLogDetail as functionCallCommunicationLog">
-                <p-accordionTab header="Function Call Request">
+                <p-accordion-panel header="Function Call Request">
                     <ng-container *ngIf="functionCallCommunicationLog | instanceof: HostPluginFunctionCallCommunicationLogDetail as hostPluginFunctionCallCommunicationLog">
                         <p-card header="Host Plugin ID">{{ hostPluginFunctionCallCommunicationLog.hostPluginId }}</p-card>
                     </ng-container>
                     <p-card header="Class Name" class="wrap-text">{{ functionCallCommunicationLog.className }}</p-card>
                     <p-card header="Method">{{ functionCallCommunicationLog.method }}</p-card>
                     <p-card header="Arguments">
-                        <p-table [autoLayout]="true" [value]="functionCallCommunicationLog.sortedArguments"
-                            [scrollable]='true' scrollHeight='flex' [autoLayout]="true">
+                        <p-table [value]="functionCallCommunicationLog.sortedArguments" [scrollable]='true' scrollHeight='flex'>
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th style="width:3rem">#</th>
@@ -171,9 +171,9 @@
                             </ng-template>
                         </p-table>
                     </p-card>
-                </p-accordionTab>
+                </p-accordion-panel>
                 <ng-container *ngIf="functionCallCommunicationLog.resultType">
-                    <p-accordionTab header="Function Call Result">
+                    <p-accordion-panel header="Function Call Result">
                         <p-card header="Result Type">{{ functionCallCommunicationLog.resultType }}</p-card>
                         <p-card header="Result" *ngIf="functionCallCommunicationLog.result" class="wrap-text">
                             <p>{{functionCallCommunicationLog.result}}</p>
@@ -182,32 +182,32 @@
                                     (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
                             </div>
                         </p-card>
-                    </p-accordionTab>
+                    </p-accordion-panel>
                 </ng-container>
             </ng-container>
 
-            <p-accordionTab header="Exception Stacktrace" *ngIf="communicationLog.exceptionStacktrace">
+            <p-accordion-panel header="Exception Stacktrace" *ngIf="communicationLog.exceptionStacktrace">
                 <app-prism [language]="'javastacktrace'" [code]="communicationLog.exceptionStacktrace" [showLineNumbers]="false"></app-prism>
-            </p-accordionTab>
-            <p-accordionTab header="Observations" *ngIf="communicationLog.observations">
+            </p-accordion-panel>
+            <p-accordion-panel header="Observations" *ngIf="communicationLog.observations">
                 <div class="wrap-text">{{ communicationLog.observations }}</div>
-            </p-accordionTab>
+            </p-accordion-panel>
         </p-accordion>
 
         <ng-container *ngIf="communicationLog.ewpChangeNotificationIdsAsOrigin && communicationLog.ewpChangeNotificationIdsAsOrigin.length > 0">
             <p-accordion>
-                <p-accordionTab header="EWP Change Notifications (CNRs)">
+                <p-accordion-panel header="EWP Change Notifications (CNRs)">
                     <app-admin-dashboard-communication-log-change-notifications-table
-                        [ids]="communicationLog.ewpChangeNotificationIdsAsOrigin"></app-admin-dashboard-communication-log-change-notifications-table>
-                </p-accordionTab>
+                        [ids]="communicationLog.ewpChangeNotificationIdsAsOrigin || []"></app-admin-dashboard-communication-log-change-notifications-table>
+                </p-accordion-panel>
             </p-accordion>
         </ng-container>
 
         <ng-container *ngIf="communicationLog.sortedChildrenCommunications && communicationLog.sortedChildrenCommunications.length > 0">
-            <p-accordion [activeIndex]="0">
-                <p-accordionTab header="Nested Communications">
-                    <app-admin-dashboard-communications-logs-table [lazyLoad]="false" [allowFiltering]="false" [communicationLogs]="communicationLog.sortedChildrenCommunications"></app-admin-dashboard-communications-logs-table>
-                </p-accordionTab>
+            <p-accordion [value]="['0']">
+                <p-accordion-panel value="0" header="Nested Communications">
+                    <app-admin-dashboard-communications-logs-table [lazyLoad]="false" [allowFiltering]="false" [communicationLogs]="communicationLog.sortedChildrenCommunications || []"></app-admin-dashboard-communications-logs-table>
+                </p-accordion-panel>
             </p-accordion>
         </ng-container>
     </ng-container>

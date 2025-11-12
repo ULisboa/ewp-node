@@ -5,23 +5,23 @@
     </h4>
     <form [formGroup]="searchForm" class="p-fluid grid formgrid" (ngSubmit)="search()">
         <ng-container formArrayName="subFilters">
-            <ng-container *ngFor="let filterForm of subFilters.controls; let i = index">
-                <p-panel [header]="(i + 1).toString()" class="field col-12 md:col-4">
+            @for (filterForm of subFilters.controls; track filterForm) {
+                <p-panel [header]="($index + 1).toString()" class="field col-12 md:col-4">
 
                     <ng-template pTemplate="icons">
-                        <p-button *ngIf="i === subFilters.controls.length - 1" class="p-panel-header-icon p-link" severity="secondary"  (click)="addSubFilter()">
+                        <p-button *ngIf="$index === subFilters.controls.length - 1" class="p-panel-header-icon p-link" severity="secondary"  (click)="addSubFilter()">
                             <span class="pi pi-plus"></span>
                         </p-button>
-                        <p-button class="p-panel-header-icon p-link" severity="secondary" [style]="{ 'margin-left': '8px'}" (click)="deleteSubFilter(i)">
+                        <p-button class="p-panel-header-icon p-link" severity="secondary" [style]="{ 'margin-left': '8px'}" (click)="deleteSubFilter($index)">
                             <span class="pi pi-trash"></span>
                         </p-button>
                     </ng-template>
 
-                    <div [formGroupName]="i" class="formgrid grid">
+                    <div [formGroupName]="$index" class="formgrid grid">
                         <div class="field col-12 md:col-12">
                             <label for="type">Filter Type</label>
                             <p>
-                                <p-dropdown formControlName="type" id="type" [options]="filterTypes" optionLabel="name" optionValue="value"></p-dropdown>
+                                <p-select formControlName="type" id="type" [options]="filterTypes" optionLabel="name" optionValue="value"></p-select>
                             </p>
                         </div>
 
@@ -33,7 +33,7 @@
                                 <div class="field col-12 md:col-4">
                                     <label for="parameter">Parameter</label>
                                     <p>
-                                        <p-dropdown formControlName="parameter" id="parameter" [options]="parameterNames" optionLabel="name" optionValue="value"></p-dropdown>
+                                        <p-select formControlName="parameter" id="parameter" [options]="parameterNames" optionLabel="name" optionValue="value"></p-select>
                                     </p>
                                 </div>
                                 <div class="field col-12 md:col-8">
@@ -76,7 +76,7 @@
                         }
                     </div>
                 </p-panel>
-            </ng-container>
+            }
         </ng-container>
     </form>
 

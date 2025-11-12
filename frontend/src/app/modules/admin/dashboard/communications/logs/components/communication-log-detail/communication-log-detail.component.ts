@@ -3,6 +3,7 @@ import { ToastMessageOptions, MessageService } from 'primeng/api';
 import { CommunicationLogDetail, EwpHttpCommunicationLogDetail, FunctionCallCommunicationLogDetail, HostPluginFunctionCallCommunicationLogDetail, HttpCommunicationFromEwpNodeLogDetail, HttpCommunicationLogDetail, HttpCommunicationToEwpNodeLogDetail } from '@ewp-node-frontend/shared/models';
 import { convertMessagesToPrimengFormat, MessageInput } from '@ewp-node-frontend/shared/utils/message';
 import { AdminCommunicationsLogsService } from '@ewp-node-frontend/core';
+import { convertSeverityToPrimengFormat } from '@ewp-node-frontend/shared/utils/message';
 
 @Component({
     selector: 'app-admin-dashboard-communication-log-detail',
@@ -19,6 +20,9 @@ export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
 
   adminCommunicationsLogsService = inject(AdminCommunicationsLogsService);
 
+  // NOTE: necessary to allow .html file to use this function
+  convertSeverityToPrimengFormat = convertSeverityToPrimengFormat;
+
   @Input()
   id!: number;
 
@@ -28,12 +32,12 @@ export class AdminDashboardCommunicationLogDetailComponent implements OnInit {
   @ViewChild('codeElem')
   codeElem!: ElementRef;
 
+  messageService = inject(MessageService);
+
   communicationLog?: CommunicationLogDetail | HostPluginFunctionCallCommunicationLogDetail;
 
   loading = true;
   messages: ToastMessageOptions[] = [];
-
-  constructor(private messageService: MessageService) {}
 
   ngOnInit() {
     this.loading = true;

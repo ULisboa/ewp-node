@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { InstanceOfPipe } from "./pipes/instance-of/instance-of.pipe";
-import { CommonModule } from "@angular/common";
+import { CommonModule, NgClass } from "@angular/common";
 import { PrismComponent } from "./components/prism/prism.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
@@ -8,17 +8,20 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
   declarations: [
     InstanceOfPipe
   ],
+  providers: [
+    CommonModule
+  ],
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     
     PrismComponent
   ],
   exports: [
+    CommonModule,
+
     InstanceOfPipe,
 
-    CommonModule,
     FormsModule,
     ReactiveFormsModule
   ]

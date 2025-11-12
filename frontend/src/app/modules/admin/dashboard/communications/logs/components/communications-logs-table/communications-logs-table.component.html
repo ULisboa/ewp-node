@@ -1,4 +1,4 @@
-<p-messages [(value)]="messages" [enableService]="false"></p-messages>
+<app-messages [messages]="messages"></app-messages>
 
 <p-toast position="top-center" key="tc"></p-toast>
 
@@ -69,7 +69,7 @@
                     Start Processing Time
                     <p-columnFilter *ngIf="allowFiltering" field="startProcessingDateTime" [matchModeOptions]="startProcessingDateTimeMatchModeOptions" matchMode="COMMUNICATION-LOG-START-PROCESSING-AFTER-OR-EQUAL-DATE-TIME" display="menu" [showOperator]="false" [showAddButton]="false">
                         <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                            <p-calendar [(ngModel)]="selectedAfterOrEqualStartProcessingDateTime" dateFormat="dd/mm/yy" [showTime]="true" [showSeconds]="true" (onSelect)="filter($event)"></p-calendar>
+                            <p-date-picker [(ngModel)]="selectedAfterOrEqualStartProcessingDateTime" dateFormat="dd/mm/yy" [showTime]="true" [showSeconds]="true" (onSelect)="filter($event)"></p-date-picker>
                         </ng-template>
                     </p-columnFilter>
                 </div>
@@ -79,7 +79,7 @@
                     End Processing Time
                     <p-columnFilter *ngIf="allowFiltering" field="endProcessingDateTime" [matchModeOptions]="endProcessingDateTimeMatchModeOptions" matchMode="COMMUNICATION-LOG-END-PROCESSING-BEFORE-OR-EQUAL-DATE-TIME" display="menu" [showOperator]="false" [showAddButton]="false">
                         <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                            <p-calendar [(ngModel)]="selectedBeforeOrEqualEndProcessingDateTime" dateFormat="dd/mm/yy" [showTime]="true" [showSeconds]="true" (onSelect)="filter($event)"></p-calendar>
+                            <p-date-picker [(ngModel)]="selectedBeforeOrEqualEndProcessingDateTime" dateFormat="dd/mm/yy" [showTime]="true" [showSeconds]="true" (onSelect)="filter($event)"></p-date-picker>
                         </ng-template>
                     </p-columnFilter>
                 </div>

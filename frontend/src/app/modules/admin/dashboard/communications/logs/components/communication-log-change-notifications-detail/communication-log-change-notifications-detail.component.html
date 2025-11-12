@@ -1,14 +1,14 @@
-<p-messages [(value)]="messages" [enableService]="false"></p-messages>
+<app-messages [messages]="messages"></app-messages>
 
 <ng-container *ngIf="ewpChangeNotification">
-    <p-accordion [activeIndex]="0">
-        <p-accordionTab header="Communications">
+    <p-accordion [value]="['0']">
+        <p-accordion-panel value="0" header="Communications">
             <app-admin-dashboard-communications-logs-table
                 *ngIf="ewpChangeNotification.sortedCommunicationLogs"
                 [lazyLoad]="false"
                 [allowFiltering]="false"
                 [communicationLogs]="ewpChangeNotification.sortedCommunicationLogs"
             ></app-admin-dashboard-communications-logs-table>
-        </p-accordionTab>
+        </p-accordion-panel>
     </p-accordion>
 </ng-container>

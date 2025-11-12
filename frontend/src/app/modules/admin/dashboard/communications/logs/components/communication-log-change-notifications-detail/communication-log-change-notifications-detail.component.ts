@@ -5,7 +5,7 @@ import { ToastMessageOptions } from 'primeng/api';
 @Component({
     selector: 'app-admin-dashboard-communication-log-change-notifications-detail',
     templateUrl: './communication-log-change-notifications-detail.component.html',
-    standalone: false
+    standalone: false,
 })
 export class AdminDashboardCommunicationLogChangeNotificationsDetailComponent {
 

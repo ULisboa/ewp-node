@@ -30,7 +30,7 @@
     <p></p>
 
     <p>
-        <p-messages [value]="messages"></p-messages>
+        <app-messages [messages]="messages"></app-messages>
         <p-button label="Report" [disabled]="!form.valid" (onClick)="reportToMonitoring()" [loading]="pendingSubmit"></p-button>
     </p>
 </form>
