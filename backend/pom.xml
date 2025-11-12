@@ -7,7 +7,7 @@
   <parent>
     <artifactId>ewp-node-parent</artifactId>
     <groupId>pt.ulisboa</groupId>
-    <version>0.38.1</version>
+    <version>0.38.2</version>
   </parent>
 
   <artifactId>ewp-node-backend</artifactId>
