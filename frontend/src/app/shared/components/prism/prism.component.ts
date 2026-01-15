@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, ViewChild } from '@angular/core';
 
 import * as Prism from 'prismjs';
@@ -9,7 +9,7 @@ import 'prismjs/components/prism-markup';
 import 'prismjs/components/prism-javastacktrace';
 
 @Component({
-    imports: [CommonModule],
+    imports: [],
     selector: 'app-prism',
     templateUrl: './prism.component.html',
     styleUrl: './prism.component.css'

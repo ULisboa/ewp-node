@@ -1,1 +1,1 @@
-<pre *ngIf="language" class="language-{{ language }}" [class.line-numbers]="showLineNumbers" [attr.data-line]="linesToHighlight"><code #codeElem class="language-{{ language }}">{{code}}</code></pre>
+@if (language) {<pre class="language-{{ language }}" [class.line-numbers]="showLineNumbers" [attr.data-line]="linesToHighlight"><code #codeElem class="language-{{ language }}">{{code}}</code></pre>}

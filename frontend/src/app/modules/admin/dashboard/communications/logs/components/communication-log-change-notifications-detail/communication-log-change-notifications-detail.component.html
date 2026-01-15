@@ -1,14 +1,15 @@
 <app-messages [messages]="messages"></app-messages>
 
-<ng-container *ngIf="ewpChangeNotification">
-    <p-accordion [value]="['0']">
-        <p-accordion-panel value="0" header="Communications">
-            <app-admin-dashboard-communications-logs-table
-                *ngIf="ewpChangeNotification.sortedCommunicationLogs"
-                [lazyLoad]="false"
-                [allowFiltering]="false"
-                [communicationLogs]="ewpChangeNotification.sortedCommunicationLogs"
-            ></app-admin-dashboard-communications-logs-table>
-        </p-accordion-panel>
-    </p-accordion>
-</ng-container>
+@if (ewpChangeNotification) {
+  <p-accordion [value]="['0']">
+    <p-accordion-panel value="0" header="Communications">
+      @if (ewpChangeNotification.sortedCommunicationLogs) {
+        <app-admin-dashboard-communications-logs-table
+          [lazyLoad]="false"
+          [allowFiltering]="false"
+          [communicationLogs]="ewpChangeNotification.sortedCommunicationLogs"
+        ></app-admin-dashboard-communications-logs-table>
+      }
+    </p-accordion-panel>
+  </p-accordion>
+}

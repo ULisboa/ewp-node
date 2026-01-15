@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input } from '@angular/core';
 import { convertSeverityToPrimengFormat } from '@ewp-node-frontend/shared/utils/message';
 import { ToastMessageOptions } from 'primeng/api';
 import { MessageModule } from 'primeng/message';
 
 @Component({
-    imports: [MessageModule, CommonModule],
+    imports: [MessageModule],
     selector: 'app-messages',
     templateUrl: './messages.component.html',
     standalone: true

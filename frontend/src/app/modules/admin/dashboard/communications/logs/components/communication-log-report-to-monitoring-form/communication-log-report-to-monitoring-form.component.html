@@ -1,36 +1,42 @@
 <form [formGroup]="form">
-    <h5>Target HEI ID</h5>
-    <div>{{communicationLog.targetHeiId}}</div>
+  <h5>Target HEI ID</h5>
+  <div>{{communicationLog.targetHeiId}}</div>
 
-    <h5>API Name</h5>
-    <div>{{communicationLog.apiName}}</div>
+  <h5>API Name</h5>
+  <div>{{communicationLog.apiName}}</div>
 
-    <h5>Endpoint Name</h5>
-    <div *ngIf="communicationLog.endpointName">{{communicationLog.endpointName}}</div>
+  <h5>Endpoint Name</h5>
+  @if (communicationLog.endpointName) {
+    <div>{{communicationLog.endpointName}}</div>
+  }
 
-    <h5>HTTP Status Code</h5>
-    <div *ngIf="communicationLog.response">{{communicationLog.response.statusCode}}</div>
+  <h5>HTTP Status Code</h5>
+  @if (communicationLog.response) {
+    <div>{{communicationLog.response.statusCode}}</div>
+  }
 
-    <!-- <ng-container *ngIf="communicationLog.serverDeveloperMessage"> -->
-    <h5>Server Message</h5>
-    <ng-container *ngIf="communicationLog.serverDeveloperMessage">
-        <div>{{communicationLog.serverDeveloperMessage}}</div>
-    </ng-container>
-    <ng-container *ngIf="!communicationLog.serverDeveloperMessage">
-        <div><em>Server developer message is not set.</em></div>
-    </ng-container>
-    <!-- </ng-container> -->
-    
-    <h5>Client Message</h5>
-    <div class="field p-fluid mt-4">
-        <textarea rows="5" cols="120" pTextarea [autoResize]="true" formControlName="clientMessage"></textarea>
-        <span *ngIf="form.controls.clientMessage.errors?.['required']" class="p-error">This field is required!</span>
-    </div>
-    
-    <p></p>
+  <!-- <ng-container *ngIf="communicationLog.serverDeveloperMessage"> -->
+  <h5>Server Message</h5>
+  @if (communicationLog.serverDeveloperMessage) {
+    <div>{{communicationLog.serverDeveloperMessage}}</div>
+  }
+  @if (!communicationLog.serverDeveloperMessage) {
+    <div><em>Server developer message is not set.</em></div>
+  }
+<!-- </ng-container> -->
 
-    <p>
-        <app-messages [messages]="messages"></app-messages>
-        <p-button label="Report" [disabled]="!form.valid" (onClick)="reportToMonitoring()" [loading]="pendingSubmit"></p-button>
-    </p>
+<h5>Client Message</h5>
+<div class="field p-fluid mt-4">
+  <textarea rows="5" cols="120" pTextarea [autoResize]="true" formControlName="clientMessage"></textarea>
+  @if (form.controls.clientMessage.errors?.['required']) {
+    <span class="p-error">This field is required!</span>
+  }
+</div>
+
+<p></p>
+
+<p>
+  <app-messages [messages]="messages"></app-messages>
+  <p-button label="Report" [disabled]="!form.valid" (onClick)="reportToMonitoring()" [loading]="pendingSubmit"></p-button>
+</p>
 </form>
