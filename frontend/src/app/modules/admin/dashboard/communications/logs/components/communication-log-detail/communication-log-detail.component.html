@@ -1,7 +1,8 @@
 @if (!loading) {
   <app-messages [messages]="messages"></app-messages>
   @if (communicationLog) {
-    <p-accordion [multiple]="true">
+    <p-accordion [multiple]="true" [value]="['ewp-communication', 'ewp-monitoring', 'http-request', 'http-response', 
+      'function-call-request', 'function-call-result', 'exception-stacktrace', 'observations', 'ewp-change-notifications', 'nested-communications']">
       <!--- Warning messages -->
       @if (communicationLog.warningMessages && communicationLog.warningCodes.length > 0) {
         <!-- EWP Monitoring -->
@@ -11,213 +12,239 @@
       }
       @if (communicationLog | instanceof: EwpHttpCommunicationLogDetail; as ewpHttpCommunicationLogDetail) {
         <!-- EWP HTTP Communication -->
-        <p-accordion-panel header="EWP Communication">
-          @if (ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationToEwpNodeLogDetail; as httpCommunicationToEwpNodeLogDetail) {
-            <p-card header="Target HEI ID">{{ httpCommunicationToEwpNodeLogDetail.targetHeiId }}</p-card>
-            <p-card header="API Name">{{ httpCommunicationToEwpNodeLogDetail.apiName }}</p-card>
-            <p-card header="Version">{{ httpCommunicationToEwpNodeLogDetail.apiVersion }}</p-card>
-            @if (httpCommunicationToEwpNodeLogDetail.endpointName) {
-              <p-card header="Endpoint Name">{{ httpCommunicationToEwpNodeLogDetail.endpointName }}</p-card>
+        <p-accordion-panel value="ewp-communication">
+          <p-accordion-header>EWP Communication</p-accordion-header>
+          <p-accordion-content>
+            @if (ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationToEwpNodeLogDetail; as httpCommunicationToEwpNodeLogDetail) {
+              <p-card header="Target HEI ID">{{ httpCommunicationToEwpNodeLogDetail.targetHeiId }}</p-card>
+              <p-card header="API Name">{{ httpCommunicationToEwpNodeLogDetail.apiName }}</p-card>
+              <p-card header="Version">{{ httpCommunicationToEwpNodeLogDetail.apiVersion }}</p-card>
+              @if (httpCommunicationToEwpNodeLogDetail.endpointName) {
+                <p-card header="Endpoint Name">{{ httpCommunicationToEwpNodeLogDetail.endpointName }}</p-card>
+              }
             }
-          }
-          <p-card header="Authentication Method">{{ ewpHttpCommunicationLogDetail.authenticationMethod }}</p-card>
-          @if (ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationFromEwpNodeLogDetail; as httpCommunicationFromEwpNodeLogDetail) {
-            <p-card header="HEI IDs covered by requester">{{ httpCommunicationFromEwpNodeLogDetail.heiIdsCoveredByClient }}</p-card>
-          }
+            <p-card header="Authentication Method">{{ ewpHttpCommunicationLogDetail.authenticationMethod }}</p-card>
+            @if (ewpHttpCommunicationLogDetail | instanceof: HttpCommunicationFromEwpNodeLogDetail; as httpCommunicationFromEwpNodeLogDetail) {
+              <p-card header="HEI IDs covered by requester">{{ httpCommunicationFromEwpNodeLogDetail.heiIdsCoveredByClient }}</p-card>
+            }
+          </p-accordion-content>
         </p-accordion-panel>
       }
       @if (communicationLog | instanceof: HttpCommunicationToEwpNodeLogDetail; as httpCommunicationToEwpNodeLogDetail) {
         <!-- EWP Monitoring -->
-        <p-accordion-panel header="EWP Monitoring">
-          @if (httpCommunicationToEwpNodeLogDetail.reportedToMonitoring) {
-            <app-messages [messages]="[{'severity': 'success', 'summary': 'Communication was previously reported to monitoring'}]"
-            [closable]="false"></app-messages>
-          }
-          @if (!httpCommunicationToEwpNodeLogDetail.reportedToMonitoring) {
-            <p-card header="Report to Monitoring Form">
-              <app-admin-dashboard-communication-log-report-to-monitoring-form
-                [communicationLog]="httpCommunicationToEwpNodeLogDetail"
-              (communicationReportedToMonitoring)="onCommunicationReportedToMonitoring()"></app-admin-dashboard-communication-log-report-to-monitoring-form>
-            </p-card>
-          }
+        <p-accordion-panel value="ewp-monitoring">
+          <p-accordion-header>EWP Monitoring</p-accordion-header>
+          <p-accordion-content>
+            @if (httpCommunicationToEwpNodeLogDetail.reportedToMonitoring) {
+              <app-messages [messages]="[{'severity': 'success', 'summary': 'Communication was previously reported to monitoring'}]"
+              [closable]="false"></app-messages>
+            }
+            @if (!httpCommunicationToEwpNodeLogDetail.reportedToMonitoring) {
+              <p-card header="Report to Monitoring Form">
+                <app-admin-dashboard-communication-log-report-to-monitoring-form
+                  [communicationLog]="httpCommunicationToEwpNodeLogDetail"
+                (communicationReportedToMonitoring)="onCommunicationReportedToMonitoring()"></app-admin-dashboard-communication-log-report-to-monitoring-form>
+              </p-card>
+            }
+          </p-accordion-content>
         </p-accordion-panel>
       }
       @if (communicationLog | instanceof: HttpCommunicationLogDetail; as httpCommunicationLog) {
         <!-- HTTP Request -->
         @if (httpCommunicationLog.request) {
-          <p-accordion-panel header="HTTP Request">
-            <p-card header="URL" class="wrap-text">{{httpCommunicationLog.request.url}}</p-card>
-            <p-card header="Method">{{httpCommunicationLog.request.method}}</p-card>
-            <p-card header="Headers">
-              <p-table [value]="httpCommunicationLog.request.headers" [scrollable]='true' scrollHeight='flex'>
-                <ng-template pTemplate="header">
-                  <tr>
-                    <th pResizableColumn>Name</th>
-                    <th pResizableColumn>Value</th>
-                  </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-headerRow>
-                  <tr>
-                    <td>{{ headerRow.name }}</td>
-                    <td class="wrap-text">{{ headerRow.value }}</td>
-                  </tr>
-                </ng-template>
-              </p-table>
-            </p-card>
-            @if (httpCommunicationLog.request.body) {
-              <p-card header="Body">
-                <app-prism [language]="'markup'" [code]="httpCommunicationLog.request.body"
-                [linesToHighlight]="httpCommunicationLog.response?.bodyValidation?.lineNumbersAsString"></app-prism>
-                <div>
-                  <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.request.body"
-                  (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
-                </div>
+          <p-accordion-panel value="http-request">
+            <p-accordion-header>HTTP Request</p-accordion-header>
+            <p-accordion-content>
+              <p-card header="URL" class="wrap-text">{{httpCommunicationLog.request.url}}</p-card>
+              <p-card header="Method">{{httpCommunicationLog.request.method}}</p-card>
+              <p-card header="Headers">
+                <p-table [value]="httpCommunicationLog.request.headers" [scrollable]='true' scrollHeight='flex'>
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th pResizableColumn>Name</th>
+                      <th pResizableColumn>Value</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-headerRow>
+                    <tr>
+                      <td>{{ headerRow.name }}</td>
+                      <td class="wrap-text">{{ headerRow.value }}</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
               </p-card>
-            }
+              @if (httpCommunicationLog.request.body) {
+                <p-card header="Body">
+                  <app-prism [language]="'markup'" [code]="httpCommunicationLog.request.body"
+                  [linesToHighlight]="httpCommunicationLog.response?.bodyValidation?.lineNumbersAsString"></app-prism>
+                  <div>
+                    <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.request.body"
+                    (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
+                  </div>
+                </p-card>
+              }
+            </p-accordion-content>
           </p-accordion-panel>
         }
         <!-- HTTP Response -->
         @if (httpCommunicationLog.response) {
-          <p-accordion-panel header="HTTP Response">
-            <p-card header="Status Code">{{ httpCommunicationLog.response.statusCode }}</p-card>
-            <p-card header="Headers">
-              <p-table [value]="httpCommunicationLog.response.headers">
-                <ng-template pTemplate="header">
-                  <tr>
-                    <th>Name</th>
-                    <th>Value</th>
-                  </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-headerRow>
-                  <tr>
-                    <td>{{ headerRow.name }}</td>
-                    <td class="wrap-text">{{ headerRow.value }}</td>
-                  </tr>
-                </ng-template>
-              </p-table>
-            </p-card>
-            @if (httpCommunicationLog.response.body) {
-              <p-card header="Body">
-                <p-tabs>
-                  <!-- Raw Body -->
-                  <p-tabpanel>
-                    <ng-template pTemplate="header">
-                      <div class="flex align-items-center gap-2">
-                        <span class="font-bold white-space-nowrap m-0">
-                          Raw Body
-                        </span>
-                      </div>
-                    </ng-template>
-                    <app-prism [language]="'markup'" [code]="httpCommunicationLog.response.body"
-                    [linesToHighlight]="httpCommunicationLog.response.bodyValidation?.lineNumbersAsString"></app-prism>
-                    <div>
-                      <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.response.body"
-                      (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
-                    </div>
-                    @if (httpCommunicationLog.response.body && httpCommunicationLog.response.bodyValidation) {
-                      <ng-container header="Body Validation">
-                        <h4>Validation</h4>
-                        @if (httpCommunicationLog.response.bodyValidation.valid) {
-                          <p-message [severity]="'success'" [text]="'Valid'"></p-message>
-                        }
-                        @if (!httpCommunicationLog.response.bodyValidation.valid) {
-                          @for (item of httpCommunicationLog.response.bodyValidation.validationEntries; track item) {
-                            <p class="wrap-text">
-                              @if (item.lineNumber) {
-                                <p-message [severity]="convertSeverityToPrimengFormat(item.severity)">{{ '[Line #' + item.lineNumber + '] ' + item.message }}</p-message>
-                              }
-                              @if (!item.lineNumber) {
-                                <p-message [severity]="convertSeverityToPrimengFormat(item.severity)">{{ item.message }}</p-message>
-                              }
-                            </p>
-                          }
-                        }
-                      </ng-container>
-                    }
-                  </p-tabpanel>
-                  @if (httpCommunicationLog.response.isXmlResponse()) {
-                    <p-tabpanel header="Formatted XML">
-                      <app-prism [language]="'markup'" [code]="httpCommunicationLog.response.getBodyAsFormattedXml()"
-                      [showLineNumbers]="false"></app-prism>
+          <p-accordion-panel value="http-response">
+            <p-accordion-header>HTTP Response</p-accordion-header>
+            <p-accordion-content>
+              <p-card header="Status Code">{{ httpCommunicationLog.response.statusCode }}</p-card>
+              <p-card header="Headers">
+                <p-table [value]="httpCommunicationLog.response.headers">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-headerRow>
+                    <tr>
+                      <td>{{ headerRow.name }}</td>
+                      <td class="wrap-text">{{ headerRow.value }}</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </p-card>
+              @if (httpCommunicationLog.response.body) {
+                <p-card header="Body">
+                  <p-tabs>
+                    <!-- Raw Body -->
+                    <p-tabpanel>
+                      <ng-template pTemplate="header">
+                        <div class="flex align-items-center gap-2">
+                          <span class="font-bold white-space-nowrap m-0">
+                            Raw Body
+                          </span>
+                        </div>
+                      </ng-template>
+                      <app-prism [language]="'markup'" [code]="httpCommunicationLog.response.body"
+                      [linesToHighlight]="httpCommunicationLog.response.bodyValidation?.lineNumbersAsString"></app-prism>
                       <div>
-                        <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.response.getBodyAsFormattedXml()"
+                        <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.response.body"
                         (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
                       </div>
+                      @if (httpCommunicationLog.response.body && httpCommunicationLog.response.bodyValidation) {
+                        <ng-container header="Body Validation">
+                          <h4>Validation</h4>
+                          @if (httpCommunicationLog.response.bodyValidation.valid) {
+                            <p-message [severity]="'success'" [text]="'Valid'"></p-message>
+                          }
+                          @if (!httpCommunicationLog.response.bodyValidation.valid) {
+                            @for (item of httpCommunicationLog.response.bodyValidation.validationEntries; track item) {
+                              <p class="wrap-text">
+                                @if (item.lineNumber) {
+                                  <p-message [severity]="convertSeverityToPrimengFormat(item.severity)">{{ '[Line #' + item.lineNumber + '] ' + item.message }}</p-message>
+                                }
+                                @if (!item.lineNumber) {
+                                  <p-message [severity]="convertSeverityToPrimengFormat(item.severity)">{{ item.message }}</p-message>
+                                }
+                              </p>
+                            }
+                          }
+                        </ng-container>
+                      }
                     </p-tabpanel>
-                  }
-                </p-tabs>
-              </p-card>
-            }
+                    @if (httpCommunicationLog.response.isXmlResponse()) {
+                      <p-tabpanel header="Formatted XML">
+                        <app-prism [language]="'markup'" [code]="httpCommunicationLog.response.getBodyAsFormattedXml()"
+                        [showLineNumbers]="false"></app-prism>
+                        <div>
+                          <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="httpCommunicationLog.response.getBodyAsFormattedXml()"
+                          (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
+                        </div>
+                      </p-tabpanel>
+                    }
+                  </p-tabs>
+                </p-card>
+              }
+            </p-accordion-content>
           </p-accordion-panel>
         }
       }
       <!-- Function Call -->
       @if (communicationLog | instanceof: FunctionCallCommunicationLogDetail; as functionCallCommunicationLog) {
-        <p-accordion-panel header="Function Call Request">
-          @if (functionCallCommunicationLog | instanceof: HostPluginFunctionCallCommunicationLogDetail; as hostPluginFunctionCallCommunicationLog) {
-            <p-card header="Host Plugin ID">{{ hostPluginFunctionCallCommunicationLog.hostPluginId }}</p-card>
-          }
-          <p-card header="Class Name" class="wrap-text">{{ functionCallCommunicationLog.className }}</p-card>
-          <p-card header="Method">{{ functionCallCommunicationLog.method }}</p-card>
-          <p-card header="Arguments">
-            <p-table [value]="functionCallCommunicationLog.sortedArguments" [scrollable]='true' scrollHeight='flex'>
-              <ng-template pTemplate="header">
-                <tr>
-                  <th style="width:3rem">#</th>
-                  <th pResizableColumn>Type</th>
-                  <th pResizableColumn>Value</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-argumentRow let-rowIndex="rowIndex">
-                <tr>
-                  <td>{{ rowIndex + 1 }}</td>
-                  <td class="wrap-text">{{ argumentRow.type }}</td>
-                  <td class="wrap-text">{{ argumentRow.value }}</td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </p-card>
+        <p-accordion-panel value="function-call-request">
+          <p-accordion-header>Function Call Request</p-accordion-header>
+          <p-accordion-content>
+            @if (functionCallCommunicationLog | instanceof: HostPluginFunctionCallCommunicationLogDetail; as hostPluginFunctionCallCommunicationLog) {
+              <p-card header="Host Plugin ID">{{ hostPluginFunctionCallCommunicationLog.hostPluginId }}</p-card>
+            }
+            <p-card header="Class Name" class="wrap-text">{{ functionCallCommunicationLog.className }}</p-card>
+            <p-card header="Method">{{ functionCallCommunicationLog.method }}</p-card>
+            <p-card header="Arguments">
+              <p-table [value]="functionCallCommunicationLog.sortedArguments" [scrollable]='true' scrollHeight='flex'>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th style="width:3rem">#</th>
+                    <th pResizableColumn>Type</th>
+                    <th pResizableColumn>Value</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-argumentRow let-rowIndex="rowIndex">
+                  <tr>
+                    <td>{{ rowIndex + 1 }}</td>
+                    <td class="wrap-text">{{ argumentRow.type }}</td>
+                    <td class="wrap-text">{{ argumentRow.value }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-card>
+          </p-accordion-content>
         </p-accordion-panel>
         @if (functionCallCommunicationLog.resultType) {
-          <p-accordion-panel header="Function Call Result">
-            <p-card header="Result Type">{{ functionCallCommunicationLog.resultType }}</p-card>
-            @if (functionCallCommunicationLog.result) {
-              <p-card header="Result" class="wrap-text">
-                <p>{{functionCallCommunicationLog.result}}</p>
-                <div>
-                  <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="functionCallCommunicationLog.result"
-                  (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
-                </div>
-              </p-card>
-            }
+          <p-accordion-panel value="function-call-result">
+            <p-accordion-header>Function Call Result</p-accordion-header>
+            <p-accordion-content>
+              <p-card header="Result Type">{{ functionCallCommunicationLog.resultType }}</p-card>
+              @if (functionCallCommunicationLog.result) {
+                <p-card header="Result" class="wrap-text">
+                  <p>{{functionCallCommunicationLog.result}}</p>
+                  <div>
+                    <p-button label="Copy to clipboard" icon="pi pi-copy" [cdkCopyToClipboard]="functionCallCommunicationLog.result"
+                    (cdkCopyToClipboardCopied)="onCopyToClipboard($event)"></p-button>
+                  </div>
+                </p-card>
+              }
+            </p-accordion-content>
           </p-accordion-panel>
         }
       }
       @if (communicationLog.exceptionStacktrace) {
-        <p-accordion-panel header="Exception Stacktrace">
-          <app-prism [language]="'javastacktrace'" [code]="communicationLog.exceptionStacktrace" [showLineNumbers]="false"></app-prism>
+        <p-accordion-panel value="exception-stacktrace">
+          <p-accordion-header>Exception Stacktrace</p-accordion-header>
+          <p-accordion-content>
+            <app-prism [language]="'javastacktrace'" [code]="communicationLog.exceptionStacktrace" [showLineNumbers]="false"></app-prism>
+          </p-accordion-content>
         </p-accordion-panel>
       }
       @if (communicationLog.observations) {
-        <p-accordion-panel header="Observations">
-          <div class="wrap-text">{{ communicationLog.observations }}</div>
+        <p-accordion-panel value="observations">
+          <p-accordion-header>Observations</p-accordion-header>
+          <p-accordion-content>
+            <div class="wrap-text">{{ communicationLog.observations }}</div>
+          </p-accordion-content>
         </p-accordion-panel>
       }
     </p-accordion>
     @if (communicationLog.ewpChangeNotificationIdsAsOrigin && communicationLog.ewpChangeNotificationIdsAsOrigin.length > 0) {
-      <p-accordion>
-        <p-accordion-panel header="EWP Change Notifications (CNRs)">
+      <p-accordion-panel value="ewp-change-notifications">
+        <p-accordion-header>EWP Change Notifications (CNRs)</p-accordion-header>
+        <p-accordion-content>
           <app-admin-dashboard-communication-log-change-notifications-table
           [ids]="communicationLog.ewpChangeNotificationIdsAsOrigin || []"></app-admin-dashboard-communication-log-change-notifications-table>
-        </p-accordion-panel>
-      </p-accordion>
+        </p-accordion-content>
+      </p-accordion-panel>
     }
     @if (communicationLog.sortedChildrenCommunications && communicationLog.sortedChildrenCommunications.length > 0) {
-      <p-accordion [value]="['0']">
-        <p-accordion-panel value="0" header="Nested Communications">
+      <p-accordion-panel value="nested-communications">
+        <p-accordion-header>Nested Communications</p-accordion-header>
+        <p-accordion-content>
           <app-admin-dashboard-communications-logs-table [lazyLoad]="false" [allowFiltering]="false" [communicationLogs]="communicationLog.sortedChildrenCommunications || []"></app-admin-dashboard-communications-logs-table>
-        </p-accordion-panel>
-      </p-accordion>
+        </p-accordion-content>
+      </p-accordion-panel>
     }
   }
 }
