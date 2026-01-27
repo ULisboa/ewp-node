@@ -45,7 +45,7 @@ non-backward changes may be introduced.
 |            Mobility Factsheet            | :heavy_check_mark: |            1             |
 |           Outgoing Mobilities            | :heavy_check_mark: |          2 & 3           |
 |  Outgoing Mobility Learning Agreements   | :heavy_check_mark: |            1             |
-|          Outgoing Mobility CNR           | :heavy_check_mark: |            1             |
+|          Outgoing Mobility CNR           | :heavy_check_mark: |          1 & 2           |
 | Outgoing Mobility Learning Agreement CNR | :heavy_check_mark: |            1             |
 |           Incoming Mobilities            | :heavy_check_mark: |            1             |
 |          Incoming Mobility CNR           | :heavy_check_mark: |            1             |

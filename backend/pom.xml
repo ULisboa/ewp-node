@@ -74,7 +74,7 @@
     <dependency>
       <groupId>pt.ulisboa</groupId>
       <artifactId>ewp-host-plugin-skeleton</artifactId>
-      <version>0.28.1</version>
+      <version>0.29.0</version>
     </dependency>
 
     <dependency>
