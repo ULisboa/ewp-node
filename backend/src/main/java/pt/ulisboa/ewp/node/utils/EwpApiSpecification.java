@@ -20,6 +20,7 @@ import eu.erasmuswithoutpaper.api.imobilities.v1.ImobilitiesV1;
 import eu.erasmuswithoutpaper.api.institutions.v2.InstitutionsV2;
 import eu.erasmuswithoutpaper.api.monitoring.v1.MonitoringV1;
 import eu.erasmuswithoutpaper.api.omobilities.cnr.v1.OmobilityCnrV1;
+import eu.erasmuswithoutpaper.api.omobilities.cnr.v2.OmobilityCnrV2;
 import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.OmobilityLaCnrV1;
 import eu.erasmuswithoutpaper.api.omobilities.las.v1.OmobilityLasV1;
 import eu.erasmuswithoutpaper.api.omobilities.v1.OmobilitiesV1;
@@ -247,6 +248,15 @@ public final class EwpApiSpecification {
                 EwpApi.OUTGOING_MOBILITY_CNR,
                 1,
                 OmobilityCnrV1.class,
+                EwpOutgoingMobilityCnrApiConfiguration::create);
+
+    public static final EwpApiVersionSpecification<
+            OmobilityCnrV2, EwpOutgoingMobilityCnrApiConfiguration>
+        V2 =
+            new EwpApiVersionSpecification<>(
+                EwpApi.OUTGOING_MOBILITY_CNR,
+                2,
+                OmobilityCnrV2.class,
                 EwpOutgoingMobilityCnrApiConfiguration::create);
   }
 

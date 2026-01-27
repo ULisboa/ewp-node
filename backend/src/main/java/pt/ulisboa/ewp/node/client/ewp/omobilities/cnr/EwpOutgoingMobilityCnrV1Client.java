@@ -1,4 +1,4 @@
-package pt.ulisboa.ewp.node.client.ewp.omobilities;
+package pt.ulisboa.ewp.node.client.ewp.omobilities.cnr;
 
 import eu.erasmuswithoutpaper.api.omobilities.cnr.v1.OmobilityCnrResponseV1;
 import java.util.List;
