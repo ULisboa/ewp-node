@@ -54,10 +54,12 @@ public class EwpApiOutgoingMobilitiesManifestEntryProvider
     OmobilitiesV3 manifestEntry = new OmobilitiesV3();
     manifestEntry.setVersion(hostProviders.iterator().next().getVersion());
     manifestEntry.setAdminNotes(null);
-    manifestEntry.setIndexUrl(baseUrl + EwpApiOutgoingMobilitiesV3Controller.BASE_PATH + "/index");
-    manifestEntry.setGetUrl(baseUrl + EwpApiOutgoingMobilitiesV3Controller.BASE_PATH + "/get");
+    manifestEntry.setIndexUrl(
+        baseUrl + EwpApiOutgoingMobilitiesV3Controller.BASE_PATH + "/" + heiId + "/index");
+    manifestEntry.setGetUrl(
+        baseUrl + EwpApiOutgoingMobilitiesV3Controller.BASE_PATH + "/" + heiId + "/get");
     manifestEntry.setUpdateUrl(
-        baseUrl + EwpApiOutgoingMobilitiesV3Controller.BASE_PATH + "/update");
+        baseUrl + EwpApiOutgoingMobilitiesV3Controller.BASE_PATH + "/" + heiId + "/update");
 
     int maxOutgoingMobilityIdsPerRequest =
         hostProviders.stream()
