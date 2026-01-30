@@ -212,6 +212,7 @@
           </p-accordion-panel>
         }
       }
+
       @if (communicationLog.exceptionStacktrace) {
         <p-accordion-panel value="exception-stacktrace">
           <p-accordion-header>Exception Stacktrace</p-accordion-header>
@@ -220,6 +221,7 @@
           </p-accordion-content>
         </p-accordion-panel>
       }
+
       @if (communicationLog.observations) {
         <p-accordion-panel value="observations">
           <p-accordion-header>Observations</p-accordion-header>
@@ -228,24 +230,27 @@
           </p-accordion-content>
         </p-accordion-panel>
       }
+
+      @if (communicationLog.ewpChangeNotificationIdsAsOrigin && communicationLog.ewpChangeNotificationIdsAsOrigin.length > 0) {
+        <p-accordion-panel value="ewp-change-notifications">
+          <p-accordion-header>EWP Change Notifications (CNRs)</p-accordion-header>
+          <p-accordion-content>
+            <app-admin-dashboard-communication-log-change-notifications-table
+            [ids]="communicationLog.ewpChangeNotificationIdsAsOrigin || []"></app-admin-dashboard-communication-log-change-notifications-table>
+          </p-accordion-content>
+        </p-accordion-panel>
+      }
+
+      @if (communicationLog.sortedChildrenCommunications && communicationLog.sortedChildrenCommunications.length > 0) {
+        <p-accordion-panel value="nested-communications">
+          <p-accordion-header>Nested Communications</p-accordion-header>
+          <p-accordion-content>
+            <app-admin-dashboard-communications-logs-table [lazyLoad]="false" [allowFiltering]="false" [communicationLogs]="communicationLog.sortedChildrenCommunications || []"></app-admin-dashboard-communications-logs-table>
+          </p-accordion-content>
+        </p-accordion-panel>
+      }
+
     </p-accordion>
-    @if (communicationLog.ewpChangeNotificationIdsAsOrigin && communicationLog.ewpChangeNotificationIdsAsOrigin.length > 0) {
-      <p-accordion-panel value="ewp-change-notifications">
-        <p-accordion-header>EWP Change Notifications (CNRs)</p-accordion-header>
-        <p-accordion-content>
-          <app-admin-dashboard-communication-log-change-notifications-table
-          [ids]="communicationLog.ewpChangeNotificationIdsAsOrigin || []"></app-admin-dashboard-communication-log-change-notifications-table>
-        </p-accordion-content>
-      </p-accordion-panel>
-    }
-    @if (communicationLog.sortedChildrenCommunications && communicationLog.sortedChildrenCommunications.length > 0) {
-      <p-accordion-panel value="nested-communications">
-        <p-accordion-header>Nested Communications</p-accordion-header>
-        <p-accordion-content>
-          <app-admin-dashboard-communications-logs-table [lazyLoad]="false" [allowFiltering]="false" [communicationLogs]="communicationLog.sortedChildrenCommunications || []"></app-admin-dashboard-communications-logs-table>
-        </p-accordion-content>
-      </p-accordion-panel>
-    }
   }
 }
 
