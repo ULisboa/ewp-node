@@ -38,6 +38,7 @@ public class EwpOutgoingMobilitiesApiConfiguration extends EwpApiConfiguration {
         supportedServerAuthenticationMethods);
     this.indexUrl = indexUrl;
     this.getUrl = getUrl;
+    this.updateUrl = updateUrl;
     this.maxOmobilityIds = maxOmobilityIds;
     this.sendsNotifications = sendsNotifications;
   }
