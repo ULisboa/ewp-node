@@ -207,6 +207,32 @@ public abstract class AbstractEwpControllerIntegrationTest extends AbstractResou
     validateXml(mvcResult.getResponse().getContentAsString());
   }
 
+  protected void assertErrorRequest(
+      MockHttpServletRequestBuilder requestBuilder,
+      RequestPostProcessor securityMethodProcessor,
+      HttpStatus expectedHttpStatus,
+      Condition<ErrorResponseV1> errorResponseCondition)
+      throws Exception {
+    requestBuilder
+        .with(securityMethodProcessor)
+        .header("Date", DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()))
+        .header("X-Request-ID", UUID.randomUUID().toString())
+        .accept(MediaType.APPLICATION_XML);
+
+    MvcResult mvcResult =
+        this.mockMvc
+            .perform(requestBuilder)
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().is(expectedHttpStatus.value()))
+            .andReturn();
+
+    validateXml(mvcResult.getResponse().getContentAsString());
+
+    ErrorResponseV1 errorResponseV1 =
+        (ErrorResponseV1) mvcResult.getModelAndView().getModel().values().iterator().next();
+    assertThat(errorResponseV1).satisfies(errorResponseCondition);
+  }
+
   protected RequestPostProcessor serializableBodyProcessor(Serializable serializable) {
     return request -> {
       request.setCharacterEncoding("UTF-8");
