@@ -14,6 +14,8 @@ import pt.ulisboa.ewp.node.domain.repository.notification.EwpChangeNotificationR
 import pt.ulisboa.ewp.node.service.communication.context.CommunicationContextHolder;
 import pt.ulisboa.ewp.node.service.ewp.notification.exception.NoEwpCnrAPIException;
 import pt.ulisboa.ewp.node.service.ewp.notification.handler.EwpChangeNotificationHandler;
+import pt.ulisboa.ewp.node.utils.ClassUtils;
+import pt.ulisboa.ewp.node.utils.ObjectUtils;
 
 @Service
 public class EwpNotificationSenderDaemon implements Runnable {
@@ -136,12 +138,18 @@ public class EwpNotificationSenderDaemon implements Runnable {
       throws EwpClientErrorException, NoEwpCnrAPIException {
 
     Optional<EwpChangeNotificationHandler> senderHandlerOptional =
-        this.getSenderHandlerForClassType(changeNotification.getClass());
+        this.getSenderHandlerForClassType(ClassUtils.getRealClass(changeNotification));
     if (senderHandlerOptional.isPresent()) {
-      senderHandlerOptional.get().sendChangeNotification(changeNotification);
+      senderHandlerOptional
+          .get()
+          .sendChangeNotification(
+              (EwpChangeNotification) ObjectUtils.getRealObject(changeNotification));
     } else {
       throw new IllegalStateException(
-          "Unsupported change notification type: " + changeNotification);
+          "Unsupported change notification type (class type "
+              + changeNotification.getClass().getName()
+              + "): "
+              + changeNotification);
     }
   }
 
@@ -156,9 +164,14 @@ public class EwpNotificationSenderDaemon implements Runnable {
     changeNotificationRepository.persist(changeNotification);
   }
 
-  private <T extends EwpChangeNotification>
-      Optional<EwpChangeNotificationHandler> getSenderHandlerForClassType(Class<T> classType) {
-    return Optional.ofNullable(this.classTypeToSenderHandlerMap.get(classType));
+  private Optional<EwpChangeNotificationHandler> getSenderHandlerForClassType(Class<?> classType) {
+    if (this.classTypeToSenderHandlerMap.containsKey(classType)) {
+      return Optional.of(this.classTypeToSenderHandlerMap.get(classType));
+    }
+    if (classType.getSuperclass() != null) {
+      return getSenderHandlerForClassType(classType.getSuperclass());
+    }
+    return Optional.empty();
   }
 
   private void registerSenderHandler(Class<?> classType, EwpChangeNotificationHandler sendHandler) {
