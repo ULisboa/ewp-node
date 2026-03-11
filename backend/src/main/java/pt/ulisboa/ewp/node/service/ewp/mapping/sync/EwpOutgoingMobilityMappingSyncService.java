@@ -42,8 +42,9 @@ public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncServ
   }
 
   private void syncOutgoingMobilitiesFromProvidersV1() {
-    Map<String, Collection<OutgoingMobilitiesV1HostProvider>> providersPerHeiId = hostPluginManager.getAllProvidersOfTypePerHeiId(
-        OutgoingMobilitiesV1HostProvider.class);
+    Map<String, Collection<OutgoingMobilitiesV1HostProvider>> providersPerHeiId =
+        hostPluginManager.getAllActiveProvidersOfTypePerHeiId(
+            OutgoingMobilitiesV1HostProvider.class);
     for (Map.Entry<String, Collection<OutgoingMobilitiesV1HostProvider>> entry : providersPerHeiId.entrySet()) {
       String heiId = entry.getKey();
       for (OutgoingMobilitiesV1HostProvider provider : entry.getValue()) {
@@ -53,8 +54,9 @@ public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncServ
   }
 
   private void syncOutgoingMobilitiesFromProvidersV2() {
-    Map<String, Collection<OutgoingMobilitiesV2HostProvider>> providersPerHeiId = hostPluginManager.getAllProvidersOfTypePerHeiId(
-        OutgoingMobilitiesV2HostProvider.class);
+    Map<String, Collection<OutgoingMobilitiesV2HostProvider>> providersPerHeiId =
+        hostPluginManager.getAllActiveProvidersOfTypePerHeiId(
+            OutgoingMobilitiesV2HostProvider.class);
     for (Map.Entry<String, Collection<OutgoingMobilitiesV2HostProvider>> entry : providersPerHeiId.entrySet()) {
       String heiId = entry.getKey();
       for (OutgoingMobilitiesV2HostProvider provider : entry.getValue()) {
@@ -65,7 +67,8 @@ public class EwpOutgoingMobilityMappingSyncService implements EwpMappingSyncServ
 
   private void syncOutgoingMobilitiesFromProvidersV3() {
     Map<String, Collection<OutgoingMobilitiesV3HostProvider>> providersPerHeiId =
-        hostPluginManager.getAllProvidersOfTypePerHeiId(OutgoingMobilitiesV3HostProvider.class);
+        hostPluginManager.getAllActiveProvidersOfTypePerHeiId(
+            OutgoingMobilitiesV3HostProvider.class);
     for (Map.Entry<String, Collection<OutgoingMobilitiesV3HostProvider>> entry :
         providersPerHeiId.entrySet()) {
       String heiId = entry.getKey();

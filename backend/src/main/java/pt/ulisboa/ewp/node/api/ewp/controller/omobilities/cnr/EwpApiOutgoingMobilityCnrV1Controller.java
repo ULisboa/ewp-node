@@ -1,7 +1,6 @@
 package pt.ulisboa.ewp.node.api.ewp.controller.omobilities.cnr;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.EmptyV1;
-import eu.erasmuswithoutpaper.api.imobilities.tors.cnr.v1.ImobilityTorCnrResponseV1;
 import eu.erasmuswithoutpaper.api.omobilities.cnr.v1.OmobilityCnrResponseV1;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Collection;
@@ -59,8 +58,8 @@ public class EwpApiOutgoingMobilityCnrV1Controller {
       return ResponseEntity.ok(new OmobilityCnrResponseV1(new EmptyV1()));
     }
 
-    Collection<OutgoingMobilityCnrV1HostProvider> providers = hostPluginManager.getAllProvidersOfType(
-        OutgoingMobilityCnrV1HostProvider.class);
+    Collection<OutgoingMobilityCnrV1HostProvider> providers =
+        hostPluginManager.getAllActiveProvidersOfType(OutgoingMobilityCnrV1HostProvider.class);
     for (OutgoingMobilityCnrV1HostProvider provider : providers) {
       provider.onChangeNotification(sendingHeiId, omobilityIds);
     }

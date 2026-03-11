@@ -59,8 +59,9 @@ class EwpApiOutgoingMobilityLearningAgreementCnrV1ControllerIntegrationTest exte
     MockOutgoingMobilityLearningAgreementCnrV1HostProvider mockProvider2 = Mockito.spy(
         new MockOutgoingMobilityLearningAgreementCnrV1HostProvider());
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(OutgoingMobilityLearningAgreementCnrV1HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(OutgoingMobilityLearningAgreementCnrV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
@@ -131,8 +132,10 @@ class EwpApiOutgoingMobilityLearningAgreementCnrV1ControllerIntegrationTest exte
 
     mockProvider2.registerStats(heiId, stats2);
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, OutgoingMobilityLearningAgreementCnrV1HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(
+            heiId, OutgoingMobilityLearningAgreementCnrV1HostProvider.class);
 
     MockHttpServletRequestBuilder requestBuilder =
         MockMvcRequestBuilders.request(

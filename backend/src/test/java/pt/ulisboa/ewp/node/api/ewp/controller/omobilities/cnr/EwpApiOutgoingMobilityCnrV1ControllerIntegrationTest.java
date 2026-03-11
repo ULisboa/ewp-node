@@ -46,8 +46,9 @@ class EwpApiOutgoingMobilityCnrV1ControllerIntegrationTest extends
     MockOutgoingMobilitiesCnrV1HostProvider mockProvider2 = Mockito.spy(
         new MockOutgoingMobilitiesCnrV1HostProvider());
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(OutgoingMobilityCnrV1HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(OutgoingMobilityCnrV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);

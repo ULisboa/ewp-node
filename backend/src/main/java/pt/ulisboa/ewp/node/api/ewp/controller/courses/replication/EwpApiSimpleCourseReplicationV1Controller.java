@@ -40,12 +40,14 @@ public class EwpApiSimpleCourseReplicationV1Controller {
   public ResponseEntity<CourseReplicationResponseV1> simpleCourseReplication(
       @RequestParam(value = EwpApiParamConstants.HEI_ID, defaultValue = "") String heiId) {
 
-    if (!hostPluginManager.hasHostProvider(heiId, SimpleCourseReplicationV1HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(
+        heiId, SimpleCourseReplicationV1HostProvider.class)) {
       throw new EwpUnknownHeiIdException(heiId);
     }
 
-    Collection<SimpleCourseReplicationV1HostProvider> providers = hostPluginManager.getAllProvidersOfType(
-        heiId, SimpleCourseReplicationV1HostProvider.class);
+    Collection<SimpleCourseReplicationV1HostProvider> providers =
+        hostPluginManager.getAllActiveProvidersOfType(
+            heiId, SimpleCourseReplicationV1HostProvider.class);
 
     CourseReplicationResponseV1 response = new CourseReplicationResponseV1();
     providers.forEach(provider -> response.getLosId().addAll(provider.findAllByHeiId(heiId)));

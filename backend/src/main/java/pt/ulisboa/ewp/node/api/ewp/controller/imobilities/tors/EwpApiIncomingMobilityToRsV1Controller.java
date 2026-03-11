@@ -67,13 +67,14 @@ public class EwpApiIncomingMobilityToRsV1Controller {
               LocalDateTime modifiedSince,
           EwpApiHostAuthenticationToken authenticationToken) {
 
-    if (!hostPluginManager.hasHostProvider(receivingHeiId,
-        IncomingMobilityToRsV1HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(
+        receivingHeiId, IncomingMobilityToRsV1HostProvider.class)) {
       throw new EwpBadRequestException("Unknown HEI ID: " + receivingHeiId);
     }
 
-    Collection<IncomingMobilityToRsV1HostProvider> providers = hostPluginManager.getAllProvidersOfType(
-        receivingHeiId, IncomingMobilityToRsV1HostProvider.class);
+    Collection<IncomingMobilityToRsV1HostProvider> providers =
+        hostPluginManager.getAllActiveProvidersOfType(
+            receivingHeiId, IncomingMobilityToRsV1HostProvider.class);
 
     ImobilityTorsIndexResponseV1 response = new ImobilityTorsIndexResponseV1();
     providers.forEach(provider -> {
@@ -98,8 +99,8 @@ public class EwpApiIncomingMobilityToRsV1Controller {
       @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID) List<String> outgoingMobilityIds,
       EwpApiHostAuthenticationToken authenticationToken) {
 
-    if (!hostPluginManager.hasHostProvider(receivingHeiId,
-        IncomingMobilityToRsV1HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(
+        receivingHeiId, IncomingMobilityToRsV1HostProvider.class)) {
       throw new EwpBadRequestException("Unknown HEI ID: " + receivingHeiId);
     }
 
@@ -111,10 +112,13 @@ public class EwpApiIncomingMobilityToRsV1Controller {
           "At least some Outgoing Mobility ID must be provided");
     }
 
-    int maxOmobilityIdsPerRequest = hostPluginManager.getAllProvidersOfType(receivingHeiId,
-            IncomingMobilityToRsV1HostProvider.class).stream().mapToInt(
-            IncomingMobilityToRsV1HostProvider::getMaxOutgoingMobilityIdsPerRequest)
-        .min().orElse(0);
+    int maxOmobilityIdsPerRequest =
+        hostPluginManager
+            .getAllActiveProvidersOfType(receivingHeiId, IncomingMobilityToRsV1HostProvider.class)
+            .stream()
+            .mapToInt(IncomingMobilityToRsV1HostProvider::getMaxOutgoingMobilityIdsPerRequest)
+            .min()
+            .orElse(0);
 
     if (outgoingMobilityIds.size() > maxOmobilityIdsPerRequest) {
       throw new EwpBadRequestException(
@@ -146,8 +150,9 @@ public class EwpApiIncomingMobilityToRsV1Controller {
       if (mappingOptional.isPresent()) {
         EwpOutgoingMobilityMapping mapping = mappingOptional.get();
 
-        Optional<IncomingMobilityToRsV1HostProvider> providerOptional = hostPluginManager.getSingleProvider(
-            heiId, mapping.getOunitId(), IncomingMobilityToRsV1HostProvider.class);
+        Optional<IncomingMobilityToRsV1HostProvider> providerOptional =
+            hostPluginManager.getActiveSingleProvider(
+                heiId, mapping.getOunitId(), IncomingMobilityToRsV1HostProvider.class);
         if (providerOptional.isPresent()) {
           IncomingMobilityToRsV1HostProvider provider = providerOptional.get();
           result.computeIfAbsent(provider, ignored -> new ArrayList<>());

@@ -30,8 +30,9 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
     String heiId = "abc";
     String baseUrl = "http://example.com";
 
-    doReturn(Collections.emptyList()).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, HostProvider.class);
+    doReturn(Collections.emptyList())
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, HostProvider.class);
 
     // Act
     Collection<ManifestApiEntryBaseV1> manifestEntries = manifestEntryProvider.getManifestEntries(
@@ -54,8 +55,9 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
 
     MockOutgoingMobilitiesV2HostProvider provider = new MockOutgoingMobilitiesV2HostProvider(5);
 
-    doReturn(Collections.singletonList(provider)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, HostProvider.class);
+    doReturn(Collections.singletonList(provider))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, HostProvider.class);
 
     // Act
     Collection<ManifestApiEntryBaseV1> manifestEntries = manifestEntryProvider.getManifestEntries(
@@ -90,8 +92,9 @@ class EwpApiOutgoingMobilitiesManifestEntryProviderTest {
 
     MockOutgoingMobilitiesV2HostProvider provider2 = new MockOutgoingMobilitiesV2HostProvider(10);
 
-    doReturn(Arrays.asList(provider1, provider2)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, HostProvider.class);
+    doReturn(Arrays.asList(provider1, provider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, HostProvider.class);
 
     // Act
     Collection<ManifestApiEntryBaseV1> manifestEntries = manifestEntryProvider.getManifestEntries(

@@ -58,8 +58,8 @@ public class EwpApiIncomingMobilityToRCnrV1Controller {
       return ResponseEntity.ok(new ImobilityTorCnrResponseV1(new EmptyV1()));
     }
 
-    Collection<IncomingMobilityToRCnrV1HostProvider> providers = hostPluginManager.getAllProvidersOfType(
-        IncomingMobilityToRCnrV1HostProvider.class);
+    Collection<IncomingMobilityToRCnrV1HostProvider> providers =
+        hostPluginManager.getAllActiveProvidersOfType(IncomingMobilityToRCnrV1HostProvider.class);
     for (IncomingMobilityToRCnrV1HostProvider provider : providers) {
       provider.onChangeNotification(receivingHeiId, omobilityIds);
     }

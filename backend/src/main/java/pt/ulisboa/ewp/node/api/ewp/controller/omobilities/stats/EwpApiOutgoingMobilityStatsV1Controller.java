@@ -57,7 +57,7 @@ public class EwpApiOutgoingMobilityStatsV1Controller {
     }
 
     Collection<OutgoingMobilityStatsV1HostProvider> providers =
-        hostPluginManager.getAllProvidersOfType(
+        hostPluginManager.getAllActiveProvidersOfType(
             sendingHeiId, OutgoingMobilityStatsV1HostProvider.class);
 
     Map<String, AcademicYearStats> receivingAcademicYearToStatsMap = new HashMap<>();

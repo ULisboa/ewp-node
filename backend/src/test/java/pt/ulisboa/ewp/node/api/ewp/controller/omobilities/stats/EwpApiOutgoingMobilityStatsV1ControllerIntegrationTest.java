@@ -68,7 +68,8 @@ class EwpApiOutgoingMobilityStatsV1ControllerIntegrationTest
 
     doReturn(List.of())
         .when(hostPluginManager)
-        .getAllProvidersOfType(unknownSendingHeiId, OutgoingMobilityStatsV1HostProvider.class);
+        .getAllActiveProvidersOfType(
+            unknownSendingHeiId, OutgoingMobilityStatsV1HostProvider.class);
 
     MockHttpServletRequestBuilder requestBuilder =
         MockMvcRequestBuilders.request(
@@ -125,7 +126,7 @@ class EwpApiOutgoingMobilityStatsV1ControllerIntegrationTest
 
     doReturn(Arrays.asList(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(sendingHeiId, OutgoingMobilityStatsV1HostProvider.class);
+        .getAllActiveProvidersOfType(sendingHeiId, OutgoingMobilityStatsV1HostProvider.class);
 
     MockHttpServletRequestBuilder requestBuilder =
         MockMvcRequestBuilders.request(

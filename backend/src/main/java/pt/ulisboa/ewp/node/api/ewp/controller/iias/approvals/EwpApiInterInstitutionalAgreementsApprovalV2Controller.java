@@ -61,7 +61,7 @@ public class EwpApiInterInstitutionalAgreementsApprovalV2Controller {
     String requesterCoveredHeiId =
         authenticationToken.getPrincipal().getHeiIdsCoveredByClient().iterator().next();
 
-    if (!hostPluginManager.hasHostProvider(
+    if (!hostPluginManager.hasActiveHostProvider(
         approvingHeiId, InterInstitutionalAgreementsApprovalV2HostProvider.class)) {
       throw new EwpUnknownHeiIdException(approvingHeiId);
     }
@@ -90,7 +90,7 @@ public class EwpApiInterInstitutionalAgreementsApprovalV2Controller {
   private List<InterInstitutionalAgreementsApprovalV2HostProvider> getProvidersChainForHeiAndIiaId(
       String heiId, String iiaId) throws EwpUnknownHeiIdException {
 
-    if (!hostPluginManager.hasHostProvider(
+    if (!hostPluginManager.hasActiveHostProvider(
         heiId, InterInstitutionalAgreementsApprovalV2HostProvider.class)) {
       return new ArrayList<>();
     }
@@ -100,7 +100,7 @@ public class EwpApiInterInstitutionalAgreementsApprovalV2Controller {
     if (mappingOptional.isPresent()) {
       EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
       Optional<InterInstitutionalAgreementsApprovalV2HostProvider> providerOptional =
-          hostPluginManager.getSingleProvider(
+          hostPluginManager.getActiveSingleProvider(
               heiId,
               mapping.getOunitId(),
               InterInstitutionalAgreementsApprovalV2HostProvider.class);
@@ -112,7 +112,7 @@ public class EwpApiInterInstitutionalAgreementsApprovalV2Controller {
       }
 
     } else {
-      return hostPluginManager.getPrimaryFollowedByNonPrimaryProviders(
+      return hostPluginManager.getPrimaryFollowedByNonPrimaryActiveProviders(
           heiId, InterInstitutionalAgreementsApprovalV2HostProvider.class);
     }
   }

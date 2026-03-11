@@ -168,13 +168,13 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
             ? modifiedSinceList.iterator().next()
             : null;
 
-    if (!hostPluginManager.hasHostProvider(
+    if (!hostPluginManager.hasActiveHostProvider(
         heiId, InterInstitutionalAgreementsV7HostProvider.class)) {
       throw new EwpUnknownHeiIdException(heiId);
     }
 
     Collection<InterInstitutionalAgreementsV7HostProvider> providers =
-        hostPluginManager.getAllProvidersOfType(
+        hostPluginManager.getAllActiveProvidersOfType(
             heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     IiasIndexResponseV7 response = new IiasIndexResponseV7();
@@ -207,7 +207,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
 
     iiaIds = iiaIds != null ? iiaIds : Collections.emptyList();
 
-    if (!hostPluginManager.hasHostProvider(
+    if (!hostPluginManager.hasActiveHostProvider(
         heiId, InterInstitutionalAgreementsV7HostProvider.class)) {
       throw new EwpUnknownHeiIdException(heiId);
     }
@@ -218,7 +218,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
 
     int maxIiaIdsPerRequest =
         hostPluginManager
-            .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class)
+            .getAllActiveProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class)
             .stream()
             .mapToInt(InterInstitutionalAgreementsV7HostProvider::getMaxIiaIdsPerRequest)
             .min()
@@ -274,7 +274,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
     }
 
     Collection<InterInstitutionalAgreementsV7HostProvider> providers =
-        hostPluginManager.getAllProvidersOfType(
+        hostPluginManager.getAllActiveProvidersOfType(
             heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     IiasStatsResponseV7 statsResponse = createEmptyStatsResponse();
@@ -289,7 +289,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
   private List<InterInstitutionalAgreementsV7HostProvider> getProvidersChainForHeiAndIiaId(
       String heiId, String iiaId) throws EwpUnknownHeiIdException {
 
-    if (!hostPluginManager.hasHostProvider(
+    if (!hostPluginManager.hasActiveHostProvider(
         heiId, InterInstitutionalAgreementsV7HostProvider.class)) {
       return new ArrayList<>();
     }
@@ -299,7 +299,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
     if (mappingOptional.isPresent()) {
       EwpInterInstitutionalAgreementMapping mapping = mappingOptional.get();
       Optional<InterInstitutionalAgreementsV7HostProvider> providerOptional =
-          hostPluginManager.getSingleProvider(
+          hostPluginManager.getActiveSingleProvider(
               heiId, mapping.getOunitId(), InterInstitutionalAgreementsV7HostProvider.class);
       if (providerOptional.isPresent()) {
         InterInstitutionalAgreementsV7HostProvider provider = providerOptional.get();
@@ -309,7 +309,7 @@ public class EwpApiInterInstitutionalAgreementsV7Controller {
       }
 
     } else {
-      return hostPluginManager.getPrimaryFollowedByNonPrimaryProviders(
+      return hostPluginManager.getPrimaryFollowedByNonPrimaryActiveProviders(
           heiId, InterInstitutionalAgreementsV7HostProvider.class);
     }
   }

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,8 +39,9 @@ class EwpApiCoursesV0ControllerTest extends AbstractEwpControllerIntegrationTest
       HttpMethod method) throws Exception {
     String heiId = "test";
 
-    doReturn(false).when(hostPluginManager)
-        .hasHostProvider(heiId, CoursesV0HostProvider.class);
+    doReturn(false)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(heiId, CoursesV0HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
@@ -83,8 +83,9 @@ class EwpApiCoursesV0ControllerTest extends AbstractEwpControllerIntegrationTest
     provider2.registerLearningOpportunitySpecification(heiId,
         learningOpportunitySpecificationD4);
 
-    doReturn(List.of(provider1, provider2)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, CoursesV0HostProvider.class);
+    doReturn(List.of(provider1, provider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, CoursesV0HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
@@ -140,8 +141,9 @@ class EwpApiCoursesV0ControllerTest extends AbstractEwpControllerIntegrationTest
     provider2.registerLearningOpportunitySpecification(heiId,
         learningOpportunitySpecificationD4);
 
-    doReturn(List.of(provider1, provider2)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, CoursesV0HostProvider.class);
+    doReturn(List.of(provider1, provider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, CoursesV0HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);

@@ -44,9 +44,9 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
   public void testOunitRetrieval_UnknownHeiId(HttpMethod method) throws Exception {
     String unknownHeiId = "test";
 
-    Mockito
-        .when(hostPluginManager.hasHostProvider(unknownHeiId,
-            OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(
+                unknownHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(false);
 
     HttpParams queryParams = new HttpParams();
@@ -65,9 +65,8 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
     MockOrganizationalUnitsHostProvider mockProvider =
         new MockOrganizationalUnitsHostProvider(1, 1);
 
-    Mockito
-        .when(hostPluginManager.hasHostProvider(heiId,
-            OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
 
     HttpParams queryParams = new HttpParams();
@@ -84,7 +83,8 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
     String heiId = "test";
     String ounitId = "a";
 
-    Mockito.when(hostPluginManager.hasHostProvider(heiId, OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
 
     HttpParams queryParams = new HttpParams();
@@ -114,7 +114,8 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
     String heiId = "test";
     String ounitCode = "a";
 
-    Mockito.when(hostPluginManager.hasHostProvider(heiId, OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
 
     HttpParams queryParams = new HttpParams();
@@ -143,9 +144,8 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
       HttpMethod method) throws Exception {
     String heiId = "test";
 
-    Mockito
-        .when(hostPluginManager.hasHostProvider(heiId,
-            OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
 
     HttpParams queryParams = new HttpParams();
@@ -171,16 +171,17 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         mockProvider, Collections.emptyList()
     );
 
-    Mockito
-        .when(hostPluginManager.hasHostProvider(heiId,
-            OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
     Mockito.when(
-            hostPluginManager.getAllProvidersOfType(heiId, OrganizationalUnitsV2HostProvider.class))
+            hostPluginManager.getAllActiveProvidersOfType(
+                heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(List.of(mockProvider));
-    doReturn(providerToOunitIdsMap).when(hostPluginManager)
-        .getOunitIdsCoveredPerProviderOfHeiId(heiId, ounitIds,
-            OrganizationalUnitsV2HostProvider.class);
+    doReturn(providerToOunitIdsMap)
+        .when(hostPluginManager)
+        .getOunitIdsCoveredPerActiveProviderOfHeiId(
+            heiId, ounitIds, OrganizationalUnitsV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
@@ -201,23 +202,25 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
     MockOrganizationalUnitsHostProvider mockProvider =
         new MockOrganizationalUnitsHostProvider(0, 1);
 
-    Mockito
-        .when(hostPluginManager.hasHostProvider(heiId,
-            OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
     Mockito.when(
-            hostPluginManager.getAllProvidersOfType(heiId, OrganizationalUnitsV2HostProvider.class))
+            hostPluginManager.getAllActiveProvidersOfType(
+                heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(List.of(mockProvider));
     Mockito.when(
-            hostPluginManager.getPrimaryProvider(heiId, OrganizationalUnitsV2HostProvider.class))
+            hostPluginManager.getActivePrimaryProvider(
+                heiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     Map<OrganizationalUnitsV2HostProvider, Collection<String>> providerToOunitCodesMap = Map.of(
         mockProvider, Collections.emptyList()
     );
-    doReturn(providerToOunitCodesMap).when(hostPluginManager)
-        .getOunitCodesCoveredPerProviderOfHeiId(heiId, ounitCodes,
-            OrganizationalUnitsV2HostProvider.class);
+    doReturn(providerToOunitCodesMap)
+        .when(hostPluginManager)
+        .getOunitCodesCoveredPerActiveProviderOfHeiId(
+            heiId, ounitCodes, OrganizationalUnitsV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
@@ -250,17 +253,18 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         mockProvider, List.of(ounit1.getOunitId(), ounit2.getOunitId())
     );
 
-    Mockito
-        .when(hostPluginManager.hasHostProvider(validHeiId,
-            OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(
+                validHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
     Mockito.when(
-            hostPluginManager.getAllProvidersOfType(
+            hostPluginManager.getAllActiveProvidersOfType(
                 validHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(List.of(mockProvider));
-    doReturn(providerToOunitIdsMap).when(hostPluginManager)
-        .getOunitIdsCoveredPerProviderOfHeiId(validHeiId, validOunitIds,
-            OrganizationalUnitsV2HostProvider.class);
+    doReturn(providerToOunitIdsMap)
+        .when(hostPluginManager)
+        .getOunitIdsCoveredPerActiveProviderOfHeiId(
+            validHeiId, validOunitIds, OrganizationalUnitsV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, validHeiId);
@@ -304,17 +308,18 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         mockProvider, List.of(ounit1.getOunitCode(), ounit2.getOunitCode())
     );
 
-    Mockito
-        .when(hostPluginManager.hasHostProvider(validHeiId,
-            OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(
+                validHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
     Mockito.when(
-            hostPluginManager.getAllProvidersOfType(
+            hostPluginManager.getAllActiveProvidersOfType(
                 validHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(List.of(mockProvider));
-    doReturn(providerToOunitCodesMap).when(hostPluginManager)
-        .getOunitCodesCoveredPerProviderOfHeiId(validHeiId, validOunitCodes,
-            OrganizationalUnitsV2HostProvider.class);
+    doReturn(providerToOunitCodesMap)
+        .when(hostPluginManager)
+        .getOunitCodesCoveredPerActiveProviderOfHeiId(
+            validHeiId, validOunitCodes, OrganizationalUnitsV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, validHeiId);
@@ -367,17 +372,18 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         mockProvider2, List.of(ounit2.getOunitId(), ounit3.getOunitId())
     );
 
-    Mockito
-        .when(hostPluginManager.hasHostProvider(validHeiId,
-            OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(
+                validHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
     Mockito.when(
-            hostPluginManager.getAllProvidersOfType(
+            hostPluginManager.getAllActiveProvidersOfType(
                 validHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(List.of(mockProvider1, mockProvider2));
-    doReturn(providerToOunitIdsMap).when(hostPluginManager)
-        .getOunitIdsCoveredPerProviderOfHeiId(validHeiId, validOunitIds,
-            OrganizationalUnitsV2HostProvider.class);
+    doReturn(providerToOunitIdsMap)
+        .when(hostPluginManager)
+        .getOunitIdsCoveredPerActiveProviderOfHeiId(
+            validHeiId, validOunitIds, OrganizationalUnitsV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, validHeiId);
@@ -430,17 +436,18 @@ public class EwpApiOrganizationalUnitsV2ControllerIntegrationTest extends
         mockProvider2, List.of(ounit2.getOunitCode(), ounit3.getOunitCode())
     );
 
-    Mockito
-        .when(hostPluginManager.hasHostProvider(validHeiId,
-            OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.hasActiveHostProvider(
+                validHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(true);
     Mockito.when(
-            hostPluginManager.getAllProvidersOfType(
+            hostPluginManager.getAllActiveProvidersOfType(
                 validHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(List.of(mockProvider1, mockProvider2));
-    doReturn(providerToOunitCodesMap).when(hostPluginManager)
-        .getOunitCodesCoveredPerProviderOfHeiId(validHeiId, validOunitCodes,
-            OrganizationalUnitsV2HostProvider.class);
+    doReturn(providerToOunitCodesMap)
+        .when(hostPluginManager)
+        .getOunitCodesCoveredPerActiveProviderOfHeiId(
+            validHeiId, validOunitCodes, OrganizationalUnitsV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, validHeiId);

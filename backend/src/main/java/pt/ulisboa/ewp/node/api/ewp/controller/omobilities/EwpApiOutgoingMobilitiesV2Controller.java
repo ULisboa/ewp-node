@@ -68,12 +68,13 @@ public class EwpApiOutgoingMobilitiesV2Controller {
           LocalDateTime modifiedSince,
       EwpApiHostAuthenticationToken authenticationToken) {
 
-    if (!hostPluginManager.hasHostProvider(sendingHeiId, OutgoingMobilitiesV2HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(
+        sendingHeiId, OutgoingMobilitiesV2HostProvider.class)) {
       throw new EwpBadRequestException("Unknown HEI ID: " + sendingHeiId);
     }
 
     Collection<OutgoingMobilitiesV2HostProvider> providers =
-        hostPluginManager.getAllProvidersOfType(
+        hostPluginManager.getAllActiveProvidersOfType(
             sendingHeiId, OutgoingMobilitiesV2HostProvider.class);
 
     OmobilitiesIndexResponseV2 response = new OmobilitiesIndexResponseV2();
@@ -105,7 +106,8 @@ public class EwpApiOutgoingMobilitiesV2Controller {
       @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID) List<String> outgoingMobilityIds,
       EwpApiHostAuthenticationToken authenticationToken) {
 
-    if (!hostPluginManager.hasHostProvider(sendingHeiId, OutgoingMobilitiesV2HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(
+        sendingHeiId, OutgoingMobilitiesV2HostProvider.class)) {
       throw new EwpBadRequestException("Unknown HEI ID: " + sendingHeiId);
     }
 
@@ -118,7 +120,7 @@ public class EwpApiOutgoingMobilitiesV2Controller {
 
     int maxOmobilityIdsPerRequest =
         hostPluginManager
-            .getAllProvidersOfType(sendingHeiId, OutgoingMobilitiesV2HostProvider.class)
+            .getAllActiveProvidersOfType(sendingHeiId, OutgoingMobilitiesV2HostProvider.class)
             .stream()
             .mapToInt(OutgoingMobilitiesV2HostProvider::getMaxOutgoingMobilityIdsPerRequest)
             .min()
@@ -156,7 +158,7 @@ public class EwpApiOutgoingMobilitiesV2Controller {
   private List<OutgoingMobilitiesV2HostProvider> getProvidersChainForHeiAndOutgoingMobilityId(
       String heiId, String outgoingMobilityId) throws EwpUnknownHeiIdException {
 
-    if (!hostPluginManager.hasHostProvider(heiId, OutgoingMobilitiesV2HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(heiId, OutgoingMobilitiesV2HostProvider.class)) {
       return new ArrayList<>();
     }
 
@@ -165,7 +167,7 @@ public class EwpApiOutgoingMobilitiesV2Controller {
     if (mappingOptional.isPresent()) {
       EwpOutgoingMobilityMapping mapping = mappingOptional.get();
       Optional<OutgoingMobilitiesV2HostProvider> providerOptional =
-          hostPluginManager.getSingleProvider(
+          hostPluginManager.getActiveSingleProvider(
               heiId, mapping.getOunitId(), OutgoingMobilitiesV2HostProvider.class);
       if (providerOptional.isPresent()) {
         OutgoingMobilitiesV2HostProvider provider = providerOptional.get();
@@ -175,7 +177,7 @@ public class EwpApiOutgoingMobilitiesV2Controller {
       }
 
     } else {
-      return hostPluginManager.getPrimaryFollowedByNonPrimaryProviders(
+      return hostPluginManager.getPrimaryFollowedByNonPrimaryActiveProviders(
           heiId, OutgoingMobilitiesV2HostProvider.class);
     }
   }

@@ -36,8 +36,9 @@ public class EwpInterInstitutionalAgreementMappingSyncService implements EwpMapp
   }
 
   private void syncInterInstitutionalAgreementsV7() {
-    Map<String, Collection<InterInstitutionalAgreementsV7HostProvider>> providersPerHeiId = hostPluginManager.getAllProvidersOfTypePerHeiId(
-        InterInstitutionalAgreementsV7HostProvider.class);
+    Map<String, Collection<InterInstitutionalAgreementsV7HostProvider>> providersPerHeiId =
+        hostPluginManager.getAllActiveProvidersOfTypePerHeiId(
+            InterInstitutionalAgreementsV7HostProvider.class);
     for (Map.Entry<String, Collection<InterInstitutionalAgreementsV7HostProvider>> entry : providersPerHeiId.entrySet()) {
       String heiId = entry.getKey();
       for (InterInstitutionalAgreementsV7HostProvider provider : entry.getValue()) {

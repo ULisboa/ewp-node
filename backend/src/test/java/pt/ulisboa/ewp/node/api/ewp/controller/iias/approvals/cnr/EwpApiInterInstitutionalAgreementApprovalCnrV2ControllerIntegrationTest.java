@@ -47,7 +47,7 @@ class EwpApiInterInstitutionalAgreementApprovalCnrV2ControllerIntegrationTest
 
     doReturn(Arrays.asList(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(InterInstitutionalAgreementApprovalCnrV2HostProvider.class);
+        .getAllActiveProvidersOfType(InterInstitutionalAgreementApprovalCnrV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaId);

@@ -74,7 +74,9 @@ class EwpApiOrganizationalUnitsManifestEntryProviderTest {
     };
 
     String heiId = UUID.randomUUID().toString();
-    doReturn(Arrays.asList(provider1, provider2)).when(hostPluginManager).getAllProviders(heiId);
+    doReturn(Arrays.asList(provider1, provider2))
+        .when(hostPluginManager)
+        .getAllActiveProviders(heiId);
 
     Collection<ManifestApiEntryBaseV1> manifestEntries = manifestEntryProvider.getManifestEntries(
         heiId, "http://example.com");

@@ -42,9 +42,9 @@ public class EwpApiInstitutionsV2ControllerIntegrationTest
   public void testInstitutionRetrieval_OneUnknownHeiId(HttpMethod method) throws Exception {
     String unknownHeiId = UUID.randomUUID().toString();
 
-    Mockito
-        .when(hostPluginManager.getPrimaryProvider(unknownHeiId,
-            OrganizationalUnitsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.getActivePrimaryProvider(
+                unknownHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.empty());
 
     HttpParams queryParams = new HttpParams();
@@ -77,7 +77,9 @@ public class EwpApiInstitutionsV2ControllerIntegrationTest
     hei.setAbbreviation("TEST");
     mockProvider.register(hei);
 
-    Mockito.when(hostPluginManager.getPrimaryProvider(validHeiId, InstitutionsV2HostProvider.class))
+    Mockito.when(
+            hostPluginManager.getActivePrimaryProvider(
+                validHeiId, InstitutionsV2HostProvider.class))
         .thenReturn(Optional.of(mockProvider));
 
     HttpParams queryParams = new HttpParams();

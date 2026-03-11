@@ -49,8 +49,7 @@ public class EwpApiFactSheetsV1Controller {
 
   private FactSheetsV1HostProvider getHostProvider(String heiId) {
     Optional<FactSheetsV1HostProvider> providerOptional =
-        hostPluginManager
-            .getPrimaryProvider(heiId, FactSheetsV1HostProvider.class);
+        hostPluginManager.getActivePrimaryProvider(heiId, FactSheetsV1HostProvider.class);
     if (providerOptional.isEmpty()) {
       throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
     }

@@ -75,21 +75,26 @@ class EwpApiIncomingMobilitiesV1ControllerIntegrationTest extends
           .findByHeiIdAndOmobilityId(receivingHeiId, omobilityIds.get(index));
     }
 
-    doReturn(true).when(hostPluginManager)
-        .hasHostProvider(receivingHeiId, IncomingMobilitiesV1HostProvider.class);
+    doReturn(true)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(receivingHeiId, IncomingMobilitiesV1HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(receivingHeiId, IncomingMobilitiesV1HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(receivingHeiId, IncomingMobilitiesV1HostProvider.class);
 
-    doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
-        .getSingleProvider(receivingHeiId, ounitIds.get(0),
-            IncomingMobilitiesV1HostProvider.class);
-    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(receivingHeiId, ounitIds.get(1),
-            IncomingMobilitiesV1HostProvider.class);
-    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(receivingHeiId, ounitIds.get(2),
-            IncomingMobilitiesV1HostProvider.class);
+    doReturn(Optional.of(mockProvider1))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            receivingHeiId, ounitIds.get(0), IncomingMobilitiesV1HostProvider.class);
+    doReturn(Optional.of(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            receivingHeiId, ounitIds.get(1), IncomingMobilitiesV1HostProvider.class);
+    doReturn(Optional.of(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            receivingHeiId, ounitIds.get(2), IncomingMobilitiesV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.RECEIVING_HEI_ID, receivingHeiId);
@@ -149,21 +154,26 @@ class EwpApiIncomingMobilitiesV1ControllerIntegrationTest extends
           .findByHeiIdAndOmobilityId(receivingHeiId, omobilityIds.get(index));
     }
 
-    doReturn(true).when(hostPluginManager)
-        .hasHostProvider(receivingHeiId, IncomingMobilitiesV1HostProvider.class);
+    doReturn(true)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(receivingHeiId, IncomingMobilitiesV1HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(receivingHeiId, IncomingMobilitiesV1HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(receivingHeiId, IncomingMobilitiesV1HostProvider.class);
 
-    doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
-        .getSingleProvider(receivingHeiId, ounitIds.get(0),
-            IncomingMobilitiesV1HostProvider.class);
-    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(receivingHeiId, ounitIds.get(1),
-            IncomingMobilitiesV1HostProvider.class);
-    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(receivingHeiId, ounitIds.get(2),
-            IncomingMobilitiesV1HostProvider.class);
+    doReturn(Optional.of(mockProvider1))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            receivingHeiId, ounitIds.get(0), IncomingMobilitiesV1HostProvider.class);
+    doReturn(Optional.of(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            receivingHeiId, ounitIds.get(1), IncomingMobilitiesV1HostProvider.class);
+    doReturn(Optional.of(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            receivingHeiId, ounitIds.get(2), IncomingMobilitiesV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.RECEIVING_HEI_ID, receivingHeiId);

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
@@ -41,8 +40,9 @@ class EwpApiSimpleCourseReplicationV1ControllerTest extends AbstractEwpControlle
     String heiId = "test";
     List<String> losIds = Arrays.asList("a1", "b2", "c3");
 
-    doReturn(false).when(hostPluginManager)
-        .hasHostProvider(heiId, SimpleCourseReplicationV1HostProvider.class);
+    doReturn(false)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(heiId, SimpleCourseReplicationV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);
@@ -67,10 +67,12 @@ class EwpApiSimpleCourseReplicationV1ControllerTest extends AbstractEwpControlle
     mockProvider1.register(heiId, List.of(losIds.get(0)));
     mockProvider2.register(heiId, List.of(losIds.get(1), losIds.get(2)));
 
-    doReturn(true).when(hostPluginManager)
-        .hasHostProvider(heiId, SimpleCourseReplicationV1HostProvider.class);
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, SimpleCourseReplicationV1HostProvider.class);
+    doReturn(true)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(heiId, SimpleCourseReplicationV1HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, SimpleCourseReplicationV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.HEI_ID, heiId);

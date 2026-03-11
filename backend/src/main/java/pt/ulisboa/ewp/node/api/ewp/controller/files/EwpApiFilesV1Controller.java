@@ -46,8 +46,8 @@ public class EwpApiFilesV1Controller {
       @RequestParam(EwpApiParamConstants.FILE_ID) String fileId,
       EwpApiHostAuthenticationToken authenticationToken) {
 
-    Collection<FilesV1HostProvider> filesHostProviders = this.hostPluginManager.getAllProvidersOfType(
-        heiId, FilesV1HostProvider.class);
+    Collection<FilesV1HostProvider> filesHostProviders =
+        this.hostPluginManager.getAllActiveProvidersOfType(heiId, FilesV1HostProvider.class);
 
     Optional<FileResponse> fileResponseOptional = getFile(fileId,
         authenticationToken, filesHostProviders);

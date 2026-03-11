@@ -80,30 +80,31 @@ class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
 
     doReturn(true)
         .when(hostPluginManager)
-        .hasHostProvider(approvingHeiId, InterInstitutionalAgreementsApprovalV2HostProvider.class);
+        .hasActiveHostProvider(
+            approvingHeiId, InterInstitutionalAgreementsApprovalV2HostProvider.class);
 
     doReturn(Arrays.asList(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(
+        .getAllActiveProvidersOfType(
             approvingHeiId, InterInstitutionalAgreementsApprovalV2HostProvider.class);
 
     doReturn(Optional.of(mockProvider1))
         .when(hostPluginManager)
-        .getSingleProvider(
+        .getActiveSingleProvider(
             approvingHeiId,
             ounitIds.get(0),
             InterInstitutionalAgreementsApprovalV2HostProvider.class);
 
     doReturn(Optional.of(mockProvider2))
         .when(hostPluginManager)
-        .getSingleProvider(
+        .getActiveSingleProvider(
             approvingHeiId,
             ounitIds.get(1),
             InterInstitutionalAgreementsApprovalV2HostProvider.class);
 
     doReturn(Optional.of(mockProvider2))
         .when(hostPluginManager)
-        .getSingleProvider(
+        .getActiveSingleProvider(
             approvingHeiId,
             ounitIds.get(2),
             InterInstitutionalAgreementsApprovalV2HostProvider.class);
@@ -167,16 +168,17 @@ class EwpApiInterInstitutionalAgreementsApprovalV2ControllerTest
 
     doReturn(true)
         .when(hostPluginManager)
-        .hasHostProvider(approvingHeiId, InterInstitutionalAgreementsApprovalV2HostProvider.class);
+        .hasActiveHostProvider(
+            approvingHeiId, InterInstitutionalAgreementsApprovalV2HostProvider.class);
 
     doReturn(Optional.of(mockProvider1))
         .when(hostPluginManager)
-        .getPrimaryProvider(
+        .getActivePrimaryProvider(
             approvingHeiId, InterInstitutionalAgreementsApprovalV2HostProvider.class);
 
     doReturn(Arrays.asList(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(
+        .getAllActiveProvidersOfType(
             approvingHeiId, InterInstitutionalAgreementsApprovalV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();

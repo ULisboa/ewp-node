@@ -48,7 +48,7 @@ public class EwpApiCoursesV0ManifestEntryProviderTest {
     MockCoursesV0HostProvider provider1 = new MockCoursesV0HostProvider(5, 2);
     MockCoursesV0HostProvider provider2 = new MockCoursesV0HostProvider(3, 5);
 
-    when(hostPluginManager.getAllProviders(heiId)).thenReturn(List.of(provider1, provider2));
+    when(hostPluginManager.getAllActiveProviders(heiId)).thenReturn(List.of(provider1, provider2));
 
     Collection<ManifestApiEntryBaseV1> manifestEntries = manifestEntryProvider.getManifestEntries(
         heiId, baseUrl);

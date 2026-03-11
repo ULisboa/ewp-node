@@ -74,7 +74,7 @@ class EwpApiInterInstitutionalAgreementsCnrV3ControllerIntegrationTest
 
     doReturn(Optional.of(mockIiaCnrProvider1))
         .when(hostPluginManager)
-        .getSingleProvider(
+        .getActiveSingleProvider(
             localHeiId, localOunitId, InterInstitutionalAgreementCnrV3HostProvider.class);
 
     HttpParams queryParams = new HttpParams();

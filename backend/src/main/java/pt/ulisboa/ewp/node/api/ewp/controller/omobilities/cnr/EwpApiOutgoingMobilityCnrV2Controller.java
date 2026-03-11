@@ -61,7 +61,8 @@ public class EwpApiOutgoingMobilityCnrV2Controller {
     }
 
     Collection<OutgoingMobilityCnrV2HostProvider> providers =
-        hostPluginManager.getAllProvidersOfType(heiId, OutgoingMobilityCnrV2HostProvider.class);
+        hostPluginManager.getAllActiveProvidersOfType(
+            heiId, OutgoingMobilityCnrV2HostProvider.class);
     for (OutgoingMobilityCnrV2HostProvider provider : providers) {
       provider.onChangeNotification(requesterCoveredHeiId, omobilityIds);
     }

@@ -52,7 +52,7 @@ public class EwpApiOrganizationalUnitsV2Controller {
     ounitIds = ounitIds != null ? ounitIds : Collections.emptyList();
     ounitCodes = ounitCodes != null ? ounitCodes : Collections.emptyList();
 
-    if (!hostPluginManager.hasHostProvider(heiId, OrganizationalUnitsV2HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(heiId, OrganizationalUnitsV2HostProvider.class)) {
       throw new EwpUnknownHeiIdException(heiId);
     }
 
@@ -74,12 +74,13 @@ public class EwpApiOrganizationalUnitsV2Controller {
   }
 
   private ResponseEntity<OunitsResponseV2> ounitsByIds(String heiId, List<String> ounitIds) {
-    Map<OrganizationalUnitsV2HostProvider, Collection<String>> providerToOunitIdsMap = hostPluginManager.getOunitIdsCoveredPerProviderOfHeiId(
-        heiId, ounitIds, OrganizationalUnitsV2HostProvider.class);
+    Map<OrganizationalUnitsV2HostProvider, Collection<String>> providerToOunitIdsMap =
+        hostPluginManager.getOunitIdsCoveredPerActiveProviderOfHeiId(
+            heiId, ounitIds, OrganizationalUnitsV2HostProvider.class);
 
     int maxOunitIdsPerRequest =
         hostPluginManager
-            .getAllProvidersOfType(heiId, OrganizationalUnitsV2HostProvider.class)
+            .getAllActiveProvidersOfType(heiId, OrganizationalUnitsV2HostProvider.class)
             .stream()
             .mapToInt(OrganizationalUnitsV2HostProvider::getMaxOunitIdsPerRequest)
             .min()
@@ -109,12 +110,13 @@ public class EwpApiOrganizationalUnitsV2Controller {
   }
 
   private ResponseEntity<OunitsResponseV2> ounitsByCodes(String heiId, List<String> ounitCodes) {
-    Map<OrganizationalUnitsV2HostProvider, Collection<String>> providerToOunitCodesMap = hostPluginManager.getOunitCodesCoveredPerProviderOfHeiId(
-        heiId, ounitCodes, OrganizationalUnitsV2HostProvider.class);
+    Map<OrganizationalUnitsV2HostProvider, Collection<String>> providerToOunitCodesMap =
+        hostPluginManager.getOunitCodesCoveredPerActiveProviderOfHeiId(
+            heiId, ounitCodes, OrganizationalUnitsV2HostProvider.class);
 
     int maxOunitCodesPerRequest =
         hostPluginManager
-            .getAllProvidersOfType(heiId, OrganizationalUnitsV2HostProvider.class)
+            .getAllActiveProvidersOfType(heiId, OrganizationalUnitsV2HostProvider.class)
             .stream()
             .mapToInt(OrganizationalUnitsV2HostProvider::getMaxOunitCodesPerRequest)
             .min()

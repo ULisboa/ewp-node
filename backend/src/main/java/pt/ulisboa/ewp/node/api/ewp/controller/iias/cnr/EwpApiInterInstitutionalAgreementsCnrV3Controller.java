@@ -134,7 +134,7 @@ public class EwpApiInterInstitutionalAgreementsCnrV3Controller {
     }
 
     Optional<InterInstitutionalAgreementCnrV3HostProvider> providerOptional =
-        hostPluginManager.getSingleProvider(
+        hostPluginManager.getActiveSingleProvider(
             localHeiId, localOunitId, InterInstitutionalAgreementCnrV3HostProvider.class);
     if (providerOptional.isEmpty()) {
       throw new EwpUnknownHeiIdException(localHeiId);
@@ -146,7 +146,7 @@ public class EwpApiInterInstitutionalAgreementsCnrV3Controller {
 
   private void propagateIiaDeletion(String heiId, String iiaId, String requesterCoveredHeiId) {
     Collection<InterInstitutionalAgreementCnrV3HostProvider> providers =
-        hostPluginManager.getAllProvidersOfType(
+        hostPluginManager.getAllActiveProvidersOfType(
             heiId, InterInstitutionalAgreementCnrV3HostProvider.class);
     for (InterInstitutionalAgreementCnrV3HostProvider provider : providers) {
       provider.onChangeNotification(requesterCoveredHeiId, iiaId);

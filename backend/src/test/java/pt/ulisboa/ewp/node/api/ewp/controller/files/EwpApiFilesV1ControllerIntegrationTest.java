@@ -37,9 +37,7 @@ public class EwpApiFilesV1ControllerIntegrationTest extends AbstractEwpControlle
 
     MockFilesV1HostProvider provider1 = new MockFilesV1HostProvider();
 
-    Mockito
-        .when(hostPluginManager.getAllProvidersOfType(heiId,
-            FilesV1HostProvider.class))
+    Mockito.when(hostPluginManager.getAllActiveProvidersOfType(heiId, FilesV1HostProvider.class))
         .thenReturn(List.of(provider1));
 
     HttpParams queryParams = new HttpParams();
@@ -65,9 +63,7 @@ public class EwpApiFilesV1ControllerIntegrationTest extends AbstractEwpControlle
         "PDF_TEST_CONTENT".getBytes(StandardCharsets.UTF_8));
     provider1.registerFile(fileId, fileResponse);
 
-    Mockito
-        .when(hostPluginManager.getAllProvidersOfType(heiId,
-            FilesV1HostProvider.class))
+    Mockito.when(hostPluginManager.getAllActiveProvidersOfType(heiId, FilesV1HostProvider.class))
         .thenReturn(List.of(provider1));
 
     HttpParams queryParams = new HttpParams();

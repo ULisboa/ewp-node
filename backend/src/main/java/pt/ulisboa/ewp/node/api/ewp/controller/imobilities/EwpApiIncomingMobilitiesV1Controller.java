@@ -57,8 +57,8 @@ public class EwpApiIncomingMobilitiesV1Controller {
       @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID) List<String> outgoingMobilityIds,
       EwpApiHostAuthenticationToken authenticationToken) {
 
-    if (!hostPluginManager.hasHostProvider(receivingHeiId,
-        IncomingMobilitiesV1HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(
+        receivingHeiId, IncomingMobilitiesV1HostProvider.class)) {
       throw new EwpBadRequestException("Unknown HEI ID: " + receivingHeiId);
     }
 
@@ -70,10 +70,13 @@ public class EwpApiIncomingMobilitiesV1Controller {
           "At least some Outgoing Mobility ID must be provided");
     }
 
-    int maxOmobilityIdsPerRequest = hostPluginManager.getAllProvidersOfType(receivingHeiId,
-            IncomingMobilitiesV1HostProvider.class).stream().mapToInt(
-            IncomingMobilitiesV1HostProvider::getMaxOutgoingMobilityIdsPerRequest)
-        .min().orElse(0);
+    int maxOmobilityIdsPerRequest =
+        hostPluginManager
+            .getAllActiveProvidersOfType(receivingHeiId, IncomingMobilitiesV1HostProvider.class)
+            .stream()
+            .mapToInt(IncomingMobilitiesV1HostProvider::getMaxOutgoingMobilityIdsPerRequest)
+            .min()
+            .orElse(0);
 
     if (outgoingMobilityIds.size() > maxOmobilityIdsPerRequest) {
       throw new EwpBadRequestException(
@@ -105,8 +108,9 @@ public class EwpApiIncomingMobilitiesV1Controller {
       if (mappingOptional.isPresent()) {
         EwpOutgoingMobilityMapping mapping = mappingOptional.get();
 
-        Optional<IncomingMobilitiesV1HostProvider> providerOptional = hostPluginManager.getSingleProvider(
-            heiId, mapping.getOunitId(), IncomingMobilitiesV1HostProvider.class);
+        Optional<IncomingMobilitiesV1HostProvider> providerOptional =
+            hostPluginManager.getActiveSingleProvider(
+                heiId, mapping.getOunitId(), IncomingMobilitiesV1HostProvider.class);
         if (providerOptional.isPresent()) {
           IncomingMobilitiesV1HostProvider provider = providerOptional.get();
           result.computeIfAbsent(provider, ignored -> new ArrayList<>());

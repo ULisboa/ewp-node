@@ -2,7 +2,6 @@ package pt.ulisboa.ewp.node.api.ewp.controller.iias.approvals.cnr;
 
 import eu.erasmuswithoutpaper.api.architecture.v1.EmptyV1;
 import eu.erasmuswithoutpaper.api.iias.approval.cnr.v2.IiaApprovalCnrResponseV2;
-import eu.erasmuswithoutpaper.api.omobilities.las.cnr.v1.OmobilityLaCnrResponseV1;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collection;
@@ -63,7 +62,7 @@ public class EwpApiInterInstitutionalAgreementApprovalCnrV2Controller {
     }
 
     Collection<InterInstitutionalAgreementApprovalCnrV2HostProvider> providers =
-        hostPluginManager.getAllProvidersOfType(
+        hostPluginManager.getAllActiveProvidersOfType(
             InterInstitutionalAgreementApprovalCnrV2HostProvider.class);
     for (InterInstitutionalAgreementApprovalCnrV2HostProvider provider : providers) {
       provider.onChangeNotification(approvingHeiId, ownerHeiId, iiaId);

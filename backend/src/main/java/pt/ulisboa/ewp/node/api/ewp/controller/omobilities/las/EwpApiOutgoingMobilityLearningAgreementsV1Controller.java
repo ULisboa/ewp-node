@@ -89,13 +89,14 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
           LocalDateTime modifiedSince,
       EwpApiHostAuthenticationToken authenticationToken) {
 
-    if (!hostPluginManager.hasHostProvider(sendingHeiId,
-        OutgoingMobilityLearningAgreementsV1HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(
+        sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class)) {
       throw new EwpBadRequestException("Unknown HEI ID: " + sendingHeiId);
     }
 
-    Collection<OutgoingMobilityLearningAgreementsV1HostProvider> providers = hostPluginManager.getAllProvidersOfType(
-        sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    Collection<OutgoingMobilityLearningAgreementsV1HostProvider> providers =
+        hostPluginManager.getAllActiveProvidersOfType(
+            sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     OmobilityLasIndexResponseV1 response = new OmobilityLasIndexResponseV1();
     providers.forEach(provider -> {
@@ -122,8 +123,8 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
       @RequestParam(value = EwpApiParamConstants.OMOBILITY_ID) List<String> outgoingMobilityIds,
       EwpApiHostAuthenticationToken authenticationToken) {
 
-    if (!hostPluginManager.hasHostProvider(sendingHeiId,
-        OutgoingMobilityLearningAgreementsV1HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(
+        sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class)) {
       throw new EwpBadRequestException("Unknown HEI ID: " + sendingHeiId);
     }
 
@@ -135,10 +136,16 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
           "At least some Outgoing Mobility ID must be provided");
     }
 
-    int maxOmobilityIdsPerRequest = hostPluginManager.getAllProvidersOfType(sendingHeiId,
-            OutgoingMobilityLearningAgreementsV1HostProvider.class).stream().mapToInt(
-            OutgoingMobilityLearningAgreementsV1HostProvider::getMaxOutgoingMobilityIdsPerRequest)
-        .min().orElse(0);
+    int maxOmobilityIdsPerRequest =
+        hostPluginManager
+            .getAllActiveProvidersOfType(
+                sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class)
+            .stream()
+            .mapToInt(
+                OutgoingMobilityLearningAgreementsV1HostProvider
+                    ::getMaxOutgoingMobilityIdsPerRequest)
+            .min()
+            .orElse(0);
 
     if (outgoingMobilityIds.size() > maxOmobilityIdsPerRequest) {
       throw new EwpBadRequestException(
@@ -187,9 +194,11 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
       ounitIdCoveringAgreement = null;
     }
 
-    Optional<OutgoingMobilityLearningAgreementsV1HostProvider> providerOptional = hostPluginManager.getSingleProvider(
-        sendingHeiId, ounitIdCoveringAgreement,
-        OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    Optional<OutgoingMobilityLearningAgreementsV1HostProvider> providerOptional =
+        hostPluginManager.getActiveSingleProvider(
+            sendingHeiId,
+            ounitIdCoveringAgreement,
+            OutgoingMobilityLearningAgreementsV1HostProvider.class);
     if (providerOptional.isEmpty()) {
       throw new EwpBadRequestException("Unknown HEI ID: " + sendingHeiId);
     }
@@ -217,8 +226,8 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
     }
 
     Collection<OutgoingMobilityLearningAgreementsV1HostProvider> providers =
-        hostPluginManager.getAllProvidersOfType(heiId,
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
+        hostPluginManager.getAllActiveProvidersOfType(
+            heiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     Map<String, AcademicYearLaStats> receivingAcademicYearToLaStatsMap = new HashMap<>();
     for (OutgoingMobilityLearningAgreementsV1HostProvider provider : providers) {
@@ -361,8 +370,11 @@ public class EwpApiOutgoingMobilityLearningAgreementsV1Controller {
       if (mappingOptional.isPresent()) {
         EwpOutgoingMobilityMapping mapping = mappingOptional.get();
 
-        Optional<OutgoingMobilityLearningAgreementsV1HostProvider> providerOptional = hostPluginManager.getSingleProvider(
-            heiId, mapping.getOunitId(), OutgoingMobilityLearningAgreementsV1HostProvider.class);
+        Optional<OutgoingMobilityLearningAgreementsV1HostProvider> providerOptional =
+            hostPluginManager.getActiveSingleProvider(
+                heiId,
+                mapping.getOunitId(),
+                OutgoingMobilityLearningAgreementsV1HostProvider.class);
         if (providerOptional.isPresent()) {
           OutgoingMobilityLearningAgreementsV1HostProvider provider = providerOptional.get();
           result.computeIfAbsent(provider, ignored -> new ArrayList<>());

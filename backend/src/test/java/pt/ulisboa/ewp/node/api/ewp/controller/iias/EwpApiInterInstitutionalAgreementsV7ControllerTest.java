@@ -72,8 +72,9 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
 
     Mockito.reset(hostPluginManager);
 
-    doReturn(false).when(hostPluginManager)
-        .hasHostProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(false)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     assertBadRequest(
         registryClient,
@@ -105,10 +106,12 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
 
     Mockito.reset(hostPluginManager);
 
-    doReturn(true).when(hostPluginManager)
-        .hasHostProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(true)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     String responseXml =
         executeRequest(
@@ -189,21 +192,26 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
           .findByHeiIdAndIiaId(heiId, iiaIds.get(index));
     }
 
-    doReturn(true).when(hostPluginManager)
-        .hasHostProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(true)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
-    doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
-        .getSingleProvider(heiId, ounitIds.get(0),
-            InterInstitutionalAgreementsV7HostProvider.class);
-    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(heiId, ounitIds.get(1),
-            InterInstitutionalAgreementsV7HostProvider.class);
-    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(heiId, ounitIds.get(2),
-            InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(Optional.ofNullable(mockProvider1))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            heiId, ounitIds.get(0), InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(Optional.ofNullable(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            heiId, ounitIds.get(1), InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(Optional.ofNullable(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            heiId, ounitIds.get(2), InterInstitutionalAgreementsV7HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
@@ -267,18 +275,22 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
           .findByHeiIdAndIiaId(heiId, knownIiaIds.get(index));
     }
 
-    doReturn(true).when(hostPluginManager)
-        .hasHostProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(true)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
-    doReturn(Optional.ofNullable(mockProvider1)).when(hostPluginManager)
-        .getSingleProvider(heiId, ounitIds.get(0),
-            InterInstitutionalAgreementsV7HostProvider.class);
-    doReturn(Optional.ofNullable(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(heiId, ounitIds.get(1),
-            InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(Optional.ofNullable(mockProvider1))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            heiId, ounitIds.get(0), InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(Optional.ofNullable(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            heiId, ounitIds.get(1), InterInstitutionalAgreementsV7HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
@@ -330,11 +342,11 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
 
     doReturn(List.of(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+        .getAllActiveProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     doReturn(Optional.of(mockProvider1))
         .when(hostPluginManager)
-        .getPrimaryProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+        .getActivePrimaryProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
@@ -389,11 +401,11 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
 
     doReturn(List.of(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+        .getAllActiveProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     doReturn(Optional.of(mockProvider1))
         .when(hostPluginManager)
-        .getPrimaryProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+        .getActivePrimaryProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
@@ -443,11 +455,11 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
 
     doReturn(List.of(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+        .getAllActiveProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     doReturn(Optional.of(mockProvider1))
         .when(hostPluginManager)
-        .getPrimaryProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+        .getActivePrimaryProvider(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.IIA_ID, iiaIds);
@@ -522,8 +534,9 @@ class EwpApiInterInstitutionalAgreementsV7ControllerTest extends
 
     Mockito.reset(hostPluginManager);
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, InterInstitutionalAgreementsV7HostProvider.class);
 
     MockHttpServletRequestBuilder requestBuilder =
         MockMvcRequestBuilders.request(

@@ -67,7 +67,7 @@ public class EwpApiCoursesV0Controller {
     losIds = losIds != null ? losIds : Collections.emptyList();
     losCodes = losCodes != null ? losCodes : Collections.emptyList();
 
-    if (!hostPluginManager.hasHostProvider(heiId, CoursesV0HostProvider.class)) {
+    if (!hostPluginManager.hasActiveHostProvider(heiId, CoursesV0HostProvider.class)) {
       throw new EwpBadRequestException("Unknown HEI ID: " + heiId);
     }
 
@@ -81,8 +81,8 @@ public class EwpApiCoursesV0Controller {
           "At least some LOS ID or code must be provided");
     }
 
-    Collection<CoursesV0HostProvider> providers = hostPluginManager.getAllProvidersOfType(
-        heiId, CoursesV0HostProvider.class);
+    Collection<CoursesV0HostProvider> providers =
+        hostPluginManager.getAllActiveProvidersOfType(heiId, CoursesV0HostProvider.class);
 
     if (!losIds.isEmpty()) {
       return coursesByIds(providers, heiId, losIds, loisBefore, loisAfter, losAtDate);

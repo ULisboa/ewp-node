@@ -54,24 +54,25 @@ public abstract class EwpManifestEntryProvider {
     Map<Class<? extends HostProvider>, Collection<HostProvider>> classToHostProvidersMap = buildClassToHostProvidersMap(
         heiId, knownHostProviderClasses);
 
-    classToHostProvidersMap.forEach((classType, hostProviders) -> {
-      boolean createManifestEntry = true;
-      if (this.manifestProperties.getEntries().mustExcludeIfNoPrimaryProviderAvailable()) {
-        Optional<?> primaryProviderOptional = this.hostPluginManager.getPrimaryProvider(heiId,
-            classType);
-        if (primaryProviderOptional.isEmpty()) {
-          createManifestEntry = false;
-        }
-      }
+    classToHostProvidersMap.forEach(
+        (classType, hostProviders) -> {
+          boolean createManifestEntry = true;
+          if (this.manifestProperties.getEntries().mustExcludeIfNoPrimaryProviderAvailable()) {
+            Optional<?> primaryProviderOptional =
+                this.hostPluginManager.getActivePrimaryProvider(heiId, classType);
+            if (primaryProviderOptional.isEmpty()) {
+              createManifestEntry = false;
+            }
+          }
 
-      if (createManifestEntry) {
-        Optional<ManifestApiEntryBaseV1> manifestEntryOptional = this
-            .toManifestEntry(heiId, baseUrl, hostProviders);
-        if (manifestEntryOptional.isPresent()) {
-          manifestEntries.add(manifestEntryOptional.get());
-        }
-      }
-    });
+          if (createManifestEntry) {
+            Optional<ManifestApiEntryBaseV1> manifestEntryOptional =
+                this.toManifestEntry(heiId, baseUrl, hostProviders);
+            if (manifestEntryOptional.isPresent()) {
+              manifestEntries.add(manifestEntryOptional.get());
+            }
+          }
+        });
 
     return manifestEntries;
   }
@@ -80,15 +81,18 @@ public abstract class EwpManifestEntryProvider {
       String heiId,
       Set<Class<? extends HostProvider>> knownHostProviderClasses) {
     Map<Class<? extends HostProvider>, Collection<HostProvider>> classToHostProvidersMap = new HashMap<>();
-    hostPluginManager.getAllProviders(heiId).forEach(hostProvider -> {
-      Optional<Class<? extends HostProvider>> hostProviderClassOptional = this.getHostProviderClassFromKnownClasses(
-          hostProvider, knownHostProviderClasses);
-      if (hostProviderClassOptional.isPresent()) {
-        Class<? extends HostProvider> hostProviderClass = hostProviderClassOptional.get();
-        classToHostProvidersMap.computeIfAbsent(hostProviderClass, k -> new ArrayList<>());
-        classToHostProvidersMap.get(hostProviderClass).add(hostProvider);
-      }
-    });
+    hostPluginManager
+        .getAllActiveProviders(heiId)
+        .forEach(
+            hostProvider -> {
+              Optional<Class<? extends HostProvider>> hostProviderClassOptional =
+                  this.getHostProviderClassFromKnownClasses(hostProvider, knownHostProviderClasses);
+              if (hostProviderClassOptional.isPresent()) {
+                Class<? extends HostProvider> hostProviderClass = hostProviderClassOptional.get();
+                classToHostProvidersMap.computeIfAbsent(hostProviderClass, k -> new ArrayList<>());
+                classToHostProvidersMap.get(hostProviderClass).add(hostProvider);
+              }
+            });
     return classToHostProvidersMap;
   }
 

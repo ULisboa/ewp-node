@@ -27,30 +27,31 @@ public class AbstractHostPluginManagerTest {
   }
 
   @Test
-  public void testHasHostProvider_ExistingHostProvidersOfHeiIdAndClassType_ReturnsTrue() {
+  public void testHasHostProvider_ExistingActiveHostProvidersOfHeiIdAndClassType_ReturnsTrue() {
     String heiId = UUID.randomUUID().toString();
     HostPlugin plugin = new MockHostPlugin.Builder().coveredHeiId(heiId).build();
     this.hostPluginManager.registerPlugin(plugin, List.of(new DummyHostProvider()));
 
-    boolean result = this.hostPluginManager.hasHostProvider(heiId, DummyHostProvider.class);
+    boolean result = this.hostPluginManager.hasActiveHostProvider(heiId, DummyHostProvider.class);
 
     assertThat(result).isTrue();
   }
 
   @Test
   public void
-      testHasHostProvider_ExistingHostProvidersOfWrongHeiIdAndCorrectClassType_ReturnsFalse() {
+      testHasHostProvider_ExistingActiveHostProvidersOfWrongHeiIdAndCorrectClassType_ReturnsFalse() {
     String heiId = "test.com";
     HostPlugin plugin = new MockHostPlugin.Builder().coveredHeiId(heiId).build();
     this.hostPluginManager.registerPlugin(plugin, List.of(new DummyHostProvider()));
 
-    boolean result = this.hostPluginManager.hasHostProvider("wrong", DummyHostProvider.class);
+    boolean result = this.hostPluginManager.hasActiveHostProvider("wrong", DummyHostProvider.class);
 
     assertThat(result).isFalse();
   }
 
   @Test
-  public void testGetPrimaryProvider_ExistingPrimaryHostProvider_ReturnsCorrectHostProvider() {
+  public void
+      testGetPrimaryProvider_ExistingActivePrimaryHostProvider_ReturnsCorrectHostProvider() {
     String heiId = "test.com";
 
     HostPlugin primaryPlugin =
@@ -63,14 +64,14 @@ public class AbstractHostPluginManagerTest {
     this.hostPluginManager.registerPlugin(nonPrimaryPlugin, List.of(nonPrimaryHostProvider));
 
     Optional<DummyHostProvider> result =
-        this.hostPluginManager.getPrimaryProvider(heiId, DummyHostProvider.class);
+        this.hostPluginManager.getActivePrimaryProvider(heiId, DummyHostProvider.class);
 
     assertThat(result).isPresent();
     assertThat(result.get()).isEqualTo(primaryHostProvider);
   }
 
   @Test
-  public void testGetPrimaryProvider_NonExistingPrimaryHostProvider_ReturnsEmptyResult() {
+  public void testGetPrimaryProvider_NonExistingActivePrimaryHostProvider_ReturnsEmptyResult() {
     String heiId = "test.com";
 
     HostPlugin primaryPlugin =
@@ -79,14 +80,14 @@ public class AbstractHostPluginManagerTest {
     this.hostPluginManager.registerPlugin(primaryPlugin, List.of(primaryHostProvider));
 
     Optional<DummyHostProvider> result =
-        this.hostPluginManager.getPrimaryProvider("wrong", DummyHostProvider.class);
+        this.hostPluginManager.getActivePrimaryProvider("wrong", DummyHostProvider.class);
 
     assertThat(result).isEmpty();
   }
 
   @Test
   public void
-      testGetSingleProvider_ExistingHostProviderForHeiIdAndNullOunitId_ReturnsPrimaryHostProvider() {
+      testGetActiveSingleProvider_ExistingHostProviderForHeiIdAndNullOunitId_ReturnsPrimaryHostProvider() {
     String heiId = "test.com";
 
     HostPlugin primaryPlugin =
@@ -99,7 +100,7 @@ public class AbstractHostPluginManagerTest {
     this.hostPluginManager.registerPlugin(nonPrimaryPlugin, List.of(nonPrimaryHostProvider));
 
     Optional<DummyHostProvider> result =
-        this.hostPluginManager.getSingleProvider(heiId, null, DummyHostProvider.class);
+        this.hostPluginManager.getActiveSingleProvider(heiId, null, DummyHostProvider.class);
 
     assertThat(result).isPresent();
     assertThat(result.get()).isEqualTo(primaryHostProvider);
@@ -107,7 +108,7 @@ public class AbstractHostPluginManagerTest {
 
   @Test
   public void
-      testGetSingleProvider_ExistingHostProviderForHeiIdAndOunitId_ReturnsCorrectHostProvider() {
+      testGetActiveSingleProvider_ExistingHostProviderForHeiIdAndOunitId_ReturnsCorrectHostProvider() {
     String heiId = "test.com";
     String ounitId = "test";
 
@@ -130,7 +131,7 @@ public class AbstractHostPluginManagerTest {
         pluginCoveringOunitId, List.of(hostProviderOfPluginCoveringOunitId));
 
     Optional<DummyHostProvider> result =
-        this.hostPluginManager.getSingleProvider(heiId, ounitId, DummyHostProvider.class);
+        this.hostPluginManager.getActiveSingleProvider(heiId, ounitId, DummyHostProvider.class);
 
     assertThat(result).isPresent();
     assertThat(result.get()).isEqualTo(hostProviderOfPluginCoveringOunitId);
@@ -138,7 +139,7 @@ public class AbstractHostPluginManagerTest {
 
   @Test
   public void
-      testGetAllProvidersOfType_TwoHostPluginsWithDistinctHeiId_ReturnsHostProvidersOfCorrectHeiId() {
+      testGetAllProvidersOfType_TwoHostPluginsWithDistinctHeiId_ReturnsHostActiveActiveActiveProvidersOfCorrectHeiId() {
     String heiId = "test.com";
 
     HostPlugin pluginWithCorrectHeiId = new MockHostPlugin.Builder().coveredHeiId(heiId).build();
@@ -155,7 +156,7 @@ public class AbstractHostPluginManagerTest {
         pluginWithIncorrectHeiId, List.of(hostProviderOfPluginWithIncorrectHeiId));
 
     Collection<DummyHostProvider> result =
-        this.hostPluginManager.getAllProvidersOfType(heiId, DummyHostProvider.class);
+        this.hostPluginManager.getAllActiveProvidersOfType(heiId, DummyHostProvider.class);
 
     assertThat(result).hasSize(2);
     assertThat(result)
@@ -164,7 +165,7 @@ public class AbstractHostPluginManagerTest {
 
   @Test
   public void
-      testGetAllProvidersOfType_TwoHostPluginsWithDistinctHeiId_ReturnsAllHostProvidersOfCorrectType() {
+      testGetAllProvidersOfType_TwoHostPluginsWithDistinctHeiId_ReturnsAllHostActiveActiveActiveProvidersOfCorrectType() {
     HostPlugin plugin1 = new MockHostPlugin.Builder().coveredHeiId("hei1").build();
     DummyHostProvider hostProvider1OfPlugin1 = new DummyHostProvider();
     DummyHostProvider hostProvider2OfPlugin1 = new DummyHostProvider();
@@ -176,7 +177,7 @@ public class AbstractHostPluginManagerTest {
     this.hostPluginManager.registerPlugin(plugin2, List.of(hostProvider1OfPlugin2));
 
     Collection<DummyHostProvider> result =
-        this.hostPluginManager.getAllProvidersOfType(DummyHostProvider.class);
+        this.hostPluginManager.getAllActiveProvidersOfType(DummyHostProvider.class);
 
     assertThat(result).hasSize(3);
     assertThat(result)
@@ -185,7 +186,7 @@ public class AbstractHostPluginManagerTest {
 
   @Test
   public void
-      testGetAllProvidersOfTypePerHeiId_TwoHostPluginsWithDistinctHeiId_ReturnsAllHostProvidersOfCorrectTypeSplittedByHeiId() {
+      testGetAllProvidersOfTypePerHeiId_TwoHostPluginsWithDistinctHeiId_ReturnsAllHostActiveActiveActiveActiveProvidersOfCorrectTypeSplittedByHeiId() {
     String coveredHeiIdByPlugin1 = "hei1";
     HostPlugin plugin1 = new MockHostPlugin.Builder().coveredHeiId(coveredHeiIdByPlugin1).build();
     DummyHostProvider hostProvider1OfPlugin1 = new DummyHostProvider();
@@ -199,7 +200,7 @@ public class AbstractHostPluginManagerTest {
     this.hostPluginManager.registerPlugin(plugin2, List.of(hostProvider1OfPlugin2));
 
     Map<String, Collection<DummyHostProvider>> result =
-        this.hostPluginManager.getAllProvidersOfTypePerHeiId(DummyHostProvider.class);
+        this.hostPluginManager.getAllActiveProvidersOfTypePerHeiId(DummyHostProvider.class);
 
     assertThat(result).hasSize(2);
     assertThat(result).containsKey(coveredHeiIdByPlugin1);
@@ -211,7 +212,7 @@ public class AbstractHostPluginManagerTest {
 
   @Test
   public void
-      testGetAllProviders_TwoHostPluginsWithDistinctHeiId_ReturnsAllHostProvidersOfWantedHeiId() {
+      testGetAllProviders_TwoHostPluginsWithDistinctHeiId_ReturnsAllHostActiveActiveProvidersOfWantedHeiId() {
     String coveredHeiIdByPlugin1 = "hei1";
     HostPlugin plugin1 = new MockHostPlugin.Builder().coveredHeiId(coveredHeiIdByPlugin1).build();
     DummyHostProvider hostProvider1OfPlugin1 = new DummyHostProvider();
@@ -227,7 +228,8 @@ public class AbstractHostPluginManagerTest {
     this.hostPluginManager.registerPlugin(
         plugin2, List.of(hostProvider1OfPlugin2, hostProvider2OfPlugin2));
 
-    Collection<HostProvider> result = this.hostPluginManager.getAllProviders(coveredHeiIdByPlugin1);
+    Collection<HostProvider> result =
+        this.hostPluginManager.getAllActiveProviders(coveredHeiIdByPlugin1);
 
     assertThat(result)
         .containsExactlyInAnyOrder(
@@ -236,7 +238,7 @@ public class AbstractHostPluginManagerTest {
 
   @Test
   public void
-      testGetOunitIdsCoveredPerProviderOfHeiId_TwoHostPluginsWithCoveringDistinctOunitIdsOfSameHeiId_ReturnsCorrectOunitIdsPerProvider() {
+      testGetOunitIdsCoveredPerProviderOfHeiId_TwoHostPluginsWithCoveringDistinctOunitIdsOfSameHeiId_ReturnsCorrectOunitIdsPerActiveProvider() {
     String coveredHeiIdByPlugin1 = "hei1";
     List<String> coveredOunitIdsOfPlugin1 = List.of("hei1-ounit1", "hei1-ounit2", "hei1-ounit3");
     HostPlugin plugin1 =
@@ -263,7 +265,7 @@ public class AbstractHostPluginManagerTest {
 
     List<String> wantedOunitIds = List.of("hei1-ounit1", "hei1-ounit2");
     Map<DummyHostProvider, Collection<String>> result =
-        this.hostPluginManager.getOunitIdsCoveredPerProviderOfHeiId(
+        this.hostPluginManager.getOunitIdsCoveredPerActiveProviderOfHeiId(
             coveredHeiIdByPlugin1, List.of("hei1-ounit1", "hei1-ounit2"), DummyHostProvider.class);
 
     assertThat(result).containsOnlyKeys(hostProvider1OfPlugin1);
@@ -273,7 +275,7 @@ public class AbstractHostPluginManagerTest {
 
   @Test
   public void
-      testGetOunitCodesCoveredPerProviderOfHeiId_TwoHostPluginsWithCoveringDistinctOunitCodesOfSameHeiId_ReturnsCorrectOunitCodesPerProvider() {
+      testGetOunitCodesCoveredPerProviderOfHeiId_TwoHostPluginsWithCoveringDistinctOunitCodesOfSameHeiId_ReturnsCorrectOunitCodesPerActiveProvider() {
     String coveredHeiIdByPlugin1 = "hei1";
     List<String> coveredOunitCodesOfPlugin1 = List.of("hei1-ounit1", "hei1-ounit2", "hei1-ounit3");
     HostPlugin plugin1 =
@@ -300,7 +302,7 @@ public class AbstractHostPluginManagerTest {
 
     List<String> wantedOunitIds = List.of("hei1-ounit1", "hei1-ounit2");
     Map<DummyHostProvider, Collection<String>> result =
-        this.hostPluginManager.getOunitCodesCoveredPerProviderOfHeiId(
+        this.hostPluginManager.getOunitCodesCoveredPerActiveProviderOfHeiId(
             coveredHeiIdByPlugin1, List.of("hei1-ounit1", "hei1-ounit2"), DummyHostProvider.class);
 
     assertThat(result).containsOnlyKeys(hostProvider1OfPlugin1);

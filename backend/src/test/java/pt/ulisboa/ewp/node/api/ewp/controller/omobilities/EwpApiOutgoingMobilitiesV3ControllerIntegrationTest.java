@@ -50,7 +50,7 @@ class EwpApiOutgoingMobilitiesV3ControllerIntegrationTest
     String unknownHeiId = UUID.randomUUID().toString();
 
     Mockito.when(
-            hostPluginManager.getPrimaryProvider(
+            hostPluginManager.getActivePrimaryProvider(
                 unknownHeiId, OrganizationalUnitsV2HostProvider.class))
         .thenReturn(Optional.empty());
 
@@ -87,10 +87,10 @@ class EwpApiOutgoingMobilitiesV3ControllerIntegrationTest
 
     doReturn(true)
         .when(hostPluginManager)
-        .hasHostProvider(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
+        .hasActiveHostProvider(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
     doReturn(Arrays.asList(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
+        .getAllActiveProvidersOfType(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
 
@@ -152,21 +152,24 @@ class EwpApiOutgoingMobilitiesV3ControllerIntegrationTest
 
     doReturn(true)
         .when(hostPluginManager)
-        .hasHostProvider(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
+        .hasActiveHostProvider(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
 
     doReturn(Arrays.asList(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
+        .getAllActiveProvidersOfType(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
 
     doReturn(Optional.of(mockProvider1))
         .when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(0), OutgoingMobilitiesV3HostProvider.class);
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(0), OutgoingMobilitiesV3HostProvider.class);
     doReturn(Optional.of(mockProvider2))
         .when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(1), OutgoingMobilitiesV3HostProvider.class);
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(1), OutgoingMobilitiesV3HostProvider.class);
     doReturn(Optional.of(mockProvider2))
         .when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(2), OutgoingMobilitiesV3HostProvider.class);
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(2), OutgoingMobilitiesV3HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
@@ -237,21 +240,24 @@ class EwpApiOutgoingMobilitiesV3ControllerIntegrationTest
 
     doReturn(true)
         .when(hostPluginManager)
-        .hasHostProvider(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
+        .hasActiveHostProvider(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
 
     doReturn(Arrays.asList(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
+        .getAllActiveProvidersOfType(sendingHeiId, OutgoingMobilitiesV3HostProvider.class);
 
     doReturn(Optional.of(mockProvider1))
         .when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(0), OutgoingMobilitiesV3HostProvider.class);
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(0), OutgoingMobilitiesV3HostProvider.class);
     doReturn(Optional.of(mockProvider2))
         .when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(1), OutgoingMobilitiesV3HostProvider.class);
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(1), OutgoingMobilitiesV3HostProvider.class);
     doReturn(Optional.of(mockProvider2))
         .when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(2), OutgoingMobilitiesV3HostProvider.class);
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(2), OutgoingMobilitiesV3HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);

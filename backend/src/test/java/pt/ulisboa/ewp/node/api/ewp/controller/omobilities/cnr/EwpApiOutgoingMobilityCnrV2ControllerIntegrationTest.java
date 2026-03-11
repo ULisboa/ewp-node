@@ -48,7 +48,7 @@ class EwpApiOutgoingMobilityCnrV2ControllerIntegrationTest
 
     doReturn(Arrays.asList(mockProvider1, mockProvider2))
         .when(hostPluginManager)
-        .getAllProvidersOfType(receivingHeiId, OutgoingMobilityCnrV2HostProvider.class);
+        .getAllActiveProvidersOfType(receivingHeiId, OutgoingMobilityCnrV2HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.OMOBILITY_ID, omobilityId);

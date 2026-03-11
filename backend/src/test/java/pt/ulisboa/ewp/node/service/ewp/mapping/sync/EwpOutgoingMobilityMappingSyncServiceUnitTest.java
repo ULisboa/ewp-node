@@ -67,8 +67,9 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
         new MockOutgoingMobilitiesV1HostProvider(
             1).registerOutgoingMobility(heiIds.get(1), omobilityIds.get(1), mobilities.get(1)));
     providersPerHeiId.put(heiIds.get(1), List.of(provider2));
-    doReturn(providersPerHeiId).when(hostPluginManager)
-        .getAllProvidersOfTypePerHeiId(OutgoingMobilitiesV1HostProvider.class);
+    doReturn(providersPerHeiId)
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfTypePerHeiId(OutgoingMobilitiesV1HostProvider.class);
 
     syncService.run();
 
@@ -119,8 +120,9 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
         new MockOutgoingMobilitiesV1HostProvider(
             1).registerOutgoingMobility(heiIds.get(1), omobilityIds.get(1), mobilities.get(1)));
     providersPerHeiId.put(heiIds.get(1), List.of(provider2));
-    doReturn(providersPerHeiId).when(hostPluginManager)
-        .getAllProvidersOfTypePerHeiId(OutgoingMobilitiesV1HostProvider.class);
+    doReturn(providersPerHeiId)
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfTypePerHeiId(OutgoingMobilitiesV1HostProvider.class);
 
     doReturn(Optional.of(
         EwpOutgoingMobilityMapping.create(heiIds.get(1), ounitIds.get(1), omobilityIds.get(1))))
@@ -175,8 +177,9 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
         new MockOutgoingMobilitiesV2HostProvider(
             1).registerOutgoingMobility(heiIds.get(1), omobilityIds.get(1), mobilities.get(1)));
     providersPerHeiId.put(heiIds.get(1), List.of(provider2));
-    doReturn(providersPerHeiId).when(hostPluginManager)
-        .getAllProvidersOfTypePerHeiId(OutgoingMobilitiesV2HostProvider.class);
+    doReturn(providersPerHeiId)
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfTypePerHeiId(OutgoingMobilitiesV2HostProvider.class);
 
     syncService.run();
 
@@ -227,8 +230,9 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
         new MockOutgoingMobilitiesV2HostProvider(
             1).registerOutgoingMobility(heiIds.get(1), omobilityIds.get(1), mobilities.get(1)));
     providersPerHeiId.put(heiIds.get(1), List.of(provider2));
-    doReturn(providersPerHeiId).when(hostPluginManager)
-        .getAllProvidersOfTypePerHeiId(OutgoingMobilitiesV2HostProvider.class);
+    doReturn(providersPerHeiId)
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfTypePerHeiId(OutgoingMobilitiesV2HostProvider.class);
 
     doReturn(Optional.of(
         EwpOutgoingMobilityMapping.create(heiIds.get(1), ounitIds.get(1), omobilityIds.get(1))))
@@ -291,7 +295,7 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
     providersPerHeiId.put(heiIds.get(1), List.of(provider2));
     doReturn(providersPerHeiId)
         .when(hostPluginManager)
-        .getAllProvidersOfTypePerHeiId(OutgoingMobilitiesV3HostProvider.class);
+        .getAllActiveProvidersOfTypePerHeiId(OutgoingMobilitiesV3HostProvider.class);
 
     syncService.run();
 
@@ -350,7 +354,7 @@ class EwpOutgoingMobilityMappingSyncServiceUnitTest {
     providersPerHeiId.put(heiIds.get(1), List.of(provider2));
     doReturn(providersPerHeiId)
         .when(hostPluginManager)
-        .getAllProvidersOfTypePerHeiId(OutgoingMobilitiesV3HostProvider.class);
+        .getAllActiveProvidersOfTypePerHeiId(OutgoingMobilitiesV3HostProvider.class);
 
     doReturn(
             Optional.of(

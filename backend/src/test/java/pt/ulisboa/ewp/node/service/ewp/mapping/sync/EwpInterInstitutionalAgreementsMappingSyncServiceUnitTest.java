@@ -63,8 +63,9 @@ class EwpInterInstitutionalAgreementsMappingSyncServiceUnitTest {
             1, 1).registerIia(heiIds.get(1),
             iiaIds.get(1), iiaCodes.get(1), iias.get(1)));
     providersPerHeiId.put(heiIds.get(1), List.of(provider2));
-    doReturn(providersPerHeiId).when(hostPluginManager)
-        .getAllProvidersOfTypePerHeiId(InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(providersPerHeiId)
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfTypePerHeiId(InterInstitutionalAgreementsV7HostProvider.class);
 
     syncService.run();
 
@@ -117,8 +118,9 @@ class EwpInterInstitutionalAgreementsMappingSyncServiceUnitTest {
             1, 1).registerIia(heiIds.get(1),
             iiaIds.get(1), iiaCodes.get(1), iias.get(1)));
     providersPerHeiId.put(heiIds.get(1), List.of(provider2));
-    doReturn(providersPerHeiId).when(hostPluginManager)
-        .getAllProvidersOfTypePerHeiId(InterInstitutionalAgreementsV7HostProvider.class);
+    doReturn(providersPerHeiId)
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfTypePerHeiId(InterInstitutionalAgreementsV7HostProvider.class);
 
     doReturn(
             Optional.of(

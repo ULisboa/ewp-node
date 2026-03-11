@@ -68,9 +68,9 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
       throws Exception {
     String unknownHeiId = UUID.randomUUID().toString();
 
-    Mockito
-        .when(hostPluginManager.getPrimaryProvider(unknownHeiId,
-            OutgoingMobilityLearningAgreementsV1HostProvider.class))
+    Mockito.when(
+            hostPluginManager.getActivePrimaryProvider(
+                unknownHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class))
         .thenReturn(Optional.empty());
 
     HttpParams queryParams = new HttpParams();
@@ -98,11 +98,14 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
     mockProvider2.registerOutgoingMobilityIds(sendingHeiId,
         List.of(omobilityIds.get(1), omobilityIds.get(2)));
 
-    doReturn(true).when(hostPluginManager)
-        .hasHostProvider(sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(sendingHeiId,
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(true)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(
+            sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(
+            sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
@@ -164,22 +167,28 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
           .findByHeiIdAndOmobilityId(sendingHeiId, omobilityIds.get(index));
     }
 
-    doReturn(true).when(hostPluginManager)
-        .hasHostProvider(sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(true)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(
+            sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(sendingHeiId,
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(
+            sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
-    doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(0),
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
-    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(1),
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
-    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(2),
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Optional.of(mockProvider1))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(0), OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Optional.of(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(1), OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Optional.of(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(2), OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
@@ -246,22 +255,28 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
           .findByHeiIdAndOmobilityId(sendingHeiId, knownOmobilityIds.get(index));
     }
 
-    doReturn(true).when(hostPluginManager)
-        .hasHostProvider(sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(true)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(
+            sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(sendingHeiId,
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(
+            sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
-    doReturn(Optional.of(mockProvider1)).when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(0),
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
-    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(1),
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
-    doReturn(Optional.of(mockProvider2)).when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitIds.get(2),
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Optional.of(mockProvider1))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(0), OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Optional.of(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(1), OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Optional.of(mockProvider2))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            sendingHeiId, ounitIds.get(2), OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     HttpParams queryParams = new HttpParams();
     queryParams.param(EwpApiParamConstants.SENDING_HEI_ID, sendingHeiId);
@@ -319,12 +334,15 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
             omobilityId))).when(mappingRepository)
         .findByHeiIdAndOmobilityId(sendingHeiId, omobilityId);
 
-    doReturn(true).when(hostPluginManager)
-        .hasHostProvider(sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(true)
+        .when(hostPluginManager)
+        .hasActiveHostProvider(
+            sendingHeiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
-    doReturn(Optional.of(mockProvider)).when(hostPluginManager)
-        .getSingleProvider(sendingHeiId, ounitId,
-            OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Optional.of(mockProvider))
+        .when(hostPluginManager)
+        .getActiveSingleProvider(
+            sendingHeiId, ounitId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     String responseXml = executeRequest(registryClient, method,
         EwpApiConstants.API_BASE_URI
@@ -392,8 +410,9 @@ class EwpApiOutgoingMobilityLearningAgreementsV1ControllerIntegrationTest extend
 
     mockProvider2.registerStats(heiId, stats2);
 
-    doReturn(Arrays.asList(mockProvider1, mockProvider2)).when(hostPluginManager)
-        .getAllProvidersOfType(heiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
+    doReturn(Arrays.asList(mockProvider1, mockProvider2))
+        .when(hostPluginManager)
+        .getAllActiveProvidersOfType(heiId, OutgoingMobilityLearningAgreementsV1HostProvider.class);
 
     MockHttpServletRequestBuilder requestBuilder =
         MockMvcRequestBuilders.request(

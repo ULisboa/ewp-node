@@ -71,8 +71,9 @@ public class EwpApiOutgoingMobilityLearningAgreementCnrV1Controller {
       return ResponseEntity.ok(new OmobilityLaCnrResponseV1(new EmptyV1()));
     }
 
-    Collection<OutgoingMobilityLearningAgreementCnrV1HostProvider> providers = hostPluginManager.getAllProvidersOfType(
-        OutgoingMobilityLearningAgreementCnrV1HostProvider.class);
+    Collection<OutgoingMobilityLearningAgreementCnrV1HostProvider> providers =
+        hostPluginManager.getAllActiveProvidersOfType(
+            OutgoingMobilityLearningAgreementCnrV1HostProvider.class);
     for (OutgoingMobilityLearningAgreementCnrV1HostProvider provider : providers) {
       provider.onChangeNotification(sendingHeiId, omobilityIds);
     }
@@ -97,8 +98,8 @@ public class EwpApiOutgoingMobilityLearningAgreementCnrV1Controller {
     }
 
     Collection<OutgoingMobilityLearningAgreementCnrV1HostProvider> providers =
-        hostPluginManager.getAllProvidersOfType(heiId,
-            OutgoingMobilityLearningAgreementCnrV1HostProvider.class);
+        hostPluginManager.getAllActiveProvidersOfType(
+            heiId, OutgoingMobilityLearningAgreementCnrV1HostProvider.class);
 
     Map<String, AcademicYearLaStats> receivingAcademicYearToLaStatsMap = new HashMap<>();
     for (OutgoingMobilityLearningAgreementCnrV1HostProvider provider : providers) {

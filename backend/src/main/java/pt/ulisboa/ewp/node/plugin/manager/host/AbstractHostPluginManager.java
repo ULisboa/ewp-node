@@ -32,7 +32,9 @@ public abstract class AbstractHostPluginManager implements HostPluginManager {
   private final Map<String, Collection<HostPlugin>> heiIdToPluginsMap = new HashMap<>();
   private final Map<String, HostPlugin> heiIdToPrimaryPluginMap = new HashMap<>();
 
-  private final Map<HostPlugin, Collection<HostProvider>> pluginToHostProvidersMap =
+  private final Map<HostPlugin, Collection<HostProvider>> pluginToActiveHostProvidersMap =
+      new HashMap<>();
+  private final Map<HostPlugin, Collection<HostProvider>> pluginToInactiveHostProvidersMap =
       new HashMap<>();
 
   protected AbstractHostPluginManager(
@@ -90,24 +92,30 @@ public abstract class AbstractHostPluginManager implements HostPluginManager {
   private void registerPluginHostProviders(HostPlugin plugin) {
     Collection<HostProvider> providers = getAllProvidersOfPlugin(plugin);
     for (HostProvider provider : providers) {
-      this.pluginToHostProvidersMap.computeIfAbsent(plugin, p -> new ArrayList<>());
+      if (provider.isActive()) {
+        this.pluginToActiveHostProvidersMap.computeIfAbsent(plugin, p -> new ArrayList<>());
 
-      HostProvider providerToAdd;
-      if (this.pluginsProperties.getAspects().isEnabled()) {
-        AspectJProxyFactory proxyFactory = new AspectJProxyFactory(provider);
-        proxyFactory.setProxyTargetClass(true);
-        for (HostPluginProviderAspect aspect : this.hostPluginProviderAspects) {
-          proxyFactory.addAspect(aspect);
+        HostProvider providerToAdd;
+        if (this.pluginsProperties.getAspects().isEnabled()) {
+          AspectJProxyFactory proxyFactory = new AspectJProxyFactory(provider);
+          proxyFactory.setProxyTargetClass(true);
+          for (HostPluginProviderAspect aspect : this.hostPluginProviderAspects) {
+            proxyFactory.addAspect(aspect);
+          }
+
+          providerToAdd = proxyFactory.getProxy();
+
+        } else {
+          providerToAdd = provider;
         }
 
-        providerToAdd = proxyFactory.getProxy();
+        processAwareInterfaces(plugin, providerToAdd);
+        this.pluginToActiveHostProvidersMap.get(plugin).add(providerToAdd);
 
       } else {
-        providerToAdd = provider;
+        this.pluginToInactiveHostProvidersMap.computeIfAbsent(plugin, p -> new ArrayList<>());
+        this.pluginToInactiveHostProvidersMap.get(plugin).add(provider);
       }
-
-      processAwareInterfaces(plugin, providerToAdd);
-      this.pluginToHostProvidersMap.get(plugin).add(providerToAdd);
     }
   }
 
@@ -115,37 +123,38 @@ public abstract class AbstractHostPluginManager implements HostPluginManager {
     hostProvider.setPlugin(hostPlugin);
   }
 
-  public <T extends HostProvider> boolean hasHostProvider(
+  public <T extends HostProvider> boolean hasActiveHostProvider(
       String heiId, Class<T> providerClassType) {
-    Collection<T> providers = getAllProvidersOfType(heiId, providerClassType);
+    Collection<T> providers = getAllActiveProvidersOfType(heiId, providerClassType);
     return !providers.isEmpty();
   }
 
-  public <T extends HostProvider> Optional<T> getPrimaryProvider(
+  public <T extends HostProvider> Optional<T> getActivePrimaryProvider(
       String heiId, Class<T> providerClassType) {
     Optional<HostPlugin> primaryPluginOptional = getPrimaryPluginCoveringHeiId(heiId);
     if (primaryPluginOptional.isEmpty()) {
       return Optional.empty();
     }
-    return getSingleProvider(primaryPluginOptional.get(), providerClassType);
+    return getSingleActiveProvider(primaryPluginOptional.get(), providerClassType);
   }
 
-  public <T extends HostProvider> Optional<T> getSingleProvider(
+  public <T extends HostProvider> Optional<T> getActiveSingleProvider(
       String heiId, String ounitId, Class<T> providerClassType) {
     Optional<HostPlugin> pluginOptional = getSinglePluginCoveringHeiIdAndOunitId(heiId, ounitId);
     if (pluginOptional.isEmpty()) {
       return Optional.empty();
     }
-    return getSingleProvider(pluginOptional.get(), providerClassType);
+    return getSingleActiveProvider(pluginOptional.get(), providerClassType);
   }
 
-  public <T extends HostProvider> Map<T, Collection<String>> getOunitIdsCoveredPerProviderOfHeiId(
-      String heiId, Collection<String> ounitIds, Class<T> providerClassType)
-      throws EwpUnknownHeiIdException {
+  public <T extends HostProvider>
+      Map<T, Collection<String>> getOunitIdsCoveredPerActiveProviderOfHeiId(
+          String heiId, Collection<String> ounitIds, Class<T> providerClassType)
+          throws EwpUnknownHeiIdException {
 
     Map<T, Collection<String>> result = new HashMap<>();
     for (String ounitId : ounitIds) {
-      Optional<T> providerOptional = getSingleProvider(heiId, ounitId, providerClassType);
+      Optional<T> providerOptional = getActiveSingleProvider(heiId, ounitId, providerClassType);
       if (providerOptional.isPresent()) {
         T provider = providerOptional.get();
         result.computeIfAbsent(provider, ignored -> new ArrayList<>());
@@ -159,13 +168,14 @@ public abstract class AbstractHostPluginManager implements HostPluginManager {
    * @throws EwpUnknownHeiIdException Thrown if there is no host provider of given type for the
    *     provided HEI ID.
    */
-  public <T extends HostProvider> Map<T, Collection<String>> getOunitCodesCoveredPerProviderOfHeiId(
-      String heiId, Collection<String> ounitCodes, Class<T> providerClassType) {
+  public <T extends HostProvider>
+      Map<T, Collection<String>> getOunitCodesCoveredPerActiveProviderOfHeiId(
+          String heiId, Collection<String> ounitCodes, Class<T> providerClassType) {
 
     Map<T, Collection<String>> result = new HashMap<>();
     for (String ounitCode : ounitCodes) {
       Optional<T> providerOptional =
-          getSingleProviderByHeiIdAndOunitCode(heiId, ounitCode, providerClassType);
+          getSingleActiveProviderByHeiIdAndOunitCode(heiId, ounitCode, providerClassType);
       if (providerOptional.isPresent()) {
         T provider = providerOptional.get();
         result.computeIfAbsent(provider, ignored -> new ArrayList<>());
@@ -175,49 +185,50 @@ public abstract class AbstractHostPluginManager implements HostPluginManager {
     return result;
   }
 
-  public Collection<HostProvider> getAllProviders(String heiId) {
-    return getAllProvidersOfType(heiId, HostProvider.class);
+  public Collection<HostProvider> getAllActiveProviders(String heiId) {
+    return getAllActiveProvidersOfType(heiId, HostProvider.class);
   }
 
-  public <T extends HostProvider> Map<String, Collection<T>> getAllProvidersOfTypePerHeiId(
+  public <T extends HostProvider> Map<String, Collection<T>> getAllActiveProvidersOfTypePerHeiId(
       Class<T> providerClassType) {
     Map<String, Collection<T>> result = new HashMap<>();
     for (String heiId : this.heiIdToPluginsMap.keySet()) {
       result.computeIfAbsent(heiId, ignored -> new ArrayList<>());
-      result.get(heiId).addAll(getAllProvidersOfType(heiId, providerClassType));
+      result.get(heiId).addAll(getAllActiveProvidersOfType(heiId, providerClassType));
     }
     return result;
   }
 
-  public <T extends HostProvider> Collection<T> getAllProvidersOfType(Class<T> providerClassType) {
+  public <T extends HostProvider> Collection<T> getAllActiveProvidersOfType(
+      Class<T> providerClassType) {
     return this.heiIdToPluginsMap.values().stream()
         .flatMap(Collection::stream)
-        .flatMap(p -> getAllProviders(p, providerClassType).stream())
+        .flatMap(p -> getAllActiveProviders(p, providerClassType).stream())
         .collect(Collectors.toList());
   }
 
-  public <T extends HostProvider> Collection<T> getAllProvidersOfType(
+  public <T extends HostProvider> Collection<T> getAllActiveProvidersOfType(
       String heiId, Class<T> providerClassType) {
     this.heiIdToPluginsMap.computeIfAbsent(heiId, ignored -> new ArrayList<>());
     Collection<HostPlugin> plugins = getSortedPlugins(heiId);
     return plugins.stream()
-        .flatMap(p -> getAllProviders(p, providerClassType).stream())
+        .flatMap(p -> getAllActiveProviders(p, providerClassType).stream())
         .collect(Collectors.toList());
   }
 
-  public <T extends HostProvider> Optional<T> getSingleProviderByHeiIdAndOunitCode(
+  public <T extends HostProvider> Optional<T> getSingleActiveProviderByHeiIdAndOunitCode(
       String heiId, String ounitCode, Class<T> providerClassType) {
     Optional<HostPlugin> pluginOptional =
         getSinglePluginCoveringHeiIdAndOunitCode(heiId, ounitCode);
     if (pluginOptional.isEmpty()) {
       return Optional.empty();
     }
-    return getSingleProvider(pluginOptional.get(), providerClassType);
+    return getSingleActiveProvider(pluginOptional.get(), providerClassType);
   }
 
-  public <T extends HostProvider> Optional<T> getSingleProvider(
+  public <T extends HostProvider> Optional<T> getSingleActiveProvider(
       HostPlugin hostPlugin, Class<T> providerClassType) {
-    Collection<T> providers = getAllProviders(hostPlugin, providerClassType);
+    Collection<T> providers = getAllActiveProviders(hostPlugin, providerClassType);
     if (providers.isEmpty()) {
       return Optional.empty();
     }
@@ -234,15 +245,15 @@ public abstract class AbstractHostPluginManager implements HostPluginManager {
   }
 
   @Override
-  public Optional<HostPlugin> getSingleHostPluginByProvider(Class<?> providerClassType) {
+  public Optional<HostPlugin> getSingleHostPluginByActiveProvider(Class<?> providerClassType) {
     List<HostPlugin> validHostPlugins =
-        this.pluginToHostProvidersMap.entrySet().stream()
+        this.pluginToActiveHostProvidersMap.entrySet().stream()
             .filter(
                 e ->
                     e.getValue().stream()
                         .anyMatch(p -> providerClassType.isAssignableFrom(p.getClass())))
             .map(Map.Entry::getKey)
-            .collect(Collectors.toList());
+            .toList();
     if (validHostPlugins.isEmpty()) {
       return Optional.empty();
     }
@@ -255,9 +266,9 @@ public abstract class AbstractHostPluginManager implements HostPluginManager {
     return Optional.of(validHostPlugins.iterator().next());
   }
 
-  private <T extends HostProvider> Collection<T> getAllProviders(
+  private <T extends HostProvider> Collection<T> getAllActiveProviders(
       HostPlugin hostPlugin, Class<T> providerClassType) {
-    return this.pluginToHostProvidersMap.getOrDefault(hostPlugin, new ArrayList<>()).stream()
+    return this.pluginToActiveHostProvidersMap.getOrDefault(hostPlugin, new ArrayList<>()).stream()
         .filter(p -> providerClassType.isAssignableFrom(p.getClass()))
         .map(providerClassType::cast)
         .collect(Collectors.toSet());
