@@ -78,6 +78,7 @@ export class AdminDashboardCommunicationsLogsTableComponent implements AfterCont
 
   statusOptions = [
     { name: 'SUCCESS', value: 'SUCCESS' },
+    { name: 'ACCEPTED', value: 'ACCEPTED' },
     { name: 'FAILURE', value: 'FAILURE' },
     { name: 'INCOMPLETE', value: 'INCOMPLETE' }
   ]

@@ -1,6 +1,12 @@
 package pt.ulisboa.ewp.node.domain.entity.communication.log.http;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import org.springframework.http.HttpStatus;
@@ -29,22 +35,16 @@ public abstract class HttpCommunicationLog extends CommunicationLog {
 
   @Override
   public Status getStatus() {
-    switch (super.getStatus()) {
-      case SUCCESS:
-        if (isResponseStatusError()) {
-          return Status.FAILURE;
-        }
-        return Status.SUCCESS;
-
-      case INCOMPLETE:
-        return Status.INCOMPLETE;
-
-      case FAILURE:
+    Status status = super.getStatus();
+    if (status == Status.SUCCESS) {
+      if (isResponseStatusAccepted()) {
+        return Status.ACCEPTED;
+      } else if (isResponseStatusError()) {
         return Status.FAILURE;
-
-      default:
-        throw new IllegalStateException("Unknown status: " + super.getStatus());
+      }
+      return Status.SUCCESS;
     }
+    return status;
   }
 
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -71,6 +71,11 @@ public abstract class HttpCommunicationLog extends CommunicationLog {
   @Transient
   public String getTarget() {
     return request.getUrl();
+  }
+
+  @Transient
+  private boolean isResponseStatusAccepted() {
+    return HttpStatus.valueOf(this.response.getStatusCode()).equals(HttpStatus.ACCEPTED);
   }
 
   @Transient

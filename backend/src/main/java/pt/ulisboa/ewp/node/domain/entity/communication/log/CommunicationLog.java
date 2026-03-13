@@ -227,6 +227,7 @@ public class CommunicationLog {
   public enum Status {
     INCOMPLETE,
     SUCCESS,
+    ACCEPTED,
     FAILURE
   }
 }
