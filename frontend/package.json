@@ -23,7 +23,7 @@
     "@ngrx/operators": "21.0.1",
     "@ngrx/router-store": "21.0.1",
     "@ngrx/store": "21.0.1",
-    "@nx/angular": "22.5.1",
+    "@nx/angular": "22.6.3",
     "@primeng/themes": "^19.0.6",
     "class-transformer": "~0.5.1",
     "primeflex": "^3.3.1",
@@ -37,7 +37,7 @@
     "zone.js": "0.16.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "21.1.4",
+    "@angular-devkit/build-angular": "21.2.5",
     "@angular-devkit/core": "21.1.4",
     "@angular-devkit/schematics": "21.1.4",
     "@angular-eslint/eslint-plugin": "21.1.0",
