@@ -37,7 +37,7 @@
     "zone.js": "0.16.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "21.1.4",
+    "@angular-devkit/build-angular": "21.2.18",
     "@angular-devkit/core": "21.1.4",
     "@angular-devkit/schematics": "21.1.4",
     "@angular-eslint/eslint-plugin": "21.1.0",
@@ -73,7 +73,7 @@
     "jsonc-eslint-parser": "^2.4.0",
     "ng-packagr": "21.1.0",
     "nx": "22.5.1",
-    "postcss": "^8.4.47",
+    "postcss": "^8.5.12",
     "postcss-import": "~16.1.0",
     "postcss-preset-env": "~10.0.3",
     "postcss-url": "~10.1.3",
