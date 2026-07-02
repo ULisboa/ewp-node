@@ -44,3 +44,6 @@ Thumbs.db
 target/
 .nx/cache
 .nx/workspace-data
+.claude/worktrees
+.nx/polygraph
+.nx/self-healing

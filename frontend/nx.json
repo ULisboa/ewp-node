@@ -26,8 +26,10 @@
     "@nx/eslint:lint": {
       "inputs": [
         "default",
+        "^default",
         "{workspaceRoot}/.eslintrc.json",
-        "{workspaceRoot}/.eslintignore"
+        "{workspaceRoot}/.eslintignore",
+        "{workspaceRoot}/tools/eslint-rules/**/*"
       ],
       "cache": true
     }
@@ -61,5 +63,6 @@
     }
   },
   "defaultProject": "ewp-node-frontend",
-  "useInferencePlugins": false
+  "useInferencePlugins": false,
+  "analytics": false
 }
