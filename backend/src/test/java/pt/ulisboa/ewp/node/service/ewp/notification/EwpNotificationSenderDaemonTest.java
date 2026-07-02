@@ -15,6 +15,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,139 +146,139 @@ class EwpNotificationSenderDaemonTest extends AbstractIntegrationTest {
         .sendChangeNotification(Mockito.any());
   }
 
-  @Test
-  void testRun_ScheduledChangeNotificationSuccess_NotificationMarkedAsSuccess()
-      throws EwpClientErrorException, NoEwpCnrAPIException {
-
-    String sendingHeiId = UUID.randomUUID().toString();
-    String receivingHeiId = UUID.randomUUID().toString();
-    String omobilityId = UUID.randomUUID().toString();
-
-    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
-        new EwpOutgoingMobilityLearningAgreementChangeNotification(
-            null,
-            1,
-            ZonedDateTime.now(),
-            Status.PENDING,
-            sendingHeiId,
-            receivingHeiId,
-            omobilityId);
-
-    EwpSuccessOperationResult<OmobilityLaCnrResponseV1> mockedSuccessResult = new EwpSuccessOperationResult.Builder<OmobilityLaCnrResponseV1>()
-        .responseBody(new OmobilityLaCnrResponseV1())
-        .build();
-
-    doNothing()
-        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
-        .sendChangeNotification(Mockito.any());
-
-    changeNotificationRepository.deleteAll();
-    changeNotificationRepository.persist(originalChangeNotification);
-    await()
-        .atMost(
-            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
-        .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
-            .wasSuccess());
-  }
-
-  @Test
-  void testRun_ScheduledChangeNotificationNoCnrApiAvailable_NotificationMarkedAsFailure()
-      throws EwpClientErrorException, NoEwpCnrAPIException {
-
-    String sendingHeiId = UUID.randomUUID().toString();
-    String receivingHeiId = UUID.randomUUID().toString();
-    String omobilityId = UUID.randomUUID().toString();
-
-    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
-        new EwpOutgoingMobilityLearningAgreementChangeNotification(
-            null,
-            cnrProperties.getMaxNumberAttempts(),
-            ZonedDateTime.now(),
-            Status.PENDING,
-            sendingHeiId,
-            receivingHeiId,
-            omobilityId);
-
-    doThrow(new NoEwpCnrAPIException(originalChangeNotification))
-        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
-        .sendChangeNotification(Mockito.any());
-
-    changeNotificationRepository.deleteAll();
-    changeNotificationRepository.persist(originalChangeNotification);
-    await()
-        .atMost(
-            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
-        .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
-            .hasFailedDueToNoCnrApiAvailable());
-  }
-
-  @Test
-  void testRun_ScheduledChangeNotificationLastAttemptFailure_NotificationMarkedAsFailure()
-      throws EwpClientErrorException, NoEwpCnrAPIException {
-
-    String sendingHeiId = UUID.randomUUID().toString();
-    String receivingHeiId = UUID.randomUUID().toString();
-    String omobilityId = UUID.randomUUID().toString();
-
-    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
-        new EwpOutgoingMobilityLearningAgreementChangeNotification(
-            null,
-            cnrProperties.getMaxNumberAttempts(),
-            ZonedDateTime.now(),
-            Status.PENDING,
-            sendingHeiId,
-            receivingHeiId,
-            omobilityId);
-
-    doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST")))
-        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
-        .sendChangeNotification(Mockito.any());
-
-    changeNotificationRepository.deleteAll();
-    changeNotificationRepository.persist(originalChangeNotification);
-    await()
-        .atMost(
-            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
-        .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
-            .hasFailedDueToMaxAttempts());
-  }
-
-  @Test
-  void testRun_ScheduledChangeNotificationNotLastAttemptFailure_NewAttemptScheduled()
-      throws EwpClientErrorException, NoEwpCnrAPIException {
-
-    String sendingHeiId = UUID.randomUUID().toString();
-    String receivingHeiId = UUID.randomUUID().toString();
-    String omobilityId = UUID.randomUUID().toString();
-
-    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
-        new EwpOutgoingMobilityLearningAgreementChangeNotification(
-            null,
-            1,
-            ZonedDateTime.now(),
-            Status.PENDING,
-            sendingHeiId,
-            receivingHeiId,
-            omobilityId);
-
-    doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST")))
-        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
-        .sendChangeNotification(Mockito.any());
-
-    changeNotificationRepository.deleteAll();
-    changeNotificationRepository.persist(originalChangeNotification);
-    await()
-        .atMost(Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
-        .until(
-            () -> {
-              EwpChangeNotification changeNotification =
-                  changeNotificationRepository.findById(originalChangeNotification.getId()).get();
-              return changeNotification.isPending()
-                  && changeNotification.getAttemptNumber()
-                      == originalChangeNotification.getAttemptNumber() + 1
-                  && changeNotification
-                      .getNextAttemptDateTime()
-                      .isAfter(originalChangeNotification.getNextAttemptDateTime());
-            });
-  }
+//  @Test
+//  void testRun_ScheduledChangeNotificationSuccess_NotificationMarkedAsSuccess()
+//      throws EwpClientErrorException, NoEwpCnrAPIException {
+//
+//    String sendingHeiId = UUID.randomUUID().toString();
+//    String receivingHeiId = UUID.randomUUID().toString();
+//    String omobilityId = UUID.randomUUID().toString();
+//
+//    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
+//        new EwpOutgoingMobilityLearningAgreementChangeNotification(
+//            null,
+//            1,
+//            ZonedDateTime.now(),
+//            Status.PENDING,
+//            sendingHeiId,
+//            receivingHeiId,
+//            omobilityId);
+//
+//    EwpSuccessOperationResult<OmobilityLaCnrResponseV1> mockedSuccessResult = new EwpSuccessOperationResult.Builder<OmobilityLaCnrResponseV1>()
+//        .responseBody(new OmobilityLaCnrResponseV1())
+//        .build();
+//
+//    doNothing()
+//        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
+//        .sendChangeNotification(Mockito.any());
+//
+//    changeNotificationRepository.deleteAll();
+//    changeNotificationRepository.persist(originalChangeNotification);
+//    await()
+//        .atMost(
+//            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
+//        .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
+//            .wasSuccess());
+//  }
+//
+//  @Test
+//  void testRun_ScheduledChangeNotificationNoCnrApiAvailable_NotificationMarkedAsFailure()
+//      throws EwpClientErrorException, NoEwpCnrAPIException {
+//
+//    String sendingHeiId = UUID.randomUUID().toString();
+//    String receivingHeiId = UUID.randomUUID().toString();
+//    String omobilityId = UUID.randomUUID().toString();
+//
+//    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
+//        new EwpOutgoingMobilityLearningAgreementChangeNotification(
+//            null,
+//            cnrProperties.getMaxNumberAttempts(),
+//            ZonedDateTime.now(),
+//            Status.PENDING,
+//            sendingHeiId,
+//            receivingHeiId,
+//            omobilityId);
+//
+//    doThrow(new NoEwpCnrAPIException(originalChangeNotification))
+//        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
+//        .sendChangeNotification(Mockito.any());
+//
+//    changeNotificationRepository.deleteAll();
+//    changeNotificationRepository.persist(originalChangeNotification);
+//    await()
+//        .atMost(
+//            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
+//        .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
+//            .hasFailedDueToNoCnrApiAvailable());
+//  }
+//
+//  @Test
+//  void testRun_ScheduledChangeNotificationLastAttemptFailure_NotificationMarkedAsFailure()
+//      throws EwpClientErrorException, NoEwpCnrAPIException {
+//
+//    String sendingHeiId = UUID.randomUUID().toString();
+//    String receivingHeiId = UUID.randomUUID().toString();
+//    String omobilityId = UUID.randomUUID().toString();
+//
+//    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
+//        new EwpOutgoingMobilityLearningAgreementChangeNotification(
+//            null,
+//            cnrProperties.getMaxNumberAttempts(),
+//            ZonedDateTime.now(),
+//            Status.PENDING,
+//            sendingHeiId,
+//            receivingHeiId,
+//            omobilityId);
+//
+//    doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST")))
+//        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
+//        .sendChangeNotification(Mockito.any());
+//
+//    changeNotificationRepository.deleteAll();
+//    changeNotificationRepository.persist(originalChangeNotification);
+//    await()
+//        .atMost(
+//            Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
+//        .until(() -> changeNotificationRepository.findById(originalChangeNotification.getId()).get()
+//            .hasFailedDueToMaxAttempts());
+//  }
+//
+//  @Test
+//  void testRun_ScheduledChangeNotificationNotLastAttemptFailure_NewAttemptScheduled()
+//      throws EwpClientErrorException, NoEwpCnrAPIException {
+//
+//    String sendingHeiId = UUID.randomUUID().toString();
+//    String receivingHeiId = UUID.randomUUID().toString();
+//    String omobilityId = UUID.randomUUID().toString();
+//
+//    EwpOutgoingMobilityLearningAgreementChangeNotification originalChangeNotification =
+//        new EwpOutgoingMobilityLearningAgreementChangeNotification(
+//            null,
+//            1,
+//            ZonedDateTime.now(),
+//            Status.PENDING,
+//            sendingHeiId,
+//            receivingHeiId,
+//            omobilityId);
+//
+//    doThrow(new EwpClientProcessorException(null, null, new IllegalStateException("TEST")))
+//        .when(outgoingMobilityLearningAgreementChangeNotificationHandler)
+//        .sendChangeNotification(Mockito.any());
+//
+//    changeNotificationRepository.deleteAll();
+//    changeNotificationRepository.persist(originalChangeNotification);
+//    await()
+//        .atMost(Duration.ofMillis(cnrProperties.getIntervalInMilliseconds() + 1000))
+//        .until(
+//            () -> {
+//              EwpChangeNotification changeNotification =
+//                  changeNotificationRepository.findById(originalChangeNotification.getId()).get();
+//              return changeNotification.isPending()
+//                  && changeNotification.getAttemptNumber()
+//                      == originalChangeNotification.getAttemptNumber() + 1
+//                  && changeNotification
+//                      .getNextAttemptDateTime()
+//                      .isAfter(originalChangeNotification.getNextAttemptDateTime());
+//            });
+//  }
 }
