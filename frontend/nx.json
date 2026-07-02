@@ -64,5 +64,6 @@
   },
   "defaultProject": "ewp-node-frontend",
   "useInferencePlugins": false,
-  "analytics": false
+  "analytics": false,
+  "neverConnectToCloud": true
 }
