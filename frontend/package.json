@@ -23,7 +23,7 @@
     "@ngrx/operators": "21.0.1",
     "@ngrx/router-store": "21.0.1",
     "@ngrx/store": "21.0.1",
-    "@nx/angular": "23.0.1",
+    "@nx/angular": "23.1.1",
     "@primeng/themes": "^19.0.6",
     "class-transformer": "~0.5.1",
     "primeflex": "^3.3.1",
@@ -37,7 +37,7 @@
     "zone.js": "0.16.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "21.2.17",
+    "@angular-devkit/build-angular": "22.1.2",
     "@angular-devkit/core": "21.2.17",
     "@angular-devkit/schematics": "21.2.17",
     "@angular-eslint/eslint-plugin": "21.4.0",
@@ -73,7 +73,7 @@
     "jsonc-eslint-parser": "^2.4.0",
     "ng-packagr": "21.2.5",
     "nx": "23.0.1",
-    "postcss": "^8.4.47",
+    "postcss": "^8.5.19",
     "postcss-import": "~16.1.0",
     "postcss-preset-env": "~10.0.3",
     "postcss-url": "~10.1.3",
